@@ -1,11 +1,12 @@
 {
- "generatedAt": "2026-11-15T20:21:05.995579Z",
+ "generatedAt": "2026-11-15T20:49:12.203576Z",
  "snapshotCount": 3,
  "firstSnapshot": "2026-11-15T20:16:01.086534Z",
  "latestSnapshot": "2026-11-15T20:21:05.922248Z",
  "dataAsOf": "2026-11-15T20:00:00Z",
  "source": "motion-official",
- "starsCap": 15,
+ "starsCap": 32,
+ "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
  "lineupSize": 5,
  "creators": [
   {
@@ -19,8 +20,8 @@
    "acceleration": 5.5,
    "volatility": 5.19,
    "momentum": 100.0,
-   "estStars": 3,
-   "value": 33.3,
+   "estStars": 4,
+   "value": 25.0,
    "tags": [
     "SURGING"
    ],
@@ -37,8 +38,8 @@
    "acceleration": 3.0,
    "volatility": 2.83,
    "momentum": 31.7,
-   "estStars": 2,
-   "value": 15.8,
+   "estStars": 3,
+   "value": 10.6,
    "tags": [
     "SURGING",
     "SLEEPER"
@@ -79,7 +80,8 @@
    "value": 8.5,
    "tags": [
     "SURGING",
-    "COILED"
+    "COILED",
+    "SLEEPER"
    ],
    "isNew": false
   },
@@ -94,8 +96,8 @@
    "acceleration": 2.5,
    "volatility": 2.36,
    "momentum": 22.6,
-   "estStars": 3,
-   "value": 7.5,
+   "estStars": 4,
+   "value": 5.7,
    "tags": [
     "SURGING",
     "COILED"
@@ -113,8 +115,8 @@
    "acceleration": 1.0,
    "volatility": 0.94,
    "momentum": 18.1,
-   "estStars": 3,
-   "value": 6.0,
+   "estStars": 4,
+   "value": 4.5,
    "tags": [
     "SURGING",
     "COILED"
@@ -132,8 +134,8 @@
    "acceleration": 2.5,
    "volatility": 2.36,
    "momentum": 15.1,
-   "estStars": 2,
-   "value": 7.5,
+   "estStars": 3,
+   "value": 5.0,
    "tags": [
     "SURGING",
     "SLEEPER"
@@ -170,8 +172,8 @@
    "acceleration": 1.0,
    "volatility": 0.94,
    "momentum": 10.6,
-   "estStars": 4,
-   "value": 2.6,
+   "estStars": 5,
+   "value": 2.1,
    "tags": [
     "STEADY"
    ],
@@ -188,8 +190,8 @@
    "acceleration": 1.0,
    "volatility": 0.94,
    "momentum": 10.6,
-   "estStars": 2,
-   "value": 5.3,
+   "estStars": 3,
+   "value": 3.5,
    "tags": [
     "SLEEPER"
    ],
@@ -224,8 +226,8 @@
    "acceleration": 1.0,
    "volatility": 0.94,
    "momentum": 10.6,
-   "estStars": 1,
-   "value": 10.6,
+   "estStars": 2,
+   "value": 5.3,
    "tags": [
     "SLEEPER"
    ],
@@ -242,8 +244,8 @@
    "acceleration": 0.5,
    "volatility": 0.47,
    "momentum": 9.0,
-   "estStars": 5,
-   "value": 1.8,
+   "estStars": 7,
+   "value": 1.3,
    "tags": [
     "STEADY"
    ],
@@ -260,8 +262,8 @@
    "acceleration": 0.5,
    "volatility": 0.47,
    "momentum": 9.0,
-   "estStars": 3,
-   "value": 3.0,
+   "estStars": 5,
+   "value": 1.8,
    "tags": [
     "STEADY"
    ],
@@ -281,7 +283,7 @@
    "estStars": 3,
    "value": 3.0,
    "tags": [
-    "STEADY"
+    "SLEEPER"
    ],
    "isNew": false
   },
@@ -296,8 +298,8 @@
    "acceleration": 0.5,
    "volatility": 0.47,
    "momentum": 9.0,
-   "estStars": 2,
-   "value": 4.5,
+   "estStars": 3,
+   "value": 3.0,
    "tags": [
     "SLEEPER"
    ],
@@ -332,8 +334,8 @@
    "acceleration": 0.5,
    "volatility": 0.47,
    "momentum": 9.0,
-   "estStars": 1,
-   "value": 9.0,
+   "estStars": 2,
+   "value": 4.5,
    "tags": [
     "SLEEPER"
    ],
@@ -371,7 +373,7 @@
    "estStars": 3,
    "value": 1.0,
    "tags": [
-    "STEADY"
+    "SLEEPER"
    ],
    "isNew": false
   },
@@ -386,8 +388,8 @@
    "acceleration": 0.5,
    "volatility": 0.47,
    "momentum": 1.5,
-   "estStars": 2,
-   "value": 0.8,
+   "estStars": 3,
+   "value": 0.5,
    "tags": [
     "SLEEPER"
    ],
@@ -422,7 +424,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 5,
+   "estStars": 8,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -440,7 +442,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 5,
+   "estStars": 8,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -458,7 +460,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 5,
+   "estStars": 6,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -476,7 +478,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 4,
+   "estStars": 6,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -494,7 +496,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 4,
+   "estStars": 6,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -512,7 +514,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 4,
+   "estStars": 6,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -530,7 +532,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 4,
+   "estStars": 5,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -548,7 +550,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 3,
+   "estStars": 5,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -566,7 +568,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 2,
+   "estStars": 3,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -584,7 +586,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 2,
+   "estStars": 3,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -602,7 +604,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 2,
+   "estStars": 3,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -692,7 +694,7 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": 0.0,
-   "estStars": 1,
+   "estStars": 2,
    "value": 0.0,
    "tags": [
     "QUIET"
@@ -854,8 +856,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -2.5,
-   "estStars": 4,
-   "value": -0.6,
+   "estStars": 5,
+   "value": -0.5,
    "tags": [
     "STEADY"
    ],
@@ -872,8 +874,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -2.5,
-   "estStars": 3,
-   "value": -0.8,
+   "estStars": 4,
+   "value": -0.6,
    "tags": [
     "STEADY"
    ],
@@ -890,8 +892,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -2.5,
-   "estStars": 3,
-   "value": -0.8,
+   "estStars": 4,
+   "value": -0.6,
    "tags": [
     "STEADY"
    ],
@@ -944,8 +946,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -2.5,
-   "estStars": 1,
-   "value": -2.5,
+   "estStars": 2,
+   "value": -1.2,
    "tags": [
     "STEADY"
    ],
@@ -1052,8 +1054,8 @@
    "acceleration": -1.0,
    "volatility": 0.94,
    "momentum": -4.9,
-   "estStars": 3,
-   "value": -1.6,
+   "estStars": 5,
+   "value": -1.0,
    "tags": [
     "STEADY"
    ],
@@ -1070,8 +1072,8 @@
    "acceleration": -1.0,
    "volatility": 0.94,
    "momentum": -4.9,
-   "estStars": 1,
-   "value": -4.9,
+   "estStars": 2,
+   "value": -2.5,
    "tags": [
     "STEADY"
    ],
@@ -1088,8 +1090,8 @@
    "acceleration": 0.5,
    "volatility": 0.47,
    "momentum": -6.0,
-   "estStars": 3,
-   "value": -2.0,
+   "estStars": 5,
+   "value": -1.2,
    "tags": [
     "FADE"
    ],
@@ -1106,8 +1108,8 @@
    "acceleration": -1.5,
    "volatility": 1.41,
    "momentum": -7.4,
-   "estStars": 1,
-   "value": -7.4,
+   "estStars": 2,
+   "value": -3.7,
    "tags": [
     "STEADY"
    ],
@@ -1124,8 +1126,8 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": -7.5,
-   "estStars": 3,
-   "value": -2.5,
+   "estStars": 4,
+   "value": -1.9,
    "tags": [
     "FADE"
    ],
@@ -1142,8 +1144,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -10.0,
-   "estStars": 5,
-   "value": -2.0,
+   "estStars": 7,
+   "value": -1.4,
    "tags": [
     "FADE"
    ],
@@ -1160,8 +1162,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -10.0,
-   "estStars": 3,
-   "value": -3.3,
+   "estStars": 4,
+   "value": -2.5,
    "tags": [
     "FADE"
    ],
@@ -1196,8 +1198,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -10.0,
-   "estStars": 2,
-   "value": -5.0,
+   "estStars": 3,
+   "value": -3.3,
    "tags": [
     "STEADY"
    ],
@@ -1214,8 +1216,8 @@
    "acceleration": -0.5,
    "volatility": 0.47,
    "momentum": -10.0,
-   "estStars": 1,
-   "value": -10.0,
+   "estStars": 2,
+   "value": -5.0,
    "tags": [
     "STEADY"
    ],
@@ -1232,8 +1234,8 @@
    "acceleration": -1.0,
    "volatility": 0.94,
    "momentum": -12.4,
-   "estStars": 3,
-   "value": -4.1,
+   "estStars": 4,
+   "value": -3.1,
    "tags": [
     "FADE"
    ],
@@ -1250,8 +1252,8 @@
    "acceleration": -1.0,
    "volatility": 0.94,
    "momentum": -12.4,
-   "estStars": 3,
-   "value": -4.1,
+   "estStars": 4,
+   "value": -3.1,
    "tags": [
     "FADE"
    ],
@@ -1268,8 +1270,8 @@
    "acceleration": -1.0,
    "volatility": 0.94,
    "momentum": -12.4,
-   "estStars": 3,
-   "value": -4.1,
+   "estStars": 4,
+   "value": -3.1,
    "tags": [
     "FADE"
    ],
@@ -1322,8 +1324,8 @@
    "acceleration": -1.5,
    "volatility": 1.41,
    "momentum": -14.9,
-   "estStars": 4,
-   "value": -3.7,
+   "estStars": 5,
+   "value": -3.0,
    "tags": [
     "FADE"
    ],
@@ -1340,8 +1342,8 @@
    "acceleration": 0.0,
    "volatility": 0.0,
    "momentum": -15.0,
-   "estStars": 3,
-   "value": -5.0,
+   "estStars": 4,
+   "value": -3.8,
    "tags": [
     "FADE"
    ],
@@ -1358,8 +1360,8 @@
    "acceleration": -2.0,
    "volatility": 1.89,
    "momentum": -17.4,
-   "estStars": 1,
-   "value": -17.4,
+   "estStars": 2,
+   "value": -8.7,
    "tags": [
     "STEADY"
    ],
@@ -1376,8 +1378,8 @@
    "acceleration": -2.0,
    "volatility": 1.89,
    "momentum": -24.9,
-   "estStars": 3,
-   "value": -8.3,
+   "estStars": 4,
+   "value": -6.2,
    "tags": [
     "FADE"
    ],
@@ -1412,8 +1414,8 @@
    "acceleration": -5.0,
    "volatility": 4.71,
    "momentum": -54.7,
-   "estStars": 2,
-   "value": -27.4,
+   "estStars": 3,
+   "value": -18.2,
    "tags": [
     "STEADY"
    ],
@@ -1430,8 +1432,8 @@
    "acceleration": -5.5,
    "volatility": 5.19,
    "momentum": -100.0,
-   "estStars": 2,
-   "value": -50.0,
+   "estStars": 3,
+   "value": -33.3,
    "tags": [
     "STEADY"
    ],
@@ -1443,7 +1445,7 @@
    "picks": [
     {
      "name": "Coffeezilla",
-     "estStars": 3,
+     "estStars": 4,
      "momentum": 100.0,
      "tags": [
       "SURGING"
@@ -1451,7 +1453,7 @@
     },
     {
      "name": "Jim Cramer",
-     "estStars": 2,
+     "estStars": 3,
      "momentum": 31.7,
      "tags": [
       "SURGING",
@@ -1473,12 +1475,13 @@
      "momentum": 25.6,
      "tags": [
       "SURGING",
-      "COILED"
+      "COILED",
+      "SLEEPER"
      ]
     },
     {
      "name": "DJ Akademiks",
-     "estStars": 3,
+     "estStars": 4,
      "momentum": 22.6,
      "tags": [
       "SURGING",
@@ -1486,22 +1489,14 @@
      ]
     }
    ],
-   "starsUsed": 12,
+   "starsUsed": 15,
    "projectedMomentum": 205.9
   },
   "sleeperHeavy": {
    "picks": [
     {
-     "name": "Coffeezilla",
-     "estStars": 3,
-     "momentum": 100.0,
-     "tags": [
-      "SURGING"
-     ]
-    },
-    {
      "name": "Jim Cramer",
-     "estStars": 2,
+     "estStars": 3,
      "momentum": 31.7,
      "tags": [
       "SURGING",
@@ -1523,32 +1518,34 @@
      "momentum": 25.6,
      "tags": [
       "SURGING",
-      "COILED"
+      "COILED",
+      "SLEEPER"
      ]
     },
     {
-     "name": "DJ Akademiks",
+     "name": "rasmr",
      "estStars": 3,
-     "momentum": 22.6,
+     "momentum": 15.1,
      "tags": [
       "SURGING",
-      "COILED"
+      "SLEEPER"
+     ]
+    },
+    {
+     "name": "Roon",
+     "estStars": 2,
+     "momentum": 12.1,
+     "tags": [
+      "SURGING",
+      "SLEEPER"
      ]
     }
    ],
    "starsUsed": 12,
-   "projectedMomentum": 205.9
+   "projectedMomentum": 110.5
   },
   "contrarian": {
    "picks": [
-    {
-     "name": "Coffeezilla",
-     "estStars": 3,
-     "momentum": 100.0,
-     "tags": [
-      "SURGING"
-     ]
-    },
     {
      "name": "Vitalik Buterin",
      "estStars": 1,
@@ -1559,8 +1556,16 @@
      ]
     },
     {
+     "name": "Coffeezilla",
+     "estStars": 4,
+     "momentum": 100.0,
+     "tags": [
+      "SURGING"
+     ]
+    },
+    {
      "name": "Jim Cramer",
-     "estStars": 2,
+     "estStars": 3,
      "momentum": 31.7,
      "tags": [
       "SURGING",
@@ -1568,24 +1573,27 @@
      ]
     },
     {
-     "name": "Toly",
-     "estStars": 1,
-     "momentum": 10.6,
+     "name": "Mark Cuban",
+     "estStars": 3,
+     "momentum": 25.6,
      "tags": [
+      "SURGING",
+      "COILED",
       "SLEEPER"
      ]
     },
     {
-     "name": "Paul Graham",
-     "estStars": 1,
-     "momentum": 9.0,
+     "name": "Roon",
+     "estStars": 2,
+     "momentum": 12.1,
      "tags": [
+      "SURGING",
       "SLEEPER"
      ]
     }
    ],
-   "starsUsed": 8,
-   "projectedMomentum": 177.3
+   "starsUsed": 13,
+   "projectedMomentum": 195.4
   }
  },
  "disclaimer": "Scores are derived from Motion's public leaderboard (positions + 4-hour rank deltas). Star costs are estimated from rank, not the real card values. Nothing here is insider information."
