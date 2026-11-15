@@ -1,5 +1,35 @@
 [
  {
+  "player": "probe_zzz",
+  "slotAtLock": "2026-11-15T20:00:00Z",
+  "picks": [
+   {
+    "name": "Coffeezilla",
+    "positionAtLock": 20,
+    "estStars": 4,
+    "rarity": "Common",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 20,
+    "move": 0
+   },
+   {
+    "name": "Mark Cuban",
+    "positionAtLock": 32,
+    "estStars": 3,
+    "rarity": "Rare",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 32,
+    "move": 0
+   }
+  ],
+  "status": "settled",
+  "lockedAt": "2026-11-15T21:23:20.253773Z",
+  "score": 0,
+  "settledAt": "2026-11-15T20:00:00Z"
+ },
+ {
   "player": "hermes_tester",
   "slotAtLock": "2026-11-15T20:00:00Z",
   "picks": [
