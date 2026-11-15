@@ -484,10 +484,18 @@ function renderBook() {
     return;
   }
   const s = BOOK.summary || {};
+  // A receipt locked in the newest window is settled but has not been graded against a
+  // later snapshot: it must not count as a miss, so it is pulled out of the denominator.
+  const ungraded = (BOOK.receipts || []).filter(r => r.status === "settled" && r.slotAtLock && r.settledAt === r.slotAtLock).length;
+  const graded = Math.max(0, (s.settled || 0) - ungraded);
   $("#hitRate").textContent = s.hitRate == null
     ? (s.pending ? `${s.pending} pending` : "—")
-    : `${Math.round(s.hitRate * 100)}% of ${s.settled}`;
-  meta.textContent = `${s.count} receipt${s.count === 1 ? "" : "s"} · ${s.settled || 0} settled · ${s.pending || 0} pending · net ${signed(s.netRank || 0)} rank` +
+    : graded
+      ? `${Math.round((s.hitRate * (s.settled || 0) * 100) / graded)}% of ${graded}`
+      : "no window yet";
+  meta.textContent = `${s.count} receipt${s.count === 1 ? "" : "s"} · ${graded} graded` +
+    (ungraded ? ` · ${ungraded} waiting for a window` : "") +
+    ` · ${s.pending || 0} pending · net ${signed(s.netRank || 0)} rank` +
     (BOOK.asOf ? ` · graded to ${String(BOOK.asOf).slice(0, 16).replace("T", " ")}Z` : "");
   const list = BOOK.receipts || [];
   if (!list.length) {
@@ -497,7 +505,7 @@ function renderBook() {
   box.innerHTML = list.slice(0, 8).map(r => {
     const done = r.status === "settled";
     const picks = (r.picks || []).map(p => {
-      const tag = p.rarity && p.rarity !== "Common" ? `<i class="rr">${esc(p.rarity[0])}</i>` : "";
+      const tag = p.rarity && p.rarity !== "Common" ? `<i class="rr" title="${esc(p.rarity)} card">${esc(p.rarity[0])}</i>` : "";
       if (p.move == null) return esc(p.name) + tag;
       return `${esc(p.name)}${tag} <span class="${cls(p.move)}">${signed(p.move)}</span>`;
     }).join(" · ");
