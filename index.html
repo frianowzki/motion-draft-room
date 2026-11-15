@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motion Draft Room</title>
+<meta name="description" content="Forecast arena and auto-settled receipt book for Motion's creator leaderboard. Public data only.">
+<style>
+  :root{
+    --bg:#0a0a0c; --panel:#121216; --panel2:#17171c; --line:#26262e;
+    --ink:#ececf1; --dim:#8b8b99; --faint:#5a5a68;
+    --up:#3ddc84; --down:#ff5d6c; --accent:#c7f464; --warn:#ffb84d;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 80px}
+  header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font-size:21px;letter-spacing:-.4px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--dim);font-size:12.5px;margin-top:5px;line-height:1.5;max-width:62ch}
+  .badge{font-family:var(--mono);font-size:10.5px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:var(--dim);background:var(--panel);white-space:nowrap}
+  .badge b{color:var(--accent);font-weight:600}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:18px 0}
+  .stat{background:var(--panel);padding:11px 13px}
+  .stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint)}
+  .stat .v{font-family:var(--mono);font-size:17px;margin-top:3px}
+  .tabs{display:flex;gap:6px;margin:16px 0 12px;flex-wrap:wrap}
+  .tab{font-family:var(--mono);font-size:11.5px;padding:7px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--dim);cursor:pointer}
+  .tab.on{background:var(--accent);color:#0a0a0c;border-color:var(--accent);font-weight:600}
+  .grid{display:grid;grid-template-columns:1.55fr .95fr;gap:14px;align-items:start}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .card h2{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);padding:0 6px 7px;font-weight:400}
+  td{padding:6px;border-top:1px solid #1e1e25}
+  tr.row{cursor:pointer}
+  tr.row:hover td{background:var(--panel2)}
+  tr.row.sel td{background:#1b2318}
+  .pos{font-family:var(--mono);color:var(--faint);width:26px}
+  .name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+  .mono{font-family:var(--mono)}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--faint)}
+  .tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;margin-right:3px;border:1px solid var(--line);color:var(--dim)}
+  .tag.SURGING{color:var(--up);border-color:#255a3d}
+  .tag.COILED{color:var(--accent);border-color:#4a5a24}
+  .tag.SLEEPER{color:#7db3ff;border-color:#28405e}
+  .tag.FADE{color:var(--down);border-color:#5e2830}
+  .tag.QUIET{color:var(--faint)}
+  .mbar{position:relative;height:5px;background:#1e1e25;border-radius:3px;min-width:54px}
+  .mbar i{position:absolute;top:0;bottom:0;left:50%;border-radius:3px}
+  .slot{display:flex;gap:4px;margin-bottom:13px;flex-wrap:wrap}
+  .slot .s{font-family:var(--mono);font-size:9.5px;padding:3px 7px;border:1px solid var(--line);border-radius:5px;color:var(--faint)}
+  .slot .s.spent{border-color:#4a5a24;color:var(--accent);background:#1a2013}
+  .pill{font-family:var(--mono);font-size:10.5px;padding:3px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--dim)}
+  .detail h3{margin:0;font-size:16px;letter-spacing:-.3px}
+  .detail .meta{color:var(--dim);font-size:11.5px;margin:4px 0 12px;font-family:var(--mono)}
+  .kv{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:12px;margin-bottom:12px}
+  .kv .k{color:var(--faint)} .kv .v{font-family:var(--mono)}
+  label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);margin:10px 0 4px}
+  input,textarea{width:100%;background:#0d0d11;border:1px solid var(--line);border-radius:7px;color:var(--ink);font-family:var(--sans);font-size:12.5px;padding:7px 9px;resize:vertical}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  .hint{font-size:10.5px;color:var(--faint);margin-top:4px;line-height:1.4}
+  button{font-family:var(--mono);font-size:11.5px;padding:8px 12px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}
+  button.primary{background:var(--accent);color:#0a0a0c;border-color:var(--accent);font-weight:600}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .rowbtns{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .receipts .r{border-top:1px solid #1e1e25;padding:8px 0;font-size:12px}
+  .receipts .r:first-child{border-top:0}
+  .receipts .r .who{display:flex;justify-content:space-between;gap:8px}
+  .receipts .r .why{color:var(--faint);font-size:11px;margin-top:3px}
+  .empty{color:var(--faint);font-size:12px;padding:14px 0;text-align:center}
+  footer{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);color:var(--faint);font-size:11px;line-height:1.6}
+  footer code{font-family:var(--mono);color:var(--dim)}
+  .warn{background:#241a0c;border:1px solid #5e4420;color:var(--warn);font-size:11.5px;padding:8px 11px;border-radius:8px;margin-bottom:12px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Motion <span>Draft Room</span></h1>
+      <div class="sub">
+        Motion tells you where creators rank <em>right now</em>. It forgets the rest.
+        This room remembers every 4-hour slot, forecasts momentum with a formula you can audit,
+        and grades your calls once the next slot lands.
+      </div>
+    </div>
+    <div class="badge" id="stamp">loading…</div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs" id="filters"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Creators <span class="pill" id="count"></span></h2>
+      <table>
+        <thead><tr>
+          <th>#</th><th>Creator</th><th>Δ4h</th><th>Mom.</th><th>★</th><th>Signal</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="card detail" id="detail">
+        <h2>Draft a pick</h2>
+        <div class="empty">Pick a creator from the table.</div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h2>Your lineup <span class="pill" id="cap"></span></h2>
+        <div class="slot" id="slot"></div>
+        <div class="hint" id="slotHint">A pick needs a thesis and a pre-mortem. That is the whole point — a lineup without reasoning is not a call.</div>
+        <div class="rowbtns">
+          <button id="clearBtn">Clear</button>
+          <button class="primary" id="lockBtn" disabled>Lock lineup</button>
+        </div>
+      </div>
+      <div class="card receipts" style="margin-top:14px">
+        <h2>Receipt book <span class="pill" id="hitRate">—</span></h2>
+        <div id="receipts"><div class="empty">No locked lineups yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Where the numbers come from.</strong>
+    Every value on this page is derived from one source: <code>leaderboard.motion.game/api/leaderboard</code>
+    (official, unauthenticated) — the fields <code>position</code>, <code>delta</code> (4-hour rank change),
+    <code>isNew</code>, plus <code>asOf</code>. A GitHub Actions cron snapshots all 79 creators every 4 hours onto the
+    <code>data</code> branch; this page reads those snapshots.
+    <br><br>
+    <strong>What this is not.</strong> Motion's creator Score is not public, so nothing here claims to know it.
+    Star costs are estimated from rank, not the real card values. History starts the day the collector started —
+    when a window has too few slots, the field shows <code>null</code> instead of a made-up number.
+    Receipts are graded on rank movement, not on score.
+  </footer>
+</div>
+
+<script>
+const CAP = 15, SIZE = 5;
+const STAR = "★";
+let DATA = null, FILTER = "all", SEL = null, PICKS = [];
+
+// ---------- utils
+const $ = s => document.querySelector(s);
+const el = (t, c, txt) => { const n = document.createElement(t); if (c) n.className = c; if (txt != null) n.textContent = txt; return n; };
+const fmt = (v, d = 1) => v == null ? "—" : (typeof v === "number" ? v.toFixed(d) : v);
+const signed = v => v == null ? "—" : (v > 0 ? "+" + v : String(v));
+const cls = v => v == null ? "flat" : v > 0 ? "up" : v < 0 ? "down" : "flat";
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// identity survives anonymous visits, so receipts can be seen again later
+function anonId() {
+  let v = localStorage.getItem("mdr_player");
+  if (!v) { v = "anon-" + Math.random().toString(36).slice(2, 8); localStorage.setItem("mdr_player", v); }
+  return v;
+}
+
+// ---------- load
+async function load() {
+  try {
+    const r = await fetch("/api/signals", { headers: { accept: "application/json" } });
+    if (!r.ok) throw new Error("signals " + r.status);
+    DATA = await r.json();
+  } catch (e) {
+    $("#stamp").textContent = "data unavailable";
+    $("#rows").innerHTML = `<tr><td colspan="6" class="empty">Could not load signals (${esc(e.message)}). The collector runs every 4 hours.</td></tr>`;
+    return;
+  }
+  PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]");
+  render();
+}
+
+function render() {
+  const d = DATA;
+  const books = loadBooks();
+  $("#stamp").innerHTML = `asOf <b>${esc((d.dataAsOf || "").slice(0, 16).replace("T", " "))}Z</b> · ${d.snapshotCount} slot${d.snapshotCount === 1 ? "" : "s"}`;
+
+  // ---- stats
+  const cr = d.creators;
+  const gainers = cr.filter(c => c.delta4h > 0).length;
+  const losers = cr.filter(c => c.delta4h < 0).length;
+  const avgAbs = cr.length ? (cr.reduce((a, c) => a + Math.abs(c.delta4h), 0) / cr.length) : 0;
+  const stats = [
+    ["Creators", cr.length],
+    ["Up / down", `${gainers} / ${losers}`],
+    ["Avg |Δ4h|", fmt(avgAbs, 2)],
+    ["Slots tracked", d.snapshotCount],
+    ["Settled calls", books.settled],
+    ["Hit rate", books.rate == null ? "—" : Math.round(books.rate * 100) + "%"],
+  ];
+  $("#stats").innerHTML = stats.map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join("");
+
+  // ---- honest limits banner
+  if (d.snapshotCount < 3) {
+    const b = el("div", "warn");
+    b.textContent = `History is ${d.snapshotCount} slot${d.snapshotCount === 1 ? "" : "s"} old. Δ24h and acceleration need 3+ slots (~12h) and are shown as "—" until then. Nothing is backfilled or invented.`;
+    const anchor = $("#stats");
+    if (!document.querySelector(".warn")) anchor.parentNode.insertBefore(b, anchor.nextSibling);
+  }
+
+  // ---- filters
+  const tags = ["all", "SURGING", "COILED", "SLEEPER", "FADE", "QUIET"];
+  $("#filters").innerHTML = "";
+  tags.forEach(t => {
+    const b = el("button", "tab" + (FILTER === t ? " on" : ""), t === "all" ? `ALL ${cr.length}` : t + " " + cr.filter(c => c.tags.includes(t)).length);
+    b.onclick = () => { FILTER = t; render(); };
+    $("#filters").appendChild(b);
+  });
+
+  // ---- table
+  const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
+  $("#count").textContent = list.length + " shown";
+  const tb = $("#rows"); tb.innerHTML = "";
+  list.forEach(c => {
+    const tr = el("tr", "row" + (SEL === c.name ? " sel" : ""));
+    const picked = PICKS.some(p => p.name === c.name);
+    tr.innerHTML = `
+      <td class="pos">${c.position}</td>
+      <td class="name">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</td>
+      <td class="mono ${cls(c.delta4h)}">${signed(c.delta4h)}</td>
+      <td><div class="mbar"><i style="${barStyle(c.momentum)}"></i></div></td>
+      <td class="mono" style="color:var(--accent)">${STAR.repeat(c.estStars)}</td>
+      <td>${c.tags.map(t => `<span class="tag ${t}">${t}</span>`).join("")}</td>`;
+    tr.onclick = () => { SEL = c.name; render(); };
+    tb.appendChild(tr);
+  });
+
+  renderDetail();
+  renderLineup(books);
+}
+
+function barStyle(m) {
+  const w = Math.min(50, Math.abs(m) / 2);
+  return m >= 0 ? `left:50%;width:${w}%;background:var(--up)` : `right:50%;width:${w}%;background:var(--down)`;
+}
+
+// ---------- detail / draft form
+function renderDetail() {
+  const box = $("#detail");
+  const c = DATA.creators.find(x => x.name === SEL);
+  if (!c) { box.innerHTML = `<h2>Draft a pick</h2><div class="empty">Pick a creator from the table.</div>`; return; }
+
+  const already = PICKS.find(p => p.name === c.name);
+  box.innerHTML = `
+    <h2>Draft a pick</h2>
+    <h3>${esc(c.name)}</h3>
+    <div class="meta">rank #${c.position} · ${STAR.repeat(c.estStars)} est. · momentum ${fmt(c.momentum)}</div>
+    <div class="kv">
+      <div class="k">Δ last 4h</div><div class="v ${cls(c.delta4h)}">${signed(c.delta4h)}</div>
+      <div class="k">Δ over tracked slots</div><div class="v ${cls(c.delta24h)}">${signed(c.delta24h)}</div>
+      <div class="k">Acceleration</div><div class="v ${cls(c.acceleration)}">${fmt(c.acceleration, 2)}</div>
+      <div class="k">Volatility</div><div class="v">${fmt(c.volatility, 2)}</div>
+      <div class="k">Value (mom / star)</div><div class="v">${fmt(c.value)}</div>
+      <div class="k">Signal</div><div class="v">${c.tags.join(" · ")}</div>
+    </div>
+    <label for="thesis">Thesis — why this pick, in one line</label>
+    <input id="thesis" maxlength="120" placeholder="e.g. three straight positive slots, calm board above" value="${already ? esc(already.thesis) : ""}">
+    <label for="premortem">Pre-mortem — what would make this wrong</label>
+    <input id="premortem" maxlength="120" placeholder="e.g. a big account posts and pushes him down the board" value="${already ? esc(already.premortem) : ""}">
+    <div class="hint">Both fields are required. No one-click lineups — the reasoning is the submission.</div>
+    <div class="rowbtns">
+      <button class="primary" id="addBtn">${already ? "Update pick" : "Add to lineup"}</button>
+      ${already ? '<button id="rmBtn">Remove</button>' : ""}
+    </div>`;
+
+  $("#addBtn").onclick = () => {
+    const th = $("#thesis").value.trim(), pm = $("#premortem").value.trim();
+    if (th.length < 8 || pm.length < 8) { alert("Thesis and pre-mortem both need at least 8 characters."); return; }
+    const others = PICKS.filter(p => p.name !== c.name);
+    if (others.length >= SIZE) { alert(`Lineup is full (${SIZE} picks).`); return; }
+    const spent = others.reduce((a, p) => a + p.estStars, 0);
+    if (spent + c.estStars > CAP) { alert(`That would exceed the ${CAP}-star cap (${spent} + ${c.estStars}).`); return; }
+    PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum }];
+    savePicks(); render();
+  };
+  const rm = $("#rmBtn");
+  if (rm) rm.onclick = () => { PICKS = PICKS.filter(p => p.name !== c.name); savePicks(); render(); };
+}
+
+function savePicks() { localStorage.setItem("mdr_picks", JSON.stringify(PICKS)); }
+
+// ---------- lineup + receipts
+function renderLineup(books) {
+  const spent = PICKS.reduce((a, p) => a + p.estStars, 0);
+  $("#cap").textContent = `${spent}/${CAP} ${STAR}`;
+  const slot = $("#slot"); slot.innerHTML = "";
+  for (let i = 0; i < SIZE; i++) {
+    const p = PICKS[i];
+    slot.appendChild(el("span", "s" + (p ? " spent" : ""), p ? `${p.name} ${STAR.repeat(p.estStars)}` : `empty ${i + 1}`));
+  }
+  $("#lockBtn").disabled = PICKS.length !== SIZE;
+  $("#lockBtn").textContent = `Lock lineup (${PICKS.length}/${SIZE})`;
+  $("#lockBtn").onclick = lockLineup;
+
+  const books2 = loadBooks();
+  $("#hitRate").textContent = books2.rate == null
+    ? (books2.pending ? `${books2.pending} pending` : "—")
+    : `${Math.round(books2.rate * 100)}% of ${books2.settled}`;
+
+  const box = $("#receipts");
+  if (!books2.list.length) { box.innerHTML = `<div class="empty">No locked lineups yet. Lock one and it settles against the next snapshot.</div>`; return; }
+  box.innerHTML = books2.list.slice().reverse().slice(0, 6).map(b => {
+    const res = b.status === "settled"
+      ? `<span class="${cls(b.score)}">${signed(b.score)} net rank</span>`
+      : `<span class="flat">pending</span>`;
+    return `<div class="r"><div class="who"><span>${esc(b.player)} · ${b.picks.length} picks</span>${res}</div>
+      <div class="why">${esc(b.picks.map(p => p.name).join(", "))} · locked at slot ${esc(b.slotAtLock || "—")}</div></div>`;
+  }).join("");
+}
+
+// ---------- receipt book (local; nothing leaves this browser)
+function booksKey() { return "mdr_books_" + anonId(); }
+function loadBooks() {
+  const list = JSON.parse(localStorage.getItem(booksKey()) || "[]");
+  const settledList = list.filter(b => b.status === "settled");
+  const hits = settledList.filter(b => b.score > 0).length;
+  return {
+    list,
+    settled: settledList.length,
+    pending: list.filter(b => b.status !== "settled").length,
+    rate: settledList.length ? hits / settledList.length : null,
+  };
+}
+
+function lockLineup() {
+  if (PICKS.length !== SIZE) return;
+  const list = JSON.parse(localStorage.getItem(booksKey()) || "[]");
+  list.push({
+    player: anonId(),
+    picks: PICKS.map(p => ({ name: p.name, positionAtLock: p.position, estStars: p.estStars })),
+    slotAtLock: (DATA.dataAsOf || "").slice(0, 16).replace("T", " "),
+    status: "pending",
+  });
+  localStorage.setItem(booksKey(), JSON.stringify(list));
+  PICKS = []; savePicks(); SEL = null; render();
+  alert("Locked. It settles when a snapshot with a later asOf arrives.");
+}
+
+// settle pending lineups against the current snapshot
+function settle() {
+  const list = JSON.parse(localStorage.getItem(booksKey()) || "[]");
+  const byName = Object.fromEntries(DATA.creators.map(c => [c.name, c]));
+  let changed = false;
+  list.forEach(b => {
+    if (b.status === "settled") return;
+    const now = (DATA.dataAsOf || "").slice(0, 16).replace("T", " ");
+    if (now <= (b.slotAtLock || "")) return; // no new slot yet — do not grade twice on the same data
+    let score = 0, any = false;
+    b.picks.forEach(p => {
+      const c = byName[p.name];
+      if (!c) return;
+      any = true;
+      score += (p.positionAtLock - c.position); // positive = climbed the board
+    });
+    if (!any) return;
+    b.score = score;
+    b.status = "settled";
+    b.settledAt = now;
+    changed = true;
+  });
+  if (changed) localStorage.setItem(booksKey(), JSON.stringify(list));
+}
+
+// ---------- go
+load().then(() => { if (DATA) { settle(); render(); } });
+$("#clearBtn").onclick = () => { PICKS = []; savePicks(); render(); };
+</script>
+</body>
+</html>

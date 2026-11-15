@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/api/signals", "destination": "/api/signals" }
+  ],
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300" }]
+    }
+  ]
+}

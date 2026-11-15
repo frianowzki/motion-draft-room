@@ -25,15 +25,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SNAP_DIR = ROOT / "data" / "snapshots"
 
-# Source of truth: Motion's own leaderboard JSON (checked 2026-11-15, no auth).
-# It carries asOf/capturedAt/baselineCapturedAt + all 79 rows, same shape as the
-# aggregator, but straight from the game — so we do not depend on a third party.
-# Note: rows have no `handle`, only `id`/`name`/`position`/`delta`/`isNew`.
+# Source of truth: Motion's own leaderboard JSON (unauthenticated, checked 2026-11-15).
+# Fields: asOf, capturedAt, baselineCapturedAt, history ("enabled"), rows[] of
+# {id, name, position, delta, isNew}. No `handle`, no creator Score — by design we
+# use nothing but this endpoint, so every number is traceable to Motion itself.
 PRIMARY_URL = "https://leaderboard.motion.game/api/leaderboard"
-# Secondary: MotionRadar aggregator, which additionally exposes `handle` + stats.
-SECONDARY_URL = "https://motionradar.vercel.app/api/leaderboard"
-# Last resort: the HTML page (data is JS-rendered, so this rarely yields rows).
-OFFICIAL_URL = "https://leaderboard.motion.game/"
 
 
 UA = "motion-draft-room/0.1 (+collector; contact via repo)"
@@ -67,7 +63,7 @@ def fetch_primary() -> dict:
             {
                 "id": r.get("id"),
                 "name": r.get("name"),
-                "handle": r.get("handle"),  # official API omits this
+                "handle": None,  # official API publishes no X handle
                 "position": int(r.get("position") or 0),
                 "delta": int(r.get("delta") or 0),
                 "isNew": bool(r.get("isNew")),
@@ -85,114 +81,14 @@ def fetch_primary() -> dict:
     }
 
 
-def fetch_secondary() -> dict:
-    """MotionRadar aggregator -> normalized snapshot (adds handle + stats)."""
-    payload = json.loads(http_get(SECONDARY_URL))
-    data = payload.get("data") or {}
-    rows_raw = data.get("rows") or []
-    if not rows_raw:
-        raise RuntimeError("aggregator returned zero rows")
-
-    by_name = {r.get("name"): r for r in rows_raw}
-    try:
-        official = {r["name"]: r for r in fetch_primary()["rows"]}
-    except Exception:
-        official = {}
-
-    rows = []
-    for name, r in by_name.items():
-        off = official.get(name, {})
-        rows.append(
-            {
-                "id": r.get("id") or off.get("id"),
-                "name": name,
-                "handle": r.get("handle"),
-                "position": int(off.get("position") or r.get("position") or 0),
-                "delta": int(off.get("delta") if off else (r.get("delta") or 0)),
-                "isNew": bool(r.get("isNew")),
-            }
-        )
-    rows.sort(key=lambda x: x["position"])
-
-    return {
-        "source": "motionradar",
-        "asOf": data.get("asOf"),
-        "sourceCapturedAt": data.get("capturedAt"),
-        "baselineCapturedAt": data.get("baselineCapturedAt"),
-        "stats": payload.get("stats") or {},
-        "rows": rows,
-    }
-
-
-
-def parse_leaderboard_html(html: str) -> list[dict]:
-    """Fallback parser for the official leaderboard page.
-
-    The page renders rank, name and rank-change in static markup, so a regex pass
-    is enough. Deliberately conservative: if we cannot find at least 20 creators
-    we treat the scrape as failed rather than write a half-empty snapshot.
-    """
-    import re
-
-    rows: list[dict] = []
-    # Each row: rank number, optional pfp image (id embedded), name, rank change.
-    pattern = re.compile(
-        r"(?P<pos>\d{1,3})\s*(?:_?!\[Image \d+\]\([^)]*?/pfp/(?P<id>[0-9a-f-]{36})\.jpg\)_?\s*)?"
-        r"(?P<name>[A-Za-z0-9][^<\n*]{1,40}?)\s*\*\*(?P<delta>-?\d+)\*\*"
-    )
-    for m in pattern.finditer(html):
-        name = m.group("name").strip().rstrip("_").strip()
-        if not name or name.lower().startswith(("rank change", "image")):
-            continue
-        rows.append(
-            {
-                "id": m.group("id"),
-                "name": name,
-                "handle": None,
-                "position": int(m.group("pos")),
-                "delta": int(m.group("delta")),
-                "isNew": False,
-            }
-        )
-
-    seen: set[int] = set()
-    unique = []
-    for r in rows:
-        if r["position"] in seen:
-            continue
-        seen.add(r["position"])
-        unique.append(r)
-    unique.sort(key=lambda x: x["position"])
-
-    if len(unique) < 20:
-        raise RuntimeError(f"official scrape yielded only {len(unique)} rows; refusing to save")
-    return unique
-
-
-def fetch_fallback() -> dict:
-    html = http_get(OFFICIAL_URL)
-    rows = parse_leaderboard_html(html)
-    return {
-        "source": "official-scrape",
-        "asOf": None,
-        "sourceCapturedAt": None,
-        "baselineCapturedAt": None,
-        "stats": {},
-        "rows": rows,
-    }
-
-
 def collect() -> dict:
-    errors = []
-    for name, fn in (("motion-official", fetch_primary), ("motionradar", fetch_secondary), ("html", fetch_fallback)):
-        try:
-            snap = fn()
-            if errors:
-                snap["fallbackReason"] = "; ".join(errors)
-            return snap
-        except Exception as exc:  # try the next source
-            errors.append(f"{name}: {exc}")
-    raise RuntimeError("all sources failed -> " + " | ".join(errors))
+    """Fetch from Motion's official endpoint only.
+
+    Deliberately no third-party fallback: a snapshot from anywhere else would not be
+    the same measurement, so a failed fetch must fail loudly and the workflow goes
+    red instead of quietly recording a different source.
+    """
+    return fetch_primary()
 
 
 def summarize(snap: dict) -> str:
