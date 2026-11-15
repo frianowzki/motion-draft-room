@@ -400,11 +400,13 @@ function renderDetail() {
     const th = $("#thesis").value.trim(), pm = $("#premortem").value.trim();
     const rarity = (rarBtns.find(b => b.classList.contains("on")) || {}).dataset?.r || "Common";
     if (th.length < 8 || pm.length < 8) { alert("Thesis and pre-mortem both need at least 8 characters."); return; }
+    const prev = PICKS.find(p => p.name === c.name);
     const others = PICKS.filter(p => p.name !== c.name);
     if (others.length >= SIZE) { alert(`Lineup is full (${SIZE} picks).`); return; }
     const spent = others.reduce((a, p) => a + p.estStars, 0);
     if (spent + c.estStars > CAP) { alert(`That would exceed the ${CAP}-star cap (${spent} + ${c.estStars}).`); return; }
-    PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum, rarity }];
+    if (prev && prev.rarity !== rarity) { alert("A creator keeps the rarity you filed for them. Clear the pick first to change it."); return; }
+    PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum, rarity: prev ? prev.rarity : rarity }];
     savePicks(); render();
   };
   const rm = $("#rmBtn");
@@ -427,7 +429,7 @@ function renderLineup() {
   const proj = $("#proj");
   if (proj) {
     if (!PICKS.length) {
-      proj.textContent = "";
+      proj.textContent = `${SIZE - PICKS.length} more pick${SIZE - PICKS.length === 1 ? "" : "s"} to see a projection`;
     } else {
       const n = DATA.creators.length;
       const strength = p => (n - Math.min(p.position, n) + 1) / n;
