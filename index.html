@@ -225,7 +225,7 @@ function render() {
     ["Creators", cr.length, "on the board"],
     ["Up / down", `${gainers} / ${losers}`, "last 4h"],
     ["Avg |Δ4h|", fmt(avgAbs, 2), "rank places"],
-    ["Slots tracked", d.snapshotCount, d.snapshotCount === 1 ? "4h each" : "4h each"],
+    ["Slots tracked", slotWindows, slotWindows === 1 ? "distinct window" : "distinct windows"],
     ["Star cap", CAP, "per tournament"],
     ["Your hit rate", books.rate == null ? (books.pending ? books.pending + " pending" : "—") : Math.round(books.rate * 100) + "%", books.settled ? `${books.settled} settled` : "no settled calls"],
   ];
@@ -233,9 +233,12 @@ function render() {
     `<div class="stat"><div class="k">${k}</div><div class="v">${esc(v)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ""}</div>`).join("");
 
   // ---- honest limits banner
-  if (d.snapshotCount < 3) {
+  const slotWindows = [...new Set((d.slotTimes || []))].length;
+  if (slotWindows < 3) {
     const b = el("div", "warn");
-    b.textContent = `History is ${d.snapshotCount} slot${d.snapshotCount === 1 ? "" : "s"} old. Δ24h and acceleration need 3+ slots (~12h) and are shown as "—" until then. Nothing is backfilled or invented.`;
+    b.textContent = slotWindows <= 1
+      ? `Only ${slotWindows || d.snapshotCount} distinct 4-hour window so far. Δ over multiple slots and acceleration need 3+ windows (~12h); until then those cells stay "—". Nothing is backfilled or invented.`
+      : `Only ${slotWindows} distinct 4-hour windows so far. Acceleration needs 3+ (~12h); until then it stays "—". Nothing is backfilled or invented.`;
     const anchor = $("#stats");
     if (!document.querySelector(".warn")) anchor.parentNode.insertBefore(b, anchor.nextSibling);
   }

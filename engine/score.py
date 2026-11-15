@@ -181,6 +181,9 @@ def build() -> dict:
         "firstSnapshot": snaps[0].get("collectedAt"),
         "latestSnapshot": latest.get("collectedAt"),
         "dataAsOf": latest.get("asOf"),
+        # Distinct 4-hour windows, not raw snapshot count: several runs inside one
+        # window carry no extra information, and the UI must not overstate history.
+        "slotTimes": sorted({x.get("asOf") for x in snaps if x.get("asOf")}),
         "source": latest.get("source"),
         "starsCap": STAR_CAP,
         "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
