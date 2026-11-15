@@ -1,1 +1,62 @@
-[]
+[
+ {
+  "player": "hermes_tester",
+  "slotAtLock": "2026-11-15T20:00:00Z",
+  "picks": [
+   {
+    "name": "Coffeezilla",
+    "positionAtLock": 20,
+    "estStars": 4,
+    "rarity": "Legendary",
+    "thesis": "pick 0: rank 1 held through the last window",
+    "premortem": "pick 0: a cresting post above pulls it back",
+    "positionNow": 20,
+    "move": 0
+   },
+   {
+    "name": "Jim Cramer",
+    "positionAtLock": 34,
+    "estStars": 3,
+    "rarity": "Epic",
+    "thesis": "pick 1: rank 2 held through the last window",
+    "premortem": "pick 1: a cresting post above pulls it back",
+    "positionNow": 34,
+    "move": 0
+   },
+   {
+    "name": "Vitalik Buterin",
+    "positionAtLock": 72,
+    "estStars": 1,
+    "rarity": "Epic",
+    "thesis": "pick 2: rank 3 held through the last window",
+    "premortem": "pick 2: a cresting post above pulls it back",
+    "positionNow": 72,
+    "move": 0
+   },
+   {
+    "name": "Mark Cuban",
+    "positionAtLock": 32,
+    "estStars": 3,
+    "rarity": "Rare",
+    "thesis": "pick 3: rank 4 held through the last window",
+    "premortem": "pick 3: a cresting post above pulls it back",
+    "positionNow": 32,
+    "move": 0
+   },
+   {
+    "name": "DJ Akademiks",
+    "positionAtLock": 17,
+    "estStars": 4,
+    "rarity": "Rare",
+    "thesis": "pick 4: rank 5 held through the last window",
+    "premortem": "pick 4: a cresting post above pulls it back",
+    "positionNow": 17,
+    "move": 0
+   }
+  ],
+  "status": "settled",
+  "lockedAt": "2026-11-15T21:17:11.756468Z",
+  "score": 0,
+  "settledAt": "2026-11-15T20:00:00Z"
+ }
+]
