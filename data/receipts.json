@@ -1,5 +1,60 @@
 [
  {
+  "player": "hermes_tester",
+  "slotAtLock": "2026-11-15T20:00:00Z",
+  "picks": [
+   {
+    "name": "Coffeezilla",
+    "positionAtLock": 20,
+    "estStars": 4,
+    "thesis": "pick 0: board above is flat, this one moved",
+    "premortem": "pick 0: one viral post above pushes it back",
+    "positionNow": 20,
+    "move": 0
+   },
+   {
+    "name": "Jim Cramer",
+    "positionAtLock": 34,
+    "estStars": 3,
+    "thesis": "pick 1: board above is flat, this one moved",
+    "premortem": "pick 1: one viral post above pushes it back",
+    "positionNow": 34,
+    "move": 0
+   },
+   {
+    "name": "Vitalik Buterin",
+    "positionAtLock": 72,
+    "estStars": 1,
+    "thesis": "pick 2: board above is flat, this one moved",
+    "premortem": "pick 2: one viral post above pushes it back",
+    "positionNow": 72,
+    "move": 0
+   },
+   {
+    "name": "Mark Cuban",
+    "positionAtLock": 32,
+    "estStars": 3,
+    "thesis": "pick 3: board above is flat, this one moved",
+    "premortem": "pick 3: one viral post above pushes it back",
+    "positionNow": 32,
+    "move": 0
+   },
+   {
+    "name": "DJ Akademiks",
+    "positionAtLock": 17,
+    "estStars": 4,
+    "thesis": "pick 4: board above is flat, this one moved",
+    "premortem": "pick 4: one viral post above pushes it back",
+    "positionNow": 17,
+    "move": 0
+   }
+  ],
+  "status": "settled",
+  "lockedAt": "2026-11-15T21:09:49.915523Z",
+  "score": 0,
+  "settledAt": "2026-11-15T20:00:00Z"
+ },
+ {
   "player": "frianowzki",
   "slotAtLock": "2026-11-15T16:00:00Z",
   "picks": [
