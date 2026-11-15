@@ -1,44 +1,42 @@
-"""Serve the data branch's signals.json to the static UI.
+"""Serve a fresher signals.json than the copy bundled at build time.
 
-Why a function instead of a static file: the UI is deployed from `main`, the data
-lives on the `data` branch (committed every 4 hours). This reads the raw file from
-GitHub's CDN and re-serves it, so a deploy of the front-end never has to be repeated
-just to pick up new snapshots.
+The UI is deployed from `main`; the data is rewritten every 4 hours on the `data`
+branch. Reading the raw file from GitHub at request time means a new snapshot shows
+up without waiting for a redeploy. Public repo, public raw file — no secrets here.
 
-No secrets: the repo is public, this is a read of a public RAW file.
+Vercel Python functions need the module-level `handler` (BaseHTTPRequestHandler
+subclass), so this follows that convention rather than the dict-returning one.
 """
 
 import json
 import os
 import urllib.request
+from http.server import BaseHTTPRequestHandler
 
-RAW = "https://raw.githubusercontent.com/{repo}/data/data/{path}"
 REPO = os.environ.get("DATA_REPO", "frianowzki/motion-draft-room")
+RAW = f"https://raw.githubusercontent.com/{REPO}/data/data/signals.json"
 UA = "motion-draft-room/0.1"
 
 
-def _fetch(path: str) -> bytes:
-    req = urllib.request.Request(RAW.format(repo=REPO, path=path), headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=20) as r:
+def fetch() -> bytes:
+    req = urllib.request.Request(RAW, headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=15) as r:
         return r.read()
 
 
-def handler(request):
-    """Vercel Python runtime entrypoint."""
-    try:
-        body = _fetch("signals.json")
-        status = 200
-        payload = body
-    except Exception as exc:
-        status = 503
-        payload = json.dumps({"error": "upstream unavailable", "detail": str(exc)}).encode()
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        try:
+            body = fetch()
+            json.loads(body)  # fail fast if upstream is not valid JSON
+            code = 200
+        except Exception as exc:
+            body = json.dumps({"error": "upstream unavailable", "detail": str(exc)}).encode()
+            code = 503
 
-    return {
-        "statusCode": status,
-        "headers": {
-            "content-type": "application/json; charset=utf-8",
-            "cache-control": "public, max-age=60, s-maxage=300",
-            "access-control-allow-origin": "*",
-        },
-        "body": payload.decode("utf-8", "replace"),
-    }
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "public, max-age=60, s-maxage=300")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(body)
