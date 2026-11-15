@@ -224,8 +224,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
                 return
             thesis = str(p.get("thesis") or "")[:120]
             premortem = str(p.get("premortem") or "")[:120]
+            # The rarity a player claimed. Recorded, not scored: the boost table
+            # is not public, so grading on it would be grading on our assumption.
+            rarity = str(p.get("rarity") or "Common").strip().capitalize()
+            if rarity not in ("Common", "Rare", "Epic", "Legendary"):
+                rarity = "Common"
             clean.append({"name": name, "positionAtLock": pos, "estStars": stars,
-                          "thesis": thesis, "premortem": premortem})
+                          "rarity": rarity, "thesis": thesis, "premortem": premortem})
 
         try:
             snap = _snapshots()

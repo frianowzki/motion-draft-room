@@ -12,7 +12,10 @@
   "uniqueCreators": true,
   "starCapExample": 32,
   "boostLimits": "tournament-specific limit on the rarity/boost mix",
-  "scoreFormula": "Lineup Score = sum(Creator Motion Score * card Score Boost)"
+  "scoreFormula": "Lineup Score = sum(Creator Motion Score * card Score Boost)",
+  "boostCap": null,
+  "boostCapNote": "the docs say a lineup must meet limits on Score Boosts, but never state a number or how boosts are combined (sum, cap per tier, ranking). Unmodelled on purpose.",
+  "projectedScoreField": "projected is rank-relative to the best-available lineup on this board, not the game's Lineup Score"
  },
  "stars": {
   "range": "1-8",
@@ -27,8 +30,11 @@
    "Epic",
    "Legendary"
   ],
-  "function": "sets the Score Boost multiplier",
-  "dropRates": "published in the Pack Shop; not on the docs page"
+  "function": "sets the Score Boost multiplier applied to that creator's Motion Score",
+  "boostValues": null,
+  "boostValuesNote": "the numeric multiplier of each tier is NOT published in the docs; only that Legendary > Epic > Rare > Common. Do not invent values.",
+  "dropRates": "printed in the Pack Shop in-game; the docs page shows them redacted",
+  "sameCreator": "two cards of one creator can differ in rarity; same creator, same star rating, different boost"
  },
  "motionScore": {
   "basis": "X, Instagram, TikTok and YouTube engagement during the tournament",

@@ -100,6 +100,25 @@ Two corrections this forced on the product: the draft cap moved from 15 to **32*
 (a 5-card lineup of 1–8 star creators cannot fit under 15), and the star estimate now
 uses the real **1–8** scale instead of a 1–5 invention.
 
+### Rarity and Score Boost — modelled as an assumption, on purpose
+
+The formula is public; the numbers in it are not. The docs state
+`Lineup Score = Σ (Motion Score × Score Boost)`, that boost comes from card rarity and
+that Legendary > Epic > Rare > Common — but the actual multipliers, the tournament's
+boost limit and how boosts combine are printed only in the in-game Pack Shop. Motion
+Score is not public either.
+
+So `engine/rarity.py` does not pretend to reproduce a Lineup Score. It exposes the
+boost table as a single named constant (`DEFAULT_BOOST`, clearly marked assumed),
+projects a lineup from a rank-based stand-in for Motion Score, and returns the
+assumptions alongside every number. Every rarity a player picks is recorded on the
+receipt but **never graded on**, because grading on our own invented multipliers would
+turn an assumption into a fake score. The UI shows `projected 3.42 · boosts ×5.60` and
+says in the same line that this is not the game's Lineup Score.
+
+When Motion publishes the real multipliers, change `DEFAULT_BOOST` in one place and the
+engine, the API and the UI all follow.
+
 ## Status
 
 Collector, scoring engine, Draft Room UI and receipt settlement are live and verified
