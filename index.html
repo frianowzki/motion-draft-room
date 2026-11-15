@@ -416,7 +416,7 @@ function renderWho() {
   $("#whoState").textContent = h ? "@" + h : "not set";
   btn.textContent = h ? "Change" : "Save";
   msg.textContent = h
-    ? "Receipts you lock are filed publicly under @" + h + " and graded against the next snapshot."
+    ? "Receipts you lock are filed publicly under @" + h + " and graded against the newest snapshot on record."
     : "Required before you can lock: the book is public, so every receipt needs a name on it.";
 }
 
@@ -464,7 +464,7 @@ function renderBook() {
         <div class="who"><b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks</div>
         <div class="picks">${picks}</div>
       </div>
-      <div class="score ${done ? cls(r.score) : "flat"}">${done ? signed(r.score) : "pending"}<small>${done ? "net rank" : "not graded"}</small></div>
+      <div class="score ${done ? cls(r.score) : "flat"}">${done ? signed(r.score) : "pending"}<small>${done ? (r.settledAt && r.slotAtLock && r.settledAt === r.slotAtLock ? "no window yet" : "net rank") : "not graded"}</small></div>
     </div>`;
   }).join("");
 }
