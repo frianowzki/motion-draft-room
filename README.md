@@ -121,11 +121,28 @@ engine, the API and the UI all follow.
 
 ## Status
 
-Collector, scoring engine, Draft Room UI and receipt settlement are live and verified
-against real data (79 creators, 6 slots/day). Deployed at
-<https://motion-draft-room.vercel.app>. Scheduled collection has not yet produced a
-snapshot on its own — history so far comes from manual runs inside the same 4-hour
-slot, so `delta24h` equals `delta4h` until the cron fills distinct slots.
+Collector, scoring engine, Draft Room UI, public receipt book and rarity modelling are
+live and verified against real data (79 creators, 6 slots/day). Deployed at
+<https://motion-draft-room.vercel.app>.
 
-Not built yet: public/shared receipt book (receipts are per-browser), rarity/boost
-modelling, marketplace or card-value integration.
+What is verified end-to-end:
+
+- Collection runs on GitHub Actions (`7 */4 * * *`, Mon–Fri slots), one snapshot per
+  `(asOf, source)`, followed by `collector/verify.py`, which fails the run when a slot
+  is missing even if the commit step had nothing to do.
+- `GET /api/receipts` returns the whole public book and its summary; `POST` accepts a
+  receipt from a claimable X handle (400 on a malformed handle), grades it server-side
+  from the snapshot (the client never sends a score), and refuses a second receipt from
+  the same handle in the same slot (409).
+- Rarity is recorded per pick but never graded on; the only published boost numbers are
+  the assumptions in `engine/rarity.py`.
+- A receipt locked in the newest window shows as "waiting for a window" and is kept out
+  of the hit-rate denominator, because there is no later snapshot to grade it against.
+
+Still open:
+
+- `delta24h` / `delta72h` are `null` until at least three distinct 4-hour windows exist.
+  Early history came from manual runs, so some of it sits inside a single slot.
+- The cron has produced no scheduled snapshot on its own yet; the first unattended run
+  is the proof this needs.
+- No marketplace or card-value integration: star costs remain a rank-based estimate.
