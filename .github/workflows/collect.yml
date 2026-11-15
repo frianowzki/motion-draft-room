@@ -49,3 +49,9 @@ jobs:
           SLOT=$(date -u +%Y-%m-%dT%H:%MZ)
           git commit -m "data: snapshot ${SLOT}"
           git push
+      - name: Verify the slot was recorded
+        # Runs even when the commit step found nothing new: a skipped slot and a
+        # duplicate slot look identical from the outside, and only this step can
+        # tell "already have it" from "the cron never fired".
+        if: always()
+        run: python3 collector/verify.py

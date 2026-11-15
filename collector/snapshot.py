@@ -124,6 +124,22 @@ def main() -> int:
         return 0
 
     SNAP_DIR.mkdir(parents=True, exist_ok=True)
+
+    # One snapshot per (asOf, source). A re-run inside the same leaderboard
+    # window must not create a second file: snapshotCount is shown in the UI and
+    # two identical rows would read as "history" that does not exist.
+    for existing in sorted(SNAP_DIR.glob("*.json")):
+        try:
+            prev = json.loads(existing.read_text())
+        except Exception:
+            continue
+        if prev.get("asOf") == snap.get("asOf") and prev.get("source") == snap.get("source"):
+            print(f"\n[skip] already have {snap.get('asOf')} from {snap.get('source')} in "
+                  f"{existing.relative_to(ROOT)} - refreshing latest.json only")
+            latest = ROOT / "data" / "latest.json"
+            latest.write_text(json.dumps(snap, indent=1) + "\n")
+            return 0
+
     stamp = now.strftime("%Y%m%dT%H%M%SZ")
     out = SNAP_DIR / f"{stamp}.json"
     out.write_text(json.dumps(snap, indent=1) + "\n")
