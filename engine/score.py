@@ -16,9 +16,11 @@ which Motion publishes every 4 hours; nothing here is insider information):
   momentum     blended forward score, -100..100
   tags         SLEEPER | COILED | FADE | SURGING | QUIET
 
-Predicted star cost: expensive creators sit high and have been calm; cheap ones sit
-low. This mirrors the game's star-cap logic (stars follow trailing 14-day heat), so
-it is an ESTIMATE, not the real card price. The UI must say so.
+Star estimate: the game assigns 1-8 stars from a creator's performance relative to
+the pool over the trailing 14 days (docs.motion.game/docs/get-cards/understanding-cards).
+We do not have that window, so the estimate is derived from rank position and is
+labelled `estStars` everywhere. The real cap is tournament-specific (the docs example
+uses 32), so STAR_CAP here is a modelling choice for the draft challenge, not a rule.
 """
 
 from __future__ import annotations
@@ -32,7 +34,9 @@ ROOT = Path(__file__).resolve().parent.parent
 SNAP_DIR = ROOT / "data" / "snapshots"
 OUT = ROOT / "data" / "signals.json"
 
-STAR_CAP = 15
+# 32 is the cap used in the game's own docs example. A full 5-card lineup with
+# 1-8 star cards cannot fit under 15, so 15 was simply wrong.
+STAR_CAP = 32
 LINEUP_SIZE = 5
 
 
@@ -64,18 +68,17 @@ def index_deltas(snaps: list[dict]) -> dict[str, list[int]]:
 
 
 def est_stars(position: int, total: int) -> int:
-    """Estimate star cost from rank. Top of board costs the most stars."""
+    """Estimate stars (1-8, the game's real range) from rank percentile.
+
+    The game derives stars from 14-day relative performance, which we cannot see, so
+    rank is the only public proxy. Buckets are deliberately coarse and monotonic.
+    """
     if total <= 1:
-        return 3
-    pct = (position - 1) / (total - 1)  # 0 = rank 1, 1 = last
-    if pct <= 0.06:
-        return 5
-    if pct <= 0.15:
         return 4
-    if pct <= 0.40:
-        return 3
-    if pct <= 0.70:
-        return 2
+    pct = (position - 1) / (total - 1)  # 0 = rank 1, 1 = last
+    for edge, stars in ((0.02, 8), (0.05, 7), (0.10, 6), (0.20, 5), (0.35, 4), (0.55, 3), (0.80, 2)):
+        if pct <= edge:
+            return stars
     return 1
 
 
@@ -122,7 +125,7 @@ def build() -> dict:
             tags.append("COILED")
         if d4h < 0 and r["position"] <= int(total * 0.4):
             tags.append("FADE")
-        if stars <= 2 and momentum > 0:
+        if stars <= 3 and momentum > 0:
             tags.append("SLEEPER")
         if d4h == 0 and volatility == 0:
             tags.append("QUIET")
@@ -180,6 +183,7 @@ def build() -> dict:
         "dataAsOf": latest.get("asOf"),
         "source": latest.get("source"),
         "starsCap": STAR_CAP,
+        "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
         "lineupSize": LINEUP_SIZE,
         "creators": out_rows,
         "lineups": lineups,

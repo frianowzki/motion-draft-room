@@ -1,0 +1,43 @@
+{
+ "source": "https://docs.motion.game",
+ "readAt": "2026-11-15",
+ "tournament": {
+  "window": "Monday 09:00 ET -> Friday, finalized 17:30 ET",
+  "lineupLock": "Monday 07:00 ET",
+  "submissionWindow": "Saturday -> Monday 07:00 ET (editable until lock)",
+  "scoreUpdate": "every 4 hours, Monday-Friday"
+ },
+ "lineup": {
+  "size": 5,
+  "uniqueCreators": true,
+  "starCapExample": 32,
+  "boostLimits": "tournament-specific limit on the rarity/boost mix",
+  "scoreFormula": "Lineup Score = sum(Creator Motion Score * card Score Boost)"
+ },
+ "stars": {
+  "range": "1-8",
+  "basis": "performance relative to other creators over the past 14 days",
+  "pointsContribution": "none - stars only gate eligibility via the star cap",
+  "dropRateEffect": "more stars = lower chance in a Starter Pack"
+ },
+ "rarity": {
+  "tiers": [
+   "Common",
+   "Rare",
+   "Epic",
+   "Legendary"
+  ],
+  "function": "sets the Score Boost multiplier",
+  "dropRates": "published in the Pack Shop; not on the docs page"
+ },
+ "motionScore": {
+  "basis": "X, Instagram, TikTok and YouTube engagement during the tournament",
+  "crossPlatform": "signals normalised and compared against the creator pool",
+  "public": false
+ },
+ "cardFields": [
+  "T20 (all-time top-20 finishes)",
+  "RANK (current leaderboard position)",
+  "SRC (how many of the 4 platforms active)"
+ ]
+}
