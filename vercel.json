@@ -1,11 +1,11 @@
 {
-  "rewrites": [
-    { "source": "/api/signals", "destination": "/api/signals" }
-  ],
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "sh build.sh",
+  "outputDirectory": "public",
   "headers": [
     {
-      "source": "/data/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300" }]
+      "source": "/(.*)",
+      "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }]
     }
   ]
 }

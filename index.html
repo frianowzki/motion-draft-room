@@ -164,13 +164,21 @@ function anonId() {
 
 // ---------- load
 async function load() {
-  try {
-    const r = await fetch("/api/signals", { headers: { accept: "application/json" } });
-    if (!r.ok) throw new Error("signals " + r.status);
-    DATA = await r.json();
-  } catch (e) {
+  // /api/signals is the live copy (refetched from the data branch). /signals.json is the
+  // snapshot bundled at build time — it keeps the page working if the API is unreachable.
+  const urls = ["/api/signals", "/signals.json"];
+  let lastErr = null;
+  for (const u of urls) {
+    try {
+      const r = await fetch(u, { headers: { accept: "application/json" }, cache: "no-store" });
+      if (!r.ok) throw new Error(u + " " + r.status);
+      DATA = await r.json();
+      break;
+    } catch (e) { lastErr = e; }
+  }
+  if (!DATA) {
     $("#stamp").textContent = "data unavailable";
-    $("#rows").innerHTML = `<tr><td colspan="6" class="empty">Could not load signals (${esc(e.message)}). The collector runs every 4 hours.</td></tr>`;
+    $("#rows").innerHTML = `<tr><td colspan="6" class="empty">Could not load signals (${esc(lastErr && lastErr.message)}). The collector runs every 4 hours.</td></tr>`;
     return;
   }
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]");
