@@ -30,14 +30,19 @@ Primary source: `https://leaderboard.motion.game/api/leaderboard` — Motion's o
 JSON, unauthenticated, 79 rows with `position`, `delta`, `isNew`, plus `asOf` /
 `capturedAt` / `baselineCapturedAt`.
 
-Secondary (fallback, and the only source of X handles):
-`https://motionradar.vercel.app/api/leaderboard`.
+That is the **only** source. There is deliberately no third-party fallback: a
+snapshot taken from anywhere else is not the same measurement, so a failed fetch fails
+loudly (workflow goes red) instead of silently recording a different dataset.
 
 **Honest limits — these are stated in the UI too, not buried:**
 
 - Motion's creator **Score** is not public. Only rank position and 4-hour rank
   delta are. Every number here is derived from those two fields.
-- Star costs are **estimated from rank**, not the real card values in the game.
+- Stars in the real game come from 14-day relative performance on a **1–8** scale and
+  only gate eligibility via a per-tournament cap; ours are estimated from rank.
+- The **32-star cap** is the cap used in Motion's own docs example. Real caps are set
+  per tournament, and tournaments also limit the **rarity/boost mix**, which this
+  project does not model yet.
 - History starts at zero. On day one `delta24h` is `null`; acceleration needs at
   least three snapshots (~12 hours).
 - The official API is undocumented and could change. `collector/snapshot.py`
@@ -72,8 +77,36 @@ python3 engine/score.py                   # rebuild signals
 
 No dependencies beyond the standard library.
 
+## What the official docs say (read 2026-11-15)
+
+Source: <https://docs.motion.game>. Summarised in `data/game-rules.json`.
+
+| Rule | Value |
+| --- | --- |
+| Tournament | Mon 09:00 ET → Fri, finalised 17:30 ET |
+| Lineup lock | Mon 07:00 ET (submissions open from Saturday) |
+| Score updates | every 4 hours, Mon–Fri — the same rhythm as our collector |
+| Lineup | exactly 5 different creators |
+| Star cap | per tournament (docs example: 32); stars are **1–8** |
+| Score boost | set by card rarity: Common / Rare / Epic / Legendary |
+| Lineup Score | Σ (Creator Motion Score × card Score Boost) |
+| Motion Score | X + Instagram + TikTok + YouTube engagement, normalised vs the creator pool — **not public** |
+| Stars | trailing 14-day relative performance; **add no points**, only gate eligibility |
+| Card extras | T20 (all-time top-20 finishes), RANK, SRC (platforms active, of 4) |
+| Card acquisition | Starter Pack (7 random cards) or Marketplace (buy/bid/sell) |
+| Trade-in | 12 cards burned → 1 new Starter Pack |
+
+Two corrections this forced on the product: the draft cap moved from 15 to **32**
+(a 5-card lineup of 1–8 star creators cannot fit under 15), and the star estimate now
+uses the real **1–8** scale instead of a 1–5 invention.
+
 ## Status
 
-Collector and scoring engine are live and verified against real data
-(79 creators, 6 slots/day). The Draft Room UI and the receipt settlement layer are
-next.
+Collector, scoring engine, Draft Room UI and receipt settlement are live and verified
+against real data (79 creators, 6 slots/day). Deployed at
+<https://motion-draft-room.vercel.app>. Scheduled collection has not yet produced a
+snapshot on its own — history so far comes from manual runs inside the same 4-hour
+slot, so `delta24h` equals `delta4h` until the cron fills distinct slots.
+
+Not built yet: public/shared receipt book (receipts are per-browser), rarity/boost
+modelling, marketplace or card-value integration.

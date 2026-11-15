@@ -27,6 +27,11 @@
   .stat{background:var(--panel);padding:11px 13px}
   .stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint)}
   .stat .v{font-family:var(--mono);font-size:17px;margin-top:3px}
+  .rules{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:16px 0 0;padding:0 13px}
+  .rules summary{cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--dim);padding:10px 0;letter-spacing:.3px}
+  .rules summary::marker{color:var(--accent)}
+  .rulesGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 16px;padding:0 0 12px;font-size:11.5px;color:var(--dim);line-height:1.5}
+  .rulesGrid b{display:block;color:var(--ink);font-size:10px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
   .tabs{display:flex;gap:6px;margin:16px 0 12px;flex-wrap:wrap}
   .tab{font-family:var(--mono);font-size:11.5px;padding:7px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--dim);cursor:pointer}
   .tab.on{background:var(--accent);color:#0a0a0c;border-color:var(--accent);font-weight:600}
@@ -84,15 +89,28 @@
     <div>
       <h1>Motion <span>Draft Room</span></h1>
       <div class="sub">
-        Motion tells you where creators rank <em>right now</em>. It forgets the rest.
-        This room remembers every 4-hour slot, forecasts momentum with a formula you can audit,
-        and grades your calls once the next slot lands.
+        Fantasy sports for creators: five picks, a Monday-to-Friday tournament, scores every four hours.
+        Motion publishes <em>where everyone ranks right now</em> and nothing about where they are going.
+        This room keeps that history, forecasts the next move with a formula you can audit,
+        and grades your calls once the slot settles.
       </div>
     </div>
     <div class="badge" id="stamp">loading…</div>
   </header>
 
   <div class="stats" id="stats"></div>
+
+  <details class="rules">
+    <summary>The game we are modelling &mdash; from docs.motion.game</summary>
+    <div class="rulesGrid">
+      <div><b>Tournament</b>Mon 09:00 ET &rarr; Fri, finalised 17:30 ET. Lineups lock Mon 07:00 ET.</div>
+      <div><b>Scores</b>Update every 4 hours, Mon&ndash;Fri. Same rhythm as our collector.</div>
+      <div><b>Lineup</b>5 different creators; star total &le; cap; rarity/boost limits apply.</div>
+      <div><b>Formula</b>Lineup Score = &Sigma; (Creator Motion Score &times; card Score Boost).</div>
+      <div><b>Stars</b>1&ndash;8, from 14-day relative performance. Gate eligibility, add no points.</div>
+      <div><b>Rarity</b>Common / Rare / Epic / Legendary &mdash; sets the Score Boost multiplier.</div>
+    </div>
+  </details>
 
   <div class="tabs" id="filters"></div>
 
@@ -135,15 +153,18 @@
     <code>isNew</code>, plus <code>asOf</code>. A GitHub Actions cron snapshots all 79 creators every 4 hours onto the
     <code>data</code> branch; this page reads those snapshots.
     <br><br>
-    <strong>What this is not.</strong> Motion's creator Score is not public, so nothing here claims to know it.
-    Star costs are estimated from rank, not the real card values. History starts the day the collector started —
-    when a window has too few slots, the field shows <code>null</code> instead of a made-up number.
-    Receipts are graded on rank movement, not on score.
+    <strong>What this is not.</strong> A creator's Motion Score is not public — it is built from X, Instagram,
+    TikTok and YouTube engagement during the tournament — so nothing here claims to know it. Stars in the real game
+    come from 14-day relative performance on a 1&ndash;8 scale; ours are estimated from rank and labelled as such.
+    The 32-star cap is the one Motion's own docs use as an example; the real cap is set per tournament, and
+    tournaments also limit the rarity/boost mix, which this room does not model yet.
+    History starts the day the collector started — when a window has too few slots the field shows
+    <code>—</code>, never a made-up number. Receipts grade rank movement, not score.
   </footer>
 </div>
 
 <script>
-const CAP = 15, SIZE = 5;
+const CAP = 32, SIZE = 5;  // 32 = the cap in Motion's own docs example; real caps are per-tournament
 const STAR = "★";
 let DATA = null, FILTER = "all", SEL = null, PICKS = [];
 
@@ -200,8 +221,8 @@ function render() {
     ["Up / down", `${gainers} / ${losers}`],
     ["Avg |Δ4h|", fmt(avgAbs, 2)],
     ["Slots tracked", d.snapshotCount],
-    ["Settled calls", books.settled],
-    ["Hit rate", books.rate == null ? "—" : Math.round(books.rate * 100) + "%"],
+    ["Star cap", CAP],
+    ["Your hit rate", books.rate == null ? (books.pending ? books.pending + " pending" : "—") : Math.round(books.rate * 100) + "%"],
   ];
   $("#stats").innerHTML = stats.map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join("");
 
@@ -259,7 +280,7 @@ function renderDetail() {
   box.innerHTML = `
     <h2>Draft a pick</h2>
     <h3>${esc(c.name)}</h3>
-    <div class="meta">rank #${c.position} · ${STAR.repeat(c.estStars)} est. · momentum ${fmt(c.momentum)}</div>
+    <div class="meta">rank #${c.position} · ${STAR.repeat(c.estStars)} est. stars · momentum ${fmt(c.momentum)}</div>
     <div class="kv">
       <div class="k">Δ last 4h</div><div class="v ${cls(c.delta4h)}">${signed(c.delta4h)}</div>
       <div class="k">Δ over tracked slots</div><div class="v ${cls(c.delta24h)}">${signed(c.delta24h)}</div>
