@@ -84,7 +84,20 @@ Jangan sentuh, jangan tanya ulang tiap sesi, tunggu user yang menyebut.
 
 Repo lokal: `/data/workspace/motion-draft-room`. Remote
 `https://github.com/frianowzki/motion-draft-room` (URL dengan token, jangan dicetak).
-Branch aktif `main`, head **`ca35935`**. Branch `data` untuk snapshot + receipt.
+Branch aktif `main`, head **`b67198f`**. Branch `data` untuk snapshot + receipt,
+head **`6c97755`**.
+
+**Penting soal branch `data`:** workflow checkout ke `data`, jadi yang dieksekusi cron
+adalah `collector/` + `.github/` **di branch itu**, bukan di `main`. Keduanya sempat
+menyimpang (tanpa `verify.py`, tanpa dedupe, masih ada fallback motionradar) sehingga
+run terjadwal pertama akan merah. Sudah disamakan dengan `main` per `6c97755`. **Kalau
+mengubah `collector/`, `engine/`, atau workflow di `main`, salin juga ke `data`** —
+kalau tidak, cron tetap menjalankan versi lama tanpa ada yang memberi tahu.
+
+Rekaman sekarang: **1 snapshot, 1 window** (`asOf 2026-11-15T20:00:00Z`,
+`motion-official`). Dua file dibuang karena tidak jujur: `20261115T201601Z` berasal
+dari motionradar (beda posisi di 37 dari 79 kreator vs resmi, bikin `verify.py` exit 2)
+dan `20261115T202105Z` duplikat identik dari window yang sama.
 
 Live: **https://motion-draft-room.vercel.app** — `/`, `/signals.json`, `/api/signals`,
 `/api/receipts` (GET+POST) semua 200, sudah diverifikasi.
@@ -104,6 +117,17 @@ Live: **https://motion-draft-room.vercel.app** — `/`, `/signals.json`, `/api/s
 | `data/receipts.json` | Hanya di branch `data`. **Sekarang kosong (`[]`)** — receipt tes sudah dibersihkan |
 | `README.md` | Sumber angka, aturan resmi, alasan GitHub Actions, bagian rarity/boost, section Status (verified vs masih terbuka) |
 | `build.sh`, `vercel.json`, `requirements.txt`, `.gitignore` | Build + konfigurasi deploy |
+
+Catatan verifikasi (17 Nov 2026 UTC): keempat endpoint live 200, `/signals.json` dan
+`/api/signals` sama-sama `count=1 / 1 window / motion-official`. `snapshot.py` diuji
+dua kali pada window yang sama → `[skip]` dan tidak menambah file; `verify.py --at
+2026-11-16T04:10:00Z` → exit 1 dengan slot `00:00Z` dilaporkan hilang. Jalur cron
+terbukti bekerja. Yang belum terbukti hanya run **terjadwal** sungguhan (belum ada
+satu pun; run pertama dijadwalkan `2026-11-16T00:07Z`).
+
+Kalau `/api/signals` tampak masih menyajikan angka lama setelah push, itu cache edge
+Vercel (`s-maxage=300`), bukan kode: cek dengan `?cb=$(date +%s)` atau file mentah di
+`raw.githubusercontent.com`. `/signals.json` statis ikut build, jadi perlu redeploy.
 
 Kredensial ada di `/data/home/.hermes/.env` (`GITHUB_TOKEN`, `VERCEL_TOKEN`), nilainya
 **jangan pernah dicetak**. `GITHUB_TOKEN` juga terpasang sebagai env production Vercel.
