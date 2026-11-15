@@ -7,8 +7,8 @@
     "name": "Coffeezilla",
     "positionAtLock": 33,
     "estStars": 4,
-    "thesis": "three positive slots, calm board above",
-    "premortem": "one bad slot erases the move",
+    "thesis": null,
+    "premortem": null,
     "positionNow": 20,
     "move": 13
    },
@@ -16,8 +16,8 @@
     "name": "Mark Cuban",
     "positionAtLock": 40,
     "estStars": 3,
-    "thesis": "steady climb",
-    "premortem": "viral post above pushes him back",
+    "thesis": null,
+    "premortem": null,
     "positionNow": 32,
     "move": 8
    }
