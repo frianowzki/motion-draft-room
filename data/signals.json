@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T21:14:38.582266Z",
+ "generatedAt": "2026-11-15T21:14:50.395793Z",
  "snapshotCount": 3,
  "firstSnapshot": "2026-11-15T20:16:01.086534Z",
  "latestSnapshot": "2026-11-15T20:21:05.922248Z",
@@ -12,6 +12,24 @@
  "starsCap": 32,
  "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
  "lineupSize": 5,
+ "rarity": {
+  "tiers": [
+   "Common",
+   "Rare",
+   "Epic",
+   "Legendary"
+  ],
+  "assumedBoost": {
+   "Common": 1.0,
+   "Rare": 1.1,
+   "Epic": 1.25,
+   "Legendary": 1.5
+  },
+  "assumed": true,
+  "note": "Score Boost multipliers are not published (the docs only guarantee Legendary > Epic > Rare > Common). These values are an assumption; a projected score here is not the game's Lineup Score.",
+  "boostLimit": null,
+  "boostLimitNote": "tournaments limit the boost mix; the docs give no number, so this is unverified."
+ },
  "creators": [
   {
    "name": "Coffeezilla",

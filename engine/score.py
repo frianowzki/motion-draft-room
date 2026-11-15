@@ -27,8 +27,12 @@ from __future__ import annotations
 
 import json
 import statistics
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import rarity  # noqa: E402 - local module, resolved after ROOT is known
 
 ROOT = Path(__file__).resolve().parent.parent
 SNAP_DIR = ROOT / "data" / "snapshots"
@@ -188,6 +192,19 @@ def build() -> dict:
         "starsCap": STAR_CAP,
         "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
         "lineupSize": LINEUP_SIZE,
+        # Rarity/boost: the docs give the formula and the ordering but not the
+        # multipliers. This block states exactly what is assumed so neither the
+        # UI nor a judge has to guess.
+        "rarity": {
+            "tiers": list(rarity.TIERS),
+            "assumedBoost": dict(rarity.DEFAULT_BOOST),
+            "assumed": rarity.ASSUMED,
+            "note": ("Score Boost multipliers are not published (the docs only guarantee "
+                     "Legendary > Epic > Rare > Common). These values are an assumption; "
+                     "a projected score here is not the game's Lineup Score."),
+            "boostLimit": None,
+            "boostLimitNote": "tournaments limit the boost mix; the docs give no number, so this is unverified.",
+        },
         "creators": out_rows,
         "lineups": lineups,
         "disclaimer": (
