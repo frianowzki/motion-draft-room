@@ -103,7 +103,7 @@
         and grades your calls once the slot settles.
       </div>
     </div>
-    <div class="badge" id="stamp">loading…</div>
+    <div class="badge" id="stamp" title="snapshots taken vs. distinct 4-hour leaderboard windows">loading…</div>
   </header>
 
   <div class="stats" id="stats"></div>
@@ -217,7 +217,8 @@ async function load() {
 function render() {
   const d = DATA;
   const books = loadBooks();
-  $("#stamp").innerHTML = `asOf <b>${esc((d.dataAsOf || "").slice(0, 16).replace("T", " "))}Z</b> · ${d.snapshotCount} slot${d.snapshotCount === 1 ? "" : "s"}`;
+  const winCount = (d.slotTimes || []).length;
+  $("#stamp").innerHTML = `asOf <b>${esc((d.dataAsOf || "").slice(0, 16).replace("T", " "))}Z</b> · ${d.snapshotCount} snapshot${d.snapshotCount === 1 ? "" : "s"} in ${winCount} window${winCount === 1 ? "" : "s"}`;
 
   // ---- stats
   const cr = d.creators;
