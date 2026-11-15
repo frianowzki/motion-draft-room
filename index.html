@@ -46,6 +46,9 @@
   tr.row{cursor:pointer}
   tr.row:hover td{background:var(--panel2)}
   tr.row.sel td{background:#1b2318}
+  .stars{white-space:nowrap;color:var(--accent)}
+  .stars b{font-weight:600;margin-right:4px}
+  .stars span{letter-spacing:-.5px;opacity:.85}
   tr.row .add{cursor:pointer;color:var(--faint);font-family:var(--mono);font-size:14px;text-align:right;width:28px;user-select:none}
   tr.row:hover .add{color:var(--accent)}
   tr.row.picked .add{color:var(--accent)}
@@ -55,6 +58,7 @@
   .mono{font-family:var(--mono)}
   .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--faint)}
   .tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;margin-right:3px;border:1px solid var(--line);color:var(--dim)}
+  .receipt .meta,.rec .meta{color:var(--dim)}
   .tag.SURGING{color:var(--up);border-color:#255a3d}
   .tag.COILED{color:var(--accent);border-color:#4a5a24}
   .tag.SLEEPER{color:#7db3ff;border-color:#28405e}
@@ -265,7 +269,7 @@ function render() {
       <td class="name">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</td>
       <td class="mono ${cls(c.delta4h)}">${signed(c.delta4h)}</td>
       <td><div class="mbar"><i style="${barStyle(c.momentum)}"></i></div></td>
-      <td class="mono" style="color:var(--accent)">${STAR.repeat(c.estStars)}</td>
+      <td class="mono stars" title="estimated stars (1-8)"><b>${c.estStars}</b><span>${STAR.repeat(c.estStars)}</span></td>
       <td>${c.tags.map(t => `<span class="tag ${t}">${t}</span>`).join("")}</td>
       <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? "&#10003;" : "+"}</td>`;
     tr.onclick = () => { SEL = c.name; render(); };
