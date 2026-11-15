@@ -1,9 +1,13 @@
 {
- "generatedAt": "2026-11-15T20:54:34.565737Z",
+ "generatedAt": "2026-11-15T20:55:08.949502Z",
  "snapshotCount": 3,
  "firstSnapshot": "2026-11-15T20:16:01.086534Z",
  "latestSnapshot": "2026-11-15T20:21:05.922248Z",
  "dataAsOf": "2026-11-15T20:00:00Z",
+ "slotTimes": [
+  "2026-11-15T16:00:00Z",
+  "2026-11-15T20:00:00Z"
+ ],
  "source": "motion-official",
  "starsCap": 32,
  "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
