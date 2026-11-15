@@ -220,6 +220,8 @@ function render() {
   const cr = d.creators;
   const gainers = cr.filter(c => c.delta4h > 0).length;
   const losers = cr.filter(c => c.delta4h < 0).length;
+  // distinct 4-hour windows: several runs inside one window add no history
+  const slotWindows = [...new Set((d.slotTimes || []))].length;
   const avgAbs = cr.length ? (cr.reduce((a, c) => a + Math.abs(c.delta4h), 0) / cr.length) : 0;
   const stats = [
     ["Creators", cr.length, "on the board"],
@@ -233,7 +235,6 @@ function render() {
     `<div class="stat"><div class="k">${k}</div><div class="v">${esc(v)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ""}</div>`).join("");
 
   // ---- honest limits banner
-  const slotWindows = [...new Set((d.slotTimes || []))].length;
   if (slotWindows < 3) {
     const b = el("div", "warn");
     b.textContent = slotWindows <= 1
