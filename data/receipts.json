@@ -1,0 +1,30 @@
+[
+ {
+  "player": "frianowzki",
+  "slotAtLock": "2026-11-15T16:00:00Z",
+  "picks": [
+   {
+    "name": "Coffeezilla",
+    "positionAtLock": 33,
+    "estStars": 4,
+    "thesis": "three positive slots, calm board above",
+    "premortem": "one bad slot erases the move",
+    "positionNow": 20,
+    "move": 13
+   },
+   {
+    "name": "Mark Cuban",
+    "positionAtLock": 40,
+    "estStars": 3,
+    "thesis": "steady climb",
+    "premortem": "viral post above pushes him back",
+    "positionNow": 32,
+    "move": 8
+   }
+  ],
+  "status": "settled",
+  "lockedAt": "2026-11-15T21:08:52.703912Z",
+  "score": 21,
+  "settledAt": "2026-11-15T20:00:00Z"
+ }
+]
