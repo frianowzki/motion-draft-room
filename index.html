@@ -274,6 +274,7 @@ function render() {
 
   renderDetail();
   renderLineup(books);
+  syncClear();
 }
 
 function barStyle(m) {
@@ -410,7 +411,15 @@ function settle() {
 
 // ---------- go
 load().then(() => { if (DATA) { settle(); render(); } });
-$("#clearBtn").hidden = PICKS.length === 0;
+// the clear button is rebuilt by render() into the lineup card, so bind it after
+// every render instead of once at load
+function syncClear() {
+  const c = $("#clearBtn");
+  if (!c) return;                       // the lineup card is rebuilt on every render
+  c.hidden = PICKS.length === 0;
+  c.onclick = () => { PICKS = []; savePicks(); render(); };
+}
+syncClear();
 $("#clearBtn").onclick = () => { PICKS = []; savePicks(); render(); };
 </script>
 </body>
