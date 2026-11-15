@@ -127,7 +127,7 @@
       <h2>Creators <span class="pill" id="count"></span></h2>
       <table>
         <thead><tr>
-          <th>#</th><th>Creator</th><th>Δ4h</th><th>Mom.</th><th>★</th><th>Signal</th><th></th>
+          <th>#</th><th>Creator</th><th>Δ4h</th><th>Mom.</th><th title="estimated stars, 1-8 scale, like the real game">★ est</th><th>Signal</th><th></th>
         </tr></thead>
         <tbody id="rows"></tbody>
       </table>
@@ -289,7 +289,16 @@ function barStyle(m) {
 function renderDetail() {
   const box = $("#detail");
   const c = DATA.creators.find(x => x.name === SEL);
-  if (!c) { box.innerHTML = `<h2>Draft a pick</h2><div class="empty">Choose a creator &mdash; click a row, or the <b>+</b> on the right.<br>Each pick needs a one-line thesis and a pre-mortem before it counts.</div>`; return; }
+  if (!c) { box.innerHTML = `<h2>Draft a pick</h2><div class="empty">
+      <div style="margin-bottom:8px;color:var(--dim)">Pick from the board to open a draft card.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;text-align:left;max-width:280px;margin:0 auto">
+        <div>1 &middot; click a row (or the <b>+</b>)</div>
+        <div>2 &middot; write a one-line thesis</div>
+        <div>3 &middot; write the pre-mortem</div>
+        <div>4 &middot; five picks, then lock</div>
+      </div>
+      <div style="margin-top:10px">Stars total must stay under <b>${CAP}</b>. Stars only gate entry; the receipt grades rank movement.</div>
+    </div>`; return; }
 
   const already = PICKS.find(p => p.name === c.name);
   box.innerHTML = `
