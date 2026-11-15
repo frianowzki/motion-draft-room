@@ -24,9 +24,10 @@
   .badge{font-family:var(--mono);font-size:10.5px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:var(--dim);background:var(--panel);white-space:nowrap}
   .badge b{color:var(--accent);font-weight:600}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:18px 0}
-  .stat{background:var(--panel);padding:11px 13px}
-  .stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint)}
-  .stat .v{font-family:var(--mono);font-size:17px;margin-top:3px}
+  .stat{background:var(--panel);padding:12px 14px 13px}
+  .stat .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--faint)}
+  .stat .v{font-family:var(--mono);font-size:23px;line-height:1.15;margin-top:5px;letter-spacing:-.5px;font-weight:600}
+  .stat .s{font-size:10px;color:var(--faint);margin-top:2px;letter-spacing:.2px}
   .rules{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:16px 0 0;padding:0 13px}
   .rules summary{cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--dim);padding:10px 0;letter-spacing:.3px}
   .rules summary::marker{color:var(--accent)}
@@ -41,10 +42,14 @@
   .card h2{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim)}
   table{width:100%;border-collapse:collapse;font-size:12.5px}
   th{text-align:left;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);padding:0 6px 7px;font-weight:400}
-  td{padding:6px;border-top:1px solid #1e1e25}
+  td{padding:8px 7px;border-top:1px solid #1e1e25}
   tr.row{cursor:pointer}
   tr.row:hover td{background:var(--panel2)}
   tr.row.sel td{background:#1b2318}
+  tr.row .add{cursor:pointer;color:var(--faint);font-family:var(--mono);font-size:14px;text-align:right;width:28px;user-select:none}
+  tr.row:hover .add{color:var(--accent)}
+  tr.row.picked .add{color:var(--accent)}
+  th:last-child{text-align:right}
   .pos{font-family:var(--mono);color:var(--faint);width:26px}
   .name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
   .mono{font-family:var(--mono)}
@@ -119,7 +124,7 @@
       <h2>Creators <span class="pill" id="count"></span></h2>
       <table>
         <thead><tr>
-          <th>#</th><th>Creator</th><th>Δ4h</th><th>Mom.</th><th>★</th><th>Signal</th>
+          <th>#</th><th>Creator</th><th>Δ4h</th><th>Mom.</th><th>★</th><th>Signal</th><th></th>
         </tr></thead>
         <tbody id="rows"></tbody>
       </table>
@@ -135,7 +140,7 @@
         <div class="slot" id="slot"></div>
         <div class="hint" id="slotHint">A pick needs a thesis and a pre-mortem. That is the whole point — a lineup without reasoning is not a call.</div>
         <div class="rowbtns">
-          <button id="clearBtn">Clear</button>
+          <button id="clearBtn" hidden>Clear</button>
           <button class="primary" id="lockBtn" disabled>Lock lineup</button>
         </div>
       </div>
@@ -199,7 +204,7 @@ async function load() {
   }
   if (!DATA) {
     $("#stamp").textContent = "data unavailable";
-    $("#rows").innerHTML = `<tr><td colspan="6" class="empty">Could not load signals (${esc(lastErr && lastErr.message)}). The collector runs every 4 hours.</td></tr>`;
+    $("#rows").innerHTML = `<tr><td colspan="7" class="empty">Could not load signals (${esc(lastErr && lastErr.message)}). The collector runs every 4 hours.</td></tr>`;
     return;
   }
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]");
@@ -217,14 +222,15 @@ function render() {
   const losers = cr.filter(c => c.delta4h < 0).length;
   const avgAbs = cr.length ? (cr.reduce((a, c) => a + Math.abs(c.delta4h), 0) / cr.length) : 0;
   const stats = [
-    ["Creators", cr.length],
-    ["Up / down", `${gainers} / ${losers}`],
-    ["Avg |Δ4h|", fmt(avgAbs, 2)],
-    ["Slots tracked", d.snapshotCount],
-    ["Star cap", CAP],
-    ["Your hit rate", books.rate == null ? (books.pending ? books.pending + " pending" : "—") : Math.round(books.rate * 100) + "%"],
+    ["Creators", cr.length, "on the board"],
+    ["Up / down", `${gainers} / ${losers}`, "last 4h"],
+    ["Avg |Δ4h|", fmt(avgAbs, 2), "rank places"],
+    ["Slots tracked", d.snapshotCount, d.snapshotCount === 1 ? "4h each" : "4h each"],
+    ["Star cap", CAP, "per tournament"],
+    ["Your hit rate", books.rate == null ? (books.pending ? books.pending + " pending" : "—") : Math.round(books.rate * 100) + "%", books.settled ? `${books.settled} settled` : "no settled calls"],
   ];
-  $("#stats").innerHTML = stats.map(([k, v]) => `<div class="stat"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join("");
+  $("#stats").innerHTML = stats.map(([k, v, sub]) =>
+    `<div class="stat"><div class="k">${k}</div><div class="v">${esc(v)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ""}</div>`).join("");
 
   // ---- honest limits banner
   if (d.snapshotCount < 3) {
@@ -248,15 +254,16 @@ function render() {
   $("#count").textContent = list.length + " shown";
   const tb = $("#rows"); tb.innerHTML = "";
   list.forEach(c => {
-    const tr = el("tr", "row" + (SEL === c.name ? " sel" : ""));
     const picked = PICKS.some(p => p.name === c.name);
+    const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
     tr.innerHTML = `
       <td class="pos">${c.position}</td>
       <td class="name">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</td>
       <td class="mono ${cls(c.delta4h)}">${signed(c.delta4h)}</td>
       <td><div class="mbar"><i style="${barStyle(c.momentum)}"></i></div></td>
       <td class="mono" style="color:var(--accent)">${STAR.repeat(c.estStars)}</td>
-      <td>${c.tags.map(t => `<span class="tag ${t}">${t}</span>`).join("")}</td>`;
+      <td>${c.tags.map(t => `<span class="tag ${t}">${t}</span>`).join("")}</td>
+      <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? "&#10003;" : "+"}</td>`;
     tr.onclick = () => { SEL = c.name; render(); };
     tb.appendChild(tr);
   });
@@ -274,7 +281,7 @@ function barStyle(m) {
 function renderDetail() {
   const box = $("#detail");
   const c = DATA.creators.find(x => x.name === SEL);
-  if (!c) { box.innerHTML = `<h2>Draft a pick</h2><div class="empty">Pick a creator from the table.</div>`; return; }
+  if (!c) { box.innerHTML = `<h2>Draft a pick</h2><div class="empty">Choose a creator &mdash; click a row, or the <b>+</b> on the right.<br>Each pick needs a one-line thesis and a pre-mortem before it counts.</div>`; return; }
 
   const already = PICKS.find(p => p.name === c.name);
   box.innerHTML = `
@@ -399,6 +406,7 @@ function settle() {
 
 // ---------- go
 load().then(() => { if (DATA) { settle(); render(); } });
+$("#clearBtn").hidden = PICKS.length === 0;
 $("#clearBtn").onclick = () => { PICKS = []; savePicks(); render(); };
 </script>
 </body>
