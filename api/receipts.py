@@ -116,6 +116,9 @@ def _summary(receipts):
         "settled": len(settled),
         "pending": len(receipts) - len(settled),
         "hits": len(hits),
+        # hitRate is over GRADED receipts only, which is what `settled` means here:
+        # a receipt is never graded against its own lock window, so a pending one is
+        # not a miss and must not dilute anyone's rate.
         "hitRate": (len(hits) / len(settled)) if settled else None,
         "netRank": sum(r.get("score") or 0 for r in settled),
     }
@@ -136,13 +139,22 @@ def _snapshots():
 
 
 def _settle(receipt, snap):
-    """Grade against the snapshot on record, never against a client-supplied score.
+    """Grade against a snapshot from a LATER window than the lock, never the lock's own.
+
+    A lineup locked in the 12:00 window and graded against the 12:00 window scores
+    exactly 0 for everyone: the movement it is supposed to measure has not happened
+    yet. Only a snapshot with a strictly greater `dataAsOf` is a fair grade, so a
+    receipt whose lock slot is still the newest window stays pending. The score is
+    also never taken from the client - it is recomputed here from the rows below.
 
     A receipt already graded stays graded: the score is the movement from lock to
     the first later snapshot, not whatever the board says today.
     """
     if receipt.get("status") == "settled":
         return receipt
+    snap_as_of = snap.get("dataAsOf")
+    if snap_as_of and receipt.get("slotAtLock") and snap_as_of <= receipt["slotAtLock"]:
+        return None  # no later window on record yet - still pending, not a zero
     by_name = {c["name"]: c for c in snap.get("creators", [])}
     picks = receipt.get("picks") or []
     total, counted = 0, 0
@@ -161,7 +173,7 @@ def _settle(receipt, snap):
     receipt = dict(receipt)
     receipt["picks"] = rows
     receipt["score"] = total
-    receipt["settledAt"] = snap.get("dataAsOf")
+    receipt["settledAt"] = snap_as_of
     receipt["status"] = "settled"
     return receipt
 
@@ -288,6 +300,21 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
         except Exception as e:
             _json(self, 502, {"error": f"cannot read the book: {e}"})
             return
+
+        # A receipt is graded once, against the first window after its lock. If an
+        # older pending receipt can be graded by the snapshot on record now, grade
+        # it here so the book catches up on a write instead of only on a GET.
+        regraded = []
+        for r in receipts:
+            if r.get("status") == "settled":
+                regraded.append(r)
+                continue
+            graded = _settle(r, snap)
+            if graded:
+                regraded.append(graded)
+            else:
+                regraded.append(r)
+        receipts = regraded
 
         # X ids are the stable identity; handles get renamed and, before this check,
         # a renamed account could file twice for one slot. Older entries predate xid,

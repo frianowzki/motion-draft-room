@@ -7,6 +7,13 @@ and nobody notices a gap. This prints the last slots it has, the slot it expects
 to be recording now, and exits non-zero when a slot inside the retention window
 has no snapshot for the official source.
 
+Two things are explicitly NOT gaps, because crying wolf here trains people to ignore
+the red build:
+  * slots before the first snapshot we ever took - nothing exists to backfill from,
+    and inventing a past window is worse than a short history;
+  * slots whose window is still open - the cron is 4-hourly, so a run at 18:21 is
+    still inside the 16:00 window and has not failed to record it yet.
+
 Exit codes:
   0  every expected slot is present
   1  a slot is missing (gap in the record)
@@ -34,6 +41,10 @@ SLOT_HOURS = 4
 # exists - nothing before that can be backfilled, and we do not invent it.
 OFFICIAL = "motion-official"
 
+# Motion publishes a leaderboard window a minute or two after it opens. Before
+# this much of a window has passed, "no snapshot for it yet" is normal, not a gap.
+GRACE = timedelta(minutes=20)
+
 
 def parse_iso(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
@@ -58,16 +69,27 @@ def slot_of(when: datetime) -> datetime:
 
 def expected_slots(now: datetime, first: datetime) -> list[datetime]:
     """Slots that must exist: weekday, 4-hour aligned, from the first real
-    snapshot up to the most recent slot that has already settled."""
+    snapshot's own slot up to the last slot that has fully closed.
+
+    Only CLOSED windows are ever owed, with one exception: if we are still
+    inside the window `now` belongs to and it opened more than 20 minutes ago,
+    that window may be owed - the cron fires at :07, so a run at 18:21 is
+    inside the 16:00 window and should already have recorded it. A run at
+    16:05 is also inside 16:00 but too early to call it missing.
+
+    The deadline for a slot is therefore the end of its own window, which is
+    what `slot_of(now)` gives; slots strictly before it are always owed.
+    """
     slots = []
     cursor = slot_of(first)
-    # A slot's data lands a minute or two after the boundary; give it 20 minutes
-    # before treating it as owed.
-    limit = now - timedelta(minutes=20)
-    while cursor <= limit:
+    open_slot = slot_of(now)
+    while cursor < open_slot:
         if cursor.weekday() < 5:  # Mon-Fri
             slots.append(cursor)
         cursor += timedelta(hours=SLOT_HOURS)
+    # Inside the current window: owed once its data has had 20 minutes to land.
+    if open_slot >= slot_of(first) and open_slot.weekday() < 5 and now - open_slot >= GRACE:
+        slots.append(open_slot)
     return slots
 
 
@@ -98,6 +120,7 @@ def main() -> int:
     print(f"windows covered     : {len(have)}")
     print(f"first slot          : {first.isoformat()}")
     print(f"verifying at        : {now.isoformat()}")
+    print(f"open window         : {slot_of(now).isoformat()} (owed once {GRACE.seconds // 60}m in)")
     print(f"slots expected      : {len(want)}")
 
     missing = [s for s in want if s.isoformat() not in have]
