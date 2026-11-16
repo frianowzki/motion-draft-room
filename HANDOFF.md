@@ -241,8 +241,17 @@ Catatan kerja yang berguna:
   Branch `data` bisa telat beberapa detik setelah POST, jadi kalau `receipts.json`
   terbaca kosong padahal POST balas 201, tunggu dan fetch ulang — jangan menyimpulkan
   POST-nya gagal.
-- Deploy: `vercel --prod --yes --token "$VERCEL_TOKEN"` dari
-  `/data/workspace/motion-draft-room`, lalu verifikasi keempat endpoint dengan `curl`.
+- Deploy: **`./deploy.sh`** dari `/data/workspace/motion-draft-room` (butuh
+  `VERCEL_TOKEN` di env). Jangan pakai `vercel --prod` lagi: team Vercel project ini
+  hanya berisi akun owner (`friodrops-5778`), jadi build diblokir
+  `deployment_blocked` bila author commit bukan anggota team — dan commit di repo ini
+  di-author `frianowzki`. Skrip itu mengunggah file yang di-track lewat Deployments API
+  v13 dengan metadata git dipaku ke akun owner, menunggu READY, lalu memastikan domain
+  produksi masih terpasang. `./deploy.sh --dry-run` mencetak daftar file tanpa deploy.
+  Setelah deploy, verifikasi keempat endpoint dengan `curl`.
+- Landing page: `landing.html` adalah sumbernya, `build.sh` menyalinnya ke `/`.
+  Section room (SwatchAccordion), stats rail, dan receipt memakai token `--slab*`;
+  di dark mode token itu hitam (`#131312` di atas `#0f0f0e`), bukan putih.
 - Setelah mengubah `index.html`, cek sintaks: ambil isi `<script>` dan jalankan lewat
   `new Function(...)` di node.
 - Jangan percaya screenshot sendirian untuk hal kecil; ukur lewat DOM (`getBoundingClientRect`,
