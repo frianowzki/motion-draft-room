@@ -359,42 +359,25 @@
   .closer .btn.primary{background:#f8f7f4;color:var(--ink)}
   .closer .btn.primary:hover{background:#fff}
 
-  /* ---- footer: Framer "Footer 01" frame with the dynamic-date bar underneath ---- */
+  /* ---- footer: one quiet bar — copyright left, links right ---- */
   footer{margin-top:64px;padding-top:0}
-  .f1-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;
-    padding:34px 0 30px;border-top:1px solid var(--line)}
-  .f1-brand{display:flex;align-items:center;gap:10px}
-  .f1-mark{width:28px;height:28px;border-radius:50%;background:var(--ink);
-    color:var(--bg);display:grid;place-items:center;flex:none}
-  .f1-mark svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;
-    stroke-linecap:round;stroke-linejoin:round}
-  .f1-name{font-family:var(--display);font-size:15px;font-weight:600;
-    letter-spacing:-.02em;color:var(--ink)}
-  .f1-date{margin:14px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.02em;
-    color:var(--faint)}
-  .f1-date b{color:var(--dim);font-weight:500}
-  :root[data-theme="dark"] .f1-date,:root[data-theme="dark"] .f1-bar p{color:#a5a29a}
-  :root[data-theme="dark"] .f1-date b{color:#d6d3cc}
-  :root[data-theme="dark"] .f1-cols h4{color:#a5a29a}
-  :root[data-theme="dark"] .f1-social a{color:#c9c6bf;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
-  :root[data-theme="dark"] .sfaq-a-in code{background:rgba(17,17,17,.09);color:#2a2a28}
-  .f1-cols{display:flex;gap:56px}
-  .f1-cols h4{margin:0 0 12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--faint);font-weight:500}
-  .f1-cols a{display:block;font-size:12.5px;color:var(--dim);text-decoration:none;
-    padding:3px 0;transition:color .18s ease}
-  .f1-cols a:hover{color:var(--ink)}
-  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:18px;
-    flex-wrap:wrap;padding:18px 0 32px;border-top:1px solid var(--line)}
-  .f1-bar p{margin:0;font-size:12px;color:var(--faint);letter-spacing:-.005em}
-  .f1-bar p span{color:var(--dim)}
-  .f1-social{display:flex;gap:8px}
+  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;
+    flex-wrap:wrap;padding:22px 0 30px;border-top:1px solid var(--line)}
+  .f1-bar p{margin:0;font-size:12px;letter-spacing:-.005em;color:var(--faint)}
+  .f1-social{display:flex;gap:9px}
   .f1-social a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
-    box-shadow:inset 0 0 0 1px var(--line);color:var(--dim);
-    transition:color .18s ease,box-shadow .18s ease,background .18s ease}
-  .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-  .f1-social svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;
-    stroke-linecap:round;stroke-linejoin:round;display:block}
+    color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);background:transparent;
+    transition:color .2s ease,box-shadow .2s ease,background .2s ease,transform .2s ease}
+  .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
+  .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .f1-social svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .f1-social a[href*="x.com"] svg{width:15px;height:15px}
+  .f1-social a[href*="github.com"] svg{width:18px;height:18px}
+  .f1-social svg path[fill="currentColor"]{stroke:none}
+  :root[data-theme="dark"] .f1-bar p{color:#a5a29a}
+  :root[data-theme="dark"] .f1-social a{color:#cfccc5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+  :root[data-theme="dark"] .f1-social a:hover{color:#0f0f0e;background:#f4f3f0;box-shadow:none}
 
   /* ---- responsive: two breakpoints, same as the app ---- */
   @media(max-width:940px){
@@ -438,9 +421,9 @@
     .sfaq-points{display:none}
     .sfaq-q{font-size:12.5px;padding:15px 16px}
     .sfaq-a-in{padding-left:16px;padding-right:16px;font-size:12px}
-    .f1-top{grid-template-columns:minmax(0,1fr);gap:26px;padding:26px 0 24px}
-    .f1-cols{gap:32px;flex-wrap:wrap}
-    .f1-bar{padding-bottom:26px}
+    .f1-bar{padding-bottom:26px;gap:14px}
+    .f1-social{gap:7px}
+    .f1-social a{width:34px;height:34px}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -453,9 +436,10 @@
   <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></symbol>
   <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6"/><path d="M5 6v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6"/><path d="M5 12v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-6"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V8a3.6 3.6 0 0 1 7.2 0v2.5"/><circle cx="12" cy="15.2" r="1.1"/></symbol>
-  <symbol id="i-x-logo" viewBox="0 0 24 24"><path d="M4.2 3.6h4.3l4 5.5 4.6-5.5h2.7l-6 7.1 6.4 9.7h-4.3l-4.3-6-5 6H4.9l6.5-7.8z" fill="currentColor" stroke="none"/></symbol>
-  <symbol id="i-github" viewBox="0 0 24 24"><path d="M9.3 21v-2.6c-3 .5-3.6-1.4-3.6-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.4-.3-4.9-1.2-4.9-5.3 0-1.2.4-2.1 1.1-2.9-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 3 1.1a10.3 10.3 0 0 1 5.4 0c2.1-1.4 3-1.1 3-1.1.6 1.4.2 2.5.1 2.8.7.8 1.1 1.7 1.1 2.9 0 4.1-2.5 5-4.9 5.3.4.4.8 1.1.8 2.2V21"/></symbol>
-  <symbol id="i-generic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8.5h.01"/><path d="M11 12h1v4h1"/></symbol>
+  <symbol id="fi-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162L22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299l-.929-1.329L3.076 1.56h3.182l5.965 8.532l.929 1.329l7.754 11.09h-3.182z"/></symbol>
+  <symbol id="fi-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="fi-docs" viewBox="0 0 24 24"><path d="M6.5 3.5h7.2L18.5 8v12.5h-12a1.5 1.5 0 0 1-1.5-1.5V5a1.5 1.5 0 0 1 1.5-1.5Z"/><path d="M13.4 3.7V8h4.6"/><path d="M8.6 12.2h6.2"/><path d="M8.6 15.6h6.2"/><path d="M8.6 18.4h3.6"/></symbol>
+  <symbol id="fi-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 12h16.8"/><path d="M12 3.4c2.2 2.35 3.4 5.3 3.4 8.6S14.2 18.25 12 20.6c-2.2-2.35-3.4-5.3-3.4-8.6S9.8 5.75 12 3.4Z"/></symbol>
   <symbol id="i-trending-up" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></symbol>
   <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></symbol>
@@ -681,35 +665,13 @@
 
   <!-- ============ FOOTER ============ -->
   <footer>
-    <div class="f1-top">
-      <div>
-        <div class="f1-brand">
-          <span class="f1-mark"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-          <span class="f1-name">frianowzki</span>
-        </div>
-        <p class="f1-date" id="footDate">&copy; <span id="footYear">2026</span> frianowzki &middot; <b id="footStamp">&mdash;</b></p>
-      </div>
-      <nav class="f1-cols" aria-label="Footer">
-        <div>
-          <h4>The room</h4>
-          <a href="/app">Draft a lineup</a>
-          <a href="#features">How it works</a>
-          <a href="#faq">Rules</a>
-        </div>
-        <div>
-          <h4>Elsewhere</h4>
-          <a href="https://docs.motion.game" target="_blank" rel="noopener">Motion docs</a>
-          <a href="https://x.com/motion" target="_blank" rel="noopener">Motion on X</a>
-          <a href="https://motion.game" target="_blank" rel="noopener">motion.game</a>
-        </div>
-      </nav>
-    </div>
     <div class="f1-bar">
       <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
       <div class="f1-social">
-        <a href="https://x.com/motion" target="_blank" rel="noopener" aria-label="X"><svg><use href="#i-x-logo"/></svg></a>
-        <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="GitHub"><svg><use href="#i-github"/></svg></a>
-        <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Docs"><svg><use href="#i-generic"/></svg></a>
+        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
+        <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
+        <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
+        <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
       </div>
     </div>
   </footer>
@@ -760,22 +722,12 @@
   });
 })();
 
-// footer: the copyright year and stamp are computed on load, never typed in
+// footer: the copyright year is computed on load, never typed in
 (function () {
-  var now = new Date();
-  var y = String(now.getFullYear());
-  [].slice.call(document.querySelectorAll("#footYear,.fy")).forEach(function (n) {
+  var y = String(new Date().getFullYear());
+  [].slice.call(document.querySelectorAll(".fy")).forEach(function (n) {
     n.textContent = y;
   });
-  var stamp = document.getElementById("footStamp");
-  if (stamp) {
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var hh = String(now.getUTCHours()).padStart(2, "0");
-    var mm = String(now.getUTCMinutes()).padStart(2, "0");
-    stamp.textContent = now.getUTCDate() + " " + months[now.getUTCMonth()] + " " +
-      y + " · " + hh + ":" + mm + " UTC";
-  }
 })();
 </script>
 <script>
