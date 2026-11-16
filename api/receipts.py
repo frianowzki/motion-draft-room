@@ -147,15 +147,21 @@ def _settle(receipt, snap):
     receipt whose lock slot is still the newest window stays pending. The score is
     also never taken from the client - it is recomputed here from the rows below.
 
-    A receipt already graded stays graded: the score is the movement from lock to
-    the first later snapshot, not whatever the board says today.
+    A receipt graded by this function stays graded: the score is the movement from
+    lock to the first later snapshot, not whatever the board says today. Receipts
+    without `gradedAsOf` were written by the old grader, which read the wrong key
+    and graded against the lock's own window - those are regraded once.
     """
-    if receipt.get("status") == "settled":
+    if receipt.get("status") == "settled" and receipt.get("gradedAsOf"):
         return receipt
     snap_as_of = snap.get("dataAsOf")
     if snap_as_of and receipt.get("slotAtLock") and snap_as_of <= receipt["slotAtLock"]:
         return None  # no later window on record yet - still pending, not a zero
-    by_name = {c["name"]: c for c in snap.get("creators", [])}
+    # Snapshots (collector/snapshot.py) write `rows`; `creators` is the signals
+    # shape. Reading the wrong key here silently graded every pick as "not found",
+    # so keep the fallback but prefer the real one.
+    rows_in = snap.get("rows") or snap.get("creators") or []
+    by_name = {c["name"]: c for c in rows_in if c.get("name")}
     picks = receipt.get("picks") or []
     total, counted = 0, 0
     rows = []
@@ -174,6 +180,7 @@ def _settle(receipt, snap):
     receipt["picks"] = rows
     receipt["score"] = total
     receipt["settledAt"] = snap_as_of
+    receipt["gradedAsOf"] = snap_as_of
     receipt["status"] = "settled"
     return receipt
 
@@ -197,16 +204,13 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
         try:
             snap = _snapshots()
         except Exception:
-            snap = {"dataAsOf": None, "creators": []}
+            snap = {"dataAsOf": None}
 
         # settle anything still pending, using this snapshot
-        if snap.get("creators"):
+        if snap.get("rows") or snap.get("creators"):
             settled_now = []
             for r in receipts:
-                if r.get("status") == "settled":
-                    settled_now.append(r)
-                else:
-                    settled_now.append(_settle(r, snap) or r)
+                settled_now.append(_settle(r, snap) or r)
             receipts = settled_now
 
         receipts.sort(key=lambda r: (r.get("lockedAt") or ""), reverse=True)
