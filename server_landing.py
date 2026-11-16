@@ -24,6 +24,24 @@ class H(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(body)
             return
         if path == "/api/signals":
+            # preview answers from a captured prod payload so the page never
+            # blocks on a network round-trip while iterating on the layout
+            snap = os.path.join(ROOT, "sig_sample.json")
+            try:
+                if os.path.exists(snap):
+                    body = open(snap, "rb").read()
+                    json.loads(body)
+                else:
+                    raise RuntimeError("no capture")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            except Exception:
+                pass
             try:
                 with urllib.request.urlopen(PROD + "/api/signals", timeout=20) as r:
                     body = r.read()

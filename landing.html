@@ -70,8 +70,14 @@
   :root[data-theme="dark"] .chip{background:rgba(255,255,255,.05)}
   /* an unset --accent-ink left the loud button white on white: pin it per theme */
   :root{--accent-ink:#f8f7f4;
-    --slab:#111111;--slab-ink:#f8f7f4;--slab-dim:#b9b6b0}
-  :root[data-theme="dark"]{--slab:#f4f3f0;--slab-ink:#111111;--slab-dim:#5c5c56}
+    --slab:#111111;--slab-ink:#f8f7f4;--slab-dim:#b9b6b0;--slab-line:rgba(255,255,255,.20);
+    /* receipt card: the same ink slab as FAQ/room, plus its glow end and hairlines */
+    --card-glow-end:#191918;--hc-ink:#f8f7f4;--hc-dim:#b9b6b0;
+    --hc-line:rgba(255,255,255,.16);--hc-bg:#111111}
+  :root[data-theme="dark"]{--slab:#f4f3f0;--slab-ink:#111111;--slab-dim:#5c5c56;
+    --slab-line:rgba(0,0,0,.16)}
+  :root[data-theme="dark"]{--card-glow-end:#eeece7;--hc-ink:#111111;--hc-dim:#5c5c56;
+    --hc-line:rgba(0,0,0,.14);--hc-bg:#f4f3f0}
   :root[data-theme="dark"]{--accent-ink:#0f0f0e}
   :root[data-theme="dark"] .btn.primary{color:var(--bg)}
   :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.07);color:var(--ink)}
@@ -211,35 +217,74 @@
   .hero-visual span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--faint)}
 
-  /* the example receipt: full-width band above the FAQ */
-  .receipt{position:relative;display:flex;max-width:620px}
-  .stackghost{position:absolute;inset:14px 8px -8px 10px;border-radius:var(--r-lg);
-    background:var(--card-2);transform:rotate(-1.2deg);pointer-events:none;z-index:0}
-  .herocard{border-radius:var(--r-lg);padding:22px 22px 18px;position:relative;overflow:hidden;
-    z-index:1;background:var(--card);box-shadow:var(--lift);flex:1;
-    display:flex;flex-direction:column;justify-content:center;gap:0}
-  .hc-top{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--faint);margin-bottom:14px}
-  .hc-label{display:inline-flex;align-items:center;gap:6px}
-  .hc-label .ic{font-size:12px;color:var(--ink)}
-  .hc-state{color:#f8f7f4;background:var(--ink);padding:4px 9px;flex:none;
-    border-radius:var(--r-pill);font-size:8.5px}
-  .hc-who{font-family:var(--mono);font-size:12px;color:var(--ink);margin-bottom:14px}
-  .hc-rows{display:flex;flex-direction:column;gap:1px;
-    border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
-  .hc-row{display:flex;justify-content:space-between;gap:10px;align-items:center;
-    font-family:var(--mono);font-size:10.5px;color:var(--dim);padding:9px 0}
-  .hc-row b{color:var(--ink);font-weight:600;font-size:11px}
+  /* the example receipt, modelled on the Framer pricing card: one rounded panel
+     with a radial glow in the top-left corner that falls off to the page colour,
+     a small eyebrow, a large figure, a full-width pill action, then a checked
+     list. Read as a receipt, not a plan — the list is what a filed call proves. */
+  .receipt{position:relative;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);
+    gap:40px;align-items:start;width:100%}
+  .rc-side{padding-top:4px}
+  .rc-lede{margin:0;font-size:16px;line-height:1.55;color:var(--dim);
+    letter-spacing:-.012em;max-width:44ch}
+  .rc-list{list-style:none;margin:26px 0 0;padding:0;display:flex;
+    flex-direction:column;gap:20px;max-width:46ch}
+  .rc-list li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;
+    align-items:start}
+  .rc-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--faint);
+    padding-top:3px}
+  .rc-list b{display:block;font-size:14px;font-weight:500;color:var(--ink);
+    letter-spacing:-.015em;margin-bottom:4px}
+  .rc-list div{font-size:13px;line-height:1.6;color:var(--dim)}
+  @media(max-width:940px){
+    .receipt{grid-template-columns:minmax(0,1fr);gap:26px}
+    .rc-list{margin-top:20px}
+  }
+  .stackghost{display:none}
+  .herocard{position:relative;overflow:hidden;flex:1;z-index:1;
+    border-radius:16px;padding:16px;
+    background:radial-gradient(150% 90% at -12% -30%,rgba(33,120,222,.42) 0%,rgba(33,120,222,.10) 34%,var(--card-glow-end) 62%);
+    box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px -18px rgba(0,0,0,.35);
+    display:flex;flex-direction:column}
+  :root[data-theme="dark"] .herocard{
+    background:radial-gradient(150% 90% at -12% -30%,rgba(33,120,222,.34) 0%,rgba(33,120,222,.08) 36%,var(--card-glow-end) 64%)}
+  .hc-top{display:flex;align-items:center;gap:8px;
+    font-family:inherit;font-size:10.5px;font-weight:500;letter-spacing:-.02em;
+    text-transform:none;color:var(--hc-ink);margin-bottom:14px}
+  .hc-label{display:inline-flex;align-items:center;gap:6px;flex:1;min-width:0}
+  .hc-label .ic{font-size:12px;opacity:.8}
+  .hc-state{flex:none;font-size:9.5px;padding:3px 8px;border-radius:var(--r-pill);
+    color:var(--hc-ink);box-shadow:inset 0 0 0 1px var(--hc-line)}
+  .hc-who{font-family:var(--display);font-size:26px;font-weight:600;
+    letter-spacing:-.03em;line-height:1.1;color:var(--hc-ink)}
+  .hc-who i{font-style:normal;font-size:13px;font-weight:500;color:var(--hc-dim);
+    margin-left:6px;letter-spacing:-.01em}
+  .hc-sub{font-size:11px;line-height:1.5;color:var(--hc-dim);margin-top:7px}
+  /* the pill action: what this card is, not a purchase */
+  .hc-act{display:flex;align-items:center;justify-content:center;gap:8px;
+    margin:14px 0 0;padding:10px 14px;border-radius:var(--r-pill);
+    background:var(--hc-ink);color:var(--hc-bg);text-decoration:none;
+    font-size:11.5px;font-weight:500;letter-spacing:-.01em;
+    transition:opacity .2s ease}
+  .hc-act:hover{opacity:.88}
+  .hc-act .ic{font-size:12px}
+  /* the checked list replaces the four loose rows */
+  .hc-rows{list-style:none;margin:16px 0 0;padding:0;display:flex;
+    flex-direction:column;gap:9px}
+  .hc-row{display:flex;align-items:flex-start;gap:8px;
+    font-family:inherit;font-size:11.5px;color:var(--hc-ink);padding:0}
+  .hc-row .ck{width:13px;height:13px;flex:none;margin-top:1px;color:var(--hc-ink);opacity:.75}
+  .hc-row b{margin-left:auto;font-weight:500;font-size:11.5px;color:var(--hc-ink);
+    font-family:var(--mono);white-space:nowrap}
   .hc-row b.up{color:var(--up)}
-  .hc-foot{display:flex;justify-content:space-between;align-items:baseline;
-    margin-top:12px;font-family:var(--mono);font-size:9.5px;color:var(--faint);
-    letter-spacing:.08em;text-transform:uppercase}
-  .hc-foot b{font-family:var(--display);font-size:26px;color:var(--ink);
-    font-weight:600;letter-spacing:-.03em;text-transform:none}
-  .hc-note{display:flex;align-items:flex-start;gap:6px;margin-top:auto;padding-top:14px;
-    border-top:1px solid var(--line-soft);font-size:10px;color:var(--faint);line-height:1.5}
-  .hc-note .ic{font-size:11px;color:var(--faint);flex:none;margin-top:1px}
+  .hc-foot{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    margin-top:16px;padding-top:12px;border-top:1px solid var(--hc-line);
+    font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+    font-family:var(--mono);color:var(--hc-dim)}
+  .hc-foot b{font-family:var(--display);font-size:22px;font-weight:600;
+    letter-spacing:-.03em;text-transform:none;color:var(--hc-ink)}
+  .hc-note{display:flex;align-items:flex-start;gap:6px;margin-top:12px;
+    font-size:10px;color:var(--hc-dim);line-height:1.5}
+  .hc-note .ic{font-size:11px;flex:none;margin-top:1px}
 
   .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
   .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;
@@ -248,18 +293,17 @@
     padding:6px 10px;border-radius:var(--r-pill)}
 
 
-  /* ---- the room itself: five signal cards, each a swipeable top-five list.
-     A card opens like an accordion and becomes the wide one on desktop; the
-     list inside it snaps card-by-card, one creator at a time ---- */
+  /* ---- the room itself: one card per signal, stacked in a column on desktop,
+     all open. Inside a card the top five run as a plain vertical list with a
+     small face for each creator. On a phone the cards stack the same way but the
+     creator list snaps sideways, one face per swipe. ---- */
   .room{margin-top:4px}
-  .room-grid{display:flex;align-items:flex-start;gap:12px;min-width:0;max-width:100%}
-  .room-card{flex:1 1 0;max-width:100%;min-width:0;background:var(--slab);border-radius:18px;
-    overflow:hidden;transition:flex-grow .38s cubic-bezier(.2,.85,.25,1),background .25s ease;
-    box-shadow:inset 0 0 0 1px transparent}
-  .room-h{display:flex;align-items:center;gap:9px;width:100%;padding:16px 16px;
+  .room-grid{display:flex;flex-direction:column;gap:12px;min-width:0;max-width:100%}
+  .room-card{background:var(--slab);border-radius:18px;color:var(--slab-ink);
+    overflow:hidden;box-shadow:inset 0 0 0 1px transparent}
+  .room-h{display:flex;align-items:center;gap:9px;width:100%;padding:16px 18px;
     font-size:13px;font-weight:500;letter-spacing:-.01em;color:var(--slab-ink);
-    background:none;border:0;cursor:pointer;text-align:left;font-family:inherit}
-  .room-h:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+    background:none;border:0;cursor:default;text-align:left;font-family:inherit}
   .room-h b{flex:1;min-width:0;font-weight:500}
   .room-dot{width:7px;height:7px;border-radius:50%;flex:none;background:currentColor;opacity:.5}
   .room-card[data-tag="SURGING"] .room-dot{background:#3f9d63;opacity:1}
@@ -268,24 +312,22 @@
   .room-card[data-tag="QUIET"] .room-dot{background:#8a8a84;opacity:1}
   .room-card[data-tag="FADE"] .room-dot{background:#b45a4f;opacity:1}
   .room-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--slab-dim)}
-  .room-chev{width:15px;height:15px;flex:none;color:var(--slab-dim);
-    transition:transform .3s cubic-bezier(.2,.85,.25,1)}
-  .room-card[data-open] .room-chev{transform:rotate(180deg)}
-  .room-body{display:grid;grid-template-rows:0fr;opacity:0;
-    transition:grid-template-rows .38s cubic-bezier(.2,.85,.25,1),opacity .28s ease}
-  .room-card[data-open] .room-body{grid-template-rows:1fr;opacity:1}
-  .room-card[data-open] .room-body{opacity:1;transition-delay:.12s}
+  .room-chev{display:none}
+  .room-body{display:grid;grid-template-rows:1fr;opacity:1}
   .room-scroller{overflow:hidden;min-height:0}
-  .room-list{display:flex;gap:10px;margin:0;padding:0 16px 16px;list-style:none;
-    scroll-padding-inline:16px;
-    overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
-    scrollbar-width:none}
-  .room-list::-webkit-scrollbar{display:none}
-  .room-row{flex:0 0 calc(100% - 16px);scroll-snap-align:start;display:grid;
-    grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:11px;
-    padding:11px 12px;border-radius:12px;background:var(--slab-2,rgba(127,127,127,.09))}
+  .room-list{display:flex;flex-direction:column;gap:8px;margin:0;padding:0 18px 18px;
+    list-style:none}
+  .room-row{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;
+    align-items:center;gap:11px;padding:9px 12px;border-radius:12px;
+    background:var(--slab-2,rgba(127,127,127,.09))}
   .room-rank{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
     color:var(--slab-dim)}
+  /* the face: the same /pfp art the official leaderboard serves, so nobody has to
+     trust a name string to recognise a creator */
+  .room-av{width:26px;height:26px;border-radius:50%;flex:none;object-fit:cover;
+    background:var(--slab-2,rgba(127,127,127,.18));display:block}
+  .room-av.fb{display:grid;place-items:center;font-family:var(--mono);font-size:10px;
+    font-weight:500;color:var(--slab-dim);text-transform:uppercase}
   .room-name{min-width:0;font-size:12.5px;font-weight:500;color:var(--slab-ink);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .room-num{font-family:var(--mono);font-size:11px;color:var(--slab-dim);
@@ -294,22 +336,25 @@
   .room-num.down{color:#b45a4f}
   .room-row.ph{opacity:.55}
   .room-row.ph .room-name{font-style:italic}
-  .room-dots{display:flex;justify-content:center;gap:5px;padding:0 16px 14px}
-  .room-dots i{width:5px;height:5px;border-radius:50%;background:currentColor;
-    color:var(--slab-dim);opacity:.4;transition:opacity .2s ease,width .2s ease}
-  .room-dots i.on{opacity:1;width:12px;border-radius:3px}
+  .room-dots{display:none}
   .room-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;
     margin-top:14px;flex-wrap:wrap}
   .room-src{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--faint)}
-  @media(max-width:1100px){
-    .room-grid{flex-wrap:wrap}
-    .room-card{flex:1 1 calc(50% - 12px)}
+  /* phone: the creator strip swipes sideways, the cards still stack vertically */
+  @media(max-width:940px){
+    .room-list{flex-direction:row;gap:10px;padding:0 16px 16px;
+      overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
+      scroll-padding-inline:16px;scrollbar-width:none}
+    .room-list::-webkit-scrollbar{display:none}
+    .room-row{flex:0 0 calc(100% - 16px);scroll-snap-align:start}
+    .room-dots{display:flex;justify-content:center;gap:5px;padding:0 16px 14px}
+    .room-dots i{width:5px;height:5px;border-radius:50%;background:currentColor;
+      color:var(--slab-dim);opacity:.4;transition:opacity .2s ease,width .2s ease}
+    .room-dots i.on{opacity:1;width:12px;border-radius:3px}
   }
   @media(max-width:940px){
-    /* phone: one column, every card closed until tapped, one creator per swipe */
-    .room-grid{display:block}
-    .room-card{width:100%;margin-bottom:10px}
+    .room{overflow:hidden}
   }
 
   /* ---- section furniture ---- */
@@ -388,40 +433,42 @@
     letter-spacing:-.03em;margin-top:8px}
 
   /* ---- stats rail (Framer "ImpactRail" port) ----
-     Four numbers on one rail. Expanded on desktop, where there is room for the
-     prose to sit under the figure; on narrow screens every card is simply open,
-     because a tap-to-expand card stack hides numbers on the device with the least
-     room to scroll. No arrows and no per-card buttons, per the brief. */
-  .rail{display:flex;flex-direction:column;gap:12px;margin-top:64px}
-  .rail-card{position:relative;background:var(--card);border-radius:var(--r-lg);
-    box-shadow:var(--lift);padding:24px 26px 22px;overflow:hidden;
-    transition:background .35s ease,box-shadow .35s ease}
+     Four numbers side by side on desktop. The rail takes the same ink slab as the
+     FAQ and the room cards — black in light mode, paper white in dark — so the
+     page reads as one object rather than three. On a phone the cards stack, and
+     there every card is simply open: a tap-to-expand stack hides numbers on the
+     device with the least room to scroll. No arrows and no per-card buttons. */
+  .rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+    margin-top:4px;align-items:start}
+  .rail-card{position:relative;background:var(--slab);color:var(--slab-ink);
+    border-radius:18px;padding:20px 20px 18px;overflow:hidden;
+    box-shadow:inset 0 0 0 1px transparent;
+    transition:background .3s ease,box-shadow .3s ease}
   .rail-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
   .rail-k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--faint)}
-  .rail-v{font-family:var(--display);font-size:34px;font-weight:600;
-    letter-spacing:-.035em;line-height:1;margin-top:14px}
-  .rail-h{font-size:13.5px;color:var(--dim);margin-top:10px;letter-spacing:-.01em}
-  /* the prose only exists where the card can open */
+    text-transform:uppercase;color:var(--slab-dim)}
+  .rail-v{font-family:var(--display);font-size:38px;font-weight:600;
+    letter-spacing:-.035em;line-height:1;margin-top:16px;color:var(--slab-ink)}
+  .rail-h{font-size:13px;color:var(--slab-dim);margin-top:10px;letter-spacing:-.01em}
   .rail-more{display:grid;grid-template-rows:0fr;opacity:0;
-    transition:grid-template-rows .4s ease,opacity .3s ease}
+    transition:grid-template-rows .4s cubic-bezier(.2,.85,.25,1),opacity .28s ease}
   .rail-more>div{overflow:hidden}
-  .rail-more p{margin:0;padding-top:12px;font-size:13.5px;line-height:1.55;
-    color:var(--dim);max-width:56ch}
+  .rail-more p{margin:0;padding-top:12px;font-size:12.5px;line-height:1.55;
+    color:var(--slab-dim);max-width:52ch}
   .rail-card[data-open] .rail-more{grid-template-rows:1fr;opacity:1}
 
-  /* desktop only: the rail collapses to one open card at a time */
+  /* desktop only: one card opens at a time; the others close back to the number */
   @media (min-width:941px){
-    .rail-card{cursor:pointer;min-height:112px;display:flex;flex-direction:column;
-      justify-content:flex-start}
-    .rail-card[data-open]{background:var(--card-2);box-shadow:var(--lift-lg,var(--lift))}
-    .rail-card:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-    .rail-card:not([data-open]):hover{background:var(--card-2)}
-    /* collapsed cards give back the vertical space the prose would have used */
-    .rail-card:not([data-open]) .rail-v{font-size:30px}
+    .rail-card{cursor:pointer;min-height:132px;display:flex;flex-direction:column}
+    /* one card open at a time — the hairline says which, the slab stays the
+       same ink as the FAQ and the room so the row reads as one surface */
+    .rail-card[data-open]{box-shadow:inset 0 0 0 1px var(--slab-line)}
+    .rail-card:focus-visible{outline:2px solid var(--slab-ink);outline-offset:3px}
+    .rail-card:not([data-open]) .rail-v{font-size:32px}
   }
-  /* no accordion below 940: everything reads at once */
+  /* phone: stacked, everything readable at once */
   @media (max-width:940px){
+    .rail{grid-template-columns:minmax(0,1fr)}
     .rail-more{grid-template-rows:1fr;opacity:1}
   }
 
@@ -647,6 +694,10 @@
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
   <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="5 12.5 9.5 17 19 7.5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><line x1="12" y1="11" x2="12" y2="16.4"/><circle cx="12" cy="7.9" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="4.5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2.5-1.6-2.5 1.6-2.5-1.6L8 20.5 6 19V3.5Z"/><line x1="9.2" y1="8.4" x2="14.8" y2="8.4"/><line x1="9.2" y1="12.2" x2="14.8" y2="12.2"/></symbol>
 </svg>
 
 <div class="wrap" id="top">
@@ -749,59 +800,47 @@
     </div>
   </section>
 
-  <!-- ============ THE ROOM ITSELF (live top 5 per signal, swipeable) ============ -->
+  <!-- ============ THE ROOM ITSELF (live top 5 per signal) ============ -->
   <section class="block" id="showcase">
     <div class="sec-head">
       <h3>The room itself</h3>
-      <span class="kicker" id="roomNote">top 5 per signal &middot; live</span>
     </div>
     <div class="room" id="room" data-room role="region" aria-label="Top five creators per signal">
       <div class="room-grid">
-        <article class="room-card" data-tag="SURGING">
+        <article class="room-card" data-tag="SURGING" data-open>
           <header class="room-h">
             <span class="room-dot"></span><b>Surging</b><span class="room-n" data-room-n>02/5</span>
-            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
           </header>
           <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
             <li class="room-row ph"><span class="room-rank">01</span><span class="room-name">loading the board&hellip;</span></li>
           </ol></div></div>
         </article>
-        <article class="room-card" data-tag="COILED">
+        <article class="room-card" data-tag="COILED" data-open>
           <header class="room-h">
             <span class="room-dot"></span><b>Coiled</b><span class="room-n" data-room-n>02/5</span>
-            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
           </header>
           <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
         </article>
-        <article class="room-card" data-tag="SLEEPER">
+        <article class="room-card" data-tag="SLEEPER" data-open>
           <header class="room-h">
             <span class="room-dot"></span><b>Sleeper</b><span class="room-n" data-room-n>14/5</span>
-            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
           </header>
           <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
         </article>
-        <article class="room-card" data-tag="QUIET">
+        <article class="room-card" data-tag="QUIET" data-open>
           <header class="room-h">
             <span class="room-dot"></span><b>Quiet</b><span class="room-n" data-room-n>32/5</span>
-            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
           </header>
           <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
         </article>
-        <article class="room-card" data-tag="FADE">
+        <article class="room-card" data-tag="FADE" data-open>
           <header class="room-h">
             <span class="room-dot"></span><b>Fade</b><span class="room-n" data-room-n>02/5</span>
-            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
           </header>
           <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
         </article>
       </div>
-      <div class="room-foot">
-        <span class="room-src" id="roomSrc">reading the board&hellip;</span>
-        <a class="acta acta-sm" href="/app">
-          <span class="acta-t">Open the app</span>
-          <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
-        </a>
-      </div>
+      <div class="room-foot"></div>
     </div>
   </section>
 
@@ -810,7 +849,6 @@
   <section class="block" id="proof" aria-label="Creators tracked and how the board behaves">
     <div class="sec-head">
       <h3>Creators tracked</h3>
-      <span class="kicker">straight from the board</span>
     </div>
     <div class="rail" data-rail>
       <article class="rail-card" data-rail-card data-open role="button" tabindex="0" aria-expanded="true">
@@ -850,24 +888,41 @@
 
   <!-- ============ HOW A CALL READS (example receipt) ============ -->
   <section class="block" id="receipt">
+    <div class="sec-head">
+      <h3>How a call reads</h3>
+    </div>
     <div class="receipt">
-      <div class="stackghost" aria-hidden="true"></div>
       <div class="herocard">
         <div class="hc-top">
-          <span class="hc-label"><svg class="ic"><use href="#i-receipt"/></svg>how a call reads</span>
+          <span class="hc-label"><svg class="ic"><use href="#i-receipt"/></svg>call receipt</span>
           <span class="hc-state">example</span>
         </div>
-        <div class="hc-who">@yourhandle &middot; 5 picks</div>
-        <div class="hc-rows">
-          <div class="hc-row"><span>thesis + pre-mortem</span><b class="up">filed</b></div>
-          <div class="hc-row"><span>star total</span><b>24 / 32</b></div>
-          <div class="hc-row"><span>window close</span><b>20:00Z</b></div>
-          <div class="hc-row"><span>rank after</span><b class="up">+3</b></div>
-        </div>
+        <div class="hc-who">@yourhandle <i>5 picks</i></div>
+        <div class="hc-sub">Filed before the window closed. Graded by the board after it, nothing edited since.</div>
+        <a class="hc-act" href="/app">Read how a call is scored
+          <svg class="ic"><use href="#i-arrow-right"/></svg></a>
+        <ul class="hc-rows">
+          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>thesis + pre-mortem</span><b>filed</b></li>
+          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>star total</span><b>24 / 32</b></li>
+          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>window close</span><b>20:00Z</b></li>
+          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>rank after</span><b class="up">+3</b></li>
+        </ul>
         <div class="hc-foot">
-          <span>scored server-side</span>
-          <b>+7 net</b>
+          <span>score boost &middot; 1.0&times;</span>
+          <b>24 pts</b>
         </div>
+        <div class="hc-note">
+          <svg class="ic"><use href="#i-info"/></svg>
+          <span>Scored server-side from the snapshot that closes the window.</span>
+        </div>
+      </div>
+      <div class="rc-side">
+        <p class="rc-lede">One page per call. What you believed, what you risked, and what the board said when the window shut.</p>
+        <ol class="rc-list">
+          <li><span class="rc-n">01</span><div><b>The claim comes first</b>Thesis and pre-mortem are written before the window closes, so a good week cannot rewrite a bad reason.</div></li>
+          <li><span class="rc-n">02</span><div><b>Graded, never edited</b>A receipt is graded once, against the snapshot that closes its window, then frozen.</div></li>
+          <li><span class="rc-n">03</span><div><b>Readable without a spreadsheet</b>Five names, a star total, a rank. The reasoning is the part that cannot be faked.</div></li>
+        </ol>
       </div>
     </div>
   </section>
@@ -1229,73 +1284,51 @@ fetch("/api/signals", { cache: "no-store" })
 </script>
 
 <script>
-/* the room itself — five signal cards. Each card is an accordion: opening one
-   closes the rest and gives it the wide slot on desktop. Inside an open card the
-   list snaps one creator at a time (native scroll-snap, so a swipe or a wheel
-   works on a phone), and the dot rail under it mirrors the position. */
+/* the room itself — five signal cards stacked in a column, every one open. The
+   creator list is a plain vertical list on desktop; on a phone the CSS turns it
+   into a sideways snap rail and this script keeps a dot rail in step with it. */
 (function () {
   var room = document.getElementById('room');
   if (!room) return;
   var cards = [].slice.call(room.querySelectorAll('.room-card'));
-  var narrow = window.matchMedia('(max-width:940px)');
-  var RANK = ['SURGING', 'COILED', 'SLEEPER', 'QUIET', 'FADE'];
+  var PFP = 'https://leaderboard.motion.game/pfp/';
 
-  function openCard(card, on) {
-    cards.forEach(function (c) {
-      if (c === card && on) c.setAttribute('data-open', '');
-      else c.removeAttribute('data-open');
-      var h = c.querySelector('.room-h');
-      if (h) h.setAttribute('aria-expanded', (c === card && on) ? 'true' : 'false');
-    });
-    room.setAttribute('data-any', on ? '' : 'x');
+  function initials(n) {
+    return (n || '?').replace(/[^A-Za-z0-9 ]/g, ' ').trim().split(/\s+/)
+      .map(function (w) { return w.charAt(0); }).slice(0, 2).join('') || '?';
   }
 
-  cards.forEach(function (card) {
-    var h = card.querySelector('.room-h'), list = card.querySelector('.room-list');
-    if (h) {
-      h.setAttribute('role', 'button');
-      h.setAttribute('tabindex', '0');
-      var toggle = function () { openCard(card, !card.hasAttribute('data-open')); };
-      h.addEventListener('click', toggle);
-      h.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-      });
-    }
+  // dots are built per card after the rows exist, so they match the real count
+  function buildDots(card) {
+    var list = card.querySelector('.room-list');
     if (!list) return;
+    var old = card.querySelector('.room-dots');
+    if (old) old.remove();
     var n = list.children.length;
+    if (n < 2) return;
     var dots = document.createElement('div');
     dots.className = 'room-dots';
     dots.setAttribute('aria-hidden', 'true');
-    for (var i = 0; i < Math.min(n, 5); i++) dots.appendChild(document.createElement('i'));
+    for (var i = 0; i < n; i++) dots.appendChild(document.createElement('i'));
     function paint() {
       var step = (list.children[0] ? list.children[0].getBoundingClientRect().width : list.clientWidth) + 10;
       var k = Math.round(list.scrollLeft / (step || 1));
       [].forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
     }
-    if (dots.children.length > 1) {
-      card.appendChild(dots);
-      list.addEventListener('scroll', function () { requestAnimationFrame(paint); }, { passive: true });
-      window.addEventListener('resize', paint);
-      paint();
-    }
-  });
-
-  // desktop: the first card starts open so the section never reads as five
-  // closed drawers; a phone starts flat so every card is one tap away
-  var auto = !!narrow.matches;
-  if (!narrow.matches) openCard(cards[0], true);
-  narrow.addEventListener && narrow.addEventListener('change', function (e) {
-    auto = e.matches;
-    if (e.matches) openCard(null, false); else openCard(cards[0], true);
-  });
-  // a wide card hands the width back as soon as the pointer leaves the row, so a
-  // closed row is what a visitor scrolls past — unless they pinned one open
-  // outside the row (a keyboard tab counts as intent)
-  if (!auto) {
-    room.addEventListener('mouseleave', function () {
-      if (!room.contains(document.activeElement)) openCard(null, false);
-    });
+    card.appendChild(dots);
+    list.addEventListener('scroll', function () { requestAnimationFrame(paint); }, { passive: true });
+    paint();
   }
+  window.addEventListener('resize', function () {
+    cards.forEach(function (card) {
+      var dots = card.querySelector('.room-dots');
+      if (!dots) return;
+      var list = card.querySelector('.room-list');
+      var step = (list.children[0] ? list.children[0].getBoundingClientRect().width : list.clientWidth) + 10;
+      var k = Math.round(list.scrollLeft / (step || 1));
+      [].forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
+    });
+  });
 
   // fill from the same payload the app reads. A short signal (coiled and fade
   // have two names today) shows what exists and says so, rather than padding
@@ -1304,7 +1337,6 @@ fetch("/api/signals", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
     .then(function (d) {
       var all = (d && d.creators) || [];
-      var src = document.getElementById('roomSrc');
       cards.forEach(function (card) {
         var tag = card.getAttribute('data-tag');
         var rows = all.filter(function (c) {
@@ -1323,18 +1355,26 @@ fetch("/api/signals", { cache: "no-store" })
           var m = typeof c.momentum === 'number' ? c.momentum : null;
           var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
           var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
-          var nm = c.name || c.handle || 'unnamed';
+          var nm = (c.name || c.handle || 'unnamed').replace(/[<>&"]/g, '');
+          // the board publishes a face per creator id; if one is missing the row
+          // still reads, with initials standing in
+          var face = c.id
+            ? '<img class="room-av" src="' + PFP + encodeURIComponent(c.id) + '.jpg" alt="" ' +
+              'loading="lazy" decoding="async" ' +
+              'onerror="this.outerHTML=\'<span class=&quot;room-av fb&quot;>' + initials(nm) + '</span>\'">'
+            : '<span class="room-av fb">' + initials(nm) + '</span>';
           return '<li class="room-row"><span class="room-rank">0' + (i + 1) + '</span>' +
-            '<span class="room-name">' + nm.replace(/[<>&]/g, '') + '</span>' +
+            face + '<span class="room-name">' + nm + '</span>' +
             '<span class="room-num' + cls + '">' + num + '</span></li>';
         }).join('');
+        buildDots(card);
       });
-      if (src) src.textContent = 'board as of ' + (d.latestSnapshot || d.dataAsOf || 'just now');
     })
     .catch(function () {
-      var src = document.getElementById('roomSrc');
-      if (src) src.textContent = 'board unreachable — the app still has the latest snapshot';
+      // the page keeps its placeholders; the app still has the latest snapshot
     });
+  // the placeholder row is a single item, so dots appear once the data lands
+  cards.forEach(buildDots);
 })();
 </script>
 </body>
