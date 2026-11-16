@@ -1,6 +1,6 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-15 21:30 UTC. Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-16 11:20 UTC. Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
@@ -53,9 +53,20 @@ snapshot sendiri. Client tidak pernah mengirim skor. Satu receipt per handle per
 **`_settle` idempoten.** Receipt yang sudah `status == "settled"` tidak dinilai ulang
 dengan board hari ini.
 
-**Identitas = X handle yang diketik user**, regex `^@?[A-Za-z0-9_]{1,15}$`, disimpan di
-`localStorage['mdr_handle']`. Tanpa email, tanpa login. Handle invalid ditolak (400),
-bukan disanitasi diam-diam.
+**Identitas = akun X yang benar-benar login** (berubah 2026-11-16, commit `921ba5a`).
+Handle yang diketik sudah dibuang seluruhnya: isi `localStorage['mdr_handle']` lama tidak
+dibaca lagi. Alurnya OAuth 2.0 Authorization Code + PKCE (`scope=users.read`) sebagai
+public client; code ditukar di server, token tidak pernah sampai ke browser; hasilnya
+cookie `mdr_session` yang di-HMAC dengan `X_SESSION_SECRET` (stateless, tanpa database —
+rotasi secret = semua orang logout). `POST /api/receipts` mengambil handle dari sesi dan
+**mengabaikan** field `player` di body; tanpa cookie balasannya 401. Dedupe per slot
+memakai `xid` (id X), bukan handle, karena handle bisa diganti — entri lama tanpa `xid`
+tetap dibandingkan lewat handle.
+
+**Fungsi Vercel hanya dapat direktori sendiri di `sys.path`**, jadi `xauth_lib.py`
+di-*vendor* dua kali: `api/xauth_lib.py` (untuk `api/receipts.py`) dan
+`api/xauth/xauth_lib.py` (untuk `api/xauth/*`). Ubah keduanya. Ini penyebab deploy
+pertama 500 `ModuleNotFoundError: No module named 'xauth_lib'`.
 
 **Rarity/boost dimodelkan sebagai asumsi yang dilabeli, bukan angka karangan.**
 Docs resmi memberi formula `Lineup Score = Σ (Motion Score × Score Boost)`, memberi tahu
@@ -84,7 +95,7 @@ Jangan sentuh, jangan tanya ulang tiap sesi, tunggu user yang menyebut.
 
 Repo lokal: `/data/workspace/motion-draft-room`. Remote
 `https://github.com/frianowzki/motion-draft-room` (URL dengan token, jangan dicetak).
-Branch aktif `main`, head **`fd6805c`**. Branch `data` untuk snapshot + receipt,
+Branch aktif `main`, head **`921ba5a`**. Branch `data` untuk snapshot + receipt,
 head **`6c97755`**.
 
 **Penting soal branch `data`:** workflow checkout ke `data`, jadi yang dieksekusi cron
@@ -163,8 +174,14 @@ Urut prioritas. Nomor 1 dan 2 adalah satu-satunya yang benar-benar menahan submi
    tes lalu **hapus lagi** dari branch `data` (lihat catatan di bawah).
 4. **(Opsional, perlu izin user) hapus Vercel `vprobe` + 2 alias** — item "nomor 5"
    yang dikecualikan. Jangan jalan sendiri.
-5. **(Opsional) redesign total UI.** User pernah bilang "ntar kita rombak total".
-   Perbaikan sejauh ini bersifat rapikan/perbaiki, bukan rombak. Tunggu instruksi.
+5. **(Opsional) redesign total UI.** Belum dikerjakan; yang sudah ada tetap perbaikan.
+6. **Aktifkan connect-X di produksi.** Kode sudah live, tapi `/api/xauth/status` masih
+   balas `configured: false` karena `X_CLIENT_ID` dan `X_SESSION_SECRET` belum diset di
+   Vercel. Tanpa itu tombol Connect X menampilkan alasan dan filing receipt balas 401.
+   Perlu app di X developer portal dengan callback
+   `https://motion-draft-room.vercel.app/api/xauth/callback`, tipe public client (PKCE,
+   tanpa client secret), lalu `vercel env add X_CLIENT_ID` + `X_SESSION_SECRET`
+   (nilai acak 32+ byte) dan redeploy.
 
 Catatan kerja yang berguna:
 - Untuk menguji POST receipt di live lalu membersihkan: `git checkout data`,
