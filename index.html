@@ -222,12 +222,13 @@
   /* ---- feature ribbon: one wide card, two narrow, hovered one opens up ---- */
   /* min-width:0 so a long headline shrinks instead of dictating the column width */
   .ribbon{display:flex;align-items:stretch;gap:12px;min-width:0;max-width:100%}
-  /* explicit block height: an absolutely-positioned body contributes no height
-     of its own, so the cards would otherwise collapse to nothing */
+  /* explicit block height: the body is absolutely positioned, so without it the
+     cards would collapse to nothing */
   .rcard{position:relative;isolation:isolate;overflow:hidden;flex:1 1 0;min-width:0;
     height:568px;border-radius:18px;display:block;text-decoration:none;color:#fff;
-    transition:flex-grow .55s cubic-bezier(.2,.75,.2,1)}
-  .rcard[data-wide]{flex-grow:2.65}
+    cursor:pointer;transition:flex-grow .55s cubic-bezier(.2,.75,.2,1)}
+  /* the open card is the wide one; everything else shares what is left */
+  .rcard[data-open]{flex-grow:2.65}
   .rcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
     pointer-events:none;user-select:none;transform:scale(1.035);
     transition:transform .7s cubic-bezier(.2,.75,.2,1)}
@@ -242,10 +243,6 @@
   .rcard-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .rcard-idx{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
     font-weight:650;color:#fff;white-space:nowrap;text-transform:uppercase}
-  .rcard-go{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;
-    border:1px solid rgba(255,255,255,.65);border-radius:50%;color:#fff;
-    transition:background .25s,transform .3s}
-  .rcard:hover .rcard-go{background:rgba(255,255,255,.22);transform:rotate(-45deg)}
   .rcard-foot{margin-top:auto;min-width:0}
   .rcard-foot h4{margin:0;font-family:var(--display);font-size:36px;font-weight:600;
     letter-spacing:-.03em;line-height:1.1;color:#fff;
@@ -253,15 +250,21 @@
   /* the copy opens on hover only -- the card itself is not a link any more */
   .rcard-more{overflow:hidden;max-height:0;opacity:0;margin-top:0;
     transition:max-height .48s cubic-bezier(.2,.75,.2,1),opacity .3s,margin .45s}
-  .rcard:hover .rcard-more,.rcard:focus-within .rcard-more{max-height:230px;
-    opacity:1;margin-top:2px}
+  .rcard[data-open] .rcard-more{max-height:230px;opacity:1;margin-top:2px}
+  /* hover opens a card the same way a click does. A card that is open but not the
+     hovered one must fall back to the closed look, so the hover wins explicitly. */
+  .rcard:hover .rcard-more{max-height:230px;opacity:1;margin-top:2px}
+  .rcard:hover{flex-grow:2.65}
+  .ribbon[data-hover] .rcard[data-open]:not(:hover){flex-grow:1}
   /* an open narrow card keeps a slightly smaller headline than the wide one */
-  .rcard:not([data-wide]):hover .rcard-foot h4,
-  .rcard:not([data-wide]):focus-within .rcard-foot h4{font-size:30px;line-height:1.1}
+  .rcard[data-open]:not([data-wide]) .rcard-foot h4{font-size:30px;line-height:1.1}
+  .rcard:hover .rcard-foot h4{font-size:30px;line-height:1.1}
+  .ribbon[data-hover] .rcard[data-open]:not(:hover) .rcard-more{max-height:0;
+    opacity:0;margin-top:0}
   .rcard-more p{margin:13px 0 0;font-size:14px;line-height:1.5;max-width:440px;
     color:rgba(255,255,255,.88)}
-  /* narrow cards get a smaller headline; the open one always gets the big one */
-  .rcard:not([data-wide]):not(:hover):not(:focus-within) .rcard-foot h4{font-size:21px;
+  /* closed narrow cards get a smaller headline; the open one gets the big one */
+  .rcard:not([data-open]):not([data-wide]) .rcard-foot h4{font-size:21px;
     letter-spacing:-.012em;line-height:1.18}
 
   /* ---- wide placeholder slab (screenshot / demo / embed) ---- */
@@ -447,13 +450,12 @@
       <h3>How it works</h3>
     </div>
     <div class="ribbon">
-      <div class="rcard" data-wide>
+      <div class="rcard" role="button" tabindex="0" aria-expanded="true" data-wide data-open>
         <img src="img/O8fokotEIN1oVKBtIMx9S7tyHjQ.jpg" alt="Liquid chrome ribbon, the board" loading="lazy" decoding="async">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">01 &middot; the board</span>
-            <span class="rcard-go" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M3.5 10H16M10 4L16 10L10 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
           <div class="rcard-foot">
             <h4>79 creators, one number each</h4>
@@ -463,13 +465,12 @@
           </div>
         </div>
       </div>
-      <div class="rcard">
+      <div class="rcard" role="button" tabindex="0" aria-expanded="false">
         <img src="img/Y03xamjEt4yKQseebeyglKonTrU.jpg" alt="Terracotta staircase, the draft" loading="lazy" decoding="async">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">02 &middot; the draft</span>
-            <span class="rcard-go" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M3.5 10H16M10 4L16 10L10 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
           <div class="rcard-foot">
             <h4>Thesis and pre-mortem, or nothing</h4>
@@ -479,13 +480,12 @@
           </div>
         </div>
       </div>
-      <div class="rcard">
+      <div class="rcard" role="button" tabindex="0" aria-expanded="false">
         <img src="img/bJZSjHEeYwImzHivPsClN9MN1nM.jpg" alt="Red glass still life, the book" loading="lazy" decoding="async">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">03 &middot; the book</span>
-            <span class="rcard-go" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M3.5 10H16M10 4L16 10L10 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
           <div class="rcard-foot">
             <h4>Every call, signed and kept</h4>
@@ -632,6 +632,73 @@ fetch("/api/signals", { cache: "no-store" })
   })
   .catch(() => { /* placeholders stay; the page has to survive a cold API */ });
 </script>
+<script>
+/* ribbon accordion — one card is open at a time. Hover opens a card through CSS,
+   a click pins one, and arrow keys move both the focus and the open flag. */
+(function () {
+  var strip = document.querySelector('.ribbon');
+  if (!strip) return;
+  var cards = [].slice.call(strip.querySelectorAll('.rcard'));
+  if (!cards.length) return;
+  var pinned = -1;              // index the reader clicked, -1 while hover rules
+
+  function open(i) {
+    if (i < -1 || i >= cards.length) return;
+    cards.forEach(function (c, n) {
+      if (n === i) c.setAttribute('data-open', '');
+      else c.removeAttribute('data-open');
+      c.setAttribute('aria-expanded', n === i ? 'true' : 'false');
+    });
+  }
+  function unpin() {
+    pinned = -1;
+    strip.removeAttribute('data-pinned');
+  }
+
+  cards.forEach(function (card, i) {
+    card.addEventListener('click', function () {
+      pinned = i;
+      open(i);
+    });
+    card.addEventListener('mouseenter', function () {
+      if (pinned >= 0 && pinned !== i) { pinned = -1; strip.removeAttribute('data-pinned'); open(-1); }
+    });
+    card.addEventListener('keydown', function (e) {
+      var next = -1;
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        pinned = i;
+        strip.setAttribute('data-pinned', '');
+        open(i);
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % cards.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + cards.length) % cards.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = cards.length - 1;
+      if (next >= 0) {
+        e.preventDefault();
+        cards[next].focus();
+        pinned = next;
+        strip.setAttribute('data-pinned', '');
+        open(next);
+      }
+    });
+  });
+
+  // while a pointer is inside the strip, hover owns the layout; once it leaves the
+  // pin (or the first card on touch devices) takes over again
+  strip.addEventListener('mouseenter', function () { strip.setAttribute('data-hover', ''); });
+  strip.addEventListener('mouseleave', function () {
+    unpin();
+    strip.removeAttribute('data-hover');
+    if (pinned < 0) open(0);
+  });
+  // a pointer that leaves the whole window also drops it
+  document.addEventListener('mouseleave', unpin);
+})();
+</script>
+
 <script>
 /* theme switch — one knob group, one stored value, both pages agree */
 (function () {
