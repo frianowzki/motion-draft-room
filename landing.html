@@ -439,7 +439,7 @@
      there every card is simply open: a tap-to-expand stack hides numbers on the
      device with the least room to scroll. No arrows and no per-card buttons. */
   .rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
-    margin-top:4px;align-items:start}
+    margin-top:4px;align-items:stretch}
   .rail-card{position:relative;background:var(--slab);color:var(--slab-ink);
     border-radius:18px;padding:20px 20px 18px;overflow:hidden;
     box-shadow:inset 0 0 0 1px transparent;
@@ -460,6 +460,9 @@
   /* desktop only: one card opens at a time; the others close back to the number */
   @media (min-width:941px){
     .rail-card{cursor:pointer;min-height:132px;display:flex;flex-direction:column}
+    /* the number sits on top, the copy fills whatever the tallest card needs,
+       so the row reads as one band rather than four different heights */
+    .rail-more{margin-top:auto}
     /* one card open at a time — the hairline says which, the slab stays the
        same ink as the FAQ and the room so the row reads as one surface */
     .rail-card[data-open]{box-shadow:inset 0 0 0 1px var(--slab-line)}
