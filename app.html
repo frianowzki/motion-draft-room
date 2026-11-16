@@ -108,38 +108,6 @@
   :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4c4c48}
   :root[data-theme="dark"] .live-dot{box-shadow:0 0 0 3px rgba(255,255,255,.14)}
 
-  /* ---- theme switch (Framer "CoolThemeSwitch" port): a knob group pinned to
-     the top-right of the room, matched to the panel it floats over ---- */
-  .themesw{position:fixed;top:14px;right:14px;z-index:70;
-    display:flex;align-items:center;gap:2px;padding:3px;border-radius:var(--r-pill);
-    background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
-    box-shadow:inset 0 0 0 1px var(--line)}
-  .themesw button{width:30px;height:30px;border:0;border-radius:var(--r-pill);background:transparent;
-    display:grid;place-items:center;cursor:pointer;color:var(--faint);
-    transition:color .2s ease,background .2s ease}
-  .themesw button:hover{color:var(--ink);background:rgba(17,17,17,.06)}
-  .themesw button[aria-pressed="true"]{color:var(--ink);background:rgba(17,17,17,.09);
-    box-shadow:inset 0 0 0 1px var(--line)}
-  .themesw button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .themesw svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;
-    stroke-linecap:round;stroke-linejoin:round;display:block}
-  :root[data-theme="dark"] .themesw{background:rgba(26,26,25,.82);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-  :root[data-theme="dark"] .themesw button:hover{color:#fff;background:rgba(255,255,255,.1)}
-  :root[data-theme="dark"] .themesw button[aria-pressed="true"]{color:#fff;background:rgba(255,255,255,.16);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
-  :root[data-theme="dark"] .themesw button:focus-visible{outline-color:#fff}
-  html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
-  @media (prefers-reduced-motion:reduce){
-    html.theming,html.theming body{transition:none}
-    .themesw button{transition:none}
-  }
-  @media(max-width:600px){
-    .themesw{top:10px;right:10px;padding:2px}
-    .themesw button{width:32px;height:32px}
-    .themesw svg{width:15px;height:15px}
-  }
-
   *{box-sizing:border-box}
   .backhome{position:fixed;left:14px;bottom:14px;z-index:50;display:inline-flex;
     align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
@@ -594,8 +562,9 @@
   :root[data-theme="dark"] .tgs-b:focus-visible{outline-color:#fff}
   @media (prefers-reduced-motion:reduce){.tgs-knob{transition:none}}
 
-  /* dashboard placement: the switch sits pinned top-right on desktop, and on a
-     phone it drops into the header strip so it can't land on the nav pill */
+  /* dashboard placement: the switch lives in a header strip at the top of the
+     content column — right-aligned on desktop, its own row on a phone, so it can
+     never land on the nav pill or the back-home chip */
   .apphead{display:flex;justify-content:flex-end;padding-top:14px}
   .apphead #themesw{position:relative;z-index:70;pointer-events:auto}
   @media(max-width:940px){.apphead{padding:10px 10px 0}}

@@ -24,7 +24,18 @@ if [ -d fonts ]; then
   cp -R fonts public/fonts
 fi
 
-if curl -fsSL --max-time 30 "https://codeload.github.com/${REPO}/tar.gz/refs/heads/data" -o /tmp/data.tgz; then
+# The repository is private, so the anonymous tarball host answers 404. Use a
+# fine-grained read-only token when the build environment has one; without it the
+# deploy just leans on /api/signals at request time.
+GH_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+if [ -n "$GH_TOKEN" ]; then
+  GHAUTH="Authorization: Bearer $GH_TOKEN"
+else
+  GHAUTH="X-Anon: 1"
+fi
+
+if curl -fsSL --max-time 30 -H "$GHAUTH" \
+    "https://codeload.github.com/${REPO}/tar.gz/refs/heads/data" -o /tmp/data.tgz; then
   mkdir -p /tmp/databranch
   tar -xzf /tmp/data.tgz -C /tmp/databranch --strip-components=1
   if [ -f /tmp/databranch/data/signals.json ]; then

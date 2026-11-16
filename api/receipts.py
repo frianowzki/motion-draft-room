@@ -42,7 +42,8 @@ import xauth_lib as xl
 REPO = "frianowzki/motion-draft-room"
 BRANCH = "data"
 PATH = "data/receipts.json"
-SNAPSHOT_URL = f"https://raw.githubusercontent.com/{REPO}/{BRANCH}/data/signals.json"
+SNAPSHOT_PATH = "data/signals.json"
+SNAPSHOT_URL = f"https://api.github.com/repos/{REPO}/contents/{SNAPSHOT_PATH}?ref={BRANCH}"
 MAX_BODY = 8_000
 MAX_RECEIPTS = 500
 
@@ -121,7 +122,16 @@ def _summary(receipts):
 
 
 def _snapshots():
-    with urllib.request.urlopen(SNAPSHOT_URL, timeout=20) as r:
+    """The snapshot lives on a private branch, so this read needs the same token the
+    write path uses — the anonymous raw host answers 404 now."""
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    headers = {"User-Agent": "motion-draft-room/0.1",
+               "Accept": "application/vnd.github.raw",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(SNAPSHOT_URL, headers=headers)
+    with urllib.request.urlopen(req, timeout=20) as r:
         return json.loads(r.read())
 
 

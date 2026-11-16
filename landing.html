@@ -104,8 +104,12 @@
     box-shadow:none}
   :root[data-theme="dark"] .closer .btn.primary:hover{background:#000}
   :root[data-theme="dark"] .hc-state{color:var(--bg);background:var(--ink)}
-  :root[data-theme="dark"] .pillnav{background:linear-gradient(rgba(38,38,36,.9) 0%,rgba(24,24,23,.92) 100%);
-    box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.12)}
+  :root[data-theme="dark"] .pillnav{background:rgba(28,28,26,.48);
+    box-shadow:0 10px 30px rgba(0,0,0,.42),inset 0 0 0 1px rgba(255,255,255,.14)}
+  :root[data-theme="dark"] .pillnav a{color:#9d9a93}
+  :root[data-theme="dark"] .pillnav a:hover{color:#fff;background:rgba(255,255,255,.09)}
+  :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 
   /* ---- theme switch (Framer "CoolThemeSwitch" port): two icon knobs in a
      sunken track, and the page cross-fades between two inks ---- */
@@ -157,17 +161,20 @@
     background:linear-gradient(var(--bg) 72%,transparent);z-index:-1;pointer-events:none}
   .dockrow .pillnav{margin-top:0;flex:none}
   .themesw{position:static;flex:none}
+  /* light mode: a softly translucent paper pill — the ink stays legible over the
+     hero without the heavy dark slab the first pass used */
   .pillnav{pointer-events:auto;margin-top:14px;display:flex;align-items:center;gap:6px;
     padding:8px 10px;border-radius:100px;
-    background:linear-gradient(rgba(23,23,23,.88) 0%,rgba(13,13,13,.88) 100%);
-    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-    box-shadow:0 10px 30px rgba(17,17,17,.18),inset 0 0 0 1px rgba(255,255,255,.10)}
+    background:rgba(255,255,255,.55);
+    -webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);
+    box-shadow:0 8px 24px rgba(17,17,17,.08),inset 0 0 0 1px rgba(17,17,17,.10)}
   .pillnav a{width:38px;height:38px;border-radius:100px;display:grid;place-items:center;
-    color:#8a8a8a;transition:color .18s ease,background .18s ease}
-  .pillnav a:hover{color:#fff;background:rgba(255,255,255,.08)}
-  .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.12)}
-  .pillnav a:focus-visible{outline:2px solid #fff;outline-offset:2px}
-  .pillnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;
+    color:var(--faint);transition:color .18s ease,background .18s ease}
+  .pillnav a:hover{color:var(--ink);background:rgba(17,17,17,.06)}
+  .pillnav a.is-active{color:var(--ink);background:rgba(17,17,17,.09);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
+  .pillnav a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .pillnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;
     stroke-linecap:round;stroke-linejoin:round}
 
   /* ---- buttons ---- */
@@ -239,6 +246,71 @@
     letter-spacing:.06em;text-transform:uppercase;color:var(--dim);white-space:nowrap;
     background:rgba(255,255,255,.66);box-shadow:inset 0 0 0 1px var(--line);
     padding:6px 10px;border-radius:var(--r-pill)}
+
+
+  /* ---- the room itself: five signal cards, each a swipeable top-five list.
+     A card opens like an accordion and becomes the wide one on desktop; the
+     list inside it snaps card-by-card, one creator at a time ---- */
+  .room{margin-top:4px}
+  .room-grid{display:flex;align-items:flex-start;gap:12px;min-width:0;max-width:100%}
+  .room-card{flex:1 1 0;max-width:100%;min-width:0;background:var(--slab);border-radius:18px;
+    overflow:hidden;transition:flex-grow .38s cubic-bezier(.2,.85,.25,1),background .25s ease;
+    box-shadow:inset 0 0 0 1px transparent}
+  .room-h{display:flex;align-items:center;gap:9px;width:100%;padding:16px 16px;
+    font-size:13px;font-weight:500;letter-spacing:-.01em;color:var(--slab-ink);
+    background:none;border:0;cursor:pointer;text-align:left;font-family:inherit}
+  .room-h:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+  .room-h b{flex:1;min-width:0;font-weight:500}
+  .room-dot{width:7px;height:7px;border-radius:50%;flex:none;background:currentColor;opacity:.5}
+  .room-card[data-tag="SURGING"] .room-dot{background:#3f9d63;opacity:1}
+  .room-card[data-tag="COILED"] .room-dot{background:#b8862b;opacity:1}
+  .room-card[data-tag="SLEEPER"] .room-dot{background:#5b73c4;opacity:1}
+  .room-card[data-tag="QUIET"] .room-dot{background:#8a8a84;opacity:1}
+  .room-card[data-tag="FADE"] .room-dot{background:#b45a4f;opacity:1}
+  .room-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--slab-dim)}
+  .room-chev{width:15px;height:15px;flex:none;color:var(--slab-dim);
+    transition:transform .3s cubic-bezier(.2,.85,.25,1)}
+  .room-card[data-open] .room-chev{transform:rotate(180deg)}
+  .room-body{display:grid;grid-template-rows:0fr;opacity:0;
+    transition:grid-template-rows .38s cubic-bezier(.2,.85,.25,1),opacity .28s ease}
+  .room-card[data-open] .room-body{grid-template-rows:1fr;opacity:1}
+  .room-card[data-open] .room-body{opacity:1;transition-delay:.12s}
+  .room-scroller{overflow:hidden;min-height:0}
+  .room-list{display:flex;gap:10px;margin:0;padding:0 16px 16px;list-style:none;
+    scroll-padding-inline:16px;
+    overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
+    scrollbar-width:none}
+  .room-list::-webkit-scrollbar{display:none}
+  .room-row{flex:0 0 calc(100% - 16px);scroll-snap-align:start;display:grid;
+    grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:11px;
+    padding:11px 12px;border-radius:12px;background:var(--slab-2,rgba(127,127,127,.09))}
+  .room-rank{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
+    color:var(--slab-dim)}
+  .room-name{min-width:0;font-size:12.5px;font-weight:500;color:var(--slab-ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .room-num{font-family:var(--mono);font-size:11px;color:var(--slab-dim);
+    font-variant-numeric:tabular-nums}
+  .room-num.up{color:#3f9d63}
+  .room-num.down{color:#b45a4f}
+  .room-row.ph{opacity:.55}
+  .room-row.ph .room-name{font-style:italic}
+  .room-dots{display:flex;justify-content:center;gap:5px;padding:0 16px 14px}
+  .room-dots i{width:5px;height:5px;border-radius:50%;background:currentColor;
+    color:var(--slab-dim);opacity:.4;transition:opacity .2s ease,width .2s ease}
+  .room-dots i.on{opacity:1;width:12px;border-radius:3px}
+  .room-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    margin-top:14px;flex-wrap:wrap}
+  .room-src{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--faint)}
+  @media(max-width:1100px){
+    .room-grid{flex-wrap:wrap}
+    .room-card{flex:1 1 calc(50% - 12px)}
+  }
+  @media(max-width:940px){
+    /* phone: one column, every card closed until tapped, one creator per swipe */
+    .room-grid{display:block}
+    .room-card{width:100%;margin-bottom:10px}
+  }
 
   /* ---- section furniture ---- */
   section.block{margin-top:64px}
@@ -525,7 +597,7 @@
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.14648 9.07361C9.31728 8.54732 9.63015 8.07896 10.0508 7.71948C10.4714 7.36001 10.9838 7.12378 11.5303 7.03708C12.0768 6.95038 12.6362 7.0164 13.1475 7.22803C13.6587 7.43966 14.1014 7.78875 14.4268 8.23633C14.7521 8.68391 14.9469 9.21256 14.9904 9.76416C15.0339 10.3158 14.9238 10.8688 14.6727 11.3618C14.4215 11.8548 14.0394 12.2685 13.5676 12.5576C13.0958 12.8467 12.5533 12.9998 12 12.9998V14.0002M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 17V17.1L11.9502 17.1002V17H12.0498Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6"/><path d="M5 6v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6"/><path d="M5 12v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-6"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V8a3.6 3.6 0 0 1 7.2 0v2.5"/><circle cx="12" cy="15.2" r="1.1"/></symbol>
   <symbol id="fi-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162L22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299l-.929-1.329L3.076 1.56h3.182l5.965 8.532l.929 1.329l7.754 11.09h-3.182z"/></symbol>
@@ -546,16 +618,16 @@
     <div class="dockrow">
     <nav class="pillnav" aria-label="Primary">
       <a href="#top" aria-label="Top" data-nav class="is-active">
-        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M7.88403 3.86687L5.88403 5.10813C3.98695 6.28551 3.0384 6.87421 2.5192 7.82274C2 8.77128 2 9.91549 2 12.2039V13.725C2 17.6258 2 19.5763 3.17157 20.7881C4.34315 22 6.22876 22 10 22H14C17.7712 22 19.6569 22 20.8284 20.7881C22 19.5763 22 17.6258 22 13.725V12.2039C22 9.91549 22 8.77128 21.4808 7.82274C20.9616 6.87421 20.0131 6.28551 18.116 5.10812L16.116 3.86687C14.1106 2.62229 13.1079 2 12 2C10.8921 2 9.88939 2.62229 7.88403 3.86687Z" opacity=".5"/><path d="M15 18H9"/></g></svg>
+        <svg viewBox="0 0 24 24"><path d="M20 17.0002V11.4522C20 10.9179 19.9995 10.6506 19.9346 10.4019C19.877 10.1816 19.7825 9.97307 19.6546 9.78464C19.5102 9.57201 19.3096 9.39569 18.9074 9.04383L14.1074 4.84383C13.3608 4.19054 12.9875 3.86406 12.5674 3.73982C12.1972 3.63035 11.8026 3.63035 11.4324 3.73982C11.0126 3.86397 10.6398 4.19014 9.89436 4.84244L5.09277 9.04383C4.69064 9.39569 4.49004 9.57201 4.3457 9.78464C4.21779 9.97307 4.12255 10.1816 4.06497 10.4019C4 10.6506 4 10.9179 4 11.4522V17.0002C4 17.932 4 18.3978 4.15224 18.7654C4.35523 19.2554 4.74432 19.6452 5.23438 19.8482C5.60192 20.0005 6.06786 20.0005 6.99974 20.0005C7.93163 20.0005 8.39808 20.0005 8.76562 19.8482C9.25568 19.6452 9.64467 19.2555 9.84766 18.7654C9.9999 18.3979 10 17.932 10 17.0001V16.0001C10 14.8955 10.8954 14.0001 12 14.0001C13.1046 14.0001 14 14.8955 14 16.0001V17.0001C14 17.932 14 18.3979 14.1522 18.7654C14.3552 19.2555 14.7443 19.6452 15.2344 19.8482C15.6019 20.0005 16.0679 20.0005 16.9997 20.0005C17.9316 20.0005 18.3981 20.0005 18.7656 19.8482C19.2557 19.6452 19.6447 19.2554 19.8477 18.7654C19.9999 18.3978 20 17.932 20 17.0002Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
       <a href="#features" aria-label="How it works" data-nav>
-        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M6.5 10.5C4.61438 10.5 3.67157 10.5 3.08579 9.91421C2.5 9.32843 2.5 8.38562 2.5 6.5C2.5 4.61438 2.5 3.67157 3.08579 3.08579C3.67157 2.5 4.61438 2.5 6.5 2.5C8.38562 2.5 9.32843 2.5 9.91421 3.08579C10.5 3.67157 10.5 4.61438 10.5 6.5C10.5 8.38562 10.5 9.32843 9.91421 9.91421C9.32843 10.5 8.38562 10.5 6.5 10.5Z" opacity=".5"/><path d="M17.5 21.5C15.6144 21.5 14.6716 21.5 14.0858 20.9142C13.5 20.3284 13.5 19.3856 13.5 17.5C13.5 15.6144 13.5 14.6716 14.0858 14.0858C14.6716 13.5 15.6144 13.5 17.5 13.5C19.3856 13.5 20.3284 13.5 20.9142 14.0858C21.5 14.6716 21.5 15.6144 21.5 17.5C21.5 19.3856 21.5 20.3284 20.9142 20.9142C20.3284 21.5 19.3856 21.5 17.5 21.5Z" opacity=".5"/><path d="M6.5 21.5C4.61438 21.5 3.67157 21.5 3.08579 20.9142C2.5 20.3284 2.5 19.3856 2.5 17.5C2.5 15.6144 2.5 14.6716 3.08579 14.0858C3.67157 13.5 4.61438 13.5 6.5 13.5C8.38562 13.5 9.32843 13.5 9.91421 14.0858C10.5 14.6716 10.5 15.6144 10.5 17.5C10.5 19.3856 10.5 20.3284 9.91421 20.9142C9.32843 21.5 8.38562 21.5 6.5 21.5Z"/><path d="M17.5 10.5C15.6144 10.5 14.6716 10.5 14.0858 9.91421C13.5 9.32843 13.5 8.38562 13.5 6.5C13.5 4.61438 13.5 3.67157 14.0858 3.08579C14.6716 2.5 15.6144 2.5 17.5 2.5C19.3856 2.5 20.3284 2.5 20.9142 3.08579C21.5 3.67157 21.5 4.61438 21.5 6.5C21.5 8.38562 21.5 9.32843 20.9142 9.91421C20.3284 10.5 19.3856 10.5 17.5 10.5Z"/></g></svg>
+        <svg viewBox="0 0 24 24"><path d="M14 15C14 15.5523 14.4477 16 15 16C15.5523 16 16 15.5523 16 15C16 14.4477 15.5523 14 15 14C14.4477 14 14 14.4477 14 15Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/> <path d="M8 15C8 15.5523 8.44772 16 9 16C9.55228 16 10 15.5523 10 15C10 14.4477 9.55228 14 9 14C8.44772 14 8 14.4477 8 15Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/> <path d="M14 9C14 9.55228 14.4477 10 15 10C15.5523 10 16 9.55228 16 9C16 8.44772 15.5523 8 15 8C14.4477 8 14 8.44772 14 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/> <path d="M8 9C8 9.55228 8.44772 10 9 10C9.55228 10 10 9.55228 10 9C10 8.44772 9.55228 8 9 8C8.44772 8 8 8.44772 8 9Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
       <a href="#showcase" aria-label="The room" data-nav>
-        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22Z"/><circle cx="16" cy="8" r="2" opacity=".5"/><path d="M2 12.5001L3.75159 10.9675C4.66286 10.1702 6.03628 10.2159 6.89249 11.0721L11.1822 15.3618C11.8694 16.0491 12.9512 16.1428 13.7464 15.5839L14.0446 15.3744C15.1888 14.5702 16.7369 14.6634 17.7765 15.599L21 18.5001" opacity=".5"/></g></svg>
+        <svg viewBox="0 0 24 24"><path d="M3.00005 17.0001C3 16.9355 3 16.8689 3 16.8002V7.2002C3 6.08009 3 5.51962 3.21799 5.0918C3.40973 4.71547 3.71547 4.40973 4.0918 4.21799C4.51962 4 5.08009 4 6.2002 4H17.8002C18.9203 4 19.4801 4 19.9079 4.21799C20.2842 4.40973 20.5905 4.71547 20.7822 5.0918C21 5.5192 21 6.07899 21 7.19691V16.8031C21 17.2881 21 17.6679 20.9822 17.9774M3.00005 17.0001C3.00082 17.9884 3.01337 18.5058 3.21799 18.9074C3.40973 19.2837 3.71547 19.5905 4.0918 19.7822C4.5192 20 5.07899 20 6.19691 20H17.8036C18.9215 20 19.4805 20 19.9079 19.7822C20.2842 19.5905 20.5905 19.2837 20.7822 18.9074C20.9055 18.6654 20.959 18.3813 20.9822 17.9774M3.00005 17.0001L7.76798 11.4375L7.76939 11.436C8.19227 10.9426 8.40406 10.6955 8.65527 10.6064C8.87594 10.5282 9.11686 10.53 9.33643 10.6113C9.58664 10.704 9.79506 10.9539 10.2119 11.4541L12.8831 14.6595C13.269 15.1226 13.463 15.3554 13.6986 15.4489C13.9065 15.5313 14.1357 15.5406 14.3501 15.4773C14.5942 15.4053 14.8091 15.1904 15.2388 14.7607L15.7358 14.2637C16.1733 13.8262 16.3921 13.6076 16.6397 13.5361C16.8571 13.4734 17.0896 13.4869 17.2988 13.5732C17.537 13.6716 17.7302 13.9124 18.1167 14.3955L20.9822 17.9774M20.9822 17.9774L21 17.9996M15 10C14.4477 10 14 9.55228 14 9C14 8.44772 14.4477 8 15 8C15.5523 8 16 8.44772 16 9C16 9.55228 15.5523 10 15 10Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
       <a href="#faq" aria-label="FAQ" data-nav>
-        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10" opacity=".5"/><path d="M10.125 8.875C10.125 7.83947 10.9645 7 12 7C13.0355 7 13.875 7.83947 13.875 8.875C13.875 9.56245 13.505 10.1635 12.9534 10.4899C12.478 10.7711 12 11.1977 12 11.75V13"/><path stroke-linejoin="round" d="M12 16H12.0001"/></g></svg>
+        <svg viewBox="0 0 24 24"><path d="M9.14648 9.07361C9.31728 8.54732 9.63015 8.07896 10.0508 7.71948C10.4714 7.36001 10.9838 7.12378 11.5303 7.03708C12.0768 6.95038 12.6362 7.0164 13.1475 7.22803C13.6587 7.43966 14.1014 7.78875 14.4268 8.23633C14.7521 8.68391 14.9469 9.21256 14.9904 9.76416C15.0339 10.3158 14.9238 10.8688 14.6727 11.3618C14.4215 11.8548 14.0394 12.2685 13.5676 12.5576C13.0958 12.8467 12.5533 12.9998 12 12.9998V14.0002M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 17V17.1L11.9502 17.1002V17H12.0498Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </nav>
     <div class="tgs" id="themesw" role="group" aria-label="Theme">
@@ -639,20 +711,62 @@
     </div>
   </section>
 
-  <!-- ============ SHOWCASE (screenshot slot) ============ -->
+  <!-- ============ THE ROOM ITSELF (live top 5 per signal, swipeable) ============ -->
   <section class="block" id="showcase">
     <div class="sec-head">
       <h3>The room itself</h3>
+      <span class="kicker" id="roomNote">top 5 per signal &middot; live</span>
     </div>
-    <div class="slab">
-      <svg class="ic"><use href="#i-image"/></svg>
-      <span>[drop a screenshot of the room here]</span>
-      <a class="acta acta-sm" href="/app">
-        <span class="acta-t">Open the app</span>
-        <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
-      </a>
+    <div class="room" id="room" data-room role="region" aria-label="Top five creators per signal">
+      <div class="room-grid">
+        <article class="room-card" data-tag="SURGING">
+          <header class="room-h">
+            <span class="room-dot"></span><b>Surging</b><span class="room-n" data-room-n>02/5</span>
+            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
+          </header>
+          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+            <li class="room-row ph"><span class="room-rank">01</span><span class="room-name">loading the board&hellip;</span></li>
+          </ol></div></div>
+        </article>
+        <article class="room-card" data-tag="COILED">
+          <header class="room-h">
+            <span class="room-dot"></span><b>Coiled</b><span class="room-n" data-room-n>02/5</span>
+            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
+          </header>
+          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        </article>
+        <article class="room-card" data-tag="SLEEPER">
+          <header class="room-h">
+            <span class="room-dot"></span><b>Sleeper</b><span class="room-n" data-room-n>14/5</span>
+            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
+          </header>
+          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        </article>
+        <article class="room-card" data-tag="QUIET">
+          <header class="room-h">
+            <span class="room-dot"></span><b>Quiet</b><span class="room-n" data-room-n>32/5</span>
+            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
+          </header>
+          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        </article>
+        <article class="room-card" data-tag="FADE">
+          <header class="room-h">
+            <span class="room-dot"></span><b>Fade</b><span class="room-n" data-room-n>02/5</span>
+            <svg class="ic room-chev"><use href="#i-chevron-down"/></svg>
+          </header>
+          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        </article>
+      </div>
+      <div class="room-foot">
+        <span class="room-src" id="roomSrc">reading the board&hellip;</span>
+        <a class="acta acta-sm" href="/app">
+          <span class="acta-t">Open the app</span>
+          <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+        </a>
+      </div>
     </div>
   </section>
+
 
   <!-- ============ STATS STRIP (live from the API) ============ -->
   <div class="stats" id="proof">
@@ -989,6 +1103,116 @@ fetch("/api/signals", { cache: "no-store" })
       if (!localStorage.getItem('mdr-theme')) set(e.matches ? 'dark' : 'light', true);
     });
   } catch (e) {}
+})();
+</script>
+
+<script>
+/* the room itself — five signal cards. Each card is an accordion: opening one
+   closes the rest and gives it the wide slot on desktop. Inside an open card the
+   list snaps one creator at a time (native scroll-snap, so a swipe or a wheel
+   works on a phone), and the dot rail under it mirrors the position. */
+(function () {
+  var room = document.getElementById('room');
+  if (!room) return;
+  var cards = [].slice.call(room.querySelectorAll('.room-card'));
+  var narrow = window.matchMedia('(max-width:940px)');
+  var RANK = ['SURGING', 'COILED', 'SLEEPER', 'QUIET', 'FADE'];
+
+  function openCard(card, on) {
+    cards.forEach(function (c) {
+      if (c === card && on) c.setAttribute('data-open', '');
+      else c.removeAttribute('data-open');
+      var h = c.querySelector('.room-h');
+      if (h) h.setAttribute('aria-expanded', (c === card && on) ? 'true' : 'false');
+    });
+    room.setAttribute('data-any', on ? '' : 'x');
+  }
+
+  cards.forEach(function (card) {
+    var h = card.querySelector('.room-h'), list = card.querySelector('.room-list');
+    if (h) {
+      h.setAttribute('role', 'button');
+      h.setAttribute('tabindex', '0');
+      var toggle = function () { openCard(card, !card.hasAttribute('data-open')); };
+      h.addEventListener('click', toggle);
+      h.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    }
+    if (!list) return;
+    var n = list.children.length;
+    var dots = document.createElement('div');
+    dots.className = 'room-dots';
+    dots.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < Math.min(n, 5); i++) dots.appendChild(document.createElement('i'));
+    function paint() {
+      var step = (list.children[0] ? list.children[0].getBoundingClientRect().width : list.clientWidth) + 10;
+      var k = Math.round(list.scrollLeft / (step || 1));
+      [].forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
+    }
+    if (dots.children.length > 1) {
+      card.appendChild(dots);
+      list.addEventListener('scroll', function () { requestAnimationFrame(paint); }, { passive: true });
+      window.addEventListener('resize', paint);
+      paint();
+    }
+  });
+
+  // desktop: the first card starts open so the section never reads as five
+  // closed drawers; a phone starts flat so every card is one tap away
+  var auto = !!narrow.matches;
+  if (!narrow.matches) openCard(cards[0], true);
+  narrow.addEventListener && narrow.addEventListener('change', function (e) {
+    auto = e.matches;
+    if (e.matches) openCard(null, false); else openCard(cards[0], true);
+  });
+  // a wide card hands the width back as soon as the pointer leaves the row, so a
+  // closed row is what a visitor scrolls past — unless they pinned one open
+  // outside the row (a keyboard tab counts as intent)
+  if (!auto) {
+    room.addEventListener('mouseleave', function () {
+      if (!room.contains(document.activeElement)) openCard(null, false);
+    });
+  }
+
+  // fill from the same payload the app reads. A short signal (coiled and fade
+  // have two names today) shows what exists and says so, rather than padding
+  // the list with names the board never tagged.
+  fetch('/api/signals', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (d) {
+      var all = (d && d.creators) || [];
+      var src = document.getElementById('roomSrc');
+      cards.forEach(function (card) {
+        var tag = card.getAttribute('data-tag');
+        var rows = all.filter(function (c) {
+          return c && c.tags && c.tags.indexOf(tag) > -1;
+        }).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
+        var list = card.querySelector('.room-list');
+        var badge = card.querySelector('[data-room-n]');
+        if (badge) badge.textContent = ('0' + Math.min(rows.length, 5)).slice(-2) + '/' +
+          ('0' + rows.length).slice(-2);
+        if (!rows.length) {
+          list.innerHTML = '<li class="room-row ph"><span class="room-rank">--</span>' +
+            '<span class="room-name">nothing on the board right now</span></li>';
+          return;
+        }
+        list.innerHTML = rows.slice(0, 5).map(function (c, i) {
+          var m = typeof c.momentum === 'number' ? c.momentum : null;
+          var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
+          var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
+          var nm = c.name || c.handle || 'unnamed';
+          return '<li class="room-row"><span class="room-rank">0' + (i + 1) + '</span>' +
+            '<span class="room-name">' + nm.replace(/[<>&]/g, '') + '</span>' +
+            '<span class="room-num' + cls + '">' + num + '</span></li>';
+        }).join('');
+      });
+      if (src) src.textContent = 'board as of ' + (d.latestSnapshot || d.dataAsOf || 'just now');
+    })
+    .catch(function () {
+      var src = document.getElementById('roomSrc');
+      if (src) src.textContent = 'board unreachable — the app still has the latest snapshot';
+    });
 })();
 </script>
 </body>
