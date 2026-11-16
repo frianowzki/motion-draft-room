@@ -258,6 +258,12 @@
   tr.row.sel td{background:rgba(200,255,77,.055)}
   tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--accent)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
+  .avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;flex:none;
+    background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)}
+  .avatar.lg{width:34px;height:34px}
+  .avatar.sm{width:16px;height:16px}
+  .ncell{display:flex;align-items:center;gap:8px;min-width:0}
+  .nwrap{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .mono{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
   td:nth-child(3),th:nth-child(3),td:nth-child(5),th:nth-child(5){text-align:right}
@@ -330,7 +336,12 @@
     color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-soft);
     background:rgba(255,255,255,.02);white-space:nowrap}
   .slot .s.spent{color:var(--accent);background:rgba(200,255,77,.07);
-    box-shadow:inset 0 0 0 1px rgba(200,255,77,.28)}
+    box-shadow:inset 0 0 0 1px rgba(200,255,77,.28);
+    display:inline-flex;align-items:center;gap:5px}
+  .slot .s.spent b{font-weight:500;color:var(--ink)}
+  .avatar.av-fb{display:inline-flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:7.5px;font-weight:600;color:var(--dim);
+    background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line)}
   .projline{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin:2px 0 12px;line-height:1.6}
   .projline b{color:var(--ink);font-weight:500}
 
@@ -601,6 +612,18 @@ const signed = v => v == null ? "—" : (v > 0 ? "+" + v : String(v));
 const cls = v => v == null ? "flat" : v > 0 ? "up" : v < 0 ? "down" : "flat";
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 // every icon is a <symbol> in the sprite at the top of the document
+// Official avatar: Motion's own leaderboard serves /pfp/<id>.jpg. 8 of the 79 ids have
+// no image there yet (404), so a failed load is swapped for initials in place (classes
+// re-derived from data-extra (the size), since inline onerror can only use double quotes here).
+const AV_FB = "this.className='avatar av-fb'+(this.dataset.extra?''+this.dataset.extra:'');this.textContent=(this.dataset.ini||'?');this.onerror=null";
+const avatar = (c, size) => {
+  const cls = "avatar" + (size ? " " + size : "");
+  const ini = esc((((c && c.name) || "?").trim().slice(0, 2)).toUpperCase());
+  if (c && c.id) {
+    return `<img class="${cls}" src="https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${ini}" data-extra="${esc(size || "")}" onerror="${AV_FB}">`;
+  }
+  return `<span class="${cls} av-fb">${ini}</span>`;
+};
 const icon = (name, extra) => `<svg class="ic"${extra ? ` style="${extra}"` : ""}><use href="#i-${name}"/></svg>`;
 
 // identity is an X handle the player types, not a random id: a receipt nobody can
@@ -720,7 +743,7 @@ function render() {
     const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
     tr.innerHTML = `
       <td class="pos">${c.position}</td>
-      <td class="name">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</td>
+      <td class="name"><span class="ncell">${avatar(c)}<span class="nwrap">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</span></span></td>
       <td class="mono ${cls(c.delta4h)}">${signed(c.delta4h)}</td>
       <td title="momentum ${fmt(c.momentum)} (rank-weighted move, ±${fmt(100, 0)})"><div class="mbar"><i style="${barStyle(c.momentum)}"></i></div></td>
       <td class="mono stars" title="estimated stars (1-8)">${c.estStars}<span>/${8}</span></td>
@@ -763,7 +786,7 @@ function renderDetail() {
   const already = PICKS.find(p => p.name === c.name);
   box.innerHTML = `
     <h2>${icon("target")}Draft a pick</h2>
-    <h3>${esc(c.name)}</h3>
+    <h3><span class="ncell">${avatar(c, "lg")}${esc(c.name)}</span></h3>
     <div class="meta">
       <span>rank #${c.position}</span><span>·</span>
       <span class="stars">${STAR.repeat(c.estStars)}</span><span>est.</span><span>·</span>
@@ -820,7 +843,14 @@ function renderLineup() {
   const slot = $("#slot"); slot.innerHTML = "";
   for (let i = 0; i < SIZE; i++) {
     const p = PICKS[i];
-    slot.appendChild(el("span", "s" + (p ? " spent" : ""), p ? `${p.name} ${STAR.repeat(p.estStars)}` : `empty ${i + 1}`));
+    const chip = el("span", "s" + (p ? " spent" : ""));
+    if (p) {
+      const meta = DATA.creators.find(x => x.name === p.name);
+      chip.innerHTML = avatar(meta, "sm") + `<b>${esc(p.name)}</b> ${STAR.repeat(p.estStars)}`;
+    } else {
+      chip.textContent = `empty ${i + 1}`;
+    }
+    slot.appendChild(chip);
   }
   // Projection, shown live so a rarity swap is visible before locking. It uses the
   // rank stand-in for Motion Score and the assumed boost table - labelled as such.
