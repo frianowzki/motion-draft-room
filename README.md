@@ -21,7 +21,7 @@ fills.
 2. **Forecasts.** Each creator gets a `momentum` score with an explicit formula
    (no black box), a star estimate, and a tag: `SURGING` / `COILED` / `SLEEPER` /
    `FADE` / `QUIET` / `STEADY`.
-3. **Challenges you to commit.** You draft a lineup under a 15-star cap. Each pick
+3. **Challenges you to commit.** You draft a lineup under a 32-star cap (the cap from Motion's docs example). Each pick
    requires a one-line thesis **and** a pre-mortem ("what would make this wrong").
    No one-click lineups — a lineup without reasoning is rejected.
 4. **Settles itself.** When the next slot lands, every locked lineup is scored
