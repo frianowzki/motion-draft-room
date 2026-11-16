@@ -1337,7 +1337,7 @@ fetch("/api/signals", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
     .then(function (d) {
       var all = (d && d.creators) || [];
-      cards.forEach(function (card) {
+      cards.forEach(function (card, ci) {
         var tag = card.getAttribute('data-tag');
         var rows = all.filter(function (c) {
           return c && c.tags && c.tags.indexOf(tag) > -1;
@@ -1356,18 +1356,35 @@ fetch("/api/signals", { cache: "no-store" })
           var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
           var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
           var nm = (c.name || c.handle || 'unnamed').replace(/[<>&"]/g, '');
-          // the board publishes a face per creator id; if one is missing the row
-          // still reads, with initials standing in
+          // the board publishes a face per creator id, but it rate-limits a burst,
+          // so the face is fetched a beat after its row is in the DOM and the
+          // slot is staggered per card — initials hold the seat until it lands
           var face = c.id
-            ? '<img class="room-av" src="' + PFP + encodeURIComponent(c.id) + '.jpg" alt="" ' +
-              'loading="lazy" decoding="async" ' +
-              'onerror="this.outerHTML=\'<span class=&quot;room-av fb&quot;>' + initials(nm) + '</span>\'">'
+            ? '<span class="room-av fb" data-face="' + PFP + encodeURIComponent(c.id) + '.jpg">' +
+              initials(nm) + '</span>'
             : '<span class="room-av fb">' + initials(nm) + '</span>';
           return '<li class="room-row"><span class="room-rank">0' + (i + 1) + '</span>' +
             face + '<span class="room-name">' + nm + '</span>' +
             '<span class="room-num' + cls + '">' + num + '</span></li>';
         }).join('');
         buildDots(card);
+        // faces land in sequence: 5 per card, a card every 120ms, two at a time
+        var slots = [].slice.call(list.querySelectorAll('[data-face]'));
+        slots.forEach(function (slot, si) {
+          setTimeout(function () {
+            var url = slot.getAttribute('data-face');
+            if (!url) return;
+            var im = new Image();
+            im.onload = function () {
+              if (!slot.parentNode) return;
+              im.className = 'room-av';
+              im.alt = '';
+              slot.parentNode.replaceChild(im, slot);
+            };
+            // a missing face leaves the initials in place; nothing to undo
+            im.src = url;
+          }, 90 * si + 120 * ci);
+        });
       });
     })
     .catch(function () {

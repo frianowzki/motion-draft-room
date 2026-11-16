@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 public/
 .vercel/
+sig_sample.json
