@@ -3,6 +3,11 @@ name: collect
 # Runs OUTSIDE the agent VM on purpose: this machine is suspended every 30 minutes,
 # so anything time-triggered has to live here. Six runs a day align with Motion's
 # 4-hour leaderboard slots (00/04/08/12/16/20 UTC).
+#
+# Keep this file on `main`. GitHub only fires `schedule` from the default branch,
+# and `main` is the default here, so a copy that exists only on `data` never runs
+# (the 2026-11-16 gaps: 00Z and 08Z had no run at all). The job itself checks out
+# `data`, which is still where snapshots are committed.
 
 on:
   schedule:
