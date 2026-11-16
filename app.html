@@ -6,10 +6,11 @@
 /* paint the stored theme before the first frame does — no white flash, and the
    choice is shared between the landing page and the room */
 (function(){try{var t=localStorage.getItem('mdr-theme');
-  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  if(t!=='light'&&t!=='dark')t='dark';   /* dark is the house default, not the system */
   document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f0f0e">
 <title>Motion Draft Room</title>
 <meta name="description" content="Forecast arena and auto-settled receipt book for Motion's creator leaderboard. Public data only.">
 <link rel="preconnect" href="https://fonts.googleapis.com">

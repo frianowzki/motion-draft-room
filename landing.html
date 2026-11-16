@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Motion Draft Room — fantasy sports for creators</title>
 <meta name="description" content="Five picks, a thesis and a pre-mortem each, graded against the next Motion leaderboard window. Every call stays in the book.">
-<meta name="theme-color" content="#f4f3f0">
+<meta name="theme-color" content="#0f0f0e">
 <script>
 /* paint the stored theme before the first frame does — no white flash, and the
    choice is shared between the landing page and the room */
 (function(){try{var t=localStorage.getItem('mdr-theme');
-  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  if(t!=='light'&&t!=='dark')t='dark';   /* dark is the house default, not the system */
   document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <link rel="preconnect" href="/fonts" crossorigin>
