@@ -74,10 +74,13 @@
     /* receipt card: the same ink slab as FAQ/room, plus its glow end and hairlines */
     --card-glow-end:#191918;--hc-ink:#f8f7f4;--hc-dim:#b9b6b0;
     --hc-line:rgba(255,255,255,.16);--hc-bg:#111111}
-  :root[data-theme="dark"]{--slab:#f4f3f0;--slab-ink:#111111;--slab-dim:#5c5c56;
-    --slab-line:rgba(0,0,0,.16)}
-  :root[data-theme="dark"]{--card-glow-end:#eeece7;--hc-ink:#111111;--hc-dim:#5c5c56;
-    --hc-line:rgba(0,0,0,.14);--hc-bg:#f4f3f0}
+  /* dark: the slab cards read as black-on-black. The surface is a hair above the
+     page (#131312 on #0f0f0e) so the edge is felt rather than seen, and the
+     hairline carries the separation — no white slab floating on a dark page. */
+  :root[data-theme="dark"]{--slab:#131312;--slab-ink:#f3f1ec;--slab-dim:#8f8d86;
+    --slab-line:rgba(255,255,255,.14)}
+  :root[data-theme="dark"]{--card-glow-end:#131312;--hc-ink:#f3f1ec;--hc-dim:#8f8d86;
+    --hc-line:rgba(255,255,255,.13);--hc-bg:#131312}
   :root[data-theme="dark"]{--accent-ink:#0f0f0e}
   :root[data-theme="dark"] .btn.primary{color:var(--bg)}
   :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.07);color:var(--ink)}
@@ -293,47 +296,73 @@
     padding:6px 10px;border-radius:var(--r-pill)}
 
 
-  /* ---- the room itself: one card per signal, stacked in a column on desktop,
-     all open. Inside a card the top five run as a plain vertical list with a
-     small face for each creator. On a phone the cards stack the same way but the
-     creator list snaps sideways, one face per swipe. ---- */
+  /* ---- the room itself: a swatch accordion (ported from Framer's
+     SwatchAccordion). Desktop: five strips side by side, one wide at a time; the
+     closed ones keep a number at the top and the signal name running down the
+     strip, with no plus button — a whole strip is the target. Phone: no
+     accordion, one card per view, swiped sideways with a dot rail underneath.
+     Every surface is plain ink: black in light mode, paper in dark. ---- */
   .room{margin-top:4px}
-  .room-grid{display:flex;flex-direction:column;gap:12px;min-width:0;max-width:100%}
-  .room-card{background:var(--slab);border-radius:18px;color:var(--slab-ink);
-    overflow:hidden;box-shadow:inset 0 0 0 1px transparent}
-  .room-h{display:flex;align-items:center;gap:9px;width:100%;padding:16px 18px;
-    font-size:13px;font-weight:500;letter-spacing:-.01em;color:var(--slab-ink);
-    background:none;border:0;cursor:default;text-align:left;font-family:inherit}
-  .room-h b{flex:1;min-width:0;font-weight:500}
-  .room-dot{width:7px;height:7px;border-radius:50%;flex:none;background:currentColor;opacity:.5}
+  .room-grid{display:flex;gap:8px;min-width:0;max-width:100%;align-items:stretch}
+  .room-card{position:relative;flex:1 1 0;min-width:0;height:440px;border-radius:24px;
+    overflow:hidden;background:var(--slab);color:var(--slab-ink);
+    transition:flex-grow .55s cubic-bezier(.2,.75,.2,1),background .3s ease}
+  .room-card[data-open]{flex-grow:5.6}
+  /* closed strip: number on top, name running down */
+  .room-strip{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:space-between;padding:20px 0 22px;
+    opacity:1;transition:opacity .25s ease}
+  .room-card[data-open] .room-strip{opacity:0;pointer-events:none}
+  .room-num{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+    color:var(--slab-dim)}
+  .room-vt{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);
+    font-size:21px;font-weight:500;letter-spacing:-.02em;color:var(--slab-ink);
+    white-space:nowrap}
+  /* open card: tags on top, big name and the board's top five at the bottom */
+  .room-open{position:absolute;inset:0;display:flex;flex-direction:column;
+    padding:18px 20px 18px;opacity:0;pointer-events:none;
+    transition:opacity .3s ease .1s}
+  .room-card[data-open] .room-open{opacity:1;pointer-events:auto}
+  .room-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .room-top .room-num{color:var(--slab-dim)}
+  .room-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .room-tag{font-family:var(--mono);font-size:9px;letter-spacing:.09em;
+    text-transform:uppercase;padding:5px 9px;border-radius:100px;
+    background:var(--slab-2,rgba(127,127,127,.16));color:var(--slab-dim)}
+  .room-content{margin-top:auto;min-width:0}
+  .room-title{display:flex;align-items:center;gap:10px;margin:0 0 6px;
+    font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:-.03em;
+    color:var(--slab-ink);line-height:1}
+  .room-dot{width:8px;height:8px;border-radius:50%;flex:none;background:currentColor;
+    opacity:.55}
   .room-card[data-tag="SURGING"] .room-dot{background:#3f9d63;opacity:1}
   .room-card[data-tag="COILED"] .room-dot{background:#b8862b;opacity:1}
   .room-card[data-tag="SLEEPER"] .room-dot{background:#5b73c4;opacity:1}
   .room-card[data-tag="QUIET"] .room-dot{background:#8a8a84;opacity:1}
   .room-card[data-tag="FADE"] .room-dot{background:#b45a4f;opacity:1}
-  .room-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--slab-dim)}
-  .room-chev{display:none}
+  .room-desc{margin:0;font-size:12.5px;line-height:1.5;color:var(--slab-dim);
+    max-width:34ch}
   .room-body{display:grid;grid-template-rows:1fr;opacity:1}
   .room-scroller{overflow:hidden;min-height:0}
-  .room-list{display:flex;flex-direction:column;gap:8px;margin:0;padding:0 18px 18px;
+  .room-list{display:flex;flex-direction:column;gap:6px;margin:14px 0 0;padding:0;
     list-style:none}
   .room-row{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;
-    align-items:center;gap:11px;padding:9px 12px;border-radius:12px;
-    background:var(--slab-2,rgba(127,127,127,.09))}
+    align-items:center;gap:10px;padding:7px 10px;border-radius:11px;
+    background:var(--slab-2,rgba(127,127,127,.10))}
   .room-rank{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
     color:var(--slab-dim)}
   /* the face: the same /pfp art the official leaderboard serves, so nobody has to
      trust a name string to recognise a creator */
-  .room-av{width:26px;height:26px;border-radius:50%;flex:none;object-fit:cover;
+  .room-av{width:24px;height:24px;border-radius:50%;flex:none;object-fit:cover;
     background:var(--slab-2,rgba(127,127,127,.18));display:block}
-  .room-av.fb{display:grid;place-items:center;font-family:var(--mono);font-size:10px;
+  .room-av.fb{display:grid;place-items:center;font-family:var(--mono);font-size:9.5px;
     font-weight:500;color:var(--slab-dim);text-transform:uppercase}
-  .room-name{min-width:0;font-size:12.5px;font-weight:500;color:var(--slab-ink);
+  .room-name{min-width:0;font-size:12px;font-weight:500;color:var(--slab-ink);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .room-num{font-family:var(--mono);font-size:11px;color:var(--slab-dim);
+  .room-numv{font-family:var(--mono);font-size:10.5px;color:var(--slab-dim);
     font-variant-numeric:tabular-nums}
-  .room-num.up{color:#3f9d63}
-  .room-num.down{color:#b45a4f}
+  .room-numv.up{color:#3f9d63}
+  .room-numv.down{color:#b45a4f}
   .room-row.ph{opacity:.55}
   .room-row.ph .room-name{font-style:italic}
   .room-dots{display:none}
@@ -341,20 +370,25 @@
     margin-top:14px;flex-wrap:wrap}
   .room-src{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--faint)}
-  /* phone: the creator strip swipes sideways, the cards still stack vertically */
-  @media(max-width:940px){
-    .room-list{flex-direction:row;gap:10px;padding:0 16px 16px;
-      overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
-      scroll-padding-inline:16px;scrollbar-width:none}
-    .room-list::-webkit-scrollbar{display:none}
-    .room-row{flex:0 0 calc(100% - 16px);scroll-snap-align:start}
-    .room-dots{display:flex;justify-content:center;gap:5px;padding:0 16px 14px}
-    .room-dots i{width:5px;height:5px;border-radius:50%;background:currentColor;
-      color:var(--slab-dim);opacity:.4;transition:opacity .2s ease,width .2s ease}
-    .room-dots i.on{opacity:1;width:12px;border-radius:3px}
-  }
+  /* phone: no accordion — one card fills the view and the row swipes sideways */
   @media(max-width:940px){
     .room{overflow:hidden}
+    .room-grid{flex-direction:row;gap:10px;overflow-x:auto;overscroll-behavior-x:contain;
+      scroll-snap-type:x mandatory;scroll-padding-inline:0;scrollbar-width:none;
+      margin-inline:0}
+    .room-grid::-webkit-scrollbar{display:none}
+    .room-card{flex:0 0 100%;height:auto;scroll-snap-align:start;
+      display:flex;flex-direction:column;padding:16px 16px 14px}
+    .room-card[data-open]{flex-grow:0}
+    .room-strip{display:none}
+    .room-open{position:static;padding:0;opacity:1;pointer-events:auto;
+      display:flex;flex-direction:column;flex:1}
+    .room-title{font-size:26px;margin-top:auto}
+    /* phone: the five names stay inside the card as one vertical list — the swipe
+       belongs to the cards, not to the rows, so every card shows all five */
+    .room-list{flex-direction:column;gap:6px;overflow:visible;margin-top:12px}
+    .room-row{flex:none;padding:6px 9px}
+    .room-dots{display:none}
   }
 
   /* ---- section furniture ---- */
@@ -433,46 +467,57 @@
     letter-spacing:-.03em;margin-top:8px}
 
   /* ---- stats rail (Framer "ImpactRail" port) ----
-     Four numbers side by side on desktop. The rail takes the same ink slab as the
-     FAQ and the room cards — black in light mode, paper white in dark — so the
-     page reads as one object rather than three. On a phone the cards stack, and
-     there every card is simply open: a tap-to-expand stack hides numbers on the
-     device with the least room to scroll. No arrows and no per-card buttons. */
-  .rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
-    margin-top:4px;align-items:stretch}
+     Desktop: a horizontal strip accordion. Every card shows its number and
+     heading, one widens at a time and the rest give up their width, so the row
+     reads as one band instead of one tall card next to three short ones. Phone:
+     no accordion at all — full-width cards that swipe sideways with a dot rail.
+     Surface is the same ink slab as the FAQ and the room, and in dark mode that
+     ink is black so the cards sit inside the page instead of on top of it. */
+  .rail{display:flex;gap:10px;margin-top:4px;align-items:stretch;min-width:0}
   .rail-card{position:relative;background:var(--slab);color:var(--slab-ink);
-    border-radius:18px;padding:20px 20px 18px;overflow:hidden;
+    border-radius:20px;padding:20px;overflow:hidden;flex:1 1 0;min-width:0;
     box-shadow:inset 0 0 0 1px transparent;
-    transition:background .3s ease,box-shadow .3s ease}
+    transition:flex-grow .5s cubic-bezier(.2,.75,.2,1),background .3s ease,box-shadow .3s ease}
+  .rail-card[data-open]{flex-grow:2.1}
   .rail-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
   .rail-k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--slab-dim)}
-  .rail-v{font-family:var(--display);font-size:38px;font-weight:600;
-    letter-spacing:-.035em;line-height:1;margin-top:16px;color:var(--slab-ink)}
-  .rail-h{font-size:13px;color:var(--slab-dim);margin-top:10px;letter-spacing:-.01em}
-  .rail-more{display:grid;grid-template-rows:0fr;opacity:0;
+    text-transform:uppercase;color:var(--slab-dim);white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .rail-v{font-family:var(--display);font-size:40px;font-weight:600;
+    letter-spacing:-.035em;line-height:1;margin-top:14px;color:var(--slab-ink)}
+  .rail-h{font-size:13px;color:var(--slab-dim);margin-top:9px;letter-spacing:-.01em}
+  .rail-more{display:grid;grid-template-rows:0fr;opacity:0;min-width:0;
     transition:grid-template-rows .4s cubic-bezier(.2,.85,.25,1),opacity .28s ease}
   .rail-more>div{overflow:hidden}
   .rail-more p{margin:0;padding-top:12px;font-size:12.5px;line-height:1.55;
-    color:var(--slab-dim);max-width:52ch}
+    color:var(--slab-dim);max-width:44ch}
   .rail-card[data-open] .rail-more{grid-template-rows:1fr;opacity:1}
+  .rail-dots{display:none}
 
-  /* desktop only: one card opens at a time; the others close back to the number */
+  /* desktop only: one card widens, the others keep their number and heading */
   @media (min-width:941px){
-    .rail-card{cursor:pointer;min-height:132px;display:flex;flex-direction:column}
-    /* the number sits on top, the copy fills whatever the tallest card needs,
-       so the row reads as one band rather than four different heights */
+    .rail-card{cursor:pointer;min-height:150px;display:flex;flex-direction:column}
     .rail-more{margin-top:auto}
-    /* one card open at a time — the hairline says which, the slab stays the
-       same ink as the FAQ and the room so the row reads as one surface */
+    /* the open card is told apart by a hairline, not another fill — same slab */
     .rail-card[data-open]{box-shadow:inset 0 0 0 1px var(--slab-line)}
     .rail-card:focus-visible{outline:2px solid var(--slab-ink);outline-offset:3px}
-    .rail-card:not([data-open]) .rail-v{font-size:32px}
+    .rail-card:not([data-open]) .rail-v{font-size:34px}
+    /* a narrow card can only afford the number and a short heading */
+    .rail-card:not([data-open]) .rail-h{white-space:nowrap;overflow:hidden;
+      text-overflow:ellipsis}
   }
-  /* phone: stacked, everything readable at once */
+  /* phone: sideways swipe, one card per view */
   @media (max-width:940px){
-    .rail{grid-template-columns:minmax(0,1fr)}
+    .rail{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
+      scrollbar-width:none;scroll-padding-inline:0}
+    .rail::-webkit-scrollbar{display:none}
+    .rail-card{flex:0 0 100%;scroll-snap-align:start}
+    .rail-card[data-open]{flex-grow:0}
     .rail-more{grid-template-rows:1fr;opacity:1}
+    .rail-dots{display:flex;justify-content:center;gap:5px;padding:12px 0 2px}
+    .rail-dots i{width:5px;height:5px;border-radius:50%;background:var(--ink);
+      opacity:.28;transition:opacity .2s ease,width .2s ease}
+    .rail-dots i.on{opacity:1;width:12px;border-radius:3px}
   }
 
   /* ---- FAQ (empty shells, same disclosure pattern as the app) ---- */
@@ -803,7 +848,7 @@
     </div>
   </section>
 
-  <!-- ============ THE ROOM ITSELF ============ -->
+  <!-- ============ THE ROOM ITSELF (swatch accordion — Framer "SwatchAccordion") ============ -->
   <section class="block" id="showcase">
     <div class="sec-head">
       <h3>The room itself</h3>
@@ -811,36 +856,104 @@
     <div class="room" id="room" data-room role="region" aria-label="Top five creators per signal">
       <div class="room-grid">
         <article class="room-card" data-tag="SURGING" data-open>
-          <header class="room-h">
-            <span class="room-dot"></span><b>Surging</b><span class="room-n" data-room-n>02/5</span>
-          </header>
-          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-            <li class="room-row ph"><span class="room-rank">01</span><span class="room-name">loading the board&hellip;</span></li>
-          </ol></div></div>
+          <div class="room-strip" aria-hidden="true">
+            <span class="room-num">01</span>
+            <span class="room-vt">Surging</span>
+          </div>
+          <div class="room-open">
+            <div class="room-top">
+              <span class="room-num">01</span>
+              <div class="room-tags"><span class="room-tag">Surging</span></div>
+            </div>
+            <div class="room-content">
+              <h4 class="room-title"><span class="room-dot"></span>Surging</h4>
+              <p class="room-desc">what the board is bidding up right now, ranked by acceleration</p>
+              <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">loading the board…</span><span class="room-numv">—</span></li>
+              </ol></div></div>
+              <div class="room-dots" data-room-dots></div>
+            </div>
+          </div>
         </article>
-        <article class="room-card" data-tag="COILED" data-open>
-          <header class="room-h">
-            <span class="room-dot"></span><b>Coiled</b><span class="room-n" data-room-n>02/5</span>
-          </header>
-          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        <article class="room-card" data-tag="COILED">
+          <div class="room-strip" aria-hidden="true">
+            <span class="room-num">02</span>
+            <span class="room-vt">Coiled</span>
+          </div>
+          <div class="room-open">
+            <div class="room-top">
+              <span class="room-num">02</span>
+              <div class="room-tags"><span class="room-tag">Coiled</span></div>
+            </div>
+            <div class="room-content">
+              <h4 class="room-title"><span class="room-dot"></span>Coiled</h4>
+              <p class="room-desc">flat for days with the crowd gone quiet — the setup, not the move</p>
+              <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+              </ol></div></div>
+              <div class="room-dots" data-room-dots></div>
+            </div>
+          </div>
         </article>
-        <article class="room-card" data-tag="SLEEPER" data-open>
-          <header class="room-h">
-            <span class="room-dot"></span><b>Sleeper</b><span class="room-n" data-room-n>14/5</span>
-          </header>
-          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        <article class="room-card" data-tag="SLEEPER">
+          <div class="room-strip" aria-hidden="true">
+            <span class="room-num">03</span>
+            <span class="room-vt">Sleeper</span>
+          </div>
+          <div class="room-open">
+            <div class="room-top">
+              <span class="room-num">03</span>
+              <div class="room-tags"><span class="room-tag">Sleeper</span></div>
+            </div>
+            <div class="room-content">
+              <h4 class="room-title"><span class="room-dot"></span>Sleeper</h4>
+              <p class="room-desc">scored low by the board while the work keeps landing</p>
+              <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+              </ol></div></div>
+              <div class="room-dots" data-room-dots></div>
+            </div>
+          </div>
         </article>
-        <article class="room-card" data-tag="QUIET" data-open>
-          <header class="room-h">
-            <span class="room-dot"></span><b>Quiet</b><span class="room-n" data-room-n>32/5</span>
-          </header>
-          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        <article class="room-card" data-tag="QUIET">
+          <div class="room-strip" aria-hidden="true">
+            <span class="room-num">04</span>
+            <span class="room-vt">Quiet</span>
+          </div>
+          <div class="room-open">
+            <div class="room-top">
+              <span class="room-num">04</span>
+              <div class="room-tags"><span class="room-tag">Quiet</span></div>
+            </div>
+            <div class="room-content">
+              <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
+              <p class="room-desc">thin windows, no story — the honest middle of the board</p>
+              <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+              </ol></div></div>
+              <div class="room-dots" data-room-dots></div>
+            </div>
+          </div>
         </article>
-        <article class="room-card" data-tag="FADE" data-open>
-          <header class="room-h">
-            <span class="room-dot"></span><b>Fade</b><span class="room-n" data-room-n>02/5</span>
-          </header>
-          <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list></ol></div></div>
+        <article class="room-card" data-tag="FADE">
+          <div class="room-strip" aria-hidden="true">
+            <span class="room-num">05</span>
+            <span class="room-vt">Fade</span>
+          </div>
+          <div class="room-open">
+            <div class="room-top">
+              <span class="room-num">05</span>
+              <div class="room-tags"><span class="room-tag">Fade</span></div>
+            </div>
+            <div class="room-content">
+              <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
+              <p class="room-desc">momentum leaving faster than the rank shows</p>
+              <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+              </ol></div></div>
+              <div class="room-dots" data-room-dots></div>
+            </div>
+          </div>
         </article>
       </div>
       <div class="room-foot"></div>
@@ -1133,53 +1246,65 @@ fetch("/api/signals", { cache: "no-store" })
   .catch(() => { /* placeholders stay; the page has to survive a cold API */ });
 </script>
 <script>
-/* stats rail — the ImpactRail accordion, desktop only. One card is open at a time
-   and arrow keys move both focus and the open flag. Below 941 the CSS opens every
-   card, so the JS stays out of the way rather than fighting it. */
+/* stats rail — a strip accordion on desktop: every card keeps its number and
+   heading, one widens at a time, and clicking or arrowing to another passes the
+   width along. Below 941 there is no accordion: the row becomes a swipe rail of
+   full-width cards and this script keeps a dot rail in step. */
 (function () {
-  const rail = document.querySelector("[data-rail]");
+  var rail = document.querySelector("[data-rail]");
   if (!rail) return;
-  const cards = [...rail.querySelectorAll("[data-rail-card]")];
-  const wide = window.matchMedia("(min-width:941px)");
+  var cards = [].slice.call(rail.querySelectorAll("[data-rail-card]"));
+  if (!cards.length) return;
+  var wide = window.matchMedia("(min-width:941px)");
 
   function paint(open) {
     cards.forEach(function (c, i) {
-      // below the breakpoint every card is open, so the accordion state is moot
-      const on = wide.matches ? i === open : true;
+      var on = i === open;
       if (on) c.setAttribute("data-open", ""); else c.removeAttribute("data-open");
       c.setAttribute("aria-expanded", on ? "true" : "false");
-      if (wide.matches) c.setAttribute("tabindex", "0");
-      else c.removeAttribute("tabindex");  // nothing to activate with a keyboard
+      if (wide.matches) c.setAttribute("tabindex", "0"); else c.removeAttribute("tabindex");
     });
   }
-
   function current() {
-    const i = cards.findIndex(function (c) { return c.hasAttribute("data-open"); });
+    var i = cards.findIndex(function (c) { return c.hasAttribute("data-open"); });
     return i < 0 ? 0 : i;
   }
-
-  function open(i) { if (!wide.matches) return; paint(i); }
-
   cards.forEach(function (c, i) {
-    c.addEventListener("click", function () { open(i); });
-    c.addEventListener("focus", function () { open(i); });
+    c.addEventListener("click", function () { paint(i); if (!wide.matches) snapTo(i); });
+    c.addEventListener("focus", function () { if (wide.matches) paint(i); });
     c.addEventListener("keydown", function (e) {
       var k = e.key, next = -1;
       if (k === "Enter" || k === " ") next = i;
-      else if (k === "ArrowDown" || k === "ArrowRight") next = (i + 1) % cards.length;
-      else if (k === "ArrowUp" || k === "ArrowLeft") next = (i - 1 + cards.length) % cards.length;
+      else if (k === "ArrowRight" || k === "ArrowDown") next = (i + 1) % cards.length;
+      else if (k === "ArrowLeft" || k === "ArrowUp") next = (i - 1 + cards.length) % cards.length;
       else if (k === "Home") next = 0;
       else if (k === "End") next = cards.length - 1;
       if (next < 0) return;
       e.preventDefault();
-      if (!wide.matches) return;
       paint(next);
       cards[next].focus();
+      if (!wide.matches) snapTo(next);
     });
   });
 
-  wide.addEventListener("change", function () { paint(current()); });
-  paint(current());
+  // phone: dots track the swipe position rather than the open flag
+  var dots = document.createElement("div");
+  dots.className = "rail-dots";
+  dots.setAttribute("aria-hidden", "true");
+  cards.forEach(function () { dots.appendChild(document.createElement("i")); });
+  rail.parentNode.insertBefore(dots, rail.nextSibling);
+  function step() { return cards[0].getBoundingClientRect().width + 10; }
+  function snapTo(i) { rail.scrollTo({ left: i * step(), behavior: "smooth" }); }
+  function sync() {
+    var k = Math.round(rail.scrollLeft / (step() || 1));
+    [].forEach.call(dots.children, function (d, j) { d.className = j === k ? "on" : ""; });
+  }
+  rail.addEventListener("scroll", function () { requestAnimationFrame(sync); }, { passive: true });
+  window.addEventListener("resize", sync);
+
+  wide.addEventListener("change", function () { paint(current()); sync(); });
+  paint(wide.matches ? current() : -1);
+  sync();
 })();
 </script>
 <script>
@@ -1318,7 +1443,8 @@ fetch("/api/signals", { cache: "no-store" })
       var k = Math.round(list.scrollLeft / (step || 1));
       [].forEach.call(dots.children, function (d, j) { d.className = j === k ? 'on' : ''; });
     }
-    card.appendChild(dots);
+    var host = card.querySelector('.room-open') || card;
+    host.appendChild(dots);
     list.addEventListener('scroll', function () { requestAnimationFrame(paint); }, { passive: true });
     paint();
   }
@@ -1346,12 +1472,11 @@ fetch("/api/signals", { cache: "no-store" })
           return c && c.tags && c.tags.indexOf(tag) > -1;
         }).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
         var list = card.querySelector('.room-list');
-        var badge = card.querySelector('[data-room-n]');
-        if (badge) badge.textContent = ('0' + Math.min(rows.length, 5)).slice(-2) + '/' +
-          ('0' + rows.length).slice(-2);
         if (!rows.length) {
           list.innerHTML = '<li class="room-row ph"><span class="room-rank">--</span>' +
-            '<span class="room-name">nothing on the board right now</span></li>';
+            '<span class="room-av fb">--</span>' +
+            '<span class="room-name">nothing on the board right now</span>' +
+            '<span class="room-numv">--</span></li>';
           return;
         }
         list.innerHTML = rows.slice(0, 5).map(function (c, i) {
@@ -1395,6 +1520,50 @@ fetch("/api/signals", { cache: "no-store" })
     });
   // the placeholder row is a single item, so dots appear once the data lands
   cards.forEach(buildDots);
+})();
+</script>
+<script>
+/* room accordion — desktop only, one strip wide at a time. Click, focus and the
+   arrow keys all move the same open flag; below 941 the CSS turns the row into a
+   swipe rail with no accordion, so the JS steps aside. */
+(function () {
+  var room = document.getElementById('room');
+  if (!room) return;
+  var cards = [].slice.call(room.querySelectorAll('.room-card'));
+  if (!cards.length) return;
+  var wide = window.matchMedia('(min-width:941px)');
+
+  function paint(open) {
+    cards.forEach(function (c, i) {
+      var on = i === open;
+      if (on) c.setAttribute('data-open', ''); else c.removeAttribute('data-open');
+      c.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (wide.matches) c.setAttribute('tabindex', '0'); else c.removeAttribute('tabindex');
+    });
+  }
+  function current() {
+    var i = cards.findIndex(function (c) { return c.hasAttribute('data-open'); });
+    return i < 0 ? 0 : i;
+  }
+  cards.forEach(function (c, i) {
+    c.setAttribute('role', 'button');
+    c.addEventListener('click', function () { paint(i); });
+    c.addEventListener('focus', function () { paint(i); });
+    c.addEventListener('keydown', function (e) {
+      var k = e.key, next = -1;
+      if (k === 'Enter' || k === ' ') next = i;
+      else if (k === 'ArrowRight' || k === 'ArrowDown') next = (i + 1) % cards.length;
+      else if (k === 'ArrowLeft' || k === 'ArrowUp') next = (i - 1 + cards.length) % cards.length;
+      else if (k === 'Home') next = 0;
+      else if (k === 'End') next = cards.length - 1;
+      if (next < 0) return;
+      e.preventDefault();
+      paint(next);
+      cards[next].focus();
+    });
+  });
+  wide.addEventListener('change', function () { paint(current()); });
+  paint(current());
 })();
 </script>
 </body>
