@@ -53,19 +53,26 @@
      is obvious what needs real copy */
   .ph{color:var(--faint);font-style:italic}
 
-  /* ---- topbar (same single line as the app; no badge, no strap) ---- */
-  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:22px 0 0}
-  .brand{display:flex;align-items:center;gap:10px;min-width:0}
-  .mark{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
-    background:var(--ink);color:#f8f7f4;font-size:14px}
-  .mark .ic{stroke-width:2.2}
-  .brand h1{margin:0;font-family:var(--display);font-size:13.5px;font-weight:600;
-    letter-spacing:-.2px;line-height:1.1;white-space:nowrap}
-  .brand h1 span{color:var(--faint);font-weight:400}
-  .top nav{display:flex;align-items:center;gap:22px;font-family:var(--mono);
-    font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
-  .top nav a:hover{color:var(--ink)}
+  /* ---- persistent pill nav (Framer "Top Nav" reference, logo dropped) ---- */
+  .dock{position:sticky;top:0;z-index:60;display:flex;justify-content:center;
+    align-items:flex-start;pointer-events:none;height:0;margin-top:14px}
+  .pillnav{pointer-events:auto;margin-top:14px;display:flex;align-items:center;gap:6px;
+    padding:8px 10px;border-radius:100px;
+    background:linear-gradient(rgba(23,23,23,.88) 0%,rgba(13,13,13,.88) 100%);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    box-shadow:0 10px 30px rgba(17,17,17,.18),inset 0 0 0 1px rgba(255,255,255,.10)}
+  .pillnav a{width:38px;height:38px;border-radius:100px;display:grid;place-items:center;
+    color:#8a8a8a;transition:color .18s ease,background .18s ease}
+  .pillnav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+  .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.12)}
+  .pillnav a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+  .pillnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;
+    stroke-linecap:round;stroke-linejoin:round}
+  .pillnav a.enter{width:auto;gap:7px;padding:0 15px 0 13px;color:var(--ink);
+    background:#f8f7f4;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+    text-transform:uppercase;white-space:nowrap}
+  .pillnav a.enter:hover{background:#fff;color:var(--ink)}
+  .pillnav a.enter svg{width:14px;height:14px;stroke-width:2}
 
   /* ---- buttons ---- */
   .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
@@ -79,7 +86,7 @@
 
   /* ---- hero: text block left, one visual slot right ---- */
   .hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.95fr);
-    gap:16px;margin-top:34px}
+    gap:16px;margin-top:84px}
   .hero-main{position:relative;border-radius:var(--r-lg);padding:40px 38px 36px;
     background:var(--card);box-shadow:var(--lift);overflow:hidden;
     display:flex;flex-direction:column;justify-content:space-between;min-height:0}
@@ -218,9 +225,13 @@
   }
   @media(max-width:600px){
     .wrap{padding:0 12px 64px}
-    .top{padding:16px 0 0;gap:10px}
-    .top nav{gap:14px;font-size:9px}
-    .hero{margin-top:22px}
+    .dock{margin-top:10px}
+    .pillnav{margin-top:10px}
+    .pillnav{gap:2px;padding:6px 8px}
+    .pillnav a{width:36px;height:36px}
+    .pillnav svg{width:20px;height:20px}
+    .pillnav a.enter{padding:0 12px 0 10px;font-size:9px}
+    .hero{margin-top:70px}
     .hero-main{padding:22px 18px 20px;border-radius:24px}
     .hero h2{font-size:clamp(36px,12vw,58px);margin:16px 0 16px}
     .lede{font-size:13px}
@@ -248,18 +259,26 @@
   <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
 </svg>
 
-<div class="wrap">
+<div class="wrap" id="top">
 
-  <!-- ============ TOPBAR ============ -->
-  <div class="top">
-    <div class="brand">
-      <div class="mark"><svg class="ic"><use href="#i-trending-up"/></svg></div>
-      <div><h1>Motion <span>Draft Room</span></h1></div>
-    </div>
-    <nav>
-      <a href="#features">How it works</a>
-      <a href="#faq">FAQ</a>
-      <a class="btn primary" href="/app" style="padding:9px 15px;font-size:9.5px">Open app</a>
+  <!-- ============ PERSISTENT NAV (sticky pill; enters the app) ============ -->
+  <div class="dock">
+    <nav class="pillnav" aria-label="Primary">
+      <a href="#top" aria-label="Top" class="is-active" data-nav>
+        <svg viewBox="0 0 24 24"><path d="M 0 9.284 L 8.954 0.33 C 9.394 -0.11 10.106 -0.11 10.546 0.33 L 19.5 9.284 M 2.25 7.034 L 2.25 17.159 C 2.25 17.78 2.754 18.284 3.375 18.284 L 7.5 18.284 L 7.5 13.409 C 7.5 12.788 8.004 12.284 8.625 12.284 L 10.875 12.284 C 11.496 12.284 12 12.788 12 13.409 L 12 18.284 L 16.125 18.284 C 16.746 18.284 17.25 17.78 17.25 17.159 L 17.25 7.034 M 6 18.284 L 14.25 18.284"/></svg>
+      </a>
+      <a href="#features" aria-label="How it works" data-nav>
+        <svg viewBox="0 0 12 12"><path transform="translate(2.25 2.25)" d="M 7.5 3.75 C 7.5 5.821 5.821 7.5 3.75 7.5 C 1.679 7.5 0 5.821 0 3.75 C 0 1.679 1.679 0 3.75 0 C 5.821 0 7.5 1.679 7.5 3.75 Z"/></svg>
+      </a>
+      <a href="#showcase" aria-label="The room" data-nav>
+        <svg viewBox="0 0 24 24"><path d="M 0 9 L 0 8.25 C 0 7.007 1.007 6 2.25 6 L 17.25 6 C 18.493 6 19.5 7.007 19.5 8.25 L 19.5 9 M 10.811 2.561 L 8.689 0.439 C 8.408 0.158 8.027 0 7.629 0 L 2.25 0 C 1.007 0 0 1.007 0 2.25 L 0 14.25 C 0 15.493 1.007 16.5 2.25 16.5 L 17.25 16.5 C 18.493 16.5 19.5 15.493 19.5 14.25 L 19.5 5.25 C 19.5 4.007 18.493 3 17.25 3 L 11.871 3 C 11.473 3 11.092 2.842 10.811 2.561 Z"/></svg>
+      </a>
+      <a href="#faq" aria-label="FAQ" data-nav>
+        <svg viewBox="0 0 24 24"><path d="M 9 3.75 L 10.5 3.75 M 9 6.75 L 10.5 6.75 M 3 9.75 L 10.5 9.75 M 3 12.75 L 10.5 12.75 M 13.5 3.75 L 16.875 3.75 C 17.496 3.75 18 4.254 18 4.875 L 18 14.25 C 18 15.493 16.993 16.5 15.75 16.5 M 13.5 3.75 L 13.5 14.25 C 13.5 15.493 14.507 16.5 15.75 16.5 M 13.5 3.75 L 13.5 1.125 C 13.5 0.504 12.996 0 12.375 0 L 1.125 0 C 0.504 0 0 0.504 0 1.125 L 0 14.25 C 0 15.493 1.007 16.5 2.25 16.5 L 15.75 16.5 M 3 3.75 L 6 3.75 L 6 6.75 L 3 6.75 Z"/></svg>
+      </a>
+      <a href="/app" class="enter">
+        <svg viewBox="0 0 24 24"><polyline points="7 17 17 7"/><polyline points="8 7 17 7 17 16"/></svg>Open app
+      </a>
     </nav>
   </div>
 
@@ -404,6 +423,20 @@
 </div>
 
 <script>
+// nav highlight follows the section in view; scroll-spy only, no routing
+(function () {
+  var links = [].slice.call(document.querySelectorAll(".pillnav a[data-nav]"));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+  function sync() {
+    var y = window.scrollY + window.innerHeight * 0.35, best = 0;
+    targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top + window.scrollY <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle("is-active", i === best); });
+  }
+  window.addEventListener("scroll", sync, { passive: true });
+  window.addEventListener("resize", sync);
+  sync();
+})();
+
 // the proof strip is the only dynamic bit: it reads the same /api/signals the app uses
 fetch("/api/signals", { cache: "no-store" })
   .then(r => r.ok ? r.json() : Promise.reject(r.status))
