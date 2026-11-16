@@ -5,7 +5,10 @@ GET   -> every line-up receipt on the `data` branch, plus the settled/win rate
          nobody else can see proves nothing.
 
 POST  -> file a receipt. Body is JSON:
-           {"player": "@handle", "slotAtLock": "...", "picks": [{name, positionAtLock, estStars}]}
+           {"slotAtLock": "...", "picks": [{name, positionAtLock, estStars}]}
+         The player is the X account that signed in through /api/xauth, read from the
+         signed session cookie. A handle in the body is ignored: attributing a call
+         to someone who did not make it is the one thing this book cannot allow.
          The server recomputes the score from the snapshot that exists now, so a
          client cannot submit a score of its own. One receipt per player per
          slot: re-posting the same player+slot is rejected instead of stacking.
@@ -22,11 +25,19 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 import urllib.error
 import urllib.request
 from base64 import b64decode, b64encode
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
+
+# Both api/ and api/xauth/ hold a copy of this module: a Vercel function's own
+# directory is on sys.path (api/ here, api/xauth/ for the OAuth steps), and the
+# repository root is not reliably importable from a nested function.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import xauth_lib as xl
 
 REPO = "frianowzki/motion-draft-room"
 BRANCH = "data"
@@ -198,9 +209,14 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
             _json(self, 400, {"error": "body is not JSON"})
             return
 
-        player = str(body.get("player") or "").strip()
+        user = xl.session_of(self.headers)
+        if not user:
+            _json(self, 401, {"error": "connect X first - a receipt carries the handle of the "
+                                       "account that filed it, so the book can be checked"})
+            return
+        player = str(user.get("handle") or "")
         if not HANDLE_RE.match(player):
-            _json(self, 400, {"error": "player must be an X handle: letters, digits, underscore, up to 15 chars"})
+            _json(self, 401, {"error": "the session does not carry a usable X handle - reconnect X"})
             return
         picks = body.get("picks")
         if not isinstance(picks, list) or not (1 <= len(picks) <= 5):
@@ -247,6 +263,9 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
 
         receipt = {
             "player": player.lstrip("@"),
+            "xid": str(user.get("id") or ""),
+            "name": str(user.get("name") or "")[:40],
+            "avatar": str(user.get("avatar") or ""),
             "slotAtLock": slot,
             "picks": clean,
             "status": "pending",
@@ -260,9 +279,18 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
             _json(self, 502, {"error": f"cannot read the book: {e}"})
             return
 
+        # X ids are the stable identity; handles get renamed and, before this check,
+        # a renamed account could file twice for one slot. Older entries predate xid,
+        # so fall back to the handle only for those.
         for r in receipts:
-            if r.get("player", "").lower() == receipt["player"].lower() and r.get("slotAtLock") == receipt["slotAtLock"]:
-                _json(self, 409, {"error": "this handle already filed a lineup for that slot"})
+            same_slot = r.get("slotAtLock") == receipt["slotAtLock"]
+            if not same_slot:
+                continue
+            same_person = (r.get("xid") and r["xid"] == receipt["xid"]) or (
+                not r.get("xid") and str(r.get("player", "")).lower() == receipt["player"].lower()
+            )
+            if same_person:
+                _json(self, 409, {"error": f"@{receipt['player']} already filed a lineup for that slot"})
                 return
 
         receipts.insert(0, receipt)

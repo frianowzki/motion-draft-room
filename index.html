@@ -345,6 +345,25 @@
   .projline{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin:2px 0 12px;line-height:1.6}
   .projline b{color:var(--ink);font-weight:500}
 
+
+  /* ---- identity / connect X */
+  .idcard{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:var(--r-md);
+    background:var(--surface);box-shadow:inset 0 0 0 1px var(--line-soft);margin-bottom:11px}
+  .idcard .who{min-width:0;flex:1}
+  .idcard .h{font-family:var(--mono);font-size:12px;color:var(--ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .idcard .n{font-size:11px;color:var(--faint);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .idcard .state{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--accent);padding:3px 8px;border-radius:var(--r-pill);flex:none;
+    background:rgba(200,255,77,.1);box-shadow:inset 0 0 0 1px rgba(200,255,77,.26)}
+  .xbtn{background:#0d0d10;box-shadow:inset 0 0 0 1px var(--line);font-weight:500}
+  .xbtn:hover:not(:disabled){background:#17171c}
+  .xbtn .ic{stroke-width:2.1}
+  .idrow{display:flex;gap:8px;flex-wrap:wrap}
+  .rec .who .avatar.k{width:18px;height:18px}
+  .rec .who .avatar.k.av-fb{font-size:6.5px}
+
   /* ---- receipts */
   .bookmeta{font-family:var(--mono);font-size:9.5px;color:var(--faint);
     margin:-4px 0 12px;line-height:1.6}
@@ -478,7 +497,7 @@
       <span class="chip"><svg class="ic"><use href="#i-api"/></svg>official API only</span>
       <span class="chip"><svg class="ic"><use href="#i-clock"/></svg>4-hour windows</span>
       <span class="chip"><svg class="ic"><use href="#i-server"/></svg>server-side scoring</span>
-      <span class="chip"><svg class="ic"><use href="#i-incognito"/></svg>no login, no email</span>
+      <span class="chip"><svg class="ic"><use href="#i-x"/></svg>sign in with X to file</span>
     </div>
     <div class="hero-cta">
       <button class="primary" id="ctaDraft"><svg class="ic"><use href="#i-target"/></svg>Draft your five</button>
@@ -558,12 +577,7 @@
       </div>
       <div class="card identity" style="margin-top:14px">
         <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
-        <div class="hint" style="margin:0 0 9px">Your X handle goes on the receipt so the book can be checked by anyone. It is the only thing attached to your name; no email, no login.</div>
-        <div class="idrow" style="display:flex;gap:8px">
-          <input id="handle" maxlength="16" placeholder="@yourhandle" autocomplete="off" spellcheck="false">
-          <button id="handleBtn">Save</button>
-        </div>
-        <div class="hint" id="handleMsg" style="margin:9px 0 0"></div>
+        <div id="whoBody"></div>
       </div>
       <div class="card receipts" style="margin-top:14px">
         <h2><svg class="ic"><use href="#i-book-open"/></svg>The book <span class="pill" id="hitRate">—</span></h2>
@@ -587,7 +601,7 @@
     tournaments also limit the rarity/boost mix, which this room does not model yet.
     History starts the day the collector started — when a window has too few slots the field shows
     <code>—</code>, never a made-up number. Receipts grade rank movement, not score.<br><br>
-    <strong>The book is public.</strong> Locking a lineup files it (handle, picks, thesis, pre-mortem) to
+    <strong>The book is public.</strong> Locking a lineup files it (its X account, picks, thesis, pre-mortem) to
     <code>data/receipts.json</code> on the <code>data</code> branch through <code>/api/receipts</code>, and the server
     grades it against the snapshot on record — a visitor cannot submit their own score. One receipt per handle per
     slot, so nobody can keep re-rolling a lineup until one hits.
@@ -626,18 +640,42 @@ const avatar = (c, size) => {
 };
 const icon = (name, extra) => `<svg class="ic"${extra ? ` style="${extra}"` : ""}><use href="#i-${name}"/></svg>`;
 
-// identity is an X handle the player types, not a random id: a receipt nobody can
-// attribute is not a receipt. Stored locally; it is only sent when locking.
+// Identity is the X account that authorised through /api/xauth, not a handle typed
+// into a box: a receipt under a name its owner never claimed is not a receipt.
+// The server reads the signed session cookie, so nothing here is trusted for filing.
 const HANDLE_RE = /^@?[A-Za-z0-9_]{1,15}$/;
+let ME = null, AUTH_CFG = null;  // {connected, configured, user}
+const strip = v => String(v || "").replace(/^@/, "");
 function handle() {
-  const v = (localStorage.getItem("mdr_handle") || "").replace(/^@/, "");
+  const v = ME && ME.user ? strip(ME.user.handle) : "";
   return HANDLE_RE.test(v) ? v : "";
 }
-function setHandle(raw) {
-  const v = String(raw || "").trim().replace(/^@/, "");
-  if (!HANDLE_RE.test(v)) return null;
-  localStorage.setItem("mdr_handle", v);
-  return v;
+async function loadSession() {
+  try {
+    const r = await fetch("/api/xauth/status", { headers: { accept: "application/json" }, cache: "no-store", credentials: "same-origin" });
+    ME = await r.json();
+  } catch (e) {
+    ME = { connected: false, configured: null, reason: "the status endpoint is unreachable" };
+  }
+  AUTH_CFG = ME && ME.configured;
+  [renderWho(), renderLineup()].forEach(f => { try { f(); } catch (e) {} });
+}
+// popup round trip: X's screen opens in its own window, the callback posts back
+function connectX() {
+  const w = 520, h = 640;
+  const left = Math.max(0, (screen.width - w) / 2), top = Math.max(0, (screen.height - h) / 2.6);
+  const win = window.open("/api/xauth/start", "mdr_xauth",
+    `width=${w},height=${h},left=${Math.round(left)},top=${Math.round(top)},menubar=no,toolbar=no`);
+  if (!win) { $("#whoBody").insertAdjacentHTML("beforeend", '<div class="hint" style="color:var(--warm)">The sign-in window was blocked. Allow popups for this site and try again.</div>'); return; }
+  loadSession();
+}
+window.addEventListener("message", e => {
+  if (e.data && e.data.type === "mdr-oauth") { loadSession(); loadBook(); }
+});
+async function disconnectX() {
+  await fetch("/api/xauth/logout", { credentials: "same-origin", cache: "no-store" }).catch(() => {});
+  ME = { connected: false, configured: AUTH_CFG };
+  renderWho(); renderLineup();
 }
 
 // ---------- load
@@ -663,6 +701,9 @@ async function load() {
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   render();
   loadBook();
+  // the identity card used to be drawn only from load()'s render path, so whichever of
+  // the two finished last could leave it empty; draw it with the session it is waiting on
+  renderWho();
 }
 
 // ---------- public receipt book
@@ -871,28 +912,48 @@ function renderLineup() {
   const lb = $("#lockBtn");
   lb.disabled = PICKS.length !== SIZE || !h;
   lb.innerHTML = icon("lock") + (!h && PICKS.length === SIZE
-    ? "Add your handle to lock"
+    ? "Connect X to lock"
     : `Lock lineup (${PICKS.length}/${SIZE})`);
   lb.onclick = lockLineup;
   renderWho();
 }
 
 function renderWho() {
-  const h = handle();
-  const input = $("#handle"), btn = $("#handleBtn"), msg = $("#handleMsg");
-  if (!input) return;
-  if (document.activeElement !== input) input.value = h ? "@" + h : "";
-  $("#whoState").textContent = h ? "@" + h : "not set";
-  btn.textContent = h ? "Change" : "Save";
-  msg.textContent = h
-    ? "Receipts you lock are filed publicly under @" + h + " and graded against the newest snapshot on record."
-    : "Required before you can lock: the book is public, so every receipt needs a name on it.";
-}
-
-function saveHandle() {
-  const v = setHandle($("#handle").value);
-  if (!v) { $("#handleMsg").textContent = "That is not a valid X handle (letters, digits, underscore, max 15)."; return; }
-  render();
+  const box = $("#whoBody"), pill = $("#whoState");
+  if (!box) return;
+  const u = ME && ME.user, h = handle();
+  // the card is redrawn as the session resolves; say so instead of leaving it blank
+  if (!ME) {
+    pill.textContent = "";
+    box.innerHTML = `<div class="hint" style="margin:0">Checking whether you are signed in…</div>`;
+    return;
+  }
+  pill.textContent = h ? "@" + h : "not connected";
+  if (h) {
+    box.innerHTML = `
+      <div class="idcard">
+        <img class="avatar lg" src="${esc(u.avatar || "")}" alt="" referrerpolicy="no-referrer"
+             data-ini="${esc(strip(u.name || h).slice(0, 2).toUpperCase())}" data-extra="lg" onerror="${AV_FB}">
+        <div class="who">
+          <div class="h">@${esc(h)}</div>
+          <div class="n">${esc(u.name || "connected")}</div>
+        </div>
+        <span class="state">signed in</span>
+      </div>
+      <div class="hint" style="margin:0 0 10px">Receipts you lock are filed under @${esc(h)} and graded against the newest snapshot on record. Your handle comes from X, so nobody can file under your name — or you under theirs.</div>
+      <div class="idrow"><button id="xOut">${icon("x")}Disconnect</button></div>`;
+    const out = $("#xOut");
+    if (out) out.onclick = disconnectX;
+    return;
+  }
+  const why = ME && ME.configured === false
+    ? `<div class="hint" style="color:var(--warm);margin:0 0 9px">Connect X is not wired up on this deployment yet: ${esc(ME.reason || "missing configuration")}. Drafting works, filing a receipt does not.</div>`
+    : `<div class="hint" style="margin:0 0 9px">The book is public, so every receipt carries the X account that filed it. Connecting reads your handle, display name and avatar — nothing else, no posting.</div>`;
+  box.innerHTML = `${why}
+    <div class="idrow"><button class="primary xbtn" id="xIn">${icon("x")}Connect X</button></div>
+    <div class="hint" style="margin:9px 0 0">No email, no password, no database: X hands back a token, this site keeps a signed cookie that says who you are.</div>`;
+  const btn = $("#xIn");
+  if (btn) btn.onclick = connectX;
 }
 
 function syncClear() {
@@ -939,7 +1000,9 @@ function renderBook() {
       return `${esc(p.name)}${tag} <span class="${cls(p.move)}">${signed(p.move)}</span>`;
     }).join(" · ");
     return `<div class="rec"><div class="l">
-        <div class="who">${icon("user", "font-size:11px;opacity:.7")}<b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks</div>
+        <div class="who">${r.avatar
+          ? `<img class="avatar k" src="${esc(r.avatar)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${esc(String(r.player || "?").slice(0, 2).toUpperCase())}" data-extra="k" onerror="${AV_FB}">`
+          : icon("user", "font-size:11px;opacity:.7")}<b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks${r.name && r.name.toLowerCase() !== String(r.player || "").toLowerCase() ? ` <span style="color:var(--faint);font-size:10px">${esc(r.name)}</span>` : ""}</div>
         <div class="picks">${picks}</div>
       </div>
       <div class="score ${done ? cls(r.score) : "flat"}">${done ? signed(r.score) : "pending"}<small>${done ? (r.settledAt && r.slotAtLock && r.settledAt === r.slotAtLock ? "no window yet" : "net rank") : "not graded"}</small></div>
@@ -952,16 +1015,18 @@ function lockLineup() {
   if (PICKS.length !== SIZE) return;
   const h = handle();
   if (!h) { renderWho(); return; }
+  // no player field: the server takes the handle from the signed session cookie
   const body = {
-    player: h,
     slotAtLock: (DATA.dataAsOf || ""),
     picks: PICKS.map(p => ({ name: p.name, positionAtLock: p.position, estStars: p.estStars, rarity: p.rarity, thesis: p.thesis, premortem: p.premortem })),
   };
   const btn = $("#lockBtn");
   btn.disabled = true; btn.textContent = "Filing…";
-  fetch("/api/receipts", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
+  fetch("/api/receipts", { method: "POST", headers: { "content-type": "application/json" },
+      credentials: "same-origin", body: JSON.stringify(body) })
     .then(async r => {
       const out = await r.json().catch(() => ({}));
+      if (r.status === 401) { ME = { connected: false, configured: AUTH_CFG }; renderWho(); }
       if (!r.ok) throw new Error(out.error || ("HTTP " + r.status));
       // the lineup is only cleared once the book has it; a lost receipt is worse
       // than a lineup the visitor has to look at twice
@@ -979,6 +1044,7 @@ function lockLineup() {
 
 // ---------- go
 load();
+loadSession();
 // the hero CTA is a shortcut into the board, not a second flow
 document.addEventListener("click", e => {
   const cta = e.target && e.target.closest && e.target.closest("#ctaDraft");
@@ -988,14 +1054,8 @@ document.addEventListener("click", e => {
   const first = document.querySelector("#rows tr.row");
   if (first) first.focus && first.focus();
 });
-// the identity row is rebuilt by renderWho() on every render, so its handlers are
-// bound here once and look the elements up at click time
-document.addEventListener("click", e => {
-  if (e.target && e.target.id === "handleBtn") saveHandle();
-});
-document.addEventListener("keydown", e => {
-  if (e.key === "Enter" && e.target && e.target.id === "handle") saveHandle();
-});
+// the identity card is rebuilt by renderWho(), so its buttons are bound there; the
+// session is fetched once at load and again when the OAuth popup reports back
 </script>
 </body>
 </html>
