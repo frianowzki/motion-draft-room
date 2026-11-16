@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+/* paint the stored theme before the first frame does — no white flash, and the
+   choice is shared between the landing page and the room */
+(function(){try{var t=localStorage.getItem('mdr-theme');
+  if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Motion Draft Room</title>
 <meta name="description" content="Forecast arena and auto-settled receipt book for Motion's creator leaderboard. Public data only.">
@@ -40,6 +47,97 @@
     --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --r-sm:10px; --r-md:18px; --r-lg:28px; --r-pill:100px;
   }
+
+  /* ---- dark theme: same room, lights off. Tokens first, then the few
+     surfaces that were painted with a literal light value ---- */
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --void:#0f0f0e;
+    --bg:#0f0f0e;
+    --card:#191918;
+    --card-2:#141413;
+    --sunken:#121211;
+    --line:rgba(255,255,255,.13);
+    --line-soft:rgba(255,255,255,.09);
+    --ink:#f3f1ec;
+    --dim:#a9a7a0;
+    --faint:#7e7c75;
+    --accent:#f3f1ec;
+    --accent-ink:#0f0f0e;
+    --up:#4ec27c;
+    --down:#e5766a;
+    --cool:#8fb0e6;
+    --warm:#d9a24f;
+    --ring:0 0 0 1px rgba(255,255,255,.16);
+    --lift:0 1px 0 0 rgba(255,255,255,.05) inset, 0 1px 2px rgba(0,0,0,.5);
+  }
+  :root[data-theme="dark"] ::selection{background:var(--ink);color:var(--bg)}
+  :root[data-theme="dark"] .aura{opacity:.6;
+    background:
+      radial-gradient(40vmax 32vmax at 12% 0%, rgba(120,126,140,.16), transparent 62%),
+      radial-gradient(34vmax 28vmax at 92% 6%, rgba(90,96,110,.14), transparent 60%),
+      radial-gradient(40vmax 34vmax at 60% 96%, rgba(70,74,84,.16), transparent 66%)}
+  :root[data-theme="dark"] .grain{mix-blend-mode:screen;opacity:.16}
+  :root[data-theme="dark"] .hero-main:before{
+    background:radial-gradient(120% 90% at 100% 0%, rgba(255,255,255,.05), transparent 55%)}
+  :root[data-theme="dark"] {--grain-svg:0}
+  :root[data-theme="dark"] .chip,
+  :root[data-theme="dark"] .tab{background:rgba(255,255,255,.05)}
+  :root[data-theme="dark"] .tab:hover,
+  :root[data-theme="dark"] button:hover:not(:disabled),
+  :root[data-theme="dark"] input:hover,
+  :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
+  :root[data-theme="dark"] tr.row:hover td{background:rgba(255,255,255,.04)}
+  :root[data-theme="dark"] tr.row.sel td{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] input,
+  :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
+  :root[data-theme="dark"] input::placeholder,
+  :root[data-theme="dark"] textarea::placeholder{color:var(--faint)}
+  :root[data-theme="dark"] .backhome{background:rgba(20,20,19,.92);color:var(--dim)}
+  :root[data-theme="dark"] .backhome:hover{background:rgba(40,40,38,.95);color:var(--ink)}
+  :root[data-theme="dark"] .rar button.on i{color:rgba(15,15,14,.7)}
+  :root[data-theme="dark"] .slot .s.spent{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .tag.COILED{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
+  :root[data-theme="dark"] .mbar{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+  :root[data-theme="dark"] .t1{background:linear-gradient(160deg,#222220,#1b1b1a)}
+  :root[data-theme="dark"] .t3{background:linear-gradient(160deg,#26251f,#1d1d1c)}
+  :root[data-theme="dark"] ::-webkit-scrollbar-track{background:#121211}
+  :root[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#3a3a37;border-color:#121211}
+  :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4c4c48}
+  :root[data-theme="dark"] .live-dot{box-shadow:0 0 0 3px rgba(255,255,255,.14)}
+
+  /* ---- theme switch (Framer "CoolThemeSwitch" port): a knob group pinned to
+     the top-right of the room, matched to the panel it floats over ---- */
+  .themesw{position:fixed;top:14px;right:14px;z-index:70;
+    display:flex;align-items:center;gap:2px;padding:3px;border-radius:var(--r-pill);
+    background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .themesw button{width:30px;height:30px;border:0;border-radius:var(--r-pill);background:transparent;
+    display:grid;place-items:center;cursor:pointer;color:var(--faint);
+    transition:color .2s ease,background .2s ease}
+  .themesw button:hover{color:var(--ink);background:rgba(17,17,17,.06)}
+  .themesw button[aria-pressed="true"]{color:var(--ink);background:rgba(17,17,17,.09);
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .themesw button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .themesw svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;
+    stroke-linecap:round;stroke-linejoin:round;display:block}
+  :root[data-theme="dark"] .themesw{background:rgba(26,26,25,.82);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  :root[data-theme="dark"] .themesw button:hover{color:#fff;background:rgba(255,255,255,.1)}
+  :root[data-theme="dark"] .themesw button[aria-pressed="true"]{color:#fff;background:rgba(255,255,255,.16);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  :root[data-theme="dark"] .themesw button:focus-visible{outline-color:#fff}
+  html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
+  @media (prefers-reduced-motion:reduce){
+    html.theming,html.theming body{transition:none}
+    .themesw button{transition:none}
+  }
+  @media(max-width:600px){
+    .themesw{top:10px;right:10px;padding:2px}
+    .themesw button{width:32px;height:32px}
+    .themesw svg{width:15px;height:15px}
+  }
+
   *{box-sizing:border-box}
   .backhome{position:fixed;left:14px;bottom:14px;z-index:50;display:inline-flex;
     align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
@@ -469,6 +567,17 @@
 </a>
 <div class="aura" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
+
+<!-- theme switch: floats top-right over the room -->
+<div class="themesw" id="themesw" role="group" aria-label="Theme">
+  <button type="button" data-theme-set="light" aria-pressed="true" title="Light">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19V21.5M2.5 12H5M19 12H21.5M5.2 5.2L6.9 6.9M17.1 17.1L18.8 18.8M18.8 5.2L17.1 6.9M6.9 17.1L5.2 18.8"/></svg>
+  </button>
+  <button type="button" data-theme-set="dark" aria-pressed="false" title="Dark">
+    <svg viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7Z"/></svg>
+  </button>
+</div>
+
 <div class="scan" aria-hidden="true"></div>
 
 <!-- coolicons by Kryston Schwarze — MIT — via Framer Marketplace -->
@@ -1119,5 +1228,45 @@ document.addEventListener("click", e => {
 // the identity card is rebuilt by renderWho(), so its buttons are bound there; the
 // session is fetched once at load and again when the OAuth popup reports back
 </script>
+<script>
+/* theme switch — one knob group per page, one stored value, both pages agree */
+(function () {
+  var root = document.documentElement;
+  var mem = document.getElementById('themesw');
+  var btns = mem ? mem.querySelectorAll('[data-theme-set]') : [];
+  var meta = document.querySelector('meta[name="theme-color"]');
+  var paper = { light: '#f4f3f0', dark: '#0f0f0e' };
+
+  function paint(t) {
+    root.setAttribute('data-theme', t);
+    if (meta) meta.setAttribute('content', paper[t] || paper.light);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-theme-set') === t));
+    }
+  }
+  function set(t) {
+    if (t !== 'dark' && t !== 'light') return;
+    root.classList.add('theming');
+    window.setTimeout(function () { root.classList.remove('theming'); }, 400);
+    paint(t);
+    try { localStorage.setItem('mdr-theme', t); } catch (e) {}
+  }
+
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function () { set(this.getAttribute('data-theme-set')); });
+  }
+  paint(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+  // with no stored choice, the page keeps following the system
+  try {
+    window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function (e) {
+      var stored = null;
+      try { stored = localStorage.getItem('mdr-theme'); } catch (err) {}
+      if (!stored) paint(e.matches ? 'dark' : 'light');
+    });
+  } catch (e) {}
+})();
+</script>
+
 </body>
 </html>
