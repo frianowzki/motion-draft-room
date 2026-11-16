@@ -4,6 +4,11 @@ name: collect
 # so anything time-triggered has to live here. Six runs a day align with Motion's
 # 4-hour leaderboard slots (00/04/08/12/16/20 UTC).
 #
+# Keep this file on the DEFAULT branch (`data`). GitHub only fires `schedule` from
+# the default branch, so while `main` was default the `data` copy never ran: 00Z and
+# 08Z had no run at all on 2026-11-16. The job checks out `data`, which is where
+# snapshots are committed.
+#
 # Keep this file on `main`. GitHub only fires `schedule` from the default branch,
 # and `main` is the default here, so a copy that exists only on `data` never runs
 # (the 2026-11-16 gaps: 00Z and 08Z had no run at all). The job itself checks out
