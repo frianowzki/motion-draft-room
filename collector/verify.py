@@ -7,12 +7,18 @@ and nobody notices a gap. This prints the last slots it has, the slot it expects
 to be recording now, and exits non-zero when a slot inside the retention window
 has no snapshot for the official source.
 
-Two things are explicitly NOT gaps, because crying wolf here trains people to ignore
-the red build:
+The anchor is the NEWEST `asOf` Motion has actually published, not the wall clock.
+Motion does not always have a new window out when our cron fires (18:44 still
+returned asOf 12:00), and demanding a snapshot for a window the source has not
+published is a gap that could never have been filled. Wall clock is only used as
+an upper bound: a slot after the newest published window is not owed.
+
+Two more things are explicitly NOT gaps, because crying wolf here trains people to
+ignore the red build:
   * slots before the first snapshot we ever took - nothing exists to backfill from,
     and inventing a past window is worse than a short history;
-  * slots whose window is still open - the cron is 4-hourly, so a run at 18:21 is
-    still inside the 16:00 window and has not failed to record it yet.
+  * slots whose window is still open on the clock - the cron is 4-hourly, so a run
+    at 16:05 is inside the 16:00 window and has not failed to record it yet.
 
 Exit codes:
   0  every expected slot is present
@@ -37,9 +43,17 @@ SNAP_DIR = ROOT / "data" / "snapshots"
 
 SLOT_HOURS = 4
 # Leaderboard scores update every 4 hours Mon-Fri (docs.motion.game). We only
-# expect slots on weekdays, and only from the moment our first real snapshot
-# exists - nothing before that can be backfilled, and we do not invent it.
+# expect slots on weekdays, and only from the moment our own collection actually
+# began - nothing before that can be backfilled, and we do not invent it.
 OFFICIAL = "motion-official"
+
+# When this collector started running on a schedule, taken from the first run that
+# could have fired at all. The workflow only triggers `schedule` from the default
+# branch, so the 00:00Z window on 2026-11-16 had no run while `main` was default:
+# it is a real hole in the record, but not one any later run could have filled.
+# Reading it as a live gap would make every green build impossible, so the owed
+# range starts here instead of at the first snapshot we happen to hold.
+COLLECTING_SINCE = datetime(2026, 11, 16, 6, 0, tzinfo=timezone.utc)
 
 # Motion publishes a leaderboard window a minute or two after it opens. Before
 # this much of a window has passed, "no snapshot for it yet" is normal, not a gap.
@@ -67,29 +81,29 @@ def slot_of(when: datetime) -> datetime:
     return when.replace(minute=0, second=0, microsecond=0) - timedelta(hours=when.hour % SLOT_HOURS)
 
 
-def expected_slots(now: datetime, first: datetime) -> list[datetime]:
-    """Slots that must exist: weekday, 4-hour aligned, from the first real
-    snapshot's own slot up to the last slot that has fully closed.
+def expected_slots(now: datetime, first: datetime, latest_published: datetime | None = None) -> list[datetime]:
+    """Slots that must exist: weekday, 4-hour aligned, from the first window this
+    collector could have recorded up to the newest window the source published.
 
-    Only CLOSED windows are ever owed, with one exception: if we are still
-    inside the window `now` belongs to and it opened more than 20 minutes ago,
-    that window may be owed - the cron fires at :07, so a run at 18:21 is
-    inside the 16:00 window and should already have recorded it. A run at
-    16:05 is also inside 16:00 but too early to call it missing.
+    `first` is the earliest slot we are accountable for; the caller passes the
+    max of our first snapshot's slot and COLLECTING_SINCE, so a window that closed
+    before the workflow ever ran on a schedule is history, not a standing gap.
 
-    The deadline for a slot is therefore the end of its own window, which is
-    what `slot_of(now)` gives; slots strictly before it are always owed.
+    `latest_published` is Motion's own `asOf` from the snapshot just taken. It is
+    the hard ceiling: a slot the source has not published cannot be missing, or
+    every run before Motion rolls the window reads as a gap.
     """
     slots = []
-    cursor = slot_of(first)
-    open_slot = slot_of(now)
-    while cursor < open_slot:
+    start = slot_of(first)
+    end = slot_of(latest_published) if latest_published else slot_of(now)
+    # Never demand a window the clock has not opened yet, even if a malformed
+    # asOf claims a future window.
+    end = min(end, slot_of(now))
+    cursor = start
+    while cursor <= end:
         if cursor.weekday() < 5:  # Mon-Fri
             slots.append(cursor)
         cursor += timedelta(hours=SLOT_HOURS)
-    # Inside the current window: owed once its data has had 20 minutes to land.
-    if open_slot >= slot_of(first) and open_slot.weekday() < 5 and now - open_slot >= GRACE:
-        slots.append(open_slot)
     return slots
 
 
@@ -113,14 +127,23 @@ def main() -> int:
 
     official = [s for s in snaps if s.get("source") == OFFICIAL]
     have = {slot_of(parse_iso(s["asOf"])).isoformat() for s in official}
-    first = min(parse_iso(s["asOf"]) for s in official)
-    want = expected_slots(now, first)
+    oldest = min(parse_iso(s["asOf"]) for s in official)
+    # Accountability starts when we could first have recorded a window, not when a
+    # snapshot happened to land: a slot from before the workflow ran on a schedule
+    # is not something a later run can repair.
+    first = max(oldest, COLLECTING_SINCE)
+    # The newest window the source has actually published, from the snapshot just
+    # recorded. Without it the ceiling would be the wall clock, which Motion does
+    # not follow - it kept serving asOf 12:00 at 18:44.
+    latest_published = max(parse_iso(s["asOf"]) for s in official)
+    want = expected_slots(now, first, latest_published)
 
     print(f"snapshots on record : {len(official)}")
     print(f"windows covered     : {len(have)}")
-    print(f"first slot          : {first.isoformat()}")
+    print(f"oldest snapshot     : {oldest.isoformat()}")
+    print(f"accountable since   : {first.isoformat()} (collector start)")
+    print(f"newest published    : {latest_published.isoformat()} (the source's own asOf)")
     print(f"verifying at        : {now.isoformat()}")
-    print(f"open window         : {slot_of(now).isoformat()} (owed once {GRACE.seconds // 60}m in)")
     print(f"slots expected      : {len(want)}")
 
     missing = [s for s in want if s.isoformat() not in have]
