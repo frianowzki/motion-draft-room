@@ -15,6 +15,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
   /* ============================================================
      Motion Draft Room — visual system (Vexoo pass)
@@ -559,6 +561,98 @@
     .slot .s{min-height:34px;align-items:center}
     footer{border-radius:24px;padding:20px 18px}
   }
+
+  /* ============================================================
+     batch 9 — ThemeChanger switch, Arrow CTA, Fontshare type
+     ============================================================ */
+
+  /* ---- theme switch ("Switch button" from ThemeChanger): one track, one
+     knob that slides, each end a pressable target ---- */
+  .tgs{position:relative;display:inline-flex;align-items:center;gap:0;padding:3px;
+    border-radius:var(--r-pill);background:rgba(17,17,17,.07);
+    box-shadow:inset 0 0 0 1px var(--line);flex:none;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .tgs-knob{position:absolute;top:3px;left:3px;width:30px;height:30px;border-radius:50%;
+    background:var(--sunken);box-shadow:0 1px 2px rgba(17,17,17,.18),inset 0 0 0 1px var(--line);
+    transition:transform .26s cubic-bezier(.4,0,.2,1);pointer-events:none}
+  .tgs[data-on="dark"] .tgs-knob{transform:translateX(30px)}
+  .tgs-b{position:relative;z-index:1;width:30px;height:30px;padding:0;border:0;background:transparent;
+    display:grid;place-items:center;cursor:pointer;color:var(--faint);
+    border-radius:50%;transition:color .2s ease}
+  .tgs-b:hover{color:var(--ink)}
+  .tgs-b[aria-pressed="true"]{color:var(--ink)}
+  .tgs-b:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .tgs-b svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round;display:block}
+  :root[data-theme="dark"] .tgs{background:rgba(255,255,255,.09);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  :root[data-theme="dark"] .tgs-knob{background:#dedbd4;
+    box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.5)}
+  :root[data-theme="dark"] .tgs-b{color:#8f8d86}
+  :root[data-theme="dark"] .tgs-b:hover{color:#fff}
+  :root[data-theme="dark"] .tgs-b[aria-pressed="true"]{color:#111}
+  :root[data-theme="dark"] .tgs-b:focus-visible{outline-color:#fff}
+  @media (prefers-reduced-motion:reduce){.tgs-knob{transition:none}}
+
+  /* dashboard placement: the switch sits pinned top-right on desktop, and on a
+     phone it drops into the header strip so it can't land on the nav pill */
+  .apphead{display:flex;justify-content:flex-end;padding-top:14px}
+  .apphead #themesw{position:relative;z-index:70;pointer-events:auto}
+  @media(max-width:940px){.apphead{padding:10px 10px 0}}
+  /* ---- Arrow CTA button (Framer "Arrow CTA Button"): outlined pill whose
+     label sits left and whose arrow rides inside a solid disc on the right;
+     on hover the disc grows and the arrow leans ---- */
+  .acta{display:inline-flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;
+    border-radius:var(--r-pill);background:transparent;color:var(--ink);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.22);text-decoration:none;
+    font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
+    transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content}
+  .acta-t{display:block;white-space:nowrap}
+  .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
+    background:var(--ink);color:var(--bg);transition:transform .28s ease,background .22s ease}
+  .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
+    stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
+  .acta:hover{background:rgba(17,17,17,.05);box-shadow:inset 0 0 0 1px rgba(17,17,17,.34)}
+  .acta:hover .acta-ic{transform:scale(1.08)}
+  .acta:hover .acta-ic svg{transform:translateX(2px)}
+  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
+  .acta-sm .acta-ic{width:30px;height:30px}
+  .acta-sm .acta-ic svg{width:13px;height:13px}
+
+  /* in the dark, the closing slab is paper: the button flips to ink-on-paper so
+     it still reads as the strongest thing on the card */
+  :root[data-theme="dark"] .acta{color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.22)}
+  :root[data-theme="dark"] .acta-ic{background:#111;color:#f4f3f0}
+  :root[data-theme="dark"] .acta:hover{background:rgba(17,17,17,.06);box-shadow:inset 0 0 0 1px rgba(17,17,17,.4)}
+  .closer .acta{color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.24)}
+  .closer .acta-ic{background:#111;color:#f4f3f0}
+  .closer .acta:hover{background:rgba(17,17,17,.06);box-shadow:inset 0 0 0 1px rgba(17,17,17,.42)}
+  .closer .acta:focus-visible{outline-color:#111}
+
+  /* the reference CTA is set in the body face, not the mono caps of .btn */
+  .slab .acta{margin-top:8px}
+
+  /* ---- type: Clash Grotesk carries the headlines, Satoshi the body,
+     Gambetta the italic accent inside the hero ---- */
+  h1,h2,h3,h4,.hero h2,.closer h3,.sfaq-h,.rcard-foot h4,.sec-head h3,.hc-foot b,.stat .v{
+    font-family:var(--display);font-optical-sizing:auto}
+  .hero h2{font-weight:600;letter-spacing:-.025em}
+  .hero h2 em{font-family:var(--display);font-style:normal;font-weight:500}
+  body,.lede,.sfaq-a-in,.rcard-more p{font-family:var(--sans)}
+  .lede,.sfaq-a-in{font-weight:400;letter-spacing:-.003em}
+  .sfaq-t{font-family:var(--display);font-weight:500;letter-spacing:-.01em}
+  .tgs+.pillnav,.pillnav{margin-top:0}
+
+  @media(max-width:600px){
+    .acta{font-size:13px;padding:6px 6px 6px 20px;gap:10px}
+    .acta-ic{width:32px;height:32px}
+    .tgs-knob{width:28px;height:28px}
+    .tgs[data-on="dark"] .tgs-knob{transform:translateX(28px)}
+    .tgs-b{width:28px;height:28px}
+    .tgs-b svg{width:15px;height:15px}
+  }
+
 </style>
 </head>
 <body>
@@ -567,16 +661,6 @@
 </a>
 <div class="aura" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
-
-<!-- theme switch: floats top-right over the room -->
-<div class="themesw" id="themesw" role="group" aria-label="Theme">
-  <button type="button" data-theme-set="light" aria-pressed="true" title="Light">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19V21.5M2.5 12H5M19 12H21.5M5.2 5.2L6.9 6.9M17.1 17.1L18.8 18.8M18.8 5.2L17.1 6.9M6.9 17.1L5.2 18.8"/></svg>
-  </button>
-  <button type="button" data-theme-set="dark" aria-pressed="false" title="Dark">
-    <svg viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7Z"/></svg>
-  </button>
-</div>
 
 <div class="scan" aria-hidden="true"></div>
 
@@ -629,6 +713,19 @@
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
+<div class="apphead">
+<!-- theme switch (ThemeChanger "Switch button") -->
+<div class="tgs" id="themesw" role="group" aria-label="Theme">
+  <span class="tgs-knob" aria-hidden="true"></span>
+  <button type="button" class="tgs-b" data-theme-set="light" aria-pressed="true" aria-label="Light">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
+  </button>
+  <button type="button" class="tgs-b" data-theme-set="dark" aria-pressed="false" aria-label="Dark">
+    <svg viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
+  </button>
+</div>
+</div>
+
   <section class="hero">
     <div class="hero-main">
       <div class="eyebrow"><svg class="ic"><use href="#i-target"/></svg>five picks, one call, graded in public</div>
@@ -1243,6 +1340,7 @@ document.addEventListener("click", e => {
     for (var i = 0; i < btns.length; i++) {
       btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-theme-set') === t));
     }
+    if (mem) mem.setAttribute('data-on', t);
   }
   function set(t) {
     if (t !== 'dark' && t !== 'light') return;

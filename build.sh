@@ -19,6 +19,11 @@ if [ -d img ]; then
   cp -R img public/img
 fi
 
+# self-hosted type: Clash Grotesk (display), Satoshi (body), Gambetta (accent)
+if [ -d fonts ]; then
+  cp -R fonts public/fonts
+fi
+
 if curl -fsSL --max-time 30 "https://codeload.github.com/${REPO}/tar.gz/refs/heads/data" -o /tmp/data.tgz; then
   mkdir -p /tmp/databranch
   tar -xzf /tmp/data.tgz -C /tmp/databranch --strip-components=1
