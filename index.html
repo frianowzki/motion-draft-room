@@ -219,15 +219,50 @@
   .sec-head .kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
     text-transform:uppercase;color:var(--faint)}
 
-  /* ---- 3-up feature row ---- */
-  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-  .card{background:var(--card);border-radius:var(--r-md);box-shadow:var(--lift);
-    padding:22px 20px}
-  .card .num{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
-    color:var(--faint);text-transform:uppercase}
-  .card h4{margin:12px 0 8px;font-family:var(--display);font-size:15.5px;font-weight:600;
-    letter-spacing:-.01em}
-  .card p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.6}
+  /* ---- feature ribbon: one wide card, two narrow, hovered one opens up ---- */
+  /* min-width:0 so a long headline shrinks instead of dictating the column width */
+  .ribbon{display:flex;align-items:stretch;gap:12px;min-width:0;max-width:100%}
+  /* explicit block height: an absolutely-positioned body contributes no height
+     of its own, so the cards would otherwise collapse to nothing */
+  .rcard{position:relative;isolation:isolate;overflow:hidden;flex:1 1 0;min-width:0;
+    height:568px;border-radius:18px;display:block;text-decoration:none;color:#fff;
+    transition:flex-grow .55s cubic-bezier(.2,.75,.2,1)}
+  .rcard[data-wide]{flex-grow:2.65}
+  .rcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    pointer-events:none;user-select:none;transform:scale(1.035);
+    transition:transform .7s cubic-bezier(.2,.75,.2,1)}
+  .rcard::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:linear-gradient(rgba(0,0,0,.27) 0%,rgba(0,0,0,.02) 36%,
+      rgba(0,0,0,.1) 55%,rgba(0,0,0,.74) 100%)}
+  .rcard .shade{position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:#05060b;opacity:.12}
+  .rcard:focus-visible{outline:3px solid var(--ink);outline-offset:-5px}
+  .rcard-body{position:absolute;inset:0;z-index:3;padding:26px;
+    display:flex;flex-direction:column;min-width:0}
+  .rcard-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .rcard-idx{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+    font-weight:650;color:#fff;white-space:nowrap;text-transform:uppercase}
+  .rcard-go{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;
+    border:1px solid rgba(255,255,255,.65);border-radius:50%;color:#fff;
+    transition:background .25s,transform .3s}
+  .rcard:hover .rcard-go{background:rgba(255,255,255,.22);transform:rotate(-45deg)}
+  .rcard-foot{margin-top:auto;min-width:0}
+  .rcard-foot h4{margin:0;font-family:var(--display);font-size:36px;font-weight:600;
+    letter-spacing:-.03em;line-height:1.1;color:#fff;
+    text-wrap:pretty;overflow-wrap:break-word}
+  /* the copy opens on hover only -- the card itself is not a link any more */
+  .rcard-more{overflow:hidden;max-height:0;opacity:0;margin-top:0;
+    transition:max-height .48s cubic-bezier(.2,.75,.2,1),opacity .3s,margin .45s}
+  .rcard:hover .rcard-more,.rcard:focus-within .rcard-more{max-height:230px;
+    opacity:1;margin-top:2px}
+  /* an open narrow card keeps a slightly smaller headline than the wide one */
+  .rcard:not([data-wide]):hover .rcard-foot h4,
+  .rcard:not([data-wide]):focus-within .rcard-foot h4{font-size:30px;line-height:1.1}
+  .rcard-more p{margin:13px 0 0;font-size:14px;line-height:1.5;max-width:440px;
+    color:rgba(255,255,255,.88)}
+  /* narrow cards get a smaller headline; the open one always gets the big one */
+  .rcard:not([data-wide]):not(:hover):not(:focus-within) .rcard-foot h4{font-size:21px;
+    letter-spacing:-.012em;line-height:1.18}
 
   /* ---- wide placeholder slab (screenshot / demo / embed) ---- */
   .slab{border-radius:var(--r-lg);background:var(--card-2);box-shadow:var(--lift);
@@ -284,7 +319,13 @@
     .hero{grid-template-columns:minmax(0,1fr)}
     .stackghost{display:none}
     .hero-main{min-height:0;padding:30px 24px 28px}
-    .grid3{grid-template-columns:minmax(0,1fr)}
+    .ribbon{flex-direction:column;height:auto}
+    .rcard{height:auto!important;min-height:330px;flex-grow:0!important}
+    .rcard:not([data-wide]):not(:hover):not(:focus-within) .rcard-foot h4{font-size:30px}
+    .rcard-foot h4{font-size:30px;line-height:1.08}
+    .rcard-foot{padding-bottom:2px}
+    .rcard-more{max-height:none;opacity:1;margin-top:2px}
+    .rcard-body{padding:18px}
     .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
     .slab{min-height:240px}
   }
@@ -405,21 +446,54 @@
     <div class="sec-head">
       <h3>How it works</h3>
     </div>
-    <div class="grid3">
-      <div class="card">
-        <div class="num">01 &middot; the board</div>
-        <h4>79 creators, one number each</h4>
-        <p>The full Motion leaderboard, live from the official API. Rank, 4-hour movement and an estimated star rating &mdash; labelled as an estimate, because Motion Score itself is not public.</p>
+    <div class="ribbon">
+      <div class="rcard" data-wide>
+        <img src="img/O8fokotEIN1oVKBtIMx9S7tyHjQ.jpg" alt="Liquid chrome ribbon, the board" loading="lazy" decoding="async">
+        <span class="shade" aria-hidden="true"></span>
+        <div class="rcard-body">
+          <div class="rcard-top">
+            <span class="rcard-idx">01 &middot; the board</span>
+            <span class="rcard-go" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M3.5 10H16M10 4L16 10L10 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="rcard-foot">
+            <h4>79 creators, one number each</h4>
+            <div class="rcard-more">
+              <p>The full Motion leaderboard, live from the official API. Rank, 4-hour movement and an estimated star rating &mdash; labelled as an estimate, because Motion Score itself is not public.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="num">02 &middot; the draft</div>
-        <h4>Thesis and pre-mortem, or nothing</h4>
-        <p>Five different creators under a 32-star cap. Every pick needs a reason it happens and a reason it fails &mdash; a lineup without reasoning is not a call.</p>
+      <div class="rcard">
+        <img src="img/Y03xamjEt4yKQseebeyglKonTrU.jpg" alt="Terracotta staircase, the draft" loading="lazy" decoding="async">
+        <span class="shade" aria-hidden="true"></span>
+        <div class="rcard-body">
+          <div class="rcard-top">
+            <span class="rcard-idx">02 &middot; the draft</span>
+            <span class="rcard-go" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M3.5 10H16M10 4L16 10L10 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="rcard-foot">
+            <h4>Thesis and pre-mortem, or nothing</h4>
+            <div class="rcard-more">
+              <p>Five different creators under a 32-star cap. Every pick needs a reason it happens and a reason it fails &mdash; a lineup without reasoning is not a call.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="num">03 &middot; the book</div>
-        <h4>Every call, signed and kept</h4>
-        <p>Locking files the lineup under your X account and the server grades it against the next window. One receipt per handle per slot, so nobody re-rolls until one hits.</p>
+      <div class="rcard">
+        <img src="img/bJZSjHEeYwImzHivPsClN9MN1nM.jpg" alt="Red glass still life, the book" loading="lazy" decoding="async">
+        <span class="shade" aria-hidden="true"></span>
+        <div class="rcard-body">
+          <div class="rcard-top">
+            <span class="rcard-idx">03 &middot; the book</span>
+            <span class="rcard-go" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M3.5 10H16M10 4L16 10L10 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="rcard-foot">
+            <h4>Every call, signed and kept</h4>
+            <div class="rcard-more">
+              <p>Locking files the lineup under your X account and the server grades it against the next window. One receipt per handle per slot, so nobody re-rolls until one hits.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

@@ -14,6 +14,11 @@ mkdir -p public
 cp landing.html public/index.html
 cp app.html public/app.html
 
+# the landing hero ribbon ships local card art; without this the cards render empty
+if [ -d img ]; then
+  cp -R img public/img
+fi
+
 if curl -fsSL --max-time 30 "https://codeload.github.com/${REPO}/tar.gz/refs/heads/data" -o /tmp/data.tgz; then
   mkdir -p /tmp/databranch
   tar -xzf /tmp/data.tgz -C /tmp/databranch --strip-components=1
