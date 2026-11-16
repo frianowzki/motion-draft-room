@@ -387,6 +387,44 @@
   .stat .v{font-family:var(--display);font-size:26px;font-weight:600;
     letter-spacing:-.03em;margin-top:8px}
 
+  /* ---- stats rail (Framer "ImpactRail" port) ----
+     Four numbers on one rail. Expanded on desktop, where there is room for the
+     prose to sit under the figure; on narrow screens every card is simply open,
+     because a tap-to-expand card stack hides numbers on the device with the least
+     room to scroll. No arrows and no per-card buttons, per the brief. */
+  .rail{display:flex;flex-direction:column;gap:12px;margin-top:64px}
+  .rail-card{position:relative;background:var(--card);border-radius:var(--r-lg);
+    box-shadow:var(--lift);padding:24px 26px 22px;overflow:hidden;
+    transition:background .35s ease,box-shadow .35s ease}
+  .rail-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+  .rail-k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--faint)}
+  .rail-v{font-family:var(--display);font-size:34px;font-weight:600;
+    letter-spacing:-.035em;line-height:1;margin-top:14px}
+  .rail-h{font-size:13.5px;color:var(--dim);margin-top:10px;letter-spacing:-.01em}
+  /* the prose only exists where the card can open */
+  .rail-more{display:grid;grid-template-rows:0fr;opacity:0;
+    transition:grid-template-rows .4s ease,opacity .3s ease}
+  .rail-more>div{overflow:hidden}
+  .rail-more p{margin:0;padding-top:12px;font-size:13.5px;line-height:1.55;
+    color:var(--dim);max-width:56ch}
+  .rail-card[data-open] .rail-more{grid-template-rows:1fr;opacity:1}
+
+  /* desktop only: the rail collapses to one open card at a time */
+  @media (min-width:941px){
+    .rail-card{cursor:pointer;min-height:112px;display:flex;flex-direction:column;
+      justify-content:flex-start}
+    .rail-card[data-open]{background:var(--card-2);box-shadow:var(--lift-lg,var(--lift))}
+    .rail-card:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+    .rail-card:not([data-open]):hover{background:var(--card-2)}
+    /* collapsed cards give back the vertical space the prose would have used */
+    .rail-card:not([data-open]) .rail-v{font-size:30px}
+  }
+  /* no accordion below 940: everything reads at once */
+  @media (max-width:940px){
+    .rail-more{grid-template-rows:1fr;opacity:1}
+  }
+
   /* ---- FAQ (empty shells, same disclosure pattern as the app) ---- */
   /* ---- FAQ (Framer "SplitFAQ" port): the open row splits off into its own
      card and the rest close ranks beneath it ---- */
@@ -768,13 +806,47 @@
   </section>
 
 
-  <!-- ============ STATS STRIP (live from the API) ============ -->
-  <div class="stats" id="proof">
-    <div class="stat"><div class="k">creators tracked</div><div class="v" id="pCreators"><span class="ph">[—]</span></div></div>
-    <div class="stat"><div class="k">snapshot windows</div><div class="v" id="pSlots"><span class="ph">[—]</span></div></div>
-    <div class="stat"><div class="k">update rhythm</div><div class="v">4h</div></div>
-    <div class="stat"><div class="k">star cap</div><div class="v">32</div></div>
-  </div>
+  <!-- ============ STATS RAIL (Framer "ImpactRail" port, live from the API) ============ -->
+  <section class="block" id="proof" aria-label="Creators tracked and how the board behaves">
+    <div class="sec-head">
+      <h3>Creators tracked</h3>
+      <span class="kicker">straight from the board</span>
+    </div>
+    <div class="rail" data-rail>
+      <article class="rail-card" data-rail-card data-open role="button" tabindex="0" aria-expanded="true">
+        <div class="rail-top">
+          <span class="rail-k">01 &middot; creators tracked</span>
+        </div>
+        <div class="rail-v" id="pCreators"><span class="ph">[—]</span></div>
+        <div class="rail-h">every name the board scores</div>
+        <div class="rail-more"><div><p>The complete Motion leaderboard, read from the official API. Nothing cherry-picked &mdash; if the board scores a creator, they are in the room and can be drafted.</p></div></div>
+      </article>
+      <article class="rail-card" data-rail-card role="button" tabindex="0" aria-expanded="false">
+        <div class="rail-top">
+          <span class="rail-k">02 &middot; snapshot windows</span>
+        </div>
+        <div class="rail-v" id="pSlots"><span class="ph">[—]</span></div>
+        <div class="rail-h">windows recorded so far</div>
+        <div class="rail-more"><div><p>One snapshot per 4-hour window, kept as its own file. A window we missed stays missed: the record is never backfilled, so a short history is the honest one.</p></div></div>
+      </article>
+      <article class="rail-card" data-rail-card role="button" tabindex="0" aria-expanded="false">
+        <div class="rail-top">
+          <span class="rail-k">03 &middot; update rhythm</span>
+        </div>
+        <div class="rail-v">4h</div>
+        <div class="rail-h">between leaderboard windows</div>
+        <div class="rail-more"><div><p>Motion re-scores the board every four hours on weekdays. That cadence is what a receipt is graded against &mdash; the lock is a promise to a specific window, not to a vague &ldquo;soon&rdquo;.</p></div></div>
+      </article>
+      <article class="rail-card" data-rail-card role="button" tabindex="0" aria-expanded="false">
+        <div class="rail-top">
+          <span class="rail-k">04 &middot; star cap</span>
+        </div>
+        <div class="rail-v">32</div>
+        <div class="rail-h">stars per lineup</div>
+        <div class="rail-more"><div><p>Five creators, thirty-two stars, no exceptions. The cap is what makes a call a decision: you cannot take every favourite, so the reasoning has to carry the choices you leave out.</p></div></div>
+      </article>
+    </div>
+  </section>
 
   <!-- ============ HOW A CALL READS (example receipt) ============ -->
   <section class="block" id="receipt">
@@ -991,7 +1063,7 @@
   sync();
 })();
 
-// the proof strip is the only dynamic bit: it reads the same /api/signals the app uses
+// the stats rail is the only dynamic bit: it reads the same /api/signals the app uses
 fetch("/api/signals", { cache: "no-store" })
   .then(r => r.ok ? r.json() : Promise.reject(r.status))
   .then(d => {
@@ -1001,6 +1073,56 @@ fetch("/api/signals", { cache: "no-store" })
     set("pSlots", d && Array.isArray(d.slotTimes) ? d.slotTimes.length : null);
   })
   .catch(() => { /* placeholders stay; the page has to survive a cold API */ });
+</script>
+<script>
+/* stats rail — the ImpactRail accordion, desktop only. One card is open at a time
+   and arrow keys move both focus and the open flag. Below 941 the CSS opens every
+   card, so the JS stays out of the way rather than fighting it. */
+(function () {
+  const rail = document.querySelector("[data-rail]");
+  if (!rail) return;
+  const cards = [...rail.querySelectorAll("[data-rail-card]")];
+  const wide = window.matchMedia("(min-width:941px)");
+
+  function paint(open) {
+    cards.forEach(function (c, i) {
+      // below the breakpoint every card is open, so the accordion state is moot
+      const on = wide.matches ? i === open : true;
+      if (on) c.setAttribute("data-open", ""); else c.removeAttribute("data-open");
+      c.setAttribute("aria-expanded", on ? "true" : "false");
+      if (wide.matches) c.setAttribute("tabindex", "0");
+      else c.removeAttribute("tabindex");  // nothing to activate with a keyboard
+    });
+  }
+
+  function current() {
+    const i = cards.findIndex(function (c) { return c.hasAttribute("data-open"); });
+    return i < 0 ? 0 : i;
+  }
+
+  function open(i) { if (!wide.matches) return; paint(i); }
+
+  cards.forEach(function (c, i) {
+    c.addEventListener("click", function () { open(i); });
+    c.addEventListener("focus", function () { open(i); });
+    c.addEventListener("keydown", function (e) {
+      var k = e.key, next = -1;
+      if (k === "Enter" || k === " ") next = i;
+      else if (k === "ArrowDown" || k === "ArrowRight") next = (i + 1) % cards.length;
+      else if (k === "ArrowUp" || k === "ArrowLeft") next = (i - 1 + cards.length) % cards.length;
+      else if (k === "Home") next = 0;
+      else if (k === "End") next = cards.length - 1;
+      if (next < 0) return;
+      e.preventDefault();
+      if (!wide.matches) return;
+      paint(next);
+      cards[next].focus();
+    });
+  });
+
+  wide.addEventListener("change", function () { paint(current()); });
+  paint(current());
+})();
 </script>
 <script>
 /* ribbon accordion — one card is open at a time. Hover opens a card through CSS,
