@@ -1,8 +1,34 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-16 17:05 UTC (batch 10, commit a08cd35, live). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-16 18:55 UTC (commit `922cbc7` + receipt fix, live). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+---
+
+## Verifier & receipt (2026-11-16, terbaru)
+
+**Verifier hijau di CI** (run `43932357249`). Dua bug berlapis yang bikin cron merah terus:
+
+1. `expected_slots` menagih window yang masih berjalan → run 18:21 menandai `16:00Z` padahal
+   16:00 belum tutup. Sekarang batas atas = **`asOf` terbaru yang benar-benar diterbitkan
+   Motion**, bukan jam dinding. Jam 18:44 API masih menyajikan `asOf 12:00`, jadi 16:00
+   tidak boleh ditagih — window itu belum ada untuk direkam.
+2. Batas bawah = `COLLECTING_SINCE = 2026-11-16T06:00Z`. Window `00:00Z` **memang bolong**
+   (workflow hanya trigger `schedule` dari default branch, waktu itu `main`), tapi tidak ada
+   run yang bisa mengisinya; memaku batas bawah di sana membuat build merah selamanya.
+
+Selain itu verifier dan `_settle` sama-sama membaca key `creators` sementara snapshot menulis
+**`rows`** — `_settle` jadi menilai semua pick `positionNow: None`. Keduanya sudah diperbaiki.
+
+**Receipt** hanya dinilai terhadap snapshot dengan `dataAsOf` **strictly greater** dari
+`slotAtLock`; hasil grade distempel `gradedAsOf` dan beku setelah itu. Receipt lama tanpa
+`gradedAsOf` (dibuat grader buggy) dihitung ulang sekali.
+
+**Belum tuntas**: book masih berisi 1 receipt uji OAuth (`draftroom_test`, 1234567), bukan call
+sungguhan. `POST /api/receipts` menolak tanpa sesi X, dan connect-X masih mati:
+`X_CLIENT_ID` / `X_SESSION_SECRET` belum diset di Vercel. `GITHUB_TOKEN` (sensitive,
+production) **sudah** terpasang — `/api/signals` live penuh, 4 snapshot.
 
 ---
 
