@@ -64,6 +64,28 @@
   }
   :root[data-theme="dark"] ::selection{background:var(--ink);color:var(--bg)}
   :root[data-theme="dark"] .chip{background:rgba(255,255,255,.05)}
+  /* an unset --accent-ink left the loud button white on white: pin it per theme */
+  :root{--accent-ink:#f8f7f4}
+  :root[data-theme="dark"]{--accent-ink:#0f0f0e}
+  :root[data-theme="dark"] .btn.primary{color:var(--bg)}
+  :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.07);color:var(--ink)}
+  :root[data-theme="dark"] .chip{color:#c9c6bf;box-shadow:inset 0 0 0 1px var(--line)}
+  :root[data-theme="dark"] .hc-row{color:#c2bfb8}
+  :root[data-theme="dark"] .hc-foot{color:#a5a29a}
+  :root[data-theme="dark"] .themesw{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .themesw button{color:#b4b1aa}
+  :root[data-theme="dark"] .themesw button:hover{color:#fff}
+  :root[data-theme="dark"] .themesw button[aria-pressed="true"]{color:#fff;
+    background:rgba(255,255,255,.2)}
+  :root[data-theme="dark"] .pillnav a{color:#9d9a93}
+  :root[data-theme="dark"] .pillnav a:hover{color:#fff}
+  :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16)}
+  :root[data-theme="dark"] .faq-body{color:#bdbab3}
+  :root[data-theme="dark"] .faq-item summary{color:var(--ink)}
+  :root[data-theme="dark"] .stat .k, :root[data-theme="dark"] .slab span{color:#b3b0a8}
+  :root[data-theme="dark"] .sec-head .tag, :root[data-theme="dark"] .tag{color:#b0ada5}
+  :root[data-theme="dark"] .stat .v{color:var(--ink)}
+  :root[data-theme="dark"] .hc-up, :root[data-theme="dark"] .hc-row b{color:#6cd793}
   :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] .btn.ghost:hover{background:rgba(255,255,255,.11)}
   /* the closing slab was ink-on-paper; flip it so it still reads as the loud one */
@@ -150,19 +172,18 @@
   .btn.ghost:hover{background:#fff}
 
   /* ---- hero: text block left, one visual slot right ---- */
-  .hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.95fr);
-    gap:16px;margin-top:84px}
-  .hero-main{position:relative;border-radius:var(--r-lg);padding:40px 38px 36px;
+  .hero{display:block;margin-top:84px}
+  .hero-main{position:relative;border-radius:var(--r-lg);padding:52px 48px 48px;
     background:var(--card);box-shadow:var(--lift);overflow:hidden;
-    display:flex;flex-direction:column;justify-content:space-between;min-height:0}
+    display:flex;flex-direction:column;justify-content:center;min-height:min(72vh,560px)}
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
     font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
-  .hero h2{margin:26px 0 22px;font-family:var(--display);font-weight:500;
+  .hero h2{margin:22px 0 24px;max-width:20ch;font-family:var(--display);font-weight:500;
     font-size:clamp(44px,7vw,104px);line-height:.9;letter-spacing:-.05em;
     text-wrap:balance;-webkit-mask-image:linear-gradient(180deg,#000 74%,rgba(0,0,0,.62) 100%);
     mask-image:linear-gradient(180deg,#000 74%,rgba(0,0,0,.62) 100%)}
   .hero h2 em{font-style:normal;color:var(--faint)}
-  .lede{max-width:52ch;font-size:14.5px;color:var(--dim);line-height:1.65;margin:0}
+  .lede{max-width:62ch;font-size:14.5px;color:var(--dim);line-height:1.65;margin:0}
   .lede strong{color:var(--ink);font-weight:600}
   .hero-cta{display:flex;align-items:center;gap:12px;margin-top:26px;flex-wrap:wrap}
 
@@ -174,8 +195,8 @@
   .hero-visual span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
     text-transform:uppercase;color:var(--faint)}
 
-  /* hero right slot: the app's example receipt card */
-  .herocol{position:relative;display:flex}
+  /* the example receipt: full-width band above the FAQ */
+  .receipt{position:relative;display:flex;max-width:620px}
   .stackghost{position:absolute;inset:14px 8px -8px 10px;border-radius:var(--r-lg);
     background:var(--card-2);transform:rotate(-1.2deg);pointer-events:none;z-index:0}
   .herocard{border-radius:var(--r-lg);padding:22px 22px 18px;position:relative;overflow:hidden;
@@ -322,12 +343,17 @@
     .hero{grid-template-columns:minmax(0,1fr)}
     .stackghost{display:none}
     .hero-main{min-height:0;padding:30px 24px 28px}
+    /* stacked on small screens: the accordion is a desktop affordance only, so
+       every card sits open and nothing widens on hover or tap */
     .ribbon{flex-direction:column;height:auto}
-    .rcard{height:auto!important;min-height:330px;flex-grow:0!important}
-    .rcard:not([data-wide]):not(:hover):not(:focus-within) .rcard-foot h4{font-size:30px}
-    .rcard-foot h4{font-size:30px;line-height:1.08}
+    .rcard{height:auto!important;min-height:330px;flex-grow:0!important;
+      flex-grow:0!important}
+    .rcard:hover,.rcard[data-open],.ribbon[data-hover] .rcard[data-open]{flex-grow:0!important}
+    .rcard-foot h4,.rcard:hover .rcard-foot h4,.rcard[data-open]:not([data-wide]) .rcard-foot h4{
+      font-size:30px;line-height:1.08}
     .rcard-foot{padding-bottom:2px}
-    .rcard-more{max-height:none;opacity:1;margin-top:2px}
+    .rcard-more,.rcard:hover .rcard-more,.ribbon[data-hover] .rcard[data-open]:not(:hover) .rcard-more{
+      max-height:none;opacity:1;margin-top:2px}
     .rcard-body{padding:18px}
     .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
     .slab{min-height:240px}
@@ -342,10 +368,11 @@
     .pillnav a{width:36px;height:36px}
     .pillnav svg{width:20px;height:20px}
     .hero{margin-top:70px}
+    .hero-main{min-height:min(64vh,470px);justify-content:flex-end}
+    .receipt{max-width:none}
     .hero-main{padding:22px 18px 20px;border-radius:24px}
     .hero h2{font-size:clamp(36px,12vw,58px);margin:16px 0 16px}
     .lede{font-size:13px}
-    .hero-cta{flex-direction:column;align-items:stretch;gap:9px;margin-top:18px}
     .btn{justify-content:center}
     .block,.stats,.faq,.closer{margin-top:40px}
     .closer{padding:28px 20px;border-radius:24px}
@@ -409,39 +436,9 @@
           thesis and a pre-mortem each &mdash; locked, then graded against the next leaderboard window.
           <strong>Every call stays in the book, so you can check it.</strong>
         </p>
-        <div class="chips">
-          <span class="chip"><svg class="ic"><use href="#i-api"/></svg>official api</span>
-          <span class="chip"><svg class="ic"><use href="#i-clock"/></svg>4h windows</span>
-          <span class="chip"><svg class="ic"><use href="#i-server"/></svg>scored server-side</span>
-          <span class="chip"><svg class="ic"><use href="#i-x"/></svg>X to file</span>
-        </div>
-      </div>
-      <div class="hero-cta">
-        <a class="btn primary" href="/app"><svg class="ic"><use href="#i-target"/></svg>Enter the room</a>
-        <a class="btn ghost" href="#showcase">See how a call reads</a>
       </div>
     </div>
 
-    <div class="herocol">
-      <div class="stackghost" aria-hidden="true"></div>
-      <div class="herocard">
-        <div class="hc-top">
-          <span class="hc-label"><svg class="ic"><use href="#i-receipt"/></svg>how a call reads</span>
-          <span class="hc-state">example</span>
-        </div>
-        <div class="hc-who">@yourhandle &middot; 5 picks</div>
-        <div class="hc-rows">
-          <div class="hc-row"><span>thesis + pre-mortem</span><b class="up">filed</b></div>
-          <div class="hc-row"><span>star total</span><b>24 / 32</b></div>
-          <div class="hc-row"><span>window close</span><b>20:00Z</b></div>
-          <div class="hc-row"><span>rank after</span><b class="up">+3</b></div>
-        </div>
-        <div class="hc-foot">
-          <span>scored server-side</span>
-          <b>+7 net</b>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ============ HOW IT WORKS (3 steps) ============ -->
@@ -518,9 +515,36 @@
     <div class="stat"><div class="k">star cap</div><div class="v">32</div></div>
   </div>
 
+  <!-- ============ HOW A CALL READS (example receipt) ============ -->
+  <section class="block" id="receipt">
+    <div class="sec-head">
+      <h3>How a call reads</h3>
+    </div>
+    <div class="receipt">
+      <div class="stackghost" aria-hidden="true"></div>
+      <div class="herocard">
+        <div class="hc-top">
+          <span class="hc-label"><svg class="ic"><use href="#i-receipt"/></svg>how a call reads</span>
+          <span class="hc-state">example</span>
+        </div>
+        <div class="hc-who">@yourhandle &middot; 5 picks</div>
+        <div class="hc-rows">
+          <div class="hc-row"><span>thesis + pre-mortem</span><b class="up">filed</b></div>
+          <div class="hc-row"><span>star total</span><b>24 / 32</b></div>
+          <div class="hc-row"><span>window close</span><b>20:00Z</b></div>
+          <div class="hc-row"><span>rank after</span><b class="up">+3</b></div>
+        </div>
+        <div class="hc-foot">
+          <span>scored server-side</span>
+          <b>+7 net</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ FAQ ============ -->
   <section class="faq" id="faq">
-    <details class="faq-item" open>
+    <details class="faq-item">
       <summary><svg class="ic"><use href="#i-chevron-down"/></svg>The rules this room plays by</summary>
       <div class="faq-body">
         <b>Tournament</b> &mdash; Mon 09:00 ET to Fri, finalised 17:30 ET. Lineups lock Mon 07:00 ET.<br>
