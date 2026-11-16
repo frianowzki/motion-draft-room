@@ -1,8 +1,34 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-16 11:20 UTC. Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-16 16:40 UTC (batch 9, commit a2b7bd9, live). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+---
+
+## Batch 9 (live, commit `a2b7bd9`)
+
+- **FAQ**: blok `.sfaq-points` + label "FAQ section" + `.sfaq-left` dihapus. `.sfaq` sekarang
+  satu kolom (`.sfaq-right` full width) — kartu sejajar dengan sec-head dan closer.
+- **Theme switch**: `.themesw` (2 tombol terpisah) diganti `.tgs` = satu track dengan satu
+  knob yang meluncur (`data-on="light|dark"`), dua tombol ikon sun/moon di dalamnya.
+  Key localStorage tetap `mdr-theme`; `aria-pressed` tetap diset per tombol.
+  **Penting**: `.tgs` butuh `pointer-events:auto` karena `.dockrow`/`.dock` punya
+  `pointer-events:none` — tanpa itu seluruh track mati.
+- **Posisi mobile**: landing `.tgs` ada di `.dockrow` (kiri pillnav, kanan switch, tidak
+  overlap di 390). App: switch dipindah dari `position:fixed` ke `.apphead` di dalam
+  `.wrap` (flex-end) → di desktop tetap di kanan atas area konten, di mobile tidak
+  menumpuk back-home.
+- **Arrow CTA**: `.acta` (label kiri + disc hitam berisi panah kanan) dipakai di closer
+  ("Enter the room") dan slab showcase ("Open the app", `.acta-sm`). Closer slab selalu
+  gelap → `.closer .acta` dipaksa paper/ink. Hover: disc scale 1.08 + panah geser 2px.
+- **Font**: self-host Fontshare di `fonts/` (`fonts.css` + 14 woff2, 316K):
+  Clash Grotesk (display/heading), Satoshi (body/UI), Gambetta (serif accent, belum
+  dipakai di selector). Google Fonts tinggal JetBrains Mono (mono). `build.sh` sekarang
+  menyalin `fonts/` → `public/fonts`; verifikasi prod `/fonts/*.woff2` = 200,
+  `document.fonts` memuat Clash Grotesk 500/600 + Satoshi 400/500/700.
+- Fontinlogo tidak dipakai: font di sana komersial (Avenir/Cereal/Circular/Product Sans);
+  Fontshare = gratis untuk web, aman lisensi.
 
 ---
 
