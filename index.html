@@ -171,16 +171,25 @@
     color:#6b4a15;font-size:12px;padding:13px 15px;line-height:1.55}
   .warn .ic{font-size:14px;color:var(--warm);margin-top:2.5px;flex:none}
 
-  /* ---- rules disclosure */
-  .rules{margin:14px 0 0;background:var(--card);border-radius:var(--r-md);
-    box-shadow:var(--lift);padding:0 18px}
-  .rules summary{cursor:pointer;font-family:var(--mono);font-size:10.5px;color:var(--dim);
-    padding:14px 0;letter-spacing:.03em;list-style:none;display:flex;align-items:center;gap:8px}
-  .rules summary::-webkit-details-marker{display:none}
-  .rules summary .ic{font-size:12px;color:var(--ink);transition:transform .22s ease}
-  .rules[open] summary .ic{transform:rotate(180deg)}
+  /* ---- faq: rules-as-data and the explainer questions sit in one stack */
+  .faq{margin:26px 0 0;background:var(--card);border-radius:var(--r-md);
+    box-shadow:var(--lift);padding:4px 20px 8px}
+  .faq-head{margin:16px 0 4px;display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink)}
+  .faq-head .ic{font-size:13px}
+  .faq-item{border-top:1px solid var(--line)}
+  .faq-item summary{cursor:pointer;list-style:none;display:flex;align-items:flex-start;gap:9px;
+    padding:14px 0;font-size:12.5px;color:var(--ink);line-height:1.45}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary b{font-weight:600}
+  .faq-item summary .ic{font-size:12px;color:var(--dim);flex:none;margin-top:2px;
+    transition:transform .22s ease}
+  .faq-item[open] summary .ic{transform:rotate(180deg)}
+  .faq-item summary:hover b{color:var(--dim)}
+  .faq-body{font-size:12px;color:var(--dim);line-height:1.6;padding:0 0 15px 21px}
   .rulesGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 22px;
-    padding:2px 0 17px;font-size:12px;color:var(--dim);line-height:1.55}
+    padding:0 0 17px 21px;font-size:12px;color:var(--dim);line-height:1.55}
   .rulesGrid b{display:block;color:var(--ink);font-family:var(--mono);font-size:9px;
     text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;font-weight:600}
 
@@ -412,6 +421,10 @@
   /* ---- mobile: the promise is "one tap, no signup" - so make targets tappable */
   @media(max-width:600px){
     .wrap{padding:0 12px 60px}
+    .faq{padding:2px 15px 6px}
+    .faq-item summary{font-size:12px;padding:13px 0}
+    .faq-body{font-size:11.5px;padding-left:19px}
+    .rulesGrid{grid-template-columns:1fr;gap:12px;padding-left:19px}
     .hero-main{padding:22px 18px 20px;border-radius:24px}
     .hero h2{font-size:clamp(38px,12.5vw,60px);letter-spacing:-.05em;margin-top:14px}
     .lede{font-size:13px;margin-top:14px}
@@ -542,19 +555,7 @@
 
   <div class="stats" id="stats"></div>
 
-  <details class="rules">
-    <summary><svg class="ic"><use href="#i-chevron-down"/></svg>The game we are modelling &mdash; from docs.motion.game</summary>
-    <div class="rulesGrid">
-      <div><b>Tournament</b>Mon 09:00 ET &rarr; Fri, finalised 17:30 ET. Lineups lock Mon 07:00 ET.</div>
-      <div><b>Scores</b>Update every 4 hours, Mon&ndash;Fri. Same rhythm as our collector.</div>
-      <div><b>Lineup</b>5 different creators; star total &le; cap; rarity/boost limits apply.</div>
-      <div><b>Formula</b>Lineup Score = &Sigma; (Creator Motion Score &times; card Score Boost).</div>
-      <div><b>Stars</b>1&ndash;8, from 14-day relative performance. Gate eligibility, add no points.</div>
-      <div><b>Rarity</b>Common / Rare / Epic / Legendary &mdash; sets the Score Boost multiplier.</div>
-    </div>
-  </details>
-
-  <div class="tabs" id="filters"></div>
+    <div class="tabs" id="filters"></div>
   <div class="legend" id="legend"></div>
 
   <div class="grid">
@@ -607,24 +608,59 @@
   </section>
 
   <footer>
-    <strong>Where the numbers come from.</strong>
-    Every value on this page is derived from one source: <code>leaderboard.motion.game/api/leaderboard</code>
-    (official, unauthenticated) — the fields <code>position</code>, <code>delta</code> (4-hour rank change),
-    <code>isNew</code>, plus <code>asOf</code>. A GitHub Actions cron snapshots all 79 creators every 4 hours onto the
-    <code>data</code> branch; this page reads those snapshots.
-    <br><br>
-    <strong>What this is not.</strong> A creator's Motion Score is not public — it is built from X, Instagram,
-    TikTok and YouTube engagement during the tournament — so nothing here claims to know it. Stars in the real game
-    come from 14-day relative performance on a 1&ndash;8 scale; ours are estimated from rank and labelled as such.
-    The 32-star cap is the one Motion's own docs use as an example; the real cap is set per tournament, and
-    tournaments also limit the rarity/boost mix, which this room does not model yet.
-    History starts the day the collector started — when a window has too few slots the field shows
-    <code>—</code>, never a made-up number. Receipts grade rank movement, not score.<br><br>
-    <strong>The book is public.</strong> Locking a lineup files it (its X account, picks, thesis, pre-mortem) to
-    <code>data/receipts.json</code> on the <code>data</code> branch through <code>/api/receipts</code>, and the server
-    grades it against the snapshot on record — a visitor cannot submit their own score. One receipt per handle per
-    slot, so nobody can keep re-rolling a lineup until one hits.
+    <strong>Motion Draft Room</strong> &mdash; a forecast arena for the Motion creator leaderboard. Built on
+    <code>docs.motion.game</code>; every number traced to the official API.
   </footer>
+
+  <section class="faq" id="faq" aria-labelledby="faqTitle">
+    <h2 class="faq-head" id="faqTitle"><svg class="ic"><use href="#i-info"/></svg>Questions, answered</h2>
+    <details class="faq-item" open>
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>The rules this room plays by</b></summary>
+      <div class="faq-body rulesGrid">
+        <div><b>Tournament</b>Mon 09:00 ET &rarr; Fri, finalised 17:30 ET. Lineups lock Mon 07:00 ET.</div>
+        <div><b>Scores</b>Update every 4 hours, Mon&ndash;Fri. Same rhythm as our collector.</div>
+        <div><b>Lineup</b>5 different creators; star total &le; cap; rarity/boost limits apply.</div>
+        <div><b>Formula</b>Lineup Score = &Sigma; (Creator Motion Score &times; card Score Boost).</div>
+        <div><b>Stars</b>1&ndash;8, from 14-day relative performance. Gate eligibility, add no points.</div>
+        <div><b>Rarity</b>Common / Rare / Epic / Legendary &mdash; sets the Score Boost multiplier.</div>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>Where do the numbers come from?</b></summary>
+      <div class="faq-body">
+        Every value on this page is derived from one source: <code>leaderboard.motion.game/api/leaderboard</code>
+        (official, unauthenticated) &mdash; the fields <code>position</code>, <code>delta</code> (4-hour rank change),
+        <code>isNew</code>, plus <code>asOf</code>. A GitHub Actions cron snapshots all 79 creators every 4 hours onto
+        the <code>data</code> branch; this page reads those snapshots. History starts the day the collector started
+        &mdash; when a window has too few slots the field shows <code>&mdash;</code>, never a made-up number.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>Why don't you just show Motion Score?</b></summary>
+      <div class="faq-body">
+        A creator's Motion Score is not public &mdash; it is built from X, Instagram, TikTok and YouTube engagement
+        during the tournament &mdash; so nothing here claims to know it. Stars in the real game come from 14-day
+        relative performance on a 1&ndash;8 scale; ours are estimated from rank and labelled as such.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>Is the 32-star cap real?</b></summary>
+      <div class="faq-body">
+        It is the one Motion's own docs use as an example. The real cap is set per tournament, and tournaments also
+        limit the rarity/boost mix, which this room does not model yet. Receipts grade rank movement, not score.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>What happens when I lock a lineup?</b></summary>
+      <div class="faq-body">
+        The book is public. Locking files it &mdash; its X account, picks, thesis, pre-mortem &mdash; to
+        <code>data/receipts.json</code> on the <code>data</code> branch through <code>/api/receipts</code>, and the
+        server grades it against the snapshot on record, so a visitor cannot submit their own score. One receipt per
+        handle per slot, so nobody can keep re-rolling a lineup until one hits.
+      </div>
+    </details>
+  </section>
 </div>
 
 <script>
