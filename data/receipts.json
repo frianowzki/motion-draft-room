@@ -1,1 +1,65 @@
-[]
+[
+ {
+  "player": "draftroom_test",
+  "xid": "1234567",
+  "name": "Draft Room Test",
+  "avatar": "https://pbs.twimg.com/profile_images/test.jpg",
+  "slotAtLock": "2026-11-15T20:00:00Z",
+  "picks": [
+   {
+    "name": "Coffeezilla",
+    "positionAtLock": 1,
+    "estStars": 2,
+    "rarity": "Common",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 22,
+    "move": -21
+   },
+   {
+    "name": "Mark Cuban",
+    "positionAtLock": 2,
+    "estStars": 2,
+    "rarity": "Common",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 29,
+    "move": -27
+   },
+   {
+    "name": "Jim Cramer",
+    "positionAtLock": 3,
+    "estStars": 2,
+    "rarity": "Common",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 33,
+    "move": -30
+   },
+   {
+    "name": "DJ Akademiks",
+    "positionAtLock": 4,
+    "estStars": 2,
+    "rarity": "Common",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 17,
+    "move": -13
+   },
+   {
+    "name": "Logan Paul",
+    "positionAtLock": 5,
+    "estStars": 2,
+    "rarity": "Common",
+    "thesis": "",
+    "premortem": "",
+    "positionNow": 26,
+    "move": -21
+   }
+  ],
+  "status": "settled",
+  "lockedAt": "2026-11-16T10:58:45.420197Z",
+  "score": -112,
+  "settledAt": "2026-11-16T08:00:00Z"
+ }
+]
