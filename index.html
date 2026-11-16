@@ -68,11 +68,6 @@
   .pillnav a:focus-visible{outline:2px solid #fff;outline-offset:2px}
   .pillnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;
     stroke-linecap:round;stroke-linejoin:round}
-  .pillnav a.enter{width:auto;gap:7px;padding:0 15px 0 13px;color:var(--ink);
-    background:#f8f7f4;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
-    text-transform:uppercase;white-space:nowrap}
-  .pillnav a.enter:hover{background:#fff;color:var(--ink)}
-  .pillnav a.enter svg{width:14px;height:14px;stroke-width:2}
 
   /* ---- buttons ---- */
   .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
@@ -230,7 +225,6 @@
     .pillnav{gap:2px;padding:6px 8px}
     .pillnav a{width:36px;height:36px}
     .pillnav svg{width:20px;height:20px}
-    .pillnav a.enter{padding:0 12px 0 10px;font-size:9px}
     .hero{margin-top:70px}
     .hero-main{padding:22px 18px 20px;border-radius:24px}
     .hero h2{font-size:clamp(36px,12vw,58px);margin:16px 0 16px}
@@ -264,20 +258,17 @@
   <!-- ============ PERSISTENT NAV (sticky pill; enters the app) ============ -->
   <div class="dock">
     <nav class="pillnav" aria-label="Primary">
-      <a href="#top" aria-label="Top" class="is-active" data-nav>
-        <svg viewBox="0 0 24 24"><path d="M 0 9.284 L 8.954 0.33 C 9.394 -0.11 10.106 -0.11 10.546 0.33 L 19.5 9.284 M 2.25 7.034 L 2.25 17.159 C 2.25 17.78 2.754 18.284 3.375 18.284 L 7.5 18.284 L 7.5 13.409 C 7.5 12.788 8.004 12.284 8.625 12.284 L 10.875 12.284 C 11.496 12.284 12 12.788 12 13.409 L 12 18.284 L 16.125 18.284 C 16.746 18.284 17.25 17.78 17.25 17.159 L 17.25 7.034 M 6 18.284 L 14.25 18.284"/></svg>
+      <a href="#top" aria-label="Top" data-nav class="is-active">
+        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M7.88403 3.86687L5.88403 5.10813C3.98695 6.28551 3.0384 6.87421 2.5192 7.82274C2 8.77128 2 9.91549 2 12.2039V13.725C2 17.6258 2 19.5763 3.17157 20.7881C4.34315 22 6.22876 22 10 22H14C17.7712 22 19.6569 22 20.8284 20.7881C22 19.5763 22 17.6258 22 13.725V12.2039C22 9.91549 22 8.77128 21.4808 7.82274C20.9616 6.87421 20.0131 6.28551 18.116 5.10812L16.116 3.86687C14.1106 2.62229 13.1079 2 12 2C10.8921 2 9.88939 2.62229 7.88403 3.86687Z" opacity=".5"/><path d="M15 18H9"/></g></svg>
       </a>
       <a href="#features" aria-label="How it works" data-nav>
-        <svg viewBox="0 0 12 12"><path transform="translate(2.25 2.25)" d="M 7.5 3.75 C 7.5 5.821 5.821 7.5 3.75 7.5 C 1.679 7.5 0 5.821 0 3.75 C 0 1.679 1.679 0 3.75 0 C 5.821 0 7.5 1.679 7.5 3.75 Z"/></svg>
+        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M6.5 10.5C4.61438 10.5 3.67157 10.5 3.08579 9.91421C2.5 9.32843 2.5 8.38562 2.5 6.5C2.5 4.61438 2.5 3.67157 3.08579 3.08579C3.67157 2.5 4.61438 2.5 6.5 2.5C8.38562 2.5 9.32843 2.5 9.91421 3.08579C10.5 3.67157 10.5 4.61438 10.5 6.5C10.5 8.38562 10.5 9.32843 9.91421 9.91421C9.32843 10.5 8.38562 10.5 6.5 10.5Z" opacity=".5"/><path d="M17.5 21.5C15.6144 21.5 14.6716 21.5 14.0858 20.9142C13.5 20.3284 13.5 19.3856 13.5 17.5C13.5 15.6144 13.5 14.6716 14.0858 14.0858C14.6716 13.5 15.6144 13.5 17.5 13.5C19.3856 13.5 20.3284 13.5 20.9142 14.0858C21.5 14.6716 21.5 15.6144 21.5 17.5C21.5 19.3856 21.5 20.3284 20.9142 20.9142C20.3284 21.5 19.3856 21.5 17.5 21.5Z" opacity=".5"/><path d="M6.5 21.5C4.61438 21.5 3.67157 21.5 3.08579 20.9142C2.5 20.3284 2.5 19.3856 2.5 17.5C2.5 15.6144 2.5 14.6716 3.08579 14.0858C3.67157 13.5 4.61438 13.5 6.5 13.5C8.38562 13.5 9.32843 13.5 9.91421 14.0858C10.5 14.6716 10.5 15.6144 10.5 17.5C10.5 19.3856 10.5 20.3284 9.91421 20.9142C9.32843 21.5 8.38562 21.5 6.5 21.5Z"/><path d="M17.5 10.5C15.6144 10.5 14.6716 10.5 14.0858 9.91421C13.5 9.32843 13.5 8.38562 13.5 6.5C13.5 4.61438 13.5 3.67157 14.0858 3.08579C14.6716 2.5 15.6144 2.5 17.5 2.5C19.3856 2.5 20.3284 2.5 20.9142 3.08579C21.5 3.67157 21.5 4.61438 21.5 6.5C21.5 8.38562 21.5 9.32843 20.9142 9.91421C20.3284 10.5 19.3856 10.5 17.5 10.5Z"/></g></svg>
       </a>
       <a href="#showcase" aria-label="The room" data-nav>
-        <svg viewBox="0 0 24 24"><path d="M 0 9 L 0 8.25 C 0 7.007 1.007 6 2.25 6 L 17.25 6 C 18.493 6 19.5 7.007 19.5 8.25 L 19.5 9 M 10.811 2.561 L 8.689 0.439 C 8.408 0.158 8.027 0 7.629 0 L 2.25 0 C 1.007 0 0 1.007 0 2.25 L 0 14.25 C 0 15.493 1.007 16.5 2.25 16.5 L 17.25 16.5 C 18.493 16.5 19.5 15.493 19.5 14.25 L 19.5 5.25 C 19.5 4.007 18.493 3 17.25 3 L 11.871 3 C 11.473 3 11.092 2.842 10.811 2.561 Z"/></svg>
+        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><path d="M12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22Z"/><circle cx="16" cy="8" r="2" opacity=".5"/><path d="M2 12.5001L3.75159 10.9675C4.66286 10.1702 6.03628 10.2159 6.89249 11.0721L11.1822 15.3618C11.8694 16.0491 12.9512 16.1428 13.7464 15.5839L14.0446 15.3744C15.1888 14.5702 16.7369 14.6634 17.7765 15.599L21 18.5001" opacity=".5"/></g></svg>
       </a>
       <a href="#faq" aria-label="FAQ" data-nav>
-        <svg viewBox="0 0 24 24"><path d="M 9 3.75 L 10.5 3.75 M 9 6.75 L 10.5 6.75 M 3 9.75 L 10.5 9.75 M 3 12.75 L 10.5 12.75 M 13.5 3.75 L 16.875 3.75 C 17.496 3.75 18 4.254 18 4.875 L 18 14.25 C 18 15.493 16.993 16.5 15.75 16.5 M 13.5 3.75 L 13.5 14.25 C 13.5 15.493 14.507 16.5 15.75 16.5 M 13.5 3.75 L 13.5 1.125 C 13.5 0.504 12.996 0 12.375 0 L 1.125 0 C 0.504 0 0 0.504 0 1.125 L 0 14.25 C 0 15.493 1.007 16.5 2.25 16.5 L 15.75 16.5 M 3 3.75 L 6 3.75 L 6 6.75 L 3 6.75 Z"/></svg>
-      </a>
-      <a href="/app" class="enter">
-        <svg viewBox="0 0 24 24"><polyline points="7 17 17 7"/><polyline points="8 7 17 7 17 16"/></svg>Open app
+        <svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"><circle cx="12" cy="12" r="10" opacity=".5"/><path d="M10.125 8.875C10.125 7.83947 10.9645 7 12 7C13.0355 7 13.875 7.83947 13.875 8.875C13.875 9.56245 13.505 10.1635 12.9534 10.4899C12.478 10.7711 12 11.1977 12 11.75V13"/><path stroke-linejoin="round" d="M12 16H12.0001"/></g></svg>
       </a>
     </nav>
   </div>
@@ -286,7 +277,6 @@
   <section class="hero">
     <div class="hero-main">
       <div>
-        <div class="eyebrow"><svg class="ic"><use href="#i-target"/></svg>five picks, one call, graded in public</div>
         <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
         <p class="lede">
           Fantasy sports for creators, on the one dataset Motion actually publishes. Five picks with a
@@ -324,7 +314,6 @@
           <span>scored server-side</span>
           <b>+7 net</b>
         </div>
-        <div class="hc-note"><svg class="ic"><use href="#i-info"/></svg><span>Illustration only &mdash; the book starts with the first real call.</span></div>
       </div>
     </div>
   </section>
@@ -333,7 +322,6 @@
   <section class="block" id="features">
     <div class="sec-head">
       <h3>How it works</h3>
-      <span class="kicker">three moves, then you are graded</span>
     </div>
     <div class="grid3">
       <div class="card">
@@ -358,7 +346,6 @@
   <section class="block" id="showcase">
     <div class="sec-head">
       <h3>The room itself</h3>
-      <span class="kicker">board, draft, book &mdash; one screen</span>
     </div>
     <div class="slab">
       <svg class="ic"><use href="#i-image"/></svg>
@@ -405,14 +392,12 @@
   <section class="closer" id="cta">
     <div>
       <h3>Where they go next is the bet.</h3>
-      <p class="closer-sub">Five picks. One call. Graded in public.</p>
     </div>
     <a class="btn primary" href="/app"><svg class="ic"><use href="#i-arrow-up-right"/></svg>Enter the room</a>
   </section>
 
   <!-- ============ FOOTER ============ -->
   <footer>
-    <span>Motion Draft Room</span>
     <div class="links">
       <a href="/app">The room</a>
       <a href="https://docs.motion.game" target="_blank" rel="noopener">Motion docs</a>
