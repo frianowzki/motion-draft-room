@@ -411,13 +411,56 @@
 // nav highlight follows the section in view; scroll-spy only, no routing
 (function () {
   var links = [].slice.call(document.querySelectorAll(".pillnav a[data-nav]"));
-  var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
-  function sync() {
-    var y = window.scrollY + window.innerHeight * 0.35, best = 0;
-    targets.forEach(function (t, i) { if (t && t.getBoundingClientRect().top + window.scrollY <= y) best = i; });
-    links.forEach(function (a, i) { a.classList.toggle("is-active", i === best); });
+  var secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+  var held = -1;          // index a nav click owns, -1 when the scroll position rules
+  var settleTimer = 0, onMove = null;   // onMove arms after a click lands
+
+  function paint(i) {
+    links.forEach(function (a, n) { a.classList.toggle("is-active", n === i); });
   }
-  window.addEventListener("scroll", sync, { passive: true });
+  // Sections are short and sit ~65px apart, so "last section whose top passed
+  // the top third" lights the wrong icon. Snap the reading line to the viewport
+  // centre and pick the section nearest it — deterministic, never a stray hit.
+  function atRest() {
+    var mid = window.scrollY + window.innerHeight * 0.5, best = 0, bestDist = Infinity;
+    secs.forEach(function (s, i) {
+      if (!s || i === 0) return;
+      var r = s.getBoundingClientRect();
+      var top = r.top + window.scrollY, bottom = r.bottom + window.scrollY;
+      var dist = mid >= top && mid <= bottom ? 0 : Math.min(Math.abs(mid - top), Math.abs(mid - bottom));
+      if (dist < bestDist) { best = i; bestDist = dist; }
+    });
+    return best;
+  }
+  function sync() {
+    paint(held >= 0 ? held : atRest());
+  }
+  function release() {
+    held = -1; onMove = null;
+    window.clearTimeout(settleTimer);
+  }
+
+  links.forEach(function (a, i) {
+    a.addEventListener("click", function () {
+      release();
+      held = i; paint(i);
+      // After the jump lands, only hand control back when the next scroll event
+      // actually moves the page — fractional re-clamp events keep the hold.
+      settleTimer = window.setTimeout(function () {
+        if (held !== i) return;
+        var landed = window.scrollY;
+        onMove = function () {
+          if (Math.abs(window.scrollY - landed) < 2) return;
+          release(); sync();
+        };
+      }, 700);
+    });
+  });
+  // a wheel, a finger or a key hands control straight back to the scroll position
+  ["wheel", "touchstart", "touchmove", "keydown"].forEach(function (ev) {
+    window.addEventListener(ev, function () { release(); sync(); }, { passive: true, capture: true });
+  });
+  window.addEventListener("scroll", function () { if (onMove) onMove(); if (held < 0) sync(); }, { passive: true });
   window.addEventListener("resize", sync);
   sync();
 })();
