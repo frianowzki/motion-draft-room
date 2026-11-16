@@ -79,24 +79,14 @@
       stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
 
   /* ---- top bar: three quiet slots, like a name / a role / a clock */
-  .top{display:flex;align-items:center;gap:16px;
-    padding:18px 2px 16px}
-  .brand{display:flex;align-items:center;gap:10px;min-width:0}
-  .mark{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
-    background:var(--ink);color:#f8f7f4;font-size:14px}
-  .mark .ic{stroke-width:2.2}
-  .brand h1{margin:0;font-family:var(--display);font-size:13.5px;font-weight:600;
-    letter-spacing:-.2px;line-height:1.1;white-space:nowrap}
-  .brand h1 span{color:var(--faint);font-weight:400}
   .live-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);flex:none;
     box-shadow:0 0 0 3px rgba(17,17,17,.1);animation:pulse 2.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   @media(max-width:820px){
-    .top{padding:14px 0 12px}
   }
 
   /* ---- hero: one oversized line, then three bento tiles under it */
-  .hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,.9fr);gap:14px;
+  .hero{display:grid;margin-top:22px;grid-template-columns:minmax(0,1.55fr) minmax(0,.9fr);gap:14px;
     padding:6px 0 0}
   .hero-main{position:relative;border-radius:var(--r-lg);padding:34px 34px 30px;
     background:var(--card);box-shadow:var(--lift);overflow:hidden;
@@ -422,7 +412,6 @@
   /* ---- mobile: the promise is "one tap, no signup" - so make targets tappable */
   @media(max-width:600px){
     .wrap{padding:0 12px 60px}
-    .top{gap:10px;padding:14px 2px 12px}
     .hero-main{padding:22px 18px 20px;border-radius:24px}
     .hero h2{font-size:clamp(38px,12.5vw,60px);letter-spacing:-.05em;margin-top:14px}
     .lede{font-size:13px;margin-top:14px}
@@ -508,15 +497,6 @@
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
-  <div class="top">
-    <div class="brand">
-      <div class="mark"><svg class="ic"><use href="#i-trending-up"/></svg></div>
-      <div>
-        <h1>Motion <span>Draft Room</span></h1>
-      </div>
-    </div>
-  </div>
-
   <section class="hero">
     <div class="hero-main">
       <div class="eyebrow"><svg class="ic"><use href="#i-target"/></svg>five picks, one call, graded in public</div>
