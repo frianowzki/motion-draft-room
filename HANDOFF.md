@@ -84,7 +84,7 @@ Jangan sentuh, jangan tanya ulang tiap sesi, tunggu user yang menyebut.
 
 Repo lokal: `/data/workspace/motion-draft-room`. Remote
 `https://github.com/frianowzki/motion-draft-room` (URL dengan token, jangan dicetak).
-Branch aktif `main`, head **`b67198f`**. Branch `data` untuk snapshot + receipt,
+Branch aktif `main`, head **`fd6805c`**. Branch `data` untuk snapshot + receipt,
 head **`6c97755`**.
 
 **Penting soal branch `data`:** workflow checkout ke `data`, jadi yang dieksekusi cron
@@ -115,6 +115,7 @@ Live: **https://motion-draft-room.vercel.app** — `/`, `/signals.json`, `/api/s
 | `data/game-rules.json` | Ringkasan docs resmi; rarity/boost pakai `null` eksplisit untuk angka yang tidak dipublikasi |
 | `data/signals.json`, `data/latest.json`, `data/snapshots/` | Ada di kedua branch; snapshot resmi terakhir `asOf 2026-11-15T20:00:00Z`, `motion-official`, 79 rows |
 | `data/receipts.json` | Hanya di branch `data`. **Sekarang kosong (`[]`)** — receipt tes sudah dibersihkan |
+| `index.html` (avatar) | Foto profil resmi per kreator dari `https://leaderboard.motion.game/pfp/<id>.jpg` (id dari `creators[].id`, host resmi — API JSON tidak punya field avatar). 8 dari 79 id balas 404, jadi `avatar()` di `index.html` menukar `<img>` gagal dengan inisial (`AV_FB`, kelas ukuran dibawa lewat `data-extra` karena atribut inline `onerror` cuma bisa kutip ganda). Dipakai di baris board, judul kartu draft, dan chip lineup. Gambar remote, tidak di-mirror ke repo |
 | `README.md` | Sumber angka, aturan resmi, alasan GitHub Actions, bagian rarity/boost, section Status (verified vs masih terbuka) |
 | `build.sh`, `vercel.json`, `requirements.txt`, `.gitignore` | Build + konfigurasi deploy |
 
