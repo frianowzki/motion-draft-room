@@ -11,7 +11,8 @@ REPO="${DATA_REPO:-frianowzki/motion-draft-room}"
 rm -rf public
 mkdir -p public
 
-cp index.html public/index.html
+cp landing.html public/index.html
+cp app.html public/app.html
 
 if curl -fsSL --max-time 30 "https://codeload.github.com/${REPO}/tar.gz/refs/heads/data" -o /tmp/data.tgz; then
   mkdir -p /tmp/databranch

@@ -5,7 +5,18 @@
   "headers": [
     {
       "source": "/(.*)",
-      "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }]
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/app",
+      "destination": "/app.html"
     }
   ]
 }

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion Draft Room — fantasy sports for creators</title>
+<meta name="description" content="Five picks, a thesis and a pre-mortem each, graded against the next Motion leaderboard window. Every call stays in the book.">
+<meta name="theme-color" content="#f4f3f0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     Motion Draft Room — landing page (front door for /app)
+     Everything in <brackets> is still a placeholder; the rest is real
+     copy carried over from the room. Sections are labelled, and the
+     layout reflows on its own (all vertical rhythm is margin-based),
+     so deleting a section is safe.
+     ============================================================ */
+
+  :root{
+    --bg:#f4f3f0;
+    --card:#eceae6;
+    --card-2:#e3e1dc;
+    --sunken:#f7f6f3;
+    --line:rgba(17,17,17,.10);
+    --line-soft:rgba(17,17,17,.07);
+    --ink:#111111;
+    --dim:#4f4f4a;
+    --faint:#67675f;
+    --up:#1d7a44;
+    --down:#c0392b;
+    --lift:0 1px 0 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(17,17,17,.045);
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --display:'Inter Tight','Inter',-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --r-sm:10px; --r-md:18px; --r-lg:28px; --r-pill:100px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--ink);color:var(--bg)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 80px}
+  .ic{width:1em;height:1em;display:inline-block;vertical-align:-.125em;
+    fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+  /* anything still in <brackets> is a placeholder and styled softly so it
+     is obvious what needs real copy */
+  .ph{color:var(--faint);font-style:italic}
+
+  /* ---- topbar (same single line as the app; no badge, no strap) ---- */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:22px 0 0}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .mark{width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;
+    background:var(--ink);color:#f8f7f4;font-size:14px}
+  .mark .ic{stroke-width:2.2}
+  .brand h1{margin:0;font-family:var(--display);font-size:13.5px;font-weight:600;
+    letter-spacing:-.2px;line-height:1.1;white-space:nowrap}
+  .brand h1 span{color:var(--faint);font-weight:400}
+  .top nav{display:flex;align-items:center;gap:22px;font-family:var(--mono);
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .top nav a:hover{color:var(--ink)}
+
+  /* ---- buttons ---- */
+  .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
+    font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:13px 20px;
+    border-radius:var(--r-pill);border:0;cursor:pointer;white-space:nowrap}
+  .btn.primary{background:var(--ink);color:var(--accent-ink,#f8f7f4)}
+  .btn.primary:hover{opacity:.88}
+  .btn.ghost{background:rgba(255,255,255,.7);color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .btn.ghost:hover{background:#fff}
+
+  /* ---- hero: text block left, one visual slot right ---- */
+  .hero{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,.95fr);
+    gap:16px;margin-top:34px}
+  .hero-main{position:relative;border-radius:var(--r-lg);padding:40px 38px 36px;
+    background:var(--card);box-shadow:var(--lift);overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between;min-height:0}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
+    font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+  .hero h2{margin:26px 0 22px;font-family:var(--display);font-weight:500;
+    font-size:clamp(44px,7vw,104px);line-height:.9;letter-spacing:-.05em;
+    text-wrap:balance;-webkit-mask-image:linear-gradient(180deg,#000 74%,rgba(0,0,0,.62) 100%);
+    mask-image:linear-gradient(180deg,#000 74%,rgba(0,0,0,.62) 100%)}
+  .hero h2 em{font-style:normal;color:var(--faint)}
+  .lede{max-width:52ch;font-size:14.5px;color:var(--dim);line-height:1.65;margin:0}
+  .lede strong{color:var(--ink);font-weight:600}
+  .hero-cta{display:flex;align-items:center;gap:12px;margin-top:26px;flex-wrap:wrap}
+
+  /* the right slot: replace with a screenshot, a card, a video, anything */
+  .hero-visual{border-radius:var(--r-lg);background:var(--card-2);
+    box-shadow:var(--lift);min-height:260px;display:grid;place-items:center;
+    align-content:center;gap:10px;padding:24px;text-align:center}
+  .hero-visual .ic{font-size:26px;color:var(--faint)}
+  .hero-visual span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint)}
+
+  /* hero right slot: the app's example receipt card */
+  .herocol{position:relative;display:flex}
+  .stackghost{position:absolute;inset:14px 8px -8px 10px;border-radius:var(--r-lg);
+    background:var(--card-2);transform:rotate(-1.2deg);pointer-events:none;z-index:0}
+  .herocard{border-radius:var(--r-lg);padding:22px 22px 18px;position:relative;overflow:hidden;
+    z-index:1;background:var(--card);box-shadow:var(--lift);flex:1;
+    display:flex;flex-direction:column;justify-content:center;gap:0}
+  .hc-top{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:14px}
+  .hc-label{display:inline-flex;align-items:center;gap:6px}
+  .hc-label .ic{font-size:12px;color:var(--ink)}
+  .hc-state{color:#f8f7f4;background:var(--ink);padding:4px 9px;flex:none;
+    border-radius:var(--r-pill);font-size:8.5px}
+  .hc-who{font-family:var(--mono);font-size:12px;color:var(--ink);margin-bottom:14px}
+  .hc-rows{display:flex;flex-direction:column;gap:1px;
+    border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .hc-row{display:flex;justify-content:space-between;gap:10px;align-items:center;
+    font-family:var(--mono);font-size:10.5px;color:var(--dim);padding:9px 0}
+  .hc-row b{color:var(--ink);font-weight:600;font-size:11px}
+  .hc-row b.up{color:var(--up)}
+  .hc-foot{display:flex;justify-content:space-between;align-items:baseline;
+    margin-top:12px;font-family:var(--mono);font-size:9.5px;color:var(--faint);
+    letter-spacing:.08em;text-transform:uppercase}
+  .hc-foot b{font-family:var(--display);font-size:26px;color:var(--ink);
+    font-weight:600;letter-spacing:-.03em;text-transform:none}
+  .hc-note{display:flex;align-items:flex-start;gap:6px;margin-top:auto;padding-top:14px;
+    border-top:1px solid var(--line-soft);font-size:10px;color:var(--faint);line-height:1.5}
+  .hc-note .ic{font-size:11px;color:var(--faint);flex:none;margin-top:1px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--dim);white-space:nowrap;
+    background:rgba(255,255,255,.66);box-shadow:inset 0 0 0 1px var(--line);
+    padding:6px 10px;border-radius:var(--r-pill)}
+
+  /* ---- section furniture ---- */
+  section.block{margin-top:64px}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;
+    gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .sec-head h3{margin:0;font-family:var(--display);font-size:22px;font-weight:600;
+    letter-spacing:-.02em}
+  .sec-head .kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--faint)}
+
+  /* ---- 3-up feature row ---- */
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .card{background:var(--card);border-radius:var(--r-md);box-shadow:var(--lift);
+    padding:22px 20px}
+  .card .num{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+    color:var(--faint);text-transform:uppercase}
+  .card h4{margin:12px 0 8px;font-family:var(--display);font-size:15.5px;font-weight:600;
+    letter-spacing:-.01em}
+  .card p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.6}
+
+  /* ---- wide placeholder slab (screenshot / demo / embed) ---- */
+  .slab{border-radius:var(--r-lg);background:var(--card-2);box-shadow:var(--lift);
+    min-height:340px;display:grid;place-items:center;align-content:center;gap:10px;
+    padding:24px;text-align:center}
+  .slab .ic{font-size:30px;color:var(--faint)}
+  .slab span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--faint)}
+
+  /* ---- stats strip ---- */
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
+    margin-top:64px}
+  .stat{background:var(--card);border-radius:var(--r-md);box-shadow:var(--lift);
+    padding:18px}
+  .stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--faint)}
+  .stat .v{font-family:var(--display);font-size:26px;font-weight:600;
+    letter-spacing:-.03em;margin-top:8px}
+
+  /* ---- FAQ (empty shells, same disclosure pattern as the app) ---- */
+  .faq{margin-top:64px;background:var(--card);border-radius:var(--r-md);
+    box-shadow:var(--lift);padding:4px 20px 8px}
+  .faq-item{border-top:1px solid var(--line)}
+  .faq-item:first-of-type{border-top:0}
+  .faq-item summary{cursor:pointer;list-style:none;display:flex;align-items:flex-start;
+    gap:9px;padding:15px 0;font-size:13px;line-height:1.45}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary .ic{font-size:12px;color:var(--dim);flex:none;margin-top:2px;
+    transition:transform .22s ease}
+  .faq-item[open] summary .ic{transform:rotate(180deg)}
+  .faq-body{font-size:12.5px;color:var(--dim);line-height:1.65;
+    padding:0 0 16px 21px}
+
+  /* ---- closing call to action ---- */
+  .closer{margin-top:64px;border-radius:var(--r-lg);background:var(--ink);
+    color:#f8f7f4;padding:44px 38px;display:flex;align-items:center;
+    justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .closer h3{margin:0;font-family:var(--display);font-size:clamp(26px,3.4vw,42px);
+    font-weight:500;letter-spacing:-.035em;line-height:1.02}
+  .closer-sub{margin:10px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:rgba(248,247,244,.6)}
+  .closer .btn.primary{background:#f8f7f4;color:var(--ink)}
+
+  /* ---- footer ---- */
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+    flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--faint)}
+  footer .links{display:flex;gap:18px}
+  footer a:hover{color:var(--ink)}
+
+  /* ---- responsive: two breakpoints, same as the app ---- */
+  @media(max-width:940px){
+    .hero{grid-template-columns:minmax(0,1fr)}
+    .stackghost{display:none}
+    .hero-main{min-height:0;padding:30px 24px 28px}
+    .grid3{grid-template-columns:minmax(0,1fr)}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .slab{min-height:240px}
+  }
+  @media(max-width:600px){
+    .wrap{padding:0 12px 64px}
+    .top{padding:16px 0 0;gap:10px}
+    .top nav{gap:14px;font-size:9px}
+    .hero{margin-top:22px}
+    .hero-main{padding:22px 18px 20px;border-radius:24px}
+    .hero h2{font-size:clamp(36px,12vw,58px);margin:16px 0 16px}
+    .lede{font-size:13px}
+    .hero-cta{flex-direction:column;align-items:stretch;gap:9px;margin-top:18px}
+    .btn{justify-content:center}
+    .block,.stats,.faq,.closer{margin-top:40px}
+    .closer{padding:28px 20px;border-radius:24px}
+    .faq{padding:2px 15px 6px}
+    .faq-item summary{font-size:12px;padding:13px 0}
+    .faq-body{font-size:11.5px;padding-left:19px}
+    footer{gap:12px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-trending-up" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+</svg>
+
+<div class="wrap">
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="top">
+    <div class="brand">
+      <div class="mark"><svg class="ic"><use href="#i-trending-up"/></svg></div>
+      <div><h1>Motion <span>Draft Room</span></h1></div>
+    </div>
+    <nav>
+      <a href="#features">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn primary" href="/app" style="padding:9px 15px;font-size:9.5px">Open app</a>
+    </nav>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-main">
+      <div>
+        <div class="eyebrow"><svg class="ic"><use href="#i-target"/></svg>five picks, one call, graded in public</div>
+        <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
+        <p class="lede">
+          Fantasy sports for creators, on the one dataset Motion actually publishes. Five picks with a
+          thesis and a pre-mortem each &mdash; locked, then graded against the next leaderboard window.
+          <strong>Every call stays in the book, so you can check it.</strong>
+        </p>
+        <div class="chips">
+          <span class="chip"><svg class="ic"><use href="#i-api"/></svg>official api</span>
+          <span class="chip"><svg class="ic"><use href="#i-clock"/></svg>4h windows</span>
+          <span class="chip"><svg class="ic"><use href="#i-server"/></svg>scored server-side</span>
+          <span class="chip"><svg class="ic"><use href="#i-x"/></svg>X to file</span>
+        </div>
+      </div>
+      <div class="hero-cta">
+        <a class="btn primary" href="/app"><svg class="ic"><use href="#i-target"/></svg>Enter the room</a>
+        <a class="btn ghost" href="#showcase">See how a call reads</a>
+      </div>
+    </div>
+
+    <div class="herocol">
+      <div class="stackghost" aria-hidden="true"></div>
+      <div class="herocard">
+        <div class="hc-top">
+          <span class="hc-label"><svg class="ic"><use href="#i-receipt"/></svg>how a call reads</span>
+          <span class="hc-state">example</span>
+        </div>
+        <div class="hc-who">@yourhandle &middot; 5 picks</div>
+        <div class="hc-rows">
+          <div class="hc-row"><span>thesis + pre-mortem</span><b class="up">filed</b></div>
+          <div class="hc-row"><span>star total</span><b>24 / 32</b></div>
+          <div class="hc-row"><span>window close</span><b>20:00Z</b></div>
+          <div class="hc-row"><span>rank after</span><b class="up">+3</b></div>
+        </div>
+        <div class="hc-foot">
+          <span>scored server-side</span>
+          <b>+7 net</b>
+        </div>
+        <div class="hc-note"><svg class="ic"><use href="#i-info"/></svg><span>Illustration only &mdash; the book starts with the first real call.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS (3 steps) ============ -->
+  <section class="block" id="features">
+    <div class="sec-head">
+      <h3>How it works</h3>
+      <span class="kicker">three moves, then you are graded</span>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <div class="num">01 &middot; the board</div>
+        <h4>79 creators, one number each</h4>
+        <p>The full Motion leaderboard, live from the official API. Rank, 4-hour movement and an estimated star rating &mdash; labelled as an estimate, because Motion Score itself is not public.</p>
+      </div>
+      <div class="card">
+        <div class="num">02 &middot; the draft</div>
+        <h4>Thesis and pre-mortem, or nothing</h4>
+        <p>Five different creators under a 32-star cap. Every pick needs a reason it happens and a reason it fails &mdash; a lineup without reasoning is not a call.</p>
+      </div>
+      <div class="card">
+        <div class="num">03 &middot; the book</div>
+        <h4>Every call, signed and kept</h4>
+        <p>Locking files the lineup under your X account and the server grades it against the next window. One receipt per handle per slot, so nobody re-rolls until one hits.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOWCASE (screenshot slot) ============ -->
+  <section class="block" id="showcase">
+    <div class="sec-head">
+      <h3>The room itself</h3>
+      <span class="kicker">board, draft, book &mdash; one screen</span>
+    </div>
+    <div class="slab">
+      <svg class="ic"><use href="#i-image"/></svg>
+      <span>[drop a screenshot of the room here]</span>
+      <a class="btn ghost" href="/app" style="margin-top:6px">Open the app</a>
+    </div>
+  </section>
+
+  <!-- ============ STATS STRIP (live from the API) ============ -->
+  <div class="stats" id="proof">
+    <div class="stat"><div class="k">creators tracked</div><div class="v" id="pCreators"><span class="ph">[—]</span></div></div>
+    <div class="stat"><div class="k">snapshot windows</div><div class="v" id="pSlots"><span class="ph">[—]</span></div></div>
+    <div class="stat"><div class="k">update rhythm</div><div class="v">4h</div></div>
+    <div class="stat"><div class="k">star cap</div><div class="v">32</div></div>
+  </div>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq" id="faq">
+    <details class="faq-item" open>
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg>The rules this room plays by</summary>
+      <div class="faq-body">
+        <b>Tournament</b> &mdash; Mon 09:00 ET to Fri, finalised 17:30 ET. Lineups lock Mon 07:00 ET.<br>
+        <b>Scores</b> &mdash; update every 4 hours, Mon&ndash;Fri.<br>
+        <b>Lineup</b> &mdash; 5 different creators, star total at or under the cap.<br>
+        <b>Formula</b> &mdash; Lineup Score = &Sigma; (Creator Motion Score &times; card Score Boost).<br>
+        <b>Stars</b> &mdash; 1&ndash;8, from 14-day relative performance; they gate entry and add no points.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg>Where do the numbers come from?</summary>
+      <div class="faq-body">One source: <code>leaderboard.motion.game/api/leaderboard</code> (official, unauthenticated). A cron snapshots all 79 creators every 4 hours; this page reads those snapshots. When a window has too few slots the field shows &mdash;, never a made-up number.</div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg>Why don't you just show Motion Score?</summary>
+      <div class="faq-body">It is not public &mdash; it is built from X, Instagram, TikTok and YouTube engagement during the tournament. Stars here are estimated from rank and labelled as estimates.</div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg>What happens when I lock a lineup?</summary>
+      <div class="faq-body">The book is public. Locking files your X account, picks, thesis and pre-mortem, and the server grades it against the snapshot on record &mdash; a visitor cannot submit their own score.</div>
+    </details>
+  </section>
+
+  <!-- ============ CLOSER ============ -->
+  <section class="closer" id="cta">
+    <div>
+      <h3>Where they go next is the bet.</h3>
+      <p class="closer-sub">Five picks. One call. Graded in public.</p>
+    </div>
+    <a class="btn primary" href="/app"><svg class="ic"><use href="#i-arrow-up-right"/></svg>Enter the room</a>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <span>Motion Draft Room</span>
+    <div class="links">
+      <a href="/app">The room</a>
+      <a href="https://docs.motion.game" target="_blank" rel="noopener">Motion docs</a>
+      <a href="https://x.com/motion" target="_blank" rel="noopener">X</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// the proof strip is the only dynamic bit: it reads the same /api/signals the app uses
+fetch("/api/signals", { cache: "no-store" })
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(d => {
+    const set = (id, v) => { const n = document.getElementById(id); if (n && v != null) n.textContent = v; };
+    set("pCreators", d && typeof d.creatorCount === "number" ? d.creatorCount
+      : (d && Array.isArray(d.creators) ? d.creators.length : null));
+    set("pSlots", d && Array.isArray(d.slotTimes) ? d.slotTimes.length : null);
+  })
+  .catch(() => { /* placeholders stay; the page has to survive a cold API */ });
+</script>
+</body>
+</html>
