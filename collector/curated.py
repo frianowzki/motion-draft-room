@@ -9,19 +9,19 @@ This file replaces the guessing: every handle below was supplied deliberately,
 then confirmed against X at build time — the account must exist, be verified and
 clear a thousand followers before it is used.
 
-FOUR NAMES ARE DELIBERATELY ABSENT. Adding a guess for them would put a real
-stranger's face on someone else's row:
+The last five were open questions for a while and are now settled on someone's
+word rather than a guess: Zohran Mamdani uses the office account @NYCMayor, Greg
+is @greg16676935420, Jason is Jason Calacanis, and Andy is Andy Cohen. Nobody
+here should "fix" those by reasoning from the display name — the person who owns
+this board made each call.
 
-  Zohran Mamdani  two plausible accounts (@ZohranKMamdani personal,
-                  @NYCMayor the office) and no way to tell which one the board
-                  means, so neither is used
-  Greg            @greg16676935420 looks right but nothing ties it to the Greg
-                  at rank 28
-  Jason           Jason Calacanis is the likeliest, still unconfirmed
-  Andy            @Andy, @ajassy, @andy_murray and @AndyAyrey all miss
+Two of them do not obviously match the Motion display name, and that is expected:
 
-Those four rows show Motion's own avatar with initials and the card says the
-account could not be confirmed. Supply a handle and it can be added here.
+  @NYCMayor  displays as "Mayor Zohran Kwame Mamdani", not "Zohran Mamdani"
+  @Jason     displays as "@jason"
+
+That is exactly why the curated path skips the name-similarity test and only
+checks existence, verification and the follower floor.
 
 NOTE: Motion lowercases some names ("rasmr", "greg"). Matching is case-folded
 so that does not matter.
@@ -103,11 +103,10 @@ CURATED = {
     "Chris Dixon": "cdixon",
     "Shayne Coplan": "shayne_coplan",
     "Brian Chesky": "bchesky",
+    "Zohran Mamdani": "NYCMayor",
+    "Greg": "greg16676935420",
+    "Jason": "Jason",
+    "Andy": "Andy",
 }
 
-UNCONFIRMED = {
-    "Zohran Mamdani": "two candidates: @ZohranKMamdani personal, @NYCMayor office",
-    "Greg": "likely @greg16676935420, nothing ties it to rank 28",
-    "Jason": "likely Jason Calacanis @Jason, unconfirmed",
-    "Andy": "@Andy, @ajassy, @andy_murray, @AndyAyrey none fit",
-}
+UNCONFIRMED: dict[str, str] = {}
