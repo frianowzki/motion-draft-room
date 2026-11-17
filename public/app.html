@@ -232,14 +232,18 @@
     border-radius:var(--r-pill);background:var(--sunken);max-width:100%;
     box-shadow:inset 0 0 0 1px var(--line);overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{position:relative;display:inline-flex;align-items:center;gap:6px;
+  .tab{position:relative;display:inline-flex;align-items:center;gap:7px;
     font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
     padding:7px 11px;border:0;border-radius:var(--r-pill);background:none;
     color:var(--dim);cursor:pointer;white-space:nowrap;
     transition:color .18s ease,background .18s ease}
+  :root[data-theme="dark"] .tab{color:var(--ink);opacity:.82}
+  :root[data-theme="dark"] .tab:hover{opacity:1}
+  :root[data-theme="dark"] .tab.on{opacity:1}
   .tab:hover{color:var(--ink)}
   .tab.on{background:var(--ink);color:var(--accent-ink);font-weight:600}
   /* the count: a small tabular chip that inverts with the pill */
+  .tab .tl{display:inline-flex;align-items:center}
   .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
     padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.07);color:var(--faint);
     font-variant-numeric:tabular-nums;transition:background .18s ease,color .18s ease}
@@ -1147,10 +1151,20 @@ function tallyParts(v) {
   const dec = (digits.split(".")[1] || "").length;
   const unit = /\s|[A-Za-z]{2,}/.test(suf);
   // ratios such as "41 / 38" carry a second figure: count both, once
-  const rest = suf.replace(/^(\s*\/\s*)(\d[\d,]*(?:\.\d+)?)/, (all, sep, n2) =>
-    `${sep}<span class="live" data-to="${n2.replace(/,/g, "")}" data-dec="0">${n2}</span>`);
-  return `${esc(pre)}<span class="live" data-to="${digits.replace(/,/g, "")}" data-dec="${dec}">${digits}</span>${
-    rest ? (unit ? `<span class="unit">${esc(rest)}</span>` : esc(rest)) : ""}`;
+  // a ratio's second figure gets its own counting span; the pieces are escaped
+  // before they are joined, never after, or the span would be escaped with them
+  const ratio = /^(\s*\/\s*)(\d[\d,]*(?:\.\d+)?)([\s\S]*)$/.exec(suf);
+  const tail = ratio
+    ? `${esc(ratio[1])}<span class="live" data-to="${ratio[2].replace(/,/g, "")}" data-dec="0">${esc(ratio[2])}</span>${sufTail(ratio[3], unit)}`
+    : sufTail(suf, unit);
+  return `${esc(pre)}<span class="live" data-to="${digits.replace(/,/g, "")}" data-dec="${dec}">${esc(digits)}</span>${tail}`;
+}
+
+// the leftover text after a figure: long or spaced suffixes (" months", " in 5")
+// are set smaller than the number, short ones ("M", "%", "k") keep full size
+function sufTail(suf, unit) {
+  if (!suf) return "";
+  return unit ? `<span class="unit">${esc(suf)}</span>` : esc(suf);
 }
 
 // Count the figures up once, when the row comes into view, and never again: the
@@ -1273,7 +1287,7 @@ function render() {
     const b = el("button", "tab" + (FILTER === t ? " on" : ""));
     b.type = "button";
     b.setAttribute("aria-pressed", FILTER === t ? "true" : "false");
-    b.innerHTML = `${t === "all" ? "" : `<i style="background:${TAGC[t]}"></i>`}${t === "all" ? "All" : t}<b>${n}</b>`;
+    b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i style="background:${TAGC[t]}"></i>`}${t}`}</span><b>${n}</b>`;
     // a creator can carry several signals, so these counts overlap and do not
     // add up to the board size - the title says it rather than implying a partition
     b.title = t === "all"
