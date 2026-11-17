@@ -1231,8 +1231,11 @@ function placeCard(anchor) {
   const h = cardEl.offsetHeight || 300;
   let left = r.right + pad;
   if (left + w > window.innerWidth - pad) left = Math.max(pad, r.left - w - pad);
-  // align the card's banner top with the avatar's top, then pull back inside
-  let top = r.top - 6;
+  // The avatar should sit level with the card's own photo, not with its banner:
+  // the card's face is 26px below the banner plus a -26px pull, so shifting the
+  // card down by that offset lines the two faces up.
+  const cardFaceOffset = 72 - 26; // banner height minus the avatar's negative margin
+  let top = r.top - cardFaceOffset;
   const maxTop = window.innerHeight - h - pad;
   if (top > maxTop) top = maxTop;
   if (top < pad) top = pad;
