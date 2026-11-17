@@ -264,7 +264,11 @@
      the space the board occupies */
   .grid > .side > .card.detail > .empty{margin:auto 0}
   .boardcard{display:flex;flex-direction:column;min-width:0}
-  .boardcard > .tablewrap{flex:1 1 auto}
+  /* the wrap takes whatever height the row has left over, and the table inside
+     grows with it: otherwise the leftover space sits inside the card as a hole
+     between the last row and the pager */
+  .boardcard > .tablewrap{flex:1 1 auto;display:flex;flex-direction:column}
+  .boardcard > .tablewrap > table{flex:1 1 auto}
   .card h2{margin:0 0 10px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
     letter-spacing:.16em;color:var(--faint);font-weight:500;
     display:flex;align-items:center;gap:7px}
@@ -1224,9 +1228,9 @@ function renderPager(pages, total, start, shown) {
       const v = b.dataset.p;
       const next = v === "prev" ? PAGE - 1 : v === "next" ? PAGE + 1 : parseInt(v, 10);
       if (!next || next < 1 || next > pages || next === PAGE) return;
+      // paging keeps the reader where they are: the board is already on screen,
+      // so jumping to it only steals the scroll position
       PAGE = next; render();
-      const board = $("#board");
-      if (board) window.scrollTo({ top: board.getBoundingClientRect().top + window.scrollY - 90, behavior: "smooth" });
     };
   });
 }
