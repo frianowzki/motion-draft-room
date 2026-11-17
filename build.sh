@@ -45,6 +45,11 @@ if curl -fsSL --max-time 30 -H "$GHAUTH" \
   else
     echo "WARN: data branch has no signals.json yet; page will rely on /api/signals"
   fi
+  # X profiles ride along when the collector has published them; the board works
+  # without this file, the hover card just cannot confirm an account
+  if [ -f /tmp/databranch/data/profiles.json ]; then
+    cp /tmp/databranch/data/profiles.json public/profiles.json
+  fi
 else
   echo "WARN: could not fetch data branch; page will rely on /api/signals"
 fi

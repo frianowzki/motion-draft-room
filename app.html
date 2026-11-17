@@ -906,8 +906,15 @@ async function load() {
   // X profiles are resolved separately: a build-time copy plus /api/profiles, and
   // the board still renders without them (the card just says it cannot confirm one)
   try {
-    const pr = await fetch("/api/profiles", { headers: { accept: "application/json" } });
-    if (pr.ok) { const pj = await pr.json(); PROF = pj.profiles || pj; }
+    for (const u of ["/api/profiles", "/profiles.json"]) {
+      try {
+        const pr = await fetch(u, { headers: { accept: "application/json" } });
+        if (!pr.ok) continue;
+        const pj = await pr.json();
+        PROF = pj.profiles || pj;
+        if (PROF && Object.keys(PROF).length) break;
+      } catch (e) {}
+    }
   } catch (e) {}
   const urls = ["/api/signals", "/signals.json"];
   let lastErr = null;
