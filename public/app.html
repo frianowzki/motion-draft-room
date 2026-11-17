@@ -162,8 +162,12 @@
   /* ---- the header switch and one CTA, then straight into the board.
      The explainer lived here and on the landing page; it stays on the landing
      page, so the dashboard opens on the numbers. */
-  .appcta{display:flex;margin-top:16px}
-  .appcta .primary{min-height:46px;padding:0 20px}
+  /* the dashboard opens on one navbar: the CTA on the left, the theme switch on
+     the right, so the numbers start one line below it instead of two */
+  .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding-top:14px}
+  .appcta{display:flex;margin:0}
+  .appcta .primary{min-height:42px;padding:0 18px}
 
   /* ---- stats: four tiles that break out of the grid on desktop */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:14px 0 0}
@@ -227,13 +231,39 @@
   .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:14px;align-items:start}
   @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
 
+  /* your lineup, who is calling and the book run the full width under the
+     board, in the same three-column rhythm the page already uses */
+  .under{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;
+    align-items:stretch;margin-top:14px}
+  .under > .card{margin-top:0!important;min-width:0}
+  @media(max-width:1100px){.under{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:760px){.under{grid-template-columns:minmax(0,1fr)}}
+
   .card{background:var(--card);border-radius:var(--r-lg);padding:22px;
     box-shadow:var(--lift)}
+
+  /* the draft column matches the board: the pick card takes the full height the
+     creators table occupies, so the two tiles read as one row */
+  .grid > .side{display:flex;flex-direction:column;align-items:stretch}
+  .grid > .side > .card.detail{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+  /* the draft card is filled by innerHTML on every render, so the flexible
+     spacer is a pseudo-element rather than a wrapper element */
+  .grid > .side > .card.detail:after{content:"";flex:1 1 auto;min-height:0;display:block}
+  /* the empty state is the one case with nothing to stretch, so centre it in
+     the space the board occupies */
+  .grid > .side > .card.detail > .empty{margin:auto 0}
+  .boardcard{display:flex;flex-direction:column;min-width:0}
+  .boardcard > .tablewrap{flex:1 1 auto}
   .card h2{margin:0 0 14px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
     letter-spacing:.16em;color:var(--faint);font-weight:500;
     display:flex;align-items:center;gap:7px}
   .card h2 .ic{font-size:12px;color:var(--ink)}
   .card.identity,.card.receipts{margin-top:14px}
+
+  /* ---- table: one row height everywhere. The spacer row that fills the last
+     page inherits it, so a page of 9 looks exactly like a page of 10. */
+  tr.row.pad{background:none;box-shadow:none;pointer-events:none}
+  tr.row.pad td{border:0;height:1px;padding:0}
 
   /* ---- table */
   .tablewrap{overflow-x:auto;margin:0 -6px;padding:0 6px}
@@ -334,6 +364,13 @@
   :root[data-theme="dark"] .pager button:hover:not(:disabled){background:rgba(255,255,255,.06)}
 
   /* ---- creator profile card on hover */
+  .pcard .cardx{display:none;position:absolute;top:8px;right:8px;z-index:3;
+    width:26px;height:26px;min-height:0;padding:0;border-radius:50%;
+    background:rgba(17,17,17,.45);color:#fff;box-shadow:none;
+    align-items:center;justify-content:center;
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .pcard .cardx .ic{font-size:13px;stroke-width:2.4}
+  .pcard .cardx:hover{background:rgba(17,17,17,.62)}
   .pcard{position:fixed;z-index:400;width:284px;max-width:calc(100vw - 24px);border-radius:16px;overflow:hidden;
     background:var(--card);box-shadow:0 18px 44px rgba(17,17,17,.22),inset 0 0 0 1px var(--line);
     opacity:0;transform:translateY(5px);pointer-events:none;transition:opacity .14s ease,transform .14s ease}
@@ -374,6 +411,9 @@
   @media(max-width:760px){
     .pcard{width:auto;left:10px!important;right:10px;top:auto!important;bottom:10px;
       max-width:none;border-radius:18px}
+    /* a sheet docked at the bottom has no pointer to leave, so it carries its
+       own close control in the top right corner */
+    .pcard .cardx{display:flex;width:30px;height:30px}
     .pcard .pick{min-height:44px;font-size:11px}
     .pcard .soc a{width:30px;height:30px}
   }
@@ -736,6 +776,10 @@
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
+<div class="appbar">
+<div class="appcta">
+  <button class="primary" id="ctaDraft"><svg class="ic"><use href="#i-target"/></svg>Draft your five</button>
+</div>
 <div class="apphead">
 <!-- theme switch (ThemeChanger "Switch button") -->
 <div class="tgs" id="themesw" role="group" aria-label="Theme">
@@ -748,18 +792,18 @@
   </button>
 </div>
 </div>
-
-  <div class="appcta">
-    <button class="primary" id="ctaDraft"><svg class="ic"><use href="#i-target"/></svg>Draft your five</button>
-  </div>
+</div>
 
   <div class="stats" id="stats"></div>
 
     <div class="tabs" id="filters"></div>
   <div class="legend" id="legend"></div>
 
+  <!-- one screen on a desktop: navbar, then the numbers, then the board and the
+       draft beside it. Your lineup, who is calling and the book sit under both
+       columns, so nothing important is pushed below the fold. -->
   <div class="grid">
-    <div class="card">
+    <div class="card boardcard">
       <h2><svg class="ic"><use href="#i-users"/></svg>Creators</h2>
       <div class="tablewrap" id="board">
         <table>
@@ -774,30 +818,33 @@
       <div class="pager" id="pager"></div>
     </div>
 
-    <div>
+    <div class="side">
       <div class="card detail" id="detail">
         <h2><svg class="ic"><use href="#i-target"/></svg>Draft a pick</h2>
         <div class="empty">Pick a creator from the board.</div>
       </div>
-      <div class="card" style="margin-top:14px">
-        <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
-        <div class="slot" id="slot"></div>
-        <div class="projline" id="proj"></div>
-        <div class="hint" id="slotHint">A pick needs a thesis and a pre-mortem. That is the whole point — a lineup without reasoning is not a call.</div>
-        <div class="rowbtns">
-          <button id="clearBtn" hidden><svg class="ic"><use href="#i-x"/></svg>Clear</button>
-          <button class="primary" id="lockBtn" disabled><svg class="ic"><use href="#i-lock"/></svg>Lock lineup</button>
-        </div>
+    </div>
+  </div>
+
+  <div class="under">
+    <div class="card" style="margin-top:14px">
+      <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
+      <div class="slot" id="slot"></div>
+      <div class="projline" id="proj"></div>
+      <div class="hint" id="slotHint">A pick needs a thesis and a pre-mortem. That is the whole point — a lineup without reasoning is not a call.</div>
+      <div class="rowbtns">
+        <button id="clearBtn" hidden><svg class="ic"><use href="#i-x"/></svg>Clear</button>
+        <button class="primary" id="lockBtn" disabled><svg class="ic"><use href="#i-lock"/></svg>Lock lineup</button>
       </div>
-      <div class="card identity" style="margin-top:14px">
-        <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
-        <div id="whoBody"></div>
-      </div>
-      <div class="card receipts" style="margin-top:14px">
-        <h2><svg class="ic"><use href="#i-book-open"/></svg>The book <span class="pill" id="hitRate">—</span></h2>
-        <div class="bookmeta" id="bookMeta"></div>
-        <div id="receipts"><div class="empty">No locked lineups yet.</div></div>
-      </div>
+    </div>
+    <div class="card identity" style="margin-top:14px">
+      <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
+      <div id="whoBody"></div>
+    </div>
+    <div class="card receipts" style="margin-top:14px">
+      <h2><svg class="ic"><use href="#i-book-open"/></svg>The book <span class="pill" id="hitRate">—</span></h2>
+      <div class="bookmeta" id="bookMeta"></div>
+      <div id="receipts"><div class="empty">No locked lineups yet.</div></div>
     </div>
   </div>
 
@@ -1085,6 +1132,13 @@ function render() {
     if (nm) bindCard(nm, c);
   });
 
+  // The last page holds 9 of 10 rows. Without filling the gap the table shrinks
+  // and the pager jumps up, so the remainder is padded with spacer rows that keep
+  // every row the identical height. They are hidden from screen readers.
+  for (let i = slice.length; i < PER_PAGE; i++) {
+    tb.appendChild(el("tr", "row pad"));
+  }
+
   renderPager(pages, list.length, start, slice.length);
 
   const LEGEND = [["SURGING", "up", "climbing now"], ["COILED", "accent", "flat, about to move"],
@@ -1194,7 +1248,8 @@ function cardHtml(c) {
     ? `<div class="stat"><b>${prof.followers >= 1000 ? (prof.followers / 1000).toFixed(prof.followers >= 10000 ? 0 : 1) + "K" : prof.followers}</b><span>followers on X</span></div>`
     : `<div class="stat"><b>—</b><span>no verified X account matched</span></div>`;
   const handleLine = prof ? `<div class="hd">@${esc(prof.handle)}</div>` : `<div class="hd">rank #${c.position} · unverified on X</div>`;
-  return `<div class="ban"${ban}></div>
+  return `<button class="cardx" type="button" data-close="1" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+    <div class="ban"${ban}></div>
     <div class="pad">${av}
       <div class="nm">${esc(c.name)}</div>${handleLine}
       <div class="soc">${socIcons(prof)}</div>
@@ -1211,6 +1266,7 @@ function ensureCard() {
   cardEl.addEventListener("mouseenter", () => clearTimeout(cardTimer));
   cardEl.addEventListener("mouseleave", hideCardSoon);
   cardEl.addEventListener("click", e => {
+    if (e.target.closest("[data-close]")) { hideCard(); return; }
     const b = e.target.closest("[data-pick]");
     if (!b) return;
     SEL = b.dataset.pick; render(); hideCard();
