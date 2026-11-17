@@ -343,7 +343,11 @@
   .sheettag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
     color:var(--dim);padding:3px 8px;border-radius:100px;background:var(--sunken)}
   .mmx{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
-    border:0;border-radius:100px;background:var(--sunken);color:var(--dim);cursor:pointer;
+    border:0;border-radius:100px;background:var(--sunken);
+    /* the close glyph is the one control on this sheet a thumb has to find
+       without looking, so it carries ink weight, not the faint grey that
+       disappears into a dark panel */
+    color:var(--ink);cursor:pointer;
     -webkit-tap-highlight-color:transparent;transition:background .16s,color .16s}
   .mmx:hover{background:var(--ink);color:var(--accent-ink)}
   /* the glyph needs its own size: a bare inline svg with no width attribute
