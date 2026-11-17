@@ -75,6 +75,14 @@ def accept(name: str, user: dict) -> bool:
     return int(user.get("followers") or 0) >= MIN_FOLLOWERS
 
 
+def _website(user: dict) -> str | None:
+    """fxtwitter returns website as {url, display_url}; keep the URL string."""
+    w = user.get("website")
+    if isinstance(w, dict):
+        return w.get("url") or None
+    return w or None
+
+
 def resolve(name: str) -> dict | None:
     for handle in candidates(name):
         user = fetch(handle)
@@ -87,7 +95,7 @@ def resolve(name: str) -> dict | None:
                 "banner": user.get("banner_url") or None,
                 "description": user.get("description") or None,
                 "url": f"https://x.com/{user['screen_name']}",
-                "website": user.get("website") or None,
+                "website": _website(user),
                 "verified": True,
                 "match": "verified-name-followers",
             }

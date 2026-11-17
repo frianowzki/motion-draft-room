@@ -1114,14 +1114,18 @@ function renderPager(pages, total, start, shown) {
 function socIcons(prof) {
   const out = [];
   if (!prof) return "";
-  const w = (prof.website || "").toLowerCase();
+  // the website field arrives as a string, but an older map shipped it as an
+  // object; read either shape rather than throwing inside the card builder
+  const raw = prof.website;
+  const site = typeof raw === "string" ? raw : (raw && raw.url) || "";
+  const w = site.toLowerCase();
   out.push(`<a href="${esc(prof.url)}" target="_blank" rel="noopener noreferrer" title="X profile" aria-label="X profile">`
     + `<svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L6 22H2.9l7.5-8.6L2.5 2H9l4.5 6.6L18.9 2zm-1.1 18h1.7L7.3 3.8H5.5L17.8 20z"/></svg></a>`);
   if (/youtube\.com|youtu\.be/.test(w))
-    out.push(`<a href="${esc(prof.website)}" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube">`
+    out.push(`<a href="${esc(site)}" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube">`
       + `<svg viewBox="0 0 24 24"><path d="M23 12s0-3.4-.4-5c-.3-1-.9-1.8-1.9-2C19 4.6 12 4.6 12 4.6s-7 0-8.7.4c-1 .2-1.6 1-1.9 2C1 8.6 1 12 1 12s0 3.4.4 5c.3 1 .9 1.8 1.9 2 1.7.4 8.7.4 8.7.4s7 0 8.7-.4c1-.2 1.6-1 1.9-2 .4-1.6.4-5 .4-5zM9.8 15.6V8.4l5.8 3.6-5.8 3.6z"/></svg></a>`);
   if (/instagram\.com/.test(w))
-    out.push(`<a href="${esc(prof.website)}" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">`
+    out.push(`<a href="${esc(site)}" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">`
       + `<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11a1.5 1.5 0 1 1-1.5-1.6 1.6 1.6 0 0 1 1.5 1.6z"/></svg></a>`);
   return out.join("");
 }
