@@ -1119,8 +1119,8 @@ function renderPager(pages, total, start, shown) {
 // resolved against X and proven to be the same person; when nothing could be
 // proven the card says so instead of showing someone else's numbers.
 function socIcons(prof) {
-  const out = [];
   if (!prof) return "";
+  const out = [];
   // the website field arrives as a string, but an older map shipped it as an
   // object; read either shape rather than throwing inside the card builder
   const raw = prof.website;
@@ -1143,7 +1143,7 @@ function cardHtml(c) {
   const av = c.id
     // a confirmed X account carries the photo people recognise; otherwise fall
     // back to Motion's own avatar, then to initials
-    ? `<img class="pf" src="${esc(prof.avatar || `https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg`)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`
+    ? `<img class="pf" src="${esc((prof && prof.avatar) || `https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg`)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`
     : `<span class="pf" style="display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--faint)">${ini}</span>`;
   const ban = prof && prof.banner
     ? ` style="background-image:url('${esc(prof.banner)}')"`
