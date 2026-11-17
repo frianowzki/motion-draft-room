@@ -228,7 +228,10 @@
   .legend i{width:6px;height:6px;border-radius:2px;display:block;flex:none}
 
   /* ---- layout: board is the big tile, the column beside it stacks */
-  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:14px;align-items:start}
+  /* stretch, not start: the draft column has to be exactly as tall as the board
+     beside it, otherwise the two tiles end at different heights */
+  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:14px;align-items:stretch}
+  .grid > .boardcard{align-self:stretch}
   @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
 
   /* your lineup, who is calling and the book run the full width under the
