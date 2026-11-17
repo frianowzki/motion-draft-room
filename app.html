@@ -570,7 +570,10 @@
      content column — right-aligned on desktop, its own row on a phone, so it can
      never land on the nav pill or the back-home chip */
   .apphead{display:flex;justify-content:flex-end;padding-top:14px}
-  .apphead #themesw{position:relative;z-index:70;pointer-events:auto;height:34px;flex:none}
+  /* align-self keeps the track off the header's stretch without pinning a
+     height: a hard 34px squeezed a 36px switch (3+30+3) and made the knob
+     overflow its own track. Same geometry as the landing page now. */
+  .apphead #themesw{position:relative;z-index:70;pointer-events:auto;flex:none;align-self:center}
   @media(max-width:940px){.apphead{padding:10px 10px 0}}
   /* ---- Arrow CTA button (Framer "Arrow CTA Button"): outlined pill whose
      label sits left and whose arrow rides inside a solid disc on the right;
