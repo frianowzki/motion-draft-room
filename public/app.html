@@ -1207,6 +1207,18 @@ function render() {
   renderDetail();
   renderLineup();
   syncClear();
+
+  // The draft panel just changed height, and the board stretches to match it, so
+  // the number of rows that fit has changed too. One deferred re-render after the
+  // layout settles keeps the first paint from showing a page sized for the old
+  // panel. The guard stops render() calling itself forever.
+  if (!render._refit) {
+    render._refit = true;
+    requestAnimationFrame(() => {
+      render._refit = false;
+      if (rowsPerPage() !== perPage) render();
+    });
+  }
 }
 
 // ---- momentum as a bullet chart: a track, a fill the size of the move, and a
