@@ -470,3 +470,23 @@ cuma string), dan tidak punya Motion Score kreator. Jangan pernah menulis di UI,
 atau jawaban chat bahwa angka di sini sama dengan Motion Score / Lineup Score asli.
 Tombol "submit" ke game tidak ada dan tidak akan ada — submission Mogathon adalah post
 di X.
+
+## 2026-11-17 — avatar kartu: `_normal` itu 404, pakai `_400x400`
+
+`api.fxtwitter.com` mengembalikan `avatar_url` dengan sufiks `_normal` (ukuran
+timeline). X sudah tidak melayani berkas itu untuk banyak akun: `curl` balas
+**404 dengan 0 byte** sementara akunnya sehat. Akibatnya kartu menampilkan
+gambar rusak dan `onerror="this.remove()"` membuatnya jatuh ke inisial.
+
+Varian yang benar: `_400x400` (29 KB, tajam untuk avatar kartu 52px). Sudah
+ditulis ulang oleh `_avatar()` di `collector/profiles.py`, dan 79 URL di
+`data/profiles.json` sudah dinormalkan. Diverifikasi: 79/79 balas HTTP 200
+(9.360–364.588 byte), dan di browser `naturalWidth` 400 untuk Roon, Clemente,
+Andy, Murray Hill Guy, David Holz, David Senra, DogeDesigner.
+
+Kalau nanti ada yang mengembalikan sufiks `_normal`/`_bigger`/`_mini`, avatar
+akan 404 lagi — jangan hapus `_avatar()`.
+
+Catatan uji: kartu tidak bisa dibuka lewat hover di Chrome headless (dilaporkan
+`hover:none`), jadi pakai klik. `.ncell` berisi `<img>` + nama, jadi cocokkan
+nama dari `innerText` sel `.name`, bukan dari `textContent` `.ncell`.
