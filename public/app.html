@@ -511,8 +511,10 @@
   /* the ruler a focused card is measured against */
   .tlstage:before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;
     background:var(--line-soft);pointer-events:none}
+  /* the track is padded by half a stage on each side, so the first and the last
+     card can both sit in the centre instead of the ends showing air */
   .tltrack{position:absolute;top:0;height:100%;left:0;display:flex;align-items:center;
-    will-change:transform}
+    padding:0 var(--tpad,50%);box-sizing:content-box;will-change:transform}
   .tlev{flex:none;width:var(--w,240px);height:100%;display:flex;align-items:center;
     justify-content:center;padding:0 7px;box-sizing:border-box;
     transform-origin:center center;will-change:transform}
@@ -1621,25 +1623,46 @@ function tlBuild() {
   TL.w = first ? first.getBoundingClientRect().width : Number((cs && cs.width) || 240) || 240;
 
   TL.i = Math.min(TL.i, evs.length - 1);
+  tlPad();
   tlBind();
   tlLayout(true);
 }
 
-function tlMax() {
+function tlPad() {
   const stage = $("#tlStage"), track = $("#tlTrack");
-  if (!stage || !track) return 0;
-  return Math.max(0, track.scrollWidth - stage.clientWidth);
+  if (!stage || !track) return;
+  // half a stage each side keeps every card reachable at the centre
+  track.style.setProperty("--tpad", `${Math.round(stage.clientWidth / 2)}px`);
 }
 
+// where the track must sit to centre card i, with no clamping: cards are packed
+// from the left, so the first card cannot be centred by scrolling — the track is
+// padded instead and the origin of this offset is the padding
+function tlTargetRaw(i) {
+  // measured against the track's own box, so the half-stage padding on each side
+  // is included. offsetLeft alone ignores it and the first card would overshoot.
+  const track = $("#tlTrack"), stage = $("#tlStage");
+  const el = track && track.children[i];
+  if (!el || !stage) return 0;
+  const tr = track.getBoundingClientRect();
+  const er = el.getBoundingClientRect();
+  // the track's live transform moves the rects together, so this is the card's
+  // position inside the track, independent of where the track currently sits
+  const centreInTrack = (er.left - tr.left) + er.width / 2;
+  return centreInTrack - stage.clientWidth / 2;
+}
+
+// How far the track must be pulled left so card i sits in the centre. The track
+// is padded by half a stage, so card 0 already starts centred: its offset is the
+// zero point, and every target is measured relative to it. Clamped to the travel
+// the history actually has, so the ends never show air.
 function tlTarget(i) {
-  // centre event i in the stage, clamped so the ends do not show air
-  const stage = $("#tlStage"), track = $("#tlTrack");
-  if (!stage || !track) return 0;
-  const el = track.children[i];
-  if (!el) return 0;
-  const centre = el.offsetLeft + el.offsetWidth / 2;
-  const want = centre - stage.clientWidth / 2;
-  return Math.max(0, Math.min(tlMax(), want));
+  const base = tlTargetRaw(0);
+  const lastIdx = Math.max(0, (TL.events.length || 1) - 1);
+  const min = 0, max = Math.max(0, tlTargetRaw(lastIdx) - base);
+  const want = tlTargetRaw(i) - base;
+  if (max <= 0) return 0;
+  return Math.max(min, Math.min(max, want));
 }
 
 function tlLayout(animate) {
@@ -1738,7 +1761,7 @@ function tlBind() {
     lastX = e.clientX; lastT = now;
 
     let x = startOffset - dx;
-    const max = tlMax();
+    const max = tlTarget(Math.max(0, TL.events.length - 1));
     // rubber band: past either end, follow the finger at a fraction and ease
     if (x < 0) x = x * TL_RUBBER;
     else if (x > max) x = max + (x - max) * TL_RUBBER;
@@ -1802,7 +1825,11 @@ function tlBind() {
     if (Number.isFinite(i) && i !== TL.i) tlGo(i, true);
   });
 
-  window.addEventListener("resize", () => { if (TL.events.length) tlLayout(false); });
+  window.addEventListener("resize", () => {
+    if (!TL.events.length) return;
+    tlPad();
+    tlLayout(false);
+  });
 }
 
 function renderTimeline() {
