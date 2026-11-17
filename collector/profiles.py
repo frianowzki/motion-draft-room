@@ -88,6 +88,21 @@ def accept(name: str, user: dict) -> bool:
     return int(user.get("followers") or 0) >= MIN_FOLLOWERS
 
 
+def _avatar(user: dict) -> str | None:
+    """A profile photo URL that actually loads.
+
+    fxtwitter hands back the timeline-sized `_normal` variant, and X no longer
+    serves those files for many accounts (they 404 while the account is fine).
+    `_400x400` is the variant meant for profile cards and resolves for all of
+    them, so rewrite the suffix rather than shipping a broken image.
+    """
+    url = user.get("avatar_url")
+    if not url:
+        return None
+    url = re.sub(r"_(normal|bigger|mini)\.(jpg|jpeg|png|webp)$", "_400x400.\2", url, flags=re.I)
+    return url
+
+
 def _website(user: dict) -> str | None:
     """fxtwitter returns website as {url, display_url}; keep the URL string."""
     w = user.get("website")
@@ -116,7 +131,7 @@ def _entry(user: dict, match: str) -> dict:
         "handle": user["screen_name"],
         "displayName": user.get("name"),
         "followers": int(user.get("followers") or 0),
-        "avatar": user.get("avatar_url") or None,
+        "avatar": _avatar(user),
         "banner": user.get("banner_url") or None,
         "description": user.get("description") or None,
         "url": f"https://x.com/{user['screen_name']}",
