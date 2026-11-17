@@ -24,11 +24,13 @@ import time
 import urllib.error
 import urllib.request
 
+from .curated import CURATED
+
 API = "https://api.fxtwitter.com/{handle}"
 UA = {"User-Agent": "motion-draft-room/1.0 (+https://motion-draft-room.vercel.app)"}
 MIN_FOLLOWERS = 1000
 MAX_TRIES = 4
-SLEEP = 0.15
+SLEEP = 0.45
 
 
 def candidates(name: str) -> list[str]:
@@ -50,14 +52,25 @@ def normalise(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
 
-def fetch(handle: str) -> dict | None:
-    try:
-        req = urllib.request.Request(API.format(handle=handle), headers=UA)
-        with urllib.request.urlopen(req, timeout=10) as r:
-            body = json.loads(r.read().decode())
-    except (urllib.error.URLError, TimeoutError, ValueError):
-        return None
-    return body.get("user") if body.get("code") == 200 else None
+def fetch(handle: str, tries: int = 3) -> dict | None:
+    """One account from fxtwitter, retrying because it rate-limits bursts.
+
+    Walking 79 names back to back gets throttled part-way through and the
+    failures look exactly like "no such account", which would quietly drop real
+    creators. Retry with a widening pause before believing the absence.
+    """
+    for attempt in range(tries):
+        try:
+            req = urllib.request.Request(API.format(handle=handle), headers=UA)
+            with urllib.request.urlopen(req, timeout=15) as r:
+                body = json.loads(r.read().decode())
+            if body.get("code") == 200:
+                return body.get("user")
+        except (urllib.error.URLError, TimeoutError, ValueError):
+            pass
+        if attempt < tries - 1:
+            time.sleep(1.5 * (attempt + 1))
+    return None
 
 
 def accept(name: str, user: dict) -> bool:
@@ -83,22 +96,51 @@ def _website(user: dict) -> str | None:
     return w or None
 
 
+def curated_handle(name: str) -> str | None:
+    """The hand-checked handle for a Motion name, if there is one.
+
+    Motion lowercases some names ("rasmr", "greg") while the curated table is
+    written the way people write them, so compare case-folded.
+    """
+    if name in CURATED:
+        return CURATED[name]
+    low = name.strip().casefold()
+    for k, v in CURATED.items():
+        if k.casefold() == low:
+            return v
+    return None
+
+
+def _entry(user: dict, match: str) -> dict:
+    return {
+        "handle": user["screen_name"],
+        "displayName": user.get("name"),
+        "followers": int(user.get("followers") or 0),
+        "avatar": user.get("avatar_url") or None,
+        "banner": user.get("banner_url") or None,
+        "description": user.get("description") or None,
+        "url": f"https://x.com/{user['screen_name']}",
+        "website": _website(user),
+        "verified": True,
+        "match": match,
+    }
+
+
 def resolve(name: str) -> dict | None:
+    # A curated handle is a deliberate statement about who this is, so it only
+    # has to still exist, be verified and clear the follower floor — the name
+    # test does not apply ("Speed⭐️" shares no word with "IShowSpeed").
+    handle = curated_handle(name)
+    if handle:
+        user = fetch(handle)
+        if user and user.get("verification", {}).get("verified") and int(user.get("followers") or 0) >= MIN_FOLLOWERS:
+            return _entry(user, "curated-handle")
+        return None
+
     for handle in candidates(name):
         user = fetch(handle)
         if user and accept(name, user):
-            return {
-                "handle": user["screen_name"],
-                "displayName": user.get("name"),
-                "followers": int(user.get("followers") or 0),
-                "avatar": user.get("avatar_url") or None,
-                "banner": user.get("banner_url") or None,
-                "description": user.get("description") or None,
-                "url": f"https://x.com/{user['screen_name']}",
-                "website": _website(user),
-                "verified": True,
-                "match": "verified-name-followers",
-            }
+            return _entry(user, "verified-name-followers")
         time.sleep(SLEEP)
     return None
 
