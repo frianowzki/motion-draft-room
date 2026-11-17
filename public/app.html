@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>
+/* paint the stored theme before the first frame does — no white flash, and the
+   choice is shared between the landing page and the room */
+(function(){try{var t=localStorage.getItem('mdr-theme');
+  if(t!=='light'&&t!=='dark')t='dark';   /* dark is the house default, not the system */
+  document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f0f0e">
+<title>Motion Draft Room — draft five creators, get graded</title>
+<meta name="description" content="Draft five creators from Motion's public leaderboard, write your reasoning, and get scored when the window closes. Every receipt stays public.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+  /* ============================================================
+     Motion Draft Room — visual system (Vexoo pass)
+     Off-white paper, near-black ink, big rounded bento cards that
+     sit ~2% of the way off white, one oversized line on the landing page and a
+     film grain plate over everything. Icons: coolicons by Kryston
+     Schwarze (MIT, via Framer Marketplace).
+     ============================================================ */
+  :root{
+    --void:#f4f3f0;
+    --bg:#f4f3f0;
+    --card:#eceae6;
+    --card-2:#e3e1dc;
+    --sunken:#f7f6f3;
+    --line:rgba(17,17,17,.10);
+    --line-soft:rgba(17,17,17,.07);
+    --ink:#111111;
+    --dim:#4f4f4a;
+    --faint:#67675f;
+    --accent:#111111;
+    --accent-ink:#f8f7f4;
+    --up:#1d7a44;
+    --down:#c0392b;
+    --cool:#3a5e9e;
+    --warm:#a86a17;
+    --ring:0 0 0 1px rgba(17,17,17,.12);
+    --lift:0 1px 0 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(17,17,17,.045);
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --display:'Inter Tight','Inter',-apple-system,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --r-sm:10px; --r-md:18px; --r-lg:28px; --r-pill:100px;
+  }
+
+  /* ---- dark theme: same room, lights off. Tokens first, then the few
+     surfaces that were painted with a literal light value ---- */
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --void:#0f0f0e;
+    --bg:#0f0f0e;
+    --card:#191918;
+    --card-2:#141413;
+    --sunken:#121211;
+    --line:rgba(255,255,255,.13);
+    --line-soft:rgba(255,255,255,.09);
+    --ink:#f3f1ec;
+    --dim:#a9a7a0;
+    --faint:#7e7c75;
+    --accent:#f3f1ec;
+    --accent-ink:#0f0f0e;
+    --up:#4ec27c;
+    --down:#e5766a;
+    --cool:#8fb0e6;
+    --warm:#d9a24f;
+    --ring:0 0 0 1px rgba(255,255,255,.16);
+    --lift:0 1px 0 0 rgba(255,255,255,.05) inset, 0 1px 2px rgba(0,0,0,.5);
+  }
+  :root[data-theme="dark"] ::selection{background:var(--ink);color:var(--bg)}
+  :root[data-theme="dark"] .aura{opacity:.6;
+    background:
+      radial-gradient(40vmax 32vmax at 12% 0%, rgba(120,126,140,.16), transparent 62%),
+      radial-gradient(34vmax 28vmax at 92% 6%, rgba(90,96,110,.14), transparent 60%),
+      radial-gradient(40vmax 34vmax at 60% 96%, rgba(70,74,84,.16), transparent 66%)}
+  :root[data-theme="dark"] .grain{mix-blend-mode:screen;opacity:.16}
+  :root[data-theme="dark"] {--grain-svg:0}
+  :root[data-theme="dark"] .chip,
+  :root[data-theme="dark"] .tab{background:rgba(255,255,255,.05)}
+  :root[data-theme="dark"] .tab:hover,
+  :root[data-theme="dark"] button:hover:not(:disabled),
+  :root[data-theme="dark"] input:hover,
+  :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
+  :root[data-theme="dark"] tr.row:hover td{background:rgba(255,255,255,.04)}
+  :root[data-theme="dark"] tr.row.sel td{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] input,
+  :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
+  :root[data-theme="dark"] input::placeholder,
+  :root[data-theme="dark"] textarea::placeholder{color:var(--faint)}
+  :root[data-theme="dark"] .backhome{background:rgba(20,20,19,.92);color:var(--dim)}
+  :root[data-theme="dark"] .backhome:hover{background:rgba(40,40,38,.95);color:var(--ink)}
+  :root[data-theme="dark"] .rar button.on i{color:rgba(15,15,14,.7)}
+  :root[data-theme="dark"] .slot .s.spent{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .tag.COILED{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
+  :root[data-theme="dark"] .mbar{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+  :root[data-theme="dark"] .t1{background:linear-gradient(160deg,#222220,#1b1b1a)}
+  :root[data-theme="dark"] .t3{background:linear-gradient(160deg,#26251f,#1d1d1c)}
+  :root[data-theme="dark"] ::-webkit-scrollbar-track{background:#121211}
+  :root[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#3a3a37;border-color:#121211}
+  :root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#4c4c48}
+  :root[data-theme="dark"] .live-dot{box-shadow:0 0 0 3px rgba(255,255,255,.14)}
+
+  *{box-sizing:border-box}
+  .backhome{position:fixed;left:14px;bottom:14px;z-index:50;display:inline-flex;
+    align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.92);
+    backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px var(--line);
+    padding:8px 12px 8px 9px;border-radius:var(--r-pill)}
+  .backhome:hover{color:var(--ink);background:#fff}
+  .backhome .ic{font-size:11px;stroke-width:2}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-track{background:#eceae6}
+  ::-webkit-scrollbar-thumb{background:#c9c6c0;border-radius:99px;border:2px solid #eceae6}
+  ::-webkit-scrollbar-thumb:hover{background:#b0aca4}
+  html{-webkit-text-size-adjust:100%;background:var(--bg)}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:#111;color:#fff}
+
+  /* ---- ambient field: two soft paper blooms, barely there */
+  .aura{position:fixed;inset:-20vmax;z-index:0;pointer-events:none;opacity:.75;
+    background:
+      radial-gradient(40vmax 32vmax at 12% 0%, rgba(255,255,255,.9), transparent 62%),
+      radial-gradient(34vmax 28vmax at 92% 6%, rgba(226,222,214,.55), transparent 60%),
+      radial-gradient(40vmax 34vmax at 60% 96%, rgba(232,229,222,.5), transparent 66%);
+    filter:blur(24px);
+  }
+  /* ---- film grain plate: the texture that keeps flat grey from looking dead */
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.32;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.30'/%3E%3C/svg%3E");
+  }
+  .scan{display:none}
+  @media (prefers-reduced-motion:reduce){.aura{animation:none}.rec:after,.live-dot{animation:none}}
+
+  .wrap{position:relative;z-index:2;max-width:1380px;margin:0 auto;padding:0 16px 72px}
+
+  /* ---- icons */
+  .ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;
+      stroke-linecap:round;stroke-linejoin:round;flex:none;display:block}
+
+  /* ---- top bar: three quiet slots, like a name / a role / a clock */
+  .live-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);flex:none;
+    box-shadow:0 0 0 3px rgba(17,17,17,.1);animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media(max-width:820px){
+  }
+
+  /* ---- the header switch and one CTA, then straight into the board.
+     The explainer lived here and on the landing page; it stays on the landing
+     page, so the dashboard opens on the numbers. */
+  .appcta{display:flex;margin-top:16px}
+  .appcta .primary{min-height:46px;padding:0 20px}
+
+  /* ---- stats: four tiles that break out of the grid on desktop */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:14px 0 0}
+  .stat{position:relative;background:var(--card);border-radius:var(--r-md);padding:16px 17px 15px;
+    box-shadow:var(--lift);overflow:hidden}
+  .stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--faint);display:flex;align-items:center;gap:5px}
+  .stat .k .ic{font-size:11px;opacity:.75}
+  .stat .v{font-family:var(--display);font-size:30px;line-height:1;margin-top:12px;
+    letter-spacing:-.05em;font-weight:500}
+  .stat .v.txt{font-size:14px;letter-spacing:-.01em;line-height:1.3;margin-top:14px;
+    font-family:var(--sans);font-weight:500;color:var(--dim)}
+  .stat .s{font-size:10px;color:var(--faint);margin-top:7px;letter-spacing:.01em}
+
+  /* ---- honest limits */
+  .warn{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;
+    background:#f6efe1;border-radius:var(--r-md);
+    box-shadow:inset 0 0 0 1px rgba(168,106,23,.22);
+    color:#6b4a15;font-size:12px;padding:13px 15px;line-height:1.55}
+  .warn .ic{font-size:14px;color:var(--warm);margin-top:2.5px;flex:none}
+
+  /* ---- faq: rules-as-data and the explainer questions sit in one stack */
+  .faq{margin:26px 0 0;background:var(--card);border-radius:var(--r-md);
+    box-shadow:var(--lift);padding:4px 20px 8px}
+  .faq-head{margin:16px 0 4px;display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink)}
+  .faq-head .ic{font-size:13px}
+  .faq-item{border-top:1px solid var(--line)}
+  .faq-item summary{cursor:pointer;list-style:none;display:flex;align-items:flex-start;gap:9px;
+    padding:14px 0;font-size:12.5px;color:var(--ink);line-height:1.45}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary b{font-weight:600}
+  .faq-item summary .ic{font-size:12px;color:var(--dim);flex:none;margin-top:2px;
+    transition:transform .22s ease}
+  .faq-item[open] summary .ic{transform:rotate(180deg)}
+  .faq-item summary:hover b{color:var(--dim)}
+  .faq-body{font-size:12px;color:var(--dim);line-height:1.6;padding:0 0 15px 21px}
+  .rulesGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px 22px;
+    padding:0 0 17px 21px;font-size:12px;color:var(--dim);line-height:1.55}
+  .rulesGrid b{display:block;color:var(--ink);font-family:var(--mono);font-size:9px;
+    text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;font-weight:600}
+
+  /* ---- filters */
+  .tabs{display:flex;gap:6px;margin:18px 0 12px;flex-wrap:wrap;align-items:center}
+  .tab{font-family:var(--mono);font-size:10px;padding:8px 13px;border-radius:var(--r-pill);
+    background:rgba(255,255,255,.7);color:var(--dim);cursor:pointer;border:0;
+    box-shadow:inset 0 0 0 1px var(--line);letter-spacing:.04em;text-transform:uppercase;
+    transition:color .16s ease,background .16s ease,box-shadow .16s ease}
+  .tab:hover{color:var(--ink);background:#fff}
+  .tab.on{background:var(--ink);color:var(--accent-ink);font-weight:500;
+    box-shadow:inset 0 0 0 1px var(--ink)}
+  .tab .ic{font-size:11px;display:inline-block;vertical-align:-1px;margin-right:5px}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;
+    color:var(--faint);margin:-2px 0 14px;align-items:center;text-transform:uppercase;letter-spacing:.05em}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:6px;height:6px;border-radius:2px;display:block;flex:none}
+
+  /* ---- layout: board is the big tile, the column beside it stacks */
+  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:14px;align-items:start}
+  @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+  .card{background:var(--card);border-radius:var(--r-lg);padding:22px;
+    box-shadow:var(--lift)}
+  .card h2{margin:0 0 14px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
+    letter-spacing:.16em;color:var(--faint);font-weight:500;
+    display:flex;align-items:center;gap:7px}
+  .card h2 .ic{font-size:12px;color:var(--ink)}
+  .card.identity,.card.receipts{margin-top:14px}
+
+  /* ---- table */
+  .tablewrap{overflow-x:auto;margin:0 -6px;padding:0 6px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:auto;min-width:0}
+  th:nth-child(1),td:nth-child(1){width:32px}
+  th:nth-child(3),td:nth-child(3){width:52px}
+  th:nth-child(4),td:nth-child(4){width:96px}
+  th:nth-child(5),td:nth-child(5){width:60px}
+  th:nth-child(7),td:nth-child(7){width:32px}
+  th{text-align:left;font-family:var(--mono);font-size:9px;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--faint);padding:0 7px 10px;font-weight:500;
+    border-bottom:1px solid var(--line);white-space:nowrap}
+  th:last-child{text-align:right}
+  td{padding:10px 7px;border-top:1px solid var(--line-soft);vertical-align:middle;
+    overflow:hidden}
+  td:nth-child(6){white-space:normal;line-height:1.5}
+  tr.row:first-child td{border-top:0}
+  tr.row{cursor:pointer;transition:background .13s ease}
+  tr.row:hover td{background:rgba(255,255,255,.55)}
+  tr.row.sel td{background:#fff}
+  tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
+  .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
+  .avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;flex:none;
+    background:#d8d5cf;box-shadow:inset 0 0 0 1px var(--line)}
+  .avatar.lg{width:36px;height:36px}
+  .avatar.sm{width:16px;height:16px}
+  .ncell{display:flex;align-items:center;gap:8px;min-width:0}
+  .nwrap{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .mono{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+  td:nth-child(3),th:nth-child(3),td:nth-child(5),th:nth-child(5){text-align:right}
+  .stars{text-align:right;font-variant-numeric:tabular-nums}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--faint)}
+  .stars{color:var(--ink);font-weight:600;white-space:nowrap}
+  .stars span{color:var(--faint);font-weight:400;font-size:10px}
+  .pill{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:var(--r-pill);
+    background:rgba(255,255,255,.75);color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
+    white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+  .tag{display:inline-block;font-family:var(--mono);font-size:8px;padding:2px 5px;
+    border-radius:4px;margin:1px 3px 1px 0;letter-spacing:.06em;text-transform:uppercase;
+    box-shadow:inset 0 0 0 1px var(--line);color:var(--dim);white-space:nowrap;background:rgba(255,255,255,.5)}
+  .tag.SURGING{color:var(--up);box-shadow:inset 0 0 0 1px rgba(29,122,68,.3);background:rgba(29,122,68,.07)}
+  .tag.COILED{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(17,17,17,.24);background:rgba(17,17,17,.05)}
+  .tag.SLEEPER{color:var(--cool);box-shadow:inset 0 0 0 1px rgba(58,94,158,.3);background:rgba(58,94,158,.07)}
+  .tag.FADE{color:var(--down);box-shadow:inset 0 0 0 1px rgba(192,57,43,.3);background:rgba(192,57,43,.07)}
+  .tag.QUIET{color:var(--faint)}
+  .mbar{position:relative;height:6px;background:rgba(17,17,17,.08);border-radius:3px;min-width:58px;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.05)}
+  .mbar:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;
+    background:rgba(17,17,17,.28)}
+  .mbar i{position:absolute;top:0;bottom:0;border-radius:3px;min-width:3px}
+  tr.row .add{cursor:pointer;color:var(--faint);text-align:right;width:30px;user-select:none;font-size:12px;padding-right:2px}
+  tr.row .add .ic{margin-left:auto}
+  tr.row:hover .add,tr.row.picked .add{color:var(--ink)}
+
+  /* ---- detail / draft */
+  .detail h3{margin:0;font-family:var(--display);font-size:21px;font-weight:500;letter-spacing:-.03em}
+  .detail .meta{color:var(--faint);font-size:11px;margin:6px 0 15px;font-family:var(--mono);
+    display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .kv{display:grid;grid-template-columns:1fr auto;gap:8px 12px;font-size:12px;
+    margin-bottom:15px;padding:14px;border-radius:var(--r-md);
+    background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .kv .k{color:var(--faint)} .kv .v{font-family:var(--mono);font-size:11.5px;text-align:right}
+  label{display:block;font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--faint);margin:13px 0 6px}
+  input,textarea{width:100%;background:#fff;border:0;border-radius:var(--r-sm);
+    color:var(--ink);font-family:var(--sans);font-size:12.5px;padding:10px 12px;resize:vertical;
+    box-shadow:inset 0 0 0 1px var(--line)}
+  input::placeholder,textarea::placeholder{color:#a5a29b}
+  input:focus,textarea:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--ink)}
+  .hint{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.5}
+
+  button{font-family:var(--mono);font-size:11px;padding:9px 15px;border-radius:var(--r-pill);
+    border:0;background:rgba(255,255,255,.85);color:var(--ink);cursor:pointer;
+    box-shadow:inset 0 0 0 1px var(--line);
+    transition:background .16s ease,transform .12s ease,box-shadow .16s ease;
+    display:inline-flex;align-items:center;gap:6px;justify-content:center;letter-spacing:.02em}
+  button:hover:not(:disabled){background:#fff}
+  button:active:not(:disabled){transform:translateY(1px)}
+  button.primary{background:var(--ink);color:var(--accent-ink);font-weight:500;
+    box-shadow:inset 0 0 0 1px var(--ink)}
+  button.primary:hover:not(:disabled){background:#000}
+  button:disabled{opacity:.35;cursor:not-allowed}
+  .rowbtns{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
+
+  .rar{display:flex;gap:6px;margin:6px 0 0}
+  .rar button{flex:1;display:flex;flex-direction:column;gap:2px;align-items:center;
+    padding:9px 4px;font-size:10.5px;border-radius:var(--r-sm);text-transform:none}
+  .rar button i{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--faint)}
+  .rar button.on{background:var(--ink);color:var(--accent-ink);font-weight:500;
+    box-shadow:inset 0 0 0 1px var(--ink)}
+  .rar button.on i{color:rgba(255,255,255,.65)}
+  .rar button[data-r="Rare"]:not(.on){color:#3a5e9e}
+  .rar button[data-r="Epic"]:not(.on){color:#6b4c9e}
+  .rar button[data-r="Legendary"]:not(.on){color:#a86a17}
+
+  .slot{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
+  .slot .s{font-family:var(--mono);font-size:9px;padding:6px 10px;border-radius:var(--r-pill);
+    color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-soft);
+    background:rgba(255,255,255,.5);white-space:nowrap}
+  .slot .s.spent{color:var(--ink);background:#fff;
+    box-shadow:inset 0 0 0 1px var(--line);
+    display:inline-flex;align-items:center;gap:5px}
+  .slot .s.spent b{font-weight:500;color:var(--ink)}
+  .avatar.av-fb{display:inline-flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:7.5px;font-weight:600;color:var(--dim);
+    background:#d8d5cf;box-shadow:inset 0 0 0 1px var(--line)}
+  .projline{font-family:var(--mono);font-size:10px;color:var(--dim);margin:3px 0 13px;line-height:1.6}
+  .projline b{color:var(--ink);font-weight:600}
+
+
+  /* ---- identity / connect X */
+  .idcard{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-md);
+    background:#fff;box-shadow:inset 0 0 0 1px var(--line);margin-bottom:12px}
+  .idcard .who{min-width:0;flex:1}
+  .idcard .h{font-family:var(--mono);font-size:12px;color:var(--ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .idcard .n{font-size:11px;color:var(--faint);margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .idcard .state{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent-ink);padding:4px 9px;border-radius:var(--r-pill);flex:none;
+    background:var(--ink)}
+  .xbtn{background:var(--ink);color:var(--accent-ink);font-weight:500}
+  .xbtn:hover:not(:disabled){background:#000}
+  .xbtn .ic{stroke-width:2.1}
+  .idrow{display:flex;gap:8px;flex-wrap:wrap}
+  .rec .who .avatar.k{width:18px;height:18px}
+  .rec .who .avatar.k.av-fb{font-size:6.5px}
+
+  /* ---- receipts */
+  .bookmeta{font-family:var(--mono);font-size:9px;color:var(--faint);
+    margin:-5px 0 14px;line-height:1.65;text-transform:uppercase;letter-spacing:.04em}
+  .rec{display:flex;justify-content:space-between;gap:12px;padding:13px 0;
+    border-top:1px solid var(--line-soft)}
+  .rec:first-of-type{border-top:0;padding-top:2px}
+  .rec .l{min-width:0}
+  .rec .who{font-family:var(--mono);font-size:11.5px;color:var(--ink);
+    display:flex;align-items:center;gap:5px}
+  .rec .who b{color:var(--ink);font-weight:600}
+  .rec .picks{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.6}
+  .rec .picks i.rr{font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.04em;
+    color:var(--ink);box-shadow:inset 0 0 0 1px rgba(17,17,17,.2);
+    border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:1px;
+    text-transform:lowercase;margin-right:4px;background:rgba(17,17,17,.04)}
+  .rec .score{font-family:var(--display);font-size:17px;font-weight:500;white-space:nowrap;
+    text-align:right;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .rec .score small{display:block;font-family:var(--mono);font-size:8px;font-weight:400;
+    color:var(--faint);margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
+
+  .empty{color:var(--faint);font-size:12px;padding:20px 0;text-align:center;line-height:1.6}
+
+  /* ---- steps in empty detail card */
+  .steps{display:flex;flex-direction:column;gap:10px;text-align:left;width:fit-content;max-width:300px;margin:16px auto 0}
+  .steps div{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--dim)}
+  .steps .n{font-family:var(--mono);font-size:9px;width:18px;height:18px;flex:none;
+    border-radius:50%;display:grid;place-items:center;background:var(--ink);
+    color:var(--accent-ink);margin-top:1px}
+
+  /* ---- closing bento: four tiles, the wide one carries a huge ghost icon */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0 0}
+  .tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;
+    min-height:168px;padding:18px 18px 16px;border-radius:var(--r-lg);overflow:hidden;
+    background:var(--card);box-shadow:var(--lift);transition:transform .2s ease,box-shadow .2s ease}
+  a.tile{cursor:pointer}
+  a.tile:hover{transform:translateY(-2px);box-shadow:var(--lift),0 12px 26px -18px rgba(17,17,17,.4)}
+  .tile .tag-top{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--faint);display:block;margin-bottom:auto;position:relative;z-index:1}
+  .tile b{display:block;font-family:var(--display);font-size:clamp(19px,1.6vw,24px);
+    font-weight:500;letter-spacing:-.035em;line-height:1.14;margin:14px 0 6px;
+    max-width:17ch;position:relative;z-index:1}
+  .tile .tag-bot{font-size:11px;color:var(--dim);position:relative;z-index:1;max-width:20ch}
+  .tile-ic{position:absolute;right:-10px;bottom:-14px;font-size:96px;color:rgba(17,17,17,.055);
+    pointer-events:none;z-index:0}
+  .tile-ic .ic{width:1em;height:1em;stroke-width:1.3}
+  .t4{background:var(--ink);color:#f8f7f4}
+  .t4 .tag-top{color:rgba(248,247,244,.5)}
+  .t4 .tag-bot{color:rgba(248,247,244,.68)}
+  .t4 b{color:#f8f7f4}
+  .t4 .tile-ic{color:rgba(255,255,255,.09)}
+  .t1{background:linear-gradient(160deg,#e7e5e0,#dedbd4)}
+  .t3{background:linear-gradient(160deg,#eceae6,#e2ded6)}
+  @media(max-width:600px){
+    .gallery{grid-template-columns:1fr;gap:10px}
+    .tile{min-height:132px;border-radius:22px}
+    .tile b{font-size:20px}
+    .tile-ic{font-size:76px;right:-6px;bottom:-10px}
+  }
+
+  /* ---- footer */
+  footer{margin-top:18px;padding:26px 26px 24px;border-radius:var(--r-lg);
+    background:var(--card);box-shadow:var(--lift);
+    color:var(--faint);font-size:11px;line-height:1.75}
+  footer strong{color:var(--ink);font-weight:600}
+  footer code{font-family:var(--mono);color:var(--dim);font-size:10.5px;
+    background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px var(--line);
+    padding:1px 5px;border-radius:4px}
+  footer br{line-height:2}
+
+  /* ---- mobile: the promise is "one tap, no signup" - so make targets tappable */
+  @media(max-width:600px){
+    .wrap{padding:0 12px 60px}
+    .faq{padding:2px 15px 6px}
+    .faq-item summary{font-size:12px;padding:13px 0}
+    .faq-body{font-size:11.5px;padding-left:19px}
+    .rulesGrid{grid-template-columns:1fr;gap:12px;padding-left:19px}
+    .card{border-radius:24px;padding:18px 16px}
+    .stat{border-radius:18px;padding:14px}
+    .stat .v{font-size:26px}
+    .tabs{margin:16px 0 10px;gap:5px}
+    .tab{padding:9px 12px;min-height:38px;display:inline-flex;align-items:center}
+    input,textarea{padding:12px 13px;min-height:46px;font-size:13px;border-radius:12px}
+    button{min-height:44px}
+    /* the theme switch is two 28px icon targets inside a 34px pill; the blanket
+       44px tap rule above would stretch them and push the icons into the knob */
+    #themesw .tgs-b{min-height:0}
+    .rar button{min-height:48px}
+    table{font-size:11.5px;min-width:392px}
+    .pos{width:26px}
+    .tablewrap{margin:0 -16px;padding:0 16px}
+    /* handing the board a fixed min width and a scroll shadow is more honest
+       than truncating every signal tag into "SURGI" */
+    .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;background:
+        linear-gradient(90deg,rgba(17,17,17,.05),transparent 12px) left/12px 100% no-repeat,
+        linear-gradient(270deg,rgba(17,17,17,.05),transparent 12px) right/12px 100% no-repeat}
+    tr.row .add{width:34px;padding-right:6px}
+    th:nth-child(4),td:nth-child(4){width:70px}
+    .slot .s{min-height:34px;align-items:center}
+    footer{border-radius:24px;padding:20px 18px}
+  }
+
+  /* ============================================================
+     batch 9 — ThemeChanger switch, Arrow CTA, Fontshare type
+     ============================================================ */
+
+  /* ---- theme switch ("Switch button" from ThemeChanger): one track, one
+     knob that slides, each end a pressable target ---- */
+  .tgs{position:relative;display:inline-flex;align-items:center;gap:0;padding:3px;
+    border-radius:var(--r-pill);background:rgba(17,17,17,.07);
+    box-shadow:inset 0 0 0 1px var(--line);flex:none;
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .tgs-knob{position:absolute;top:3px;left:3px;width:30px;height:30px;border-radius:50%;
+    background:var(--sunken);box-shadow:0 1px 2px rgba(17,17,17,.18),inset 0 0 0 1px var(--line);
+    transition:transform .26s cubic-bezier(.4,0,.2,1);pointer-events:none}
+  .tgs[data-on="dark"] .tgs-knob{transform:translateX(30px)}
+  .tgs-b{position:relative;z-index:1;width:30px;height:30px;padding:0;border:0;background:transparent;
+    display:grid;place-items:center;cursor:pointer;color:var(--faint);
+    border-radius:50%;transition:color .2s ease}
+  .tgs-b:hover{color:var(--ink)}
+  .tgs-b[aria-pressed="true"]{color:var(--ink)}
+  .tgs-b:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .tgs-b svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round;display:block}
+  :root[data-theme="dark"] .tgs{background:rgba(255,255,255,.09);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  :root[data-theme="dark"] .tgs-knob{background:#dedbd4;
+    box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.5)}
+  :root[data-theme="dark"] .tgs-b{color:#8f8d86}
+  :root[data-theme="dark"] .tgs-b:hover{color:#fff}
+  :root[data-theme="dark"] .tgs-b[aria-pressed="true"]{color:#111}
+  :root[data-theme="dark"] .tgs-b:focus-visible{outline-color:#fff}
+  @media (prefers-reduced-motion:reduce){.tgs-knob{transition:none}}
+
+  /* dashboard placement: the switch lives in a header strip at the top of the
+     content column — right-aligned on desktop, its own row on a phone, so it can
+     never land on the nav pill or the back-home chip */
+  .apphead{display:flex;justify-content:flex-end;padding-top:14px}
+  /* align-self keeps the track off the header's stretch without pinning a
+     height: a hard 34px squeezed a 36px switch (3+30+3) and made the knob
+     overflow its own track. Same geometry as the landing page now. */
+  .apphead #themesw{position:relative;z-index:70;pointer-events:auto;flex:none;align-self:center}
+  @media(max-width:940px){.apphead{padding:10px 10px 0}}
+  /* ---- Arrow CTA button (Framer "Arrow CTA Button"): outlined pill whose
+     label sits left and whose arrow rides inside a solid disc on the right;
+     on hover the disc grows and the arrow leans ---- */
+  .acta{display:inline-flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;
+    border-radius:var(--r-pill);background:transparent;color:var(--ink);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.22);text-decoration:none;
+    font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
+    transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content}
+  .acta-t{display:block;white-space:nowrap}
+  .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
+    background:var(--ink);color:var(--bg);transition:transform .28s ease,background .22s ease}
+  .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
+    stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
+  .acta:hover{background:rgba(17,17,17,.05);box-shadow:inset 0 0 0 1px rgba(17,17,17,.34)}
+  .acta:hover .acta-ic{transform:scale(1.08)}
+  .acta:hover .acta-ic svg{transform:translateX(2px)}
+  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
+  .acta-sm .acta-ic{width:30px;height:30px}
+  .acta-sm .acta-ic svg{width:13px;height:13px}
+
+  /* in the dark, the closing slab is paper: the button flips to ink-on-paper so
+     it still reads as the strongest thing on the card */
+  :root[data-theme="dark"] .acta{color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.22)}
+  :root[data-theme="dark"] .acta-ic{background:#111;color:#f4f3f0}
+  :root[data-theme="dark"] .acta:hover{background:rgba(17,17,17,.06);box-shadow:inset 0 0 0 1px rgba(17,17,17,.4)}
+  .closer .acta{color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.24)}
+  .closer .acta-ic{background:#111;color:#f4f3f0}
+  .closer .acta:hover{background:rgba(17,17,17,.06);box-shadow:inset 0 0 0 1px rgba(17,17,17,.42)}
+  .closer .acta:focus-visible{outline-color:#111}
+
+  /* the reference CTA is set in the body face, not the mono caps of .btn */
+  .slab .acta{margin-top:8px}
+
+  /* ---- type: Clash Grotesk carries the headlines, Satoshi the body ---- */
+  h1,h2,h3,h4,.closer h3,.sfaq-h,.rcard-foot h4,.sec-head h3,.stat .v{
+    font-family:var(--display);font-optical-sizing:auto}
+  body,.lede,.sfaq-a-in,.rcard-more p{font-family:var(--sans)}
+  .lede,.sfaq-a-in{font-weight:400;letter-spacing:-.003em}
+  .sfaq-t{font-family:var(--display);font-weight:500;letter-spacing:-.01em}
+  .tgs+.pillnav,.pillnav{margin-top:0}
+
+  @media(max-width:600px){
+    .acta{font-size:13px;padding:6px 6px 6px 20px;gap:10px}
+    .acta-ic{width:32px;height:32px}
+    .tgs-knob{width:28px;height:28px}
+    .tgs[data-on="dark"] .tgs-knob{transform:translateX(28px)}
+    .tgs-b{width:28px;height:28px}
+    .tgs-b svg{width:15px;height:15px}
+  }
+
+</style>
+</head>
+<body>
+<a class="backhome" href="/" aria-label="Back to the landing page">
+  <svg class="ic" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Motion Draft Room
+</a>
+<div class="aura" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="scan" aria-hidden="true"></div>
+
+<!-- coolicons by Kryston Schwarze — MIT — via Framer Marketplace -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12C4.79157 12 6.40281 10.79157 7 9L9 3L15 21L17 15C17.59719 13.20843 19.20843 12 21 12"/></symbol>
+<symbol id="i-api" viewBox="0 0 24 24"><path d="M7 8L3 12L7 16M17 8L21 12L17 16M10 12H14"/></symbol>
+<symbol id="i-arrow-down-right" viewBox="0 0 24 24"><path d="M10 17H17V10M17 17L7 7"/></symbol>
+<symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M10 7H17V14M17 7L7 17"/></symbol>
+<symbol id="i-award" viewBox="0 0 24 24"><path d="M6 9C6 12.31371 8.68629 15 12 15C15.31371 15 18 12.31371 18 9C18 5.68629 15.31371 3 12 3C8.68629 3 6 5.68629 6 9ZM14 15L15 18C15.36902 19.10707 14.73805 20.36902 14 20L12 19L10 20C9.26195 20.36902 8.63098 19.10707 9 18L10 15"/></symbol>
+<symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 20V9C12 6.79086 13.79086 5 16 5H17C19.20914 5 21 6.79086 21 9V14C21 15.65685 19.65685 17 18 17H17C15.71942 17 14.64029 17.35971 14 18L12 20ZM12 20V9C12 6.79086 10.20914 5 8 5H7C4.79086 5 3 6.79086 3 9V14C3 15.65685 4.34315 17 6 17H7C8.28058 17 9.35971 17.35971 10 18L12 20Z"/></symbol>
+<symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 16L6 13C7.10457 11.89543 8.89543 11.89543 10 13C11.10457 14.10457 12.89543 14.10457 14 13L21 6M3 4V16C3 18.20914 4.79086 20 7 20H21"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M6 12L10 16L18 8"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M8 10L12 14L16 10"/></symbol>
+<symbol id="i-circle-dot" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM11 12C11 12.55228 11.44772 13 12 13C12.55228 13 13 12.55228 13 12C13 11.44772 12.55228 11 12 11C11.44772 11 11 11.44772 11 12Z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM12 7V12H17"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><path d="M3 11C3 8.79086 4.79086 7 7 7H13C15.20914 7 17 8.79086 17 11V17C17 19.20914 15.20914 21 13 21H7C4.79086 21 3 19.20914 3 17ZM7 3H17C19.20914 3 21 4.79086 21 7V17"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="M12 4L16 10L21 6L19.59717 13.71554C19.25136 15.6175 17.59484 17 15.66169 17L8.33831 17C6.40516 17 4.74864 15.6175 4.40283 13.71554L3 6L8 10L12 4ZM5 21H19"/></symbol>
+<symbol id="i-external-link" viewBox="0 0 24 24"><path d="M10 5H9C6.79086 5 5 6.79086 5 9V15C5 17.20914 6.79086 19 9 19H15C17.20914 19 19 17.20914 19 15V14M15 4H20V9M20 4L13 11"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M3 12C4.51388 8.36669 8.06392 6 12 6C15.93608 6 19.48612 8.36669 21 12C19.48612 15.63331 15.93608 18 12 18C8.06392 18 4.51388 15.63331 3 12ZM10 12C10 13.10457 10.89543 14 12 14C13.10457 14 14 13.10457 14 12C14 10.89543 13.10457 10 12 10C10.89543 10 10 10.89543 10 12Z"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M12 4H19C19.55228 4 20 4.44772 20 5C20 5.64029 19.64029 6.35971 19 7L15 11C14.35971 11.64029 14 12.35971 14 13V17C14 17.61287 13.22573 18.38713 12 19C11.08113 19.45944 10 18.91887 10 18V13C10 12.35971 9.64029 11.64029 9 11L5 7C4.35971 6.35971 4 5.64029 4 5C4 4.44772 4.44772 4 5 4H12Z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3C12.5 5.5 14 7.5 16 9C17.5 10.5 18 12.5 18 15C18 18.31371 15.31371 21 12 21C8.68629 21 6 18.31371 6 15C6 13.5 6.5 12.5 7 12M7 12C7 13.10457 7.89543 14 9 14C10.10457 14 11 13.10457 11 12C11 10.5 10.5 10 10 9C9 7 9.5 5 12 3"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="M6 19C2.68629 15.68629 2.68629 10.31371 6 7C9.31371 3.68629 14.68629 3.68629 18 7C21.31371 10.31371 21.31371 15.68629 18 19M12 13L15 10"/></symbol>
+<symbol id="i-hash" viewBox="0 0 24 24"><path d="M5 9H19M5 15H19M10 4L8 20M16 4L14 20"/></symbol>
+<symbol id="i-incognito" viewBox="0 0 24 24"><path d="M6 10L7 7C7.59719 5.20843 9.20843 4 11 4H13C14.79157 4 16.40281 5.20843 17 7L18 10M3 10H21M4 17C4 18.65685 5.34315 20 7 20C8.65685 20 10 18.65685 10 17C10 15.34315 8.65685 14 7 14C5.34315 14 4 15.34315 4 17ZM14 17C14 18.65685 15.34315 20 17 20C18.65685 20 20 18.65685 20 17C20 15.34315 18.65685 14 17 14C15.34315 14 14 15.34315 14 17ZM10 17C10 15.89543 10.89543 15 12 15C13.10457 15 14 15.89543 14 17"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><path d="M12 6H12.01M12 10V18"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M8 6L12 4L18 7C18.82405 7.41202 18.82405 8.58798 18 9L12 12L6 9C5.17595 8.58798 5.17595 7.41202 6 7L8 6ZM4 12L12 16L20 12M4 16L12 20L20 16"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><path d="M4 14C4 11.79086 5.79086 10 8 10H16C18.20914 10 20 11.79086 20 14V17C20 19.20914 18.20914 21 16 21H8C5.79086 21 4 19.20914 4 17ZM9 10V6C9 4.34315 10.34315 3 12 3C13.65685 3 15 4.34315 15 6V10"/></symbol>
+<symbol id="i-medal" viewBox="0 0 24 24"><path d="M7 16C7 18.76142 9.23858 21 12 21C14.76142 21 17 18.76142 17 16C17 13.23858 14.76142 11 12 11C9.23858 11 7 13.23858 7 16ZM9 12L6 3H10L12 7L14 3H18L15 12"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12H18"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M6 12H18M12 6V18"/></symbol>
+<symbol id="i-receipt" viewBox="0 0 24 24"><path d="M12 3H16C18.20914 3 20 4.79086 20 7V20C20 20.36902 19.36902 20.36902 19 20C18.44772 19.44772 17.55228 19.44772 17 20C16.44772 20.55228 15.55228 20.55228 15 20C14.44772 19.44772 13.55228 19.44772 13 20C12.44772 20.55228 11.55228 20.55228 11 20C10.44772 19.44772 9.55228 19.44772 9 20C8.44772 20.55228 7.55228 20.55228 7 20C6.44772 19.44772 5.55228 19.44772 5 20C4.63098 20.36902 4 20.36902 4 20V7C4 4.79086 5.79086 3 8 3H12ZM8 7H16M8 11H16M8 15H12"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10C3 13.86599 6.13401 17 10 17C13.86599 17 17 13.86599 17 10C17 6.13401 13.86599 3 10 3C6.13401 3 3 6.13401 3 10ZM15 15L21 21"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><path d="M3 7C3 5.34315 4.34315 4 6 4H18C19.65685 4 21 5.34315 21 7C21 8.65685 19.65685 10 18 10H6C4.34315 10 3 8.65685 3 7ZM3 17C3 15.34315 4.34315 14 6 14H18C19.65685 14 21 15.34315 21 17C21 18.65685 19.65685 20 18 20H6C4.34315 20 3 18.65685 3 17ZM7 7H7.01M7 17H7.01"/></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 3H16C18.20914 3 20 4.79086 20 7V10C20 15.5 16.5 19 12 21C7.5 19 4 15.5 4 10V7C4 4.79086 5.79086 3 8 3H12ZM9 11L11 13L15 9"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9 9C9 12 12 15 15 15C12 15 9 18 9 21C9 18 6 15 3 15C6 15 9 12 9 9ZM17 3C17 6.75 17.25 7 21 7C17.25 7 17 7.25 17 11C17 7.25 16.75 7 13 7C16.75 7 17 6.75 17 3Z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3L15 9L22 10L17 15L18 21L12 18L6 21L7 15L2 10L9 9Z"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM7 12C7 9.23858 9.23858 7 12 7C14.76142 7 17 9.23858 17 12M17 12C17 14.76142 14.76142 17 12 17C9.23858 17 7 14.76142 7 12M12 12H12.01"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M6 6V17C6 19.20914 7.79086 21 10 21H14C16.20914 21 18 19.20914 18 17V6M4 6H20M8 6C8 4.34315 9.34315 3 11 3H13C14.65685 3 16 4.34315 16 6"/></symbol>
+<symbol id="i-trending-down" viewBox="0 0 24 24"><path d="M3 7L7 11C8.10457 12.10457 9.89543 12.10457 11 11C12.10457 9.89543 13.89543 9.89543 15 11L21 17M15 17H21V11"/></symbol>
+<symbol id="i-trending-up" viewBox="0 0 24 24"><path d="M3 17L7 13C8.10457 11.89543 9.89543 11.89543 11 13C12.10457 14.10457 13.89543 14.10457 15 13L21 7M15 7H21V13"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 9V5C7 3.89543 7.89543 3 9 3H15C16.10457 3 17 3.89543 17 5V9C17 11.76142 14.76142 14 12 14C9.23858 14 7 11.76142 7 9ZM10 14V16C10 18 7 18 7 21M14 14V16C14 18 17 18 17 21M6 21H18M7 5H5C3.89543 5 3 5.89543 3 7C3 8.10457 3.89543 9 5 9H7M17 5H19C20.10457 5 21 5.89543 21 7C21 8.10457 20.10457 9 19 9H17"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M8 7C8 9.20914 9.79086 11 12 11C14.20914 11 16 9.20914 16 7C16 4.79086 14.20914 3 12 3C9.79086 3 8 4.79086 8 7ZM6 21C6 17.68629 8.68629 15 12 15C15.31371 15 18 17.68629 18 21"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><path d="M5 7C5 9.20914 6.79086 11 9 11C11.20914 11 13 9.20914 13 7C13 4.79086 11.20914 3 9 3C6.79086 3 5 4.79086 5 7ZM3 21C3 17.68629 5.68629 15 9 15C12.31371 15 15 17.68629 15 21M15 3C17.20914 3 19 4.79086 19 7C19 9.20914 17.20914 11 15 11M16 15C18.76142 15 21 17.68629 21 21"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M4 20L10 12M14 12L20 4M4 4H8L20 20H16Z"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M9.375 8.5L6.24505 12.4348C5.74227 13.06686 6.19236 14 7 14H8.25C9.35457 14 10.25 14.89543 10.25 16V19C10.25 19.6612 11.08344 19.95225 11.49505 19.4348L17.75495 11.5652C18.25773 10.93314 17.80764 10 17 10H15.75C14.64543 10 13.75 9.10457 13.75 8V5C13.75 4.3388 12.91656 4.04775 12.50495 4.5652L9.375 8.5Z"/></symbol>
+</defs></svg>
+
+<div class="aura" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="wrap">
+<div class="apphead">
+<!-- theme switch (ThemeChanger "Switch button") -->
+<div class="tgs" id="themesw" role="group" aria-label="Theme">
+  <span class="tgs-knob" aria-hidden="true"></span>
+  <button type="button" class="tgs-b" data-theme-set="light" aria-pressed="true" aria-label="Light">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
+  </button>
+  <button type="button" class="tgs-b" data-theme-set="dark" aria-pressed="false" aria-label="Dark">
+    <svg viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
+  </button>
+</div>
+</div>
+
+  <div class="appcta">
+    <button class="primary" id="ctaDraft"><svg class="ic"><use href="#i-target"/></svg>Draft your five</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+    <div class="tabs" id="filters"></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2><svg class="ic"><use href="#i-users"/></svg>Creators <span class="pill" id="count"></span></h2>
+      <div class="tablewrap" id="board">
+        <table>
+          <thead><tr>
+            <th>#</th><th>Creator</th><th>&Delta;4h</th><th>Mom.</th>
+            <th title="estimated stars, 1-8 scale, like the real game">&#9733; est</th>
+            <th>Signal</th><th aria-label="draft"></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="card detail" id="detail">
+        <h2><svg class="ic"><use href="#i-target"/></svg>Draft a pick</h2>
+        <div class="empty">Pick a creator from the board.</div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
+        <div class="slot" id="slot"></div>
+        <div class="projline" id="proj"></div>
+        <div class="hint" id="slotHint">A pick needs a thesis and a pre-mortem. That is the whole point — a lineup without reasoning is not a call.</div>
+        <div class="rowbtns">
+          <button id="clearBtn" hidden><svg class="ic"><use href="#i-x"/></svg>Clear</button>
+          <button class="primary" id="lockBtn" disabled><svg class="ic"><use href="#i-lock"/></svg>Lock lineup</button>
+        </div>
+      </div>
+      <div class="card identity" style="margin-top:14px">
+        <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
+        <div id="whoBody"></div>
+      </div>
+      <div class="card receipts" style="margin-top:14px">
+        <h2><svg class="ic"><use href="#i-book-open"/></svg>The book <span class="pill" id="hitRate">—</span></h2>
+        <div class="bookmeta" id="bookMeta"></div>
+        <div id="receipts"><div class="empty">No locked lineups yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="gallery" aria-label="What is on this page">
+    <a class="tile t1" href="#rows"><span class="tag-top">01 &middot; the board</span><b>79 creators, one number each</b><span class="tag-bot">live from the official API</span><span class="tile-ic"><svg class="ic"><use href="#i-users"/></svg></span></a>
+    <a class="tile t2" href="#detail"><span class="tag-top">02 &middot; the draft</span><b>Thesis and pre-mortem, or nothing</b><span class="tag-bot">reasoning is the submission</span><span class="tile-ic"><svg class="ic"><use href="#i-target"/></svg></span></a>
+    <a class="tile t3" href="#receipts"><span class="tag-top">03 &middot; the book</span><b>Every call, signed and kept</b><span class="tag-bot">graded against the next window</span><span class="tile-ic"><svg class="ic"><use href="#i-receipt"/></svg></span></a>
+    <div class="tile t4"><span class="tag-top">04 &middot; the limits</span><b>No invented motion scores</b><span class="tag-bot">stars gate entry, they add no points</span><span class="tile-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span></div>
+  </section>
+
+  <footer>
+    <strong>Motion Draft Room</strong> &mdash; a place to call the Motion creator leaderboard and get graded.
+    Every number comes from <code>docs.motion.game</code>; nothing here is invented.
+  </footer>
+
+  <section class="faq" id="faq" aria-labelledby="faqTitle">
+    <h2 class="faq-head" id="faqTitle"><svg class="ic"><use href="#i-info"/></svg>Questions, answered</h2>
+    <details class="faq-item" open>
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>The rules this room plays by</b></summary>
+      <div class="faq-body rulesGrid">
+        <div><b>Tournament</b>Mon 09:00 ET &rarr; Fri, finalised 17:30 ET. Lineups lock Mon 07:00 ET.</div>
+        <div><b>Scores</b>Update every 4 hours, Mon&ndash;Fri. Same rhythm as our collector.</div>
+        <div><b>Lineup</b>5 different creators; star total &le; cap; rarity/boost limits apply.</div>
+        <div><b>Formula</b>Lineup Score = &Sigma; (Creator Motion Score &times; card Score Boost).</div>
+        <div><b>Stars</b>1&ndash;8, from 14-day relative performance. Gate eligibility, add no points.</div>
+        <div><b>Rarity</b>Common / Rare / Epic / Legendary &mdash; sets the Score Boost multiplier.</div>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>Where do the numbers come from?</b></summary>
+      <div class="faq-body">
+        Every value on this page is derived from one source: <code>leaderboard.motion.game/api/leaderboard</code>
+        (official, unauthenticated) &mdash; the fields <code>position</code>, <code>delta</code> (4-hour rank change),
+        <code>isNew</code>, plus <code>asOf</code>. A GitHub Actions cron snapshots all 79 creators every 4 hours onto
+        the <code>data</code> branch; this page reads those snapshots. History starts the day the collector started
+        &mdash; when a window has too few slots the field shows <code>&mdash;</code>, never a made-up number.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>Why don't you just show Motion Score?</b></summary>
+      <div class="faq-body">
+        A creator's Motion Score is not public &mdash; it is built from X, Instagram, TikTok and YouTube engagement
+        during the tournament &mdash; so nothing here claims to know it. Stars in the real game come from 14-day
+        relative performance on a 1&ndash;8 scale; ours are estimated from rank and labelled as such.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>Is the 32-star cap real?</b></summary>
+      <div class="faq-body">
+        It is the one Motion's own docs use as an example. The real cap is set per tournament, and tournaments also
+        limit the rarity/boost mix, which this room does not model yet. Receipts grade rank movement, not score.
+      </div>
+    </details>
+    <details class="faq-item">
+      <summary><svg class="ic"><use href="#i-chevron-down"/></svg><b>What happens when I lock a lineup?</b></summary>
+      <div class="faq-body">
+        The book is public. Locking files it &mdash; its X account, picks, thesis, pre-mortem &mdash; to
+        <code>data/receipts.json</code> on the <code>data</code> branch through <code>/api/receipts</code>, and the
+        server grades it against the snapshot on record, so a visitor cannot submit their own score. One receipt per
+        handle per slot, so nobody can keep re-rolling a lineup until one hits.
+      </div>
+    </details>
+  </section>
+</div>
+
+<script>
+const CAP = 32, SIZE = 5;
+// Rarity drives the Score Boost in the real formula. Motion publishes the formula
+// and the tier order, not the multipliers - so the UI shows the boost it is using
+// and says the values are an assumption.
+const RARITY = ["Common", "Rare", "Epic", "Legendary"];
+let BOOST = { Common: 1, Rare: 1.1, Epic: 1.25, Legendary: 1.5 };
+const STAR = "★";
+let DATA = null, FILTER = "all", SEL = null, PICKS = [];
+
+// ---------- utils
+const $ = s => document.querySelector(s);
+const el = (t, c, txt) => { const n = document.createElement(t); if (c) n.className = c; if (txt != null) n.textContent = txt; return n; };
+const fmt = (v, d = 1) => v == null ? "—" : (typeof v === "number" ? v.toFixed(d) : v);
+const signed = v => v == null ? "—" : (v > 0 ? "+" + v : String(v));
+const cls = v => v == null ? "flat" : v > 0 ? "up" : v < 0 ? "down" : "flat";
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// every icon is a <symbol> in the sprite at the top of the document
+// Official avatar: Motion's own leaderboard serves /pfp/<id>.jpg. 8 of the 79 ids have
+// no image there yet (404), so a failed load is swapped for initials in place (classes
+// re-derived from data-extra (the size), since inline onerror can only use double quotes here).
+const AV_FB = "this.className='avatar av-fb'+(this.dataset.extra?''+this.dataset.extra:'');this.textContent=(this.dataset.ini||'?');this.onerror=null";
+const avatar = (c, size) => {
+  const cls = "avatar" + (size ? " " + size : "");
+  const ini = esc((((c && c.name) || "?").trim().slice(0, 2)).toUpperCase());
+  if (c && c.id) {
+    return `<img class="${cls}" src="https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${ini}" data-extra="${esc(size || "")}" onerror="${AV_FB}">`;
+  }
+  return `<span class="${cls} av-fb">${ini}</span>`;
+};
+const icon = (name, extra) => `<svg class="ic"${extra ? ` style="${extra}"` : ""}><use href="#i-${name}"/></svg>`;
+
+// Identity is the X account that authorised through /api/xauth, not a handle typed
+// into a box: a receipt under a name its owner never claimed is not a receipt.
+// The server reads the signed session cookie, so nothing here is trusted for filing.
+const HANDLE_RE = /^@?[A-Za-z0-9_]{1,15}$/;
+let ME = null, AUTH_CFG = null;  // {connected, configured, user}
+const strip = v => String(v || "").replace(/^@/, "");
+function handle() {
+  const v = ME && ME.user ? strip(ME.user.handle) : "";
+  return HANDLE_RE.test(v) ? v : "";
+}
+async function loadSession() {
+  try {
+    const r = await fetch("/api/xauth/status", { headers: { accept: "application/json" }, cache: "no-store", credentials: "same-origin" });
+    ME = await r.json();
+  } catch (e) {
+    ME = { connected: false, configured: null, reason: "the status endpoint is unreachable" };
+  }
+  AUTH_CFG = ME && ME.configured;
+  [renderWho(), renderLineup()].forEach(f => { try { f(); } catch (e) {} });
+}
+// popup round trip: X's screen opens in its own window, the callback posts back
+function connectX() {
+  const w = 520, h = 640;
+  const left = Math.max(0, (screen.width - w) / 2), top = Math.max(0, (screen.height - h) / 2.6);
+  const win = window.open("/api/xauth/start", "mdr_xauth",
+    `width=${w},height=${h},left=${Math.round(left)},top=${Math.round(top)},menubar=no,toolbar=no`);
+  if (!win) { $("#whoBody").insertAdjacentHTML("beforeend", '<div class="hint" style="color:var(--warm)">The sign-in window was blocked. Allow popups for this site and try again.</div>'); return; }
+  loadSession();
+}
+window.addEventListener("message", e => {
+  if (e.data && e.data.type === "mdr-oauth") { loadSession(); loadBook(); }
+});
+async function disconnectX() {
+  await fetch("/api/xauth/logout", { credentials: "same-origin", cache: "no-store" }).catch(() => {});
+  ME = { connected: false, configured: AUTH_CFG };
+  renderWho(); renderLineup();
+}
+
+// ---------- load
+async function load() {
+  // /api/signals is the live copy (refetched from the data branch). /signals.json is the
+  // snapshot bundled at build time — it keeps the page working if the API is unreachable.
+  const urls = ["/api/signals", "/signals.json"];
+  let lastErr = null;
+  for (const u of urls) {
+    try {
+      const r = await fetch(u, { headers: { accept: "application/json" }, cache: "no-store" });
+      if (!r.ok) throw new Error(u + " " + r.status);
+      DATA = await r.json();
+      break;
+    } catch (e) { lastErr = e; }
+  }
+  if (!DATA) {
+    $("#rows").innerHTML = `<tr><td colspan="7" class="empty">Could not load signals (${esc(lastErr && lastErr.message)}). The collector runs every 4 hours.</td></tr>`;
+    return;
+  }
+  if (DATA.rarity && DATA.rarity.assumedBoost) BOOST = DATA.rarity.assumedBoost;
+  PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
+  render();
+  loadBook();
+  // the identity card used to be drawn only from load()'s render path, so whichever of
+  // the two finished last could leave it empty; draw it with the session it is waiting on
+  renderWho();
+}
+
+// ---------- public receipt book
+let BOOK = null, BOOK_ERR = null;
+async function loadBook() {
+  try {
+    const r = await fetch("/api/receipts", { headers: { accept: "application/json" }, cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    BOOK = await r.json();
+    BOOK_ERR = null;
+  } catch (e) {
+    BOOK = null;
+    BOOK_ERR = e.message || "unreachable";
+  }
+  renderBook();
+}
+
+function render() {
+  const d = DATA;
+
+  // ---- stats
+  const cr = d.creators;
+  const gainers = cr.filter(c => c.delta4h > 0).length;
+  const losers = cr.filter(c => c.delta4h < 0).length;
+  // distinct 4-hour windows: several runs inside one window add no history
+  const slotWindows = [...new Set((d.slotTimes || []))].length;
+  const avgAbs = cr.length ? (cr.reduce((a, c) => a + Math.abs(c.delta4h), 0) / cr.length) : 0;
+  const stats = [
+    ["users", "Creators", cr.length, "on the board"],
+    ["activity", "Up / down", `${gainers} / ${losers}`, "last 4h"],
+    ["gauge", "Avg Δ4h", fmt(avgAbs, 2), "rank places"],
+    ["clock", "Slots tracked", slotWindows, slotWindows === 1 ? "distinct window" : "distinct windows"],
+    ["star", "Star cap", CAP, "per tournament"],
+    ["receipt", "Book hit rate",
+      BOOK && BOOK.summary && BOOK.summary.hitRate != null ? Math.round(BOOK.summary.hitRate * 100) + "%"
+        : (BOOK && BOOK.summary && BOOK.summary.pending ? BOOK.summary.pending + " pending" : "no calls yet"),
+      BOOK && BOOK.summary && BOOK.summary.settled ? `${BOOK.summary.settled} settled · public` : "first receipt is open"],
+  ];
+  $("#stats").innerHTML = stats.map(([ico, k, v, sub]) =>
+    `<div class="stat"><div class="k">${icon(ico)}${k}</div><div class="v${typeof v === "number" || /^[\d.\/%+\-]+$/.test(String(v)) ? "" : " txt"}">${esc(v)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ""}</div>`).join("");
+
+  // ---- honest limits banner
+  if (slotWindows < 3) {
+    if (!document.querySelector(".warn")) {
+      const b = el("div", "warn");
+      b.innerHTML = `${icon("info")}<span>${slotWindows <= 1
+        ? `Only ${slotWindows || d.snapshotCount} distinct 4-hour window so far. Δ over multiple slots and acceleration need 3+ windows (~12h); until then those cells stay "—". Nothing is backfilled or invented.`
+        : `Only ${slotWindows} distinct 4-hour windows so far. Acceleration needs 3+ (~12h); until then it stays "—". Nothing is backfilled or invented.`}</span>`;
+      const anchor = $("#stats");
+      anchor.parentNode.insertBefore(b, anchor.nextSibling);
+    }
+  }
+
+  // ---- filters
+  const tags = ["all", "SURGING", "COILED", "SLEEPER", "FADE", "QUIET"];
+  const tagged = cr.filter(c => (c.tags || []).length).length;
+  $("#filters").innerHTML = "";
+  tags.forEach(t => {
+    const n = t === "all" ? cr.length : cr.filter(c => c.tags.includes(t)).length;
+    const b = el("button", "tab" + (FILTER === t ? " on" : ""), t === "all" ? `ALL ${cr.length}` : t + " " + n);
+    // a creator can carry several signals, so these counts overlap and do not
+    // add up to the board size - the title says it rather than implying a partition
+    b.title = t === "all"
+      ? `${cr.length} creators on the board`
+      : `${n} of ${tagged} tagged creators carry ${t}. A creator can carry more than one signal, so the filter counts overlap.`;
+    b.onclick = () => { FILTER = t; render(); };
+    $("#filters").appendChild(b);
+  });
+
+  // ---- table
+  const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
+  $("#count").textContent = list.length + " shown";
+  const tb = $("#rows"); tb.innerHTML = "";
+  list.forEach(c => {
+    const picked = PICKS.some(p => p.name === c.name);
+    const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
+    tr.innerHTML = `
+      <td class="pos">${c.position}</td>
+      <td class="name"><span class="ncell">${avatar(c)}<span class="nwrap">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</span></span></td>
+      <td class="mono ${cls(c.delta4h)}">${signed(c.delta4h)}</td>
+      <td title="momentum ${fmt(c.momentum)} (rank-weighted move, ±${fmt(100, 0)})"><div class="mbar"><i style="${barStyle(c.momentum)}"></i></div></td>
+      <td class="mono stars" title="estimated stars (1-8)">${c.estStars}<span>/${8}</span></td>
+      <td>${c.tags.map(t => `<span class="tag ${t}">${t}</span>`).join("")}</td>
+      <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? icon("check") : icon("plus")}</td>`;
+    tr.onclick = () => { SEL = c.name; render(); };
+    tb.appendChild(tr);
+  });
+
+  const LEGEND = [["SURGING", "up", "climbing now"], ["COILED", "accent", "flat, about to move"],
+    ["SLEEPER", "cool", "quiet but cheap"], ["FADE", "down", "losing ground"], ["QUIET", "faint", "no signal"]];
+  $("#legend").innerHTML = LEGEND.map(([t, c, d]) =>
+    `<span><i style="background:var(--${c})"></i>${t} <span style="opacity:.6">&middot; ${d}</span></span>`).join("");
+
+  renderDetail();
+  renderLineup();
+  syncClear();
+}
+
+function barStyle(m) {
+  const w = Math.min(50, Math.abs(m) / 2);
+  return m >= 0 ? `left:50%;width:${w}%;background:var(--up)` : `right:50%;width:${w}%;background:var(--down)`;
+}
+
+// ---------- detail / draft form
+function renderDetail() {
+  const box = $("#detail");
+  const c = DATA.creators.find(x => x.name === SEL);
+  if (!c) { box.innerHTML = `<h2>${icon("target")}Draft a pick</h2><div class="empty">
+      <div style="margin-bottom:10px;color:var(--dim)">Pick from the board to open a draft card.</div>
+      <div class="steps">
+        <div><span class="n">1</span><span>click a row (or the <b>+</b>)</span></div>
+        <div><span class="n">2</span><span>write a one-line thesis</span></div>
+        <div><span class="n">3</span><span>write the pre-mortem</span></div>
+        <div><span class="n">4</span><span>five picks, then lock</span></div>
+      </div>
+      <div style="margin-top:12px">Stars total must stay under <b>${CAP}</b>. Stars only gate entry; the receipt grades rank movement.</div>
+    </div>`; return; }
+
+  const already = PICKS.find(p => p.name === c.name);
+  box.innerHTML = `
+    <h2>${icon("target")}Draft a pick</h2>
+    <h3><span class="ncell">${avatar(c, "lg")}${esc(c.name)}</span></h3>
+    <div class="meta">
+      <span>rank #${c.position}</span><span>·</span>
+      <span class="stars">${STAR.repeat(c.estStars)}</span><span>est.</span><span>·</span>
+      <span>momentum ${fmt(c.momentum)}</span>
+    </div>
+    <div class="kv">
+      <div class="k">Δ last 4h</div><div class="v ${cls(c.delta4h)}">${signed(c.delta4h)}</div>
+      <div class="k">Δ over tracked slots</div><div class="v ${cls(c.delta24h)}">${signed(c.delta24h)}</div>
+      <div class="k">Acceleration</div><div class="v ${cls(c.acceleration)}">${fmt(c.acceleration, 2)}</div>
+      <div class="k">Volatility</div><div class="v">${fmt(c.volatility, 2)}</div>
+      <div class="k">Value (mom / star)</div><div class="v">${fmt(c.value)}</div>
+      <div class="k">Signal</div><div class="v">${c.tags.join(" · ")}</div>
+    </div>
+    <label>Card rarity — sets the Score Boost in the real formula</label>
+    <div class="rar" id="rar" role="group" aria-label="card rarity">
+      ${RARITY.map(r => `<button data-r="${r}" class="${(already ? already.rarity : "Common") === r ? "on" : ""}" type="button">${r}<i>×${BOOST[r].toFixed(2)}</i></button>`).join("")}
+    </div>
+    <div class="hint" style="margin:7px 0 4px">Boost multipliers are not published by Motion — these are an assumption, so a projected score here is not the game's Lineup Score.</div>
+    <label for="thesis">Thesis — why this pick, in one line</label>
+    <input id="thesis" maxlength="120" placeholder="e.g. three straight positive slots, calm board above" value="${already ? esc(already.thesis) : ""}">
+    <label for="premortem">Pre-mortem — what would make this wrong</label>
+    <input id="premortem" maxlength="120" placeholder="e.g. a big account posts and pushes him down the board" value="${already ? esc(already.premortem) : ""}">
+    <div class="hint">Both fields are required. No one-click lineups — the reasoning is the submission.</div>
+    <div class="rowbtns">
+      <button class="primary" id="addBtn">${icon("plus")}${already ? "Update pick" : "Add to lineup"}</button>
+      ${already ? `<button id="rmBtn">${icon("trash")}Remove</button>` : ""}
+    </div>`;
+
+  const rarBtns = [...document.querySelectorAll("#rar button")];
+  rarBtns.forEach(b => { b.onclick = () => { rarBtns.forEach(x => x.classList.toggle("on", x === b)); }; });
+  $("#addBtn").onclick = () => {
+    const th = $("#thesis").value.trim(), pm = $("#premortem").value.trim();
+    const rarity = (rarBtns.find(b => b.classList.contains("on")) || {}).dataset?.r || "Common";
+    if (th.length < 8 || pm.length < 8) { alert("Thesis and pre-mortem both need at least 8 characters."); return; }
+    const prev = PICKS.find(p => p.name === c.name);
+    const others = PICKS.filter(p => p.name !== c.name);
+    if (others.length >= SIZE) { alert(`Lineup is full (${SIZE} picks).`); return; }
+    const spent = others.reduce((a, p) => a + p.estStars, 0);
+    if (spent + c.estStars > CAP) { alert(`That would exceed the ${CAP}-star cap (${spent} + ${c.estStars}).`); return; }
+    if (prev && prev.rarity !== rarity) { alert("A creator keeps the rarity you filed for them. Clear the pick first to change it."); return; }
+    PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum, rarity: prev ? prev.rarity : rarity }];
+    savePicks(); render();
+  };
+  const rm = $("#rmBtn");
+  if (rm) rm.onclick = () => { PICKS = PICKS.filter(p => p.name !== c.name); savePicks(); render(); };
+}
+
+function savePicks() { localStorage.setItem("mdr_picks", JSON.stringify(PICKS)); }
+
+// ---------- lineup + receipts
+function renderLineup() {
+  const spent = PICKS.reduce((a, p) => a + p.estStars, 0);
+  $("#cap").textContent = `${spent}/${CAP} ${STAR}`;
+  const slot = $("#slot"); slot.innerHTML = "";
+  for (let i = 0; i < SIZE; i++) {
+    const p = PICKS[i];
+    const chip = el("span", "s" + (p ? " spent" : ""));
+    if (p) {
+      const meta = DATA.creators.find(x => x.name === p.name);
+      chip.innerHTML = avatar(meta, "sm") + `<b>${esc(p.name)}</b> ${STAR.repeat(p.estStars)}`;
+    } else {
+      chip.textContent = `empty ${i + 1}`;
+    }
+    slot.appendChild(chip);
+  }
+  // Projection, shown live so a rarity swap is visible before locking. It uses the
+  // rank stand-in for Motion Score and the assumed boost table - labelled as such.
+  const proj = $("#proj");
+  if (proj) {
+    if (!PICKS.length) {
+      proj.textContent = `${SIZE - PICKS.length} more pick${SIZE - PICKS.length === 1 ? "" : "s"} to see a projection`;
+    } else {
+      const n = DATA.creators.length;
+      const strength = p => (n - Math.min(p.position, n) + 1) / n;
+      const sum = PICKS.reduce((a, p) => a + strength(p) * (BOOST[p.rarity] || 1), 0);
+      const bs = PICKS.reduce((a, p) => a + (BOOST[p.rarity] || 1), 0);
+      proj.innerHTML = `projected <b>${sum.toFixed(2)}</b> · boosts ×${bs.toFixed(2)} · ` +
+        `strength is a rank stand-in, boosts are assumed — not the game's Lineup Score`;
+    }
+  }
+  const h = handle();
+  const lb = $("#lockBtn");
+  lb.disabled = PICKS.length !== SIZE || !h;
+  lb.innerHTML = icon("lock") + (!h && PICKS.length === SIZE
+    ? "Connect X to lock"
+    : `Lock lineup (${PICKS.length}/${SIZE})`);
+  lb.onclick = lockLineup;
+  renderWho();
+}
+
+function renderWho() {
+  const box = $("#whoBody"), pill = $("#whoState");
+  if (!box) return;
+  const u = ME && ME.user, h = handle();
+  // the card is redrawn as the session resolves; say so instead of leaving it blank
+  if (!ME) {
+    pill.textContent = "";
+    box.innerHTML = `<div class="hint" style="margin:0">Checking whether you are signed in…</div>`;
+    return;
+  }
+  pill.textContent = h ? "@" + h : "not connected";
+  if (h) {
+    box.innerHTML = `
+      <div class="idcard">
+        <img class="avatar lg" src="${esc(u.avatar || "")}" alt="" referrerpolicy="no-referrer"
+             data-ini="${esc(strip(u.name || h).slice(0, 2).toUpperCase())}" data-extra="lg" onerror="${AV_FB}">
+        <div class="who">
+          <div class="h">@${esc(h)}</div>
+          <div class="n">${esc(u.name || "connected")}</div>
+        </div>
+        <span class="state">signed in</span>
+      </div>
+      <div class="hint" style="margin:0 0 10px">Receipts you lock are filed under @${esc(h)} and graded against the newest snapshot on record. Your handle comes from X, so nobody can file under your name — or you under theirs.</div>
+      <div class="idrow"><button id="xOut">${icon("x")}Disconnect</button></div>`;
+    const out = $("#xOut");
+    if (out) out.onclick = disconnectX;
+    return;
+  }
+  const why = ME && ME.configured === false
+    ? `<div class="hint" style="color:var(--warm);margin:0 0 9px">Connect X is not wired up on this deployment yet: ${esc(ME.reason || "missing configuration")}. Drafting works, filing a receipt does not.</div>`
+    : `<div class="hint" style="margin:0 0 9px">The book is public, so every receipt carries the X account that filed it. Connecting reads your handle, display name and avatar — nothing else, no posting.</div>`;
+  box.innerHTML = `${why}
+    <div class="idrow"><button class="primary xbtn" id="xIn">${icon("x")}Connect X</button></div>
+    <div class="hint" style="margin:9px 0 0">No email, no password, no database: X hands back a token, this site keeps a signed cookie that says who you are.</div>`;
+  const btn = $("#xIn");
+  if (btn) btn.onclick = connectX;
+}
+
+function syncClear() {
+  const c = $("#clearBtn");
+  if (!c) return;
+  c.hidden = PICKS.length === 0;
+  c.onclick = () => { PICKS = []; savePicks(); render(); };
+}
+
+// ---------- public book rendering
+function renderBook() {
+  const box = $("#receipts"), meta = $("#bookMeta");
+  if (!box) return;
+  if (!BOOK) {
+    meta.textContent = "";
+    $("#hitRate").textContent = "—";
+    box.innerHTML = `<div class="empty">The public book is unreachable (${esc(BOOK_ERR || "no response")}). This browser cannot file or score receipts right now.</div>`;
+    return;
+  }
+  const s = BOOK.summary || {};
+  // A receipt locked in the newest window is settled but has not been graded against a
+  // later snapshot: it must not count as a miss, so it is pulled out of the denominator.
+  const ungraded = (BOOK.receipts || []).filter(r => r.status === "settled" && r.slotAtLock && r.settledAt === r.slotAtLock).length;
+  const graded = Math.max(0, (s.settled || 0) - ungraded);
+  $("#hitRate").textContent = s.hitRate == null
+    ? (s.pending ? `${s.pending} pending` : "—")
+    : graded
+      ? `${Math.round((s.hitRate * (s.settled || 0) * 100) / graded)}% of ${graded}`
+      : "no window yet";
+  meta.textContent = `${s.count} receipt${s.count === 1 ? "" : "s"} · ${graded} graded` +
+    (ungraded ? ` · ${ungraded} waiting for a window` : "") +
+    ` · ${s.pending || 0} pending · net ${signed(s.netRank || 0)} rank` +
+    (BOOK.asOf ? ` · graded to ${String(BOOK.asOf).slice(0, 16).replace("T", " ")}Z` : "");
+  const list = BOOK.receipts || [];
+  if (!list.length) {
+    box.innerHTML = `<div class="empty">No receipts yet. Lock a lineup and it becomes the first line in this book.</div>`;
+    return;
+  }
+  box.innerHTML = list.slice(0, 8).map(r => {
+    const done = r.status === "settled";
+    const picks = (r.picks || []).map(p => {
+      const tag = p.rarity && p.rarity !== "Common" ? `<i class="rr">${esc(p.rarity)}</i>` : "";
+      if (p.move == null) return esc(p.name) + tag;
+      return `${esc(p.name)}${tag} <span class="${cls(p.move)}">${signed(p.move)}</span>`;
+    }).join(" · ");
+    return `<div class="rec"><div class="l">
+        <div class="who">${r.avatar
+          ? `<img class="avatar k" src="${esc(r.avatar)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${esc(String(r.player || "?").slice(0, 2).toUpperCase())}" data-extra="k" onerror="${AV_FB}">`
+          : icon("user", "font-size:11px;opacity:.7")}<b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks${r.name && r.name.toLowerCase() !== String(r.player || "").toLowerCase() ? ` <span style="color:var(--faint);font-size:10px">${esc(r.name)}</span>` : ""}</div>
+        <div class="picks">${picks}</div>
+      </div>
+      <div class="score ${done ? cls(r.score) : "flat"}">${done ? signed(r.score) : "pending"}<small>${done ? (r.settledAt && r.slotAtLock && r.settledAt === r.slotAtLock ? "no window yet" : "net rank") : "not graded"}</small></div>
+    </div>`;
+  }).join("");
+}
+
+// ---------- lock + settle
+function lockLineup() {
+  if (PICKS.length !== SIZE) return;
+  const h = handle();
+  if (!h) { renderWho(); return; }
+  // no player field: the server takes the handle from the signed session cookie
+  const body = {
+    slotAtLock: (DATA.dataAsOf || ""),
+    picks: PICKS.map(p => ({ name: p.name, positionAtLock: p.position, estStars: p.estStars, rarity: p.rarity, thesis: p.thesis, premortem: p.premortem })),
+  };
+  const btn = $("#lockBtn");
+  btn.disabled = true; btn.textContent = "Filing…";
+  fetch("/api/receipts", { method: "POST", headers: { "content-type": "application/json" },
+      credentials: "same-origin", body: JSON.stringify(body) })
+    .then(async r => {
+      const out = await r.json().catch(() => ({}));
+      if (r.status === 401) { ME = { connected: false, configured: AUTH_CFG }; renderWho(); }
+      if (!r.ok) throw new Error(out.error || ("HTTP " + r.status));
+      // the lineup is only cleared once the book has it; a lost receipt is worse
+      // than a lineup the visitor has to look at twice
+      PICKS = []; savePicks(); SEL = null;
+      render();
+      loadBook();
+      alert(`Filed under @${h}. ${out.receipt && out.receipt.status === "settled" ? "It graded immediately against the current snapshot: " + signed(out.receipt.score) + " net rank." : "It settles when a snapshot with a later asOf arrives."}`);
+    })
+    .catch(e => {
+      btn.disabled = false;
+      alert("Could not file the receipt: " + e.message);
+      render();
+    });
+}
+
+// ---------- go
+load();
+loadSession();
+// the CTA under the switch is a shortcut into the board, not a second flow
+document.addEventListener("click", e => {
+  const cta = e.target && e.target.closest && e.target.closest("#ctaDraft");
+  if (!cta) return;
+  const board = document.querySelector("#rows");
+  if (board && board.scrollIntoView) board.scrollIntoView({ behavior: "smooth", block: "center" });
+  const first = document.querySelector("#rows tr.row");
+  if (first) first.focus && first.focus();
+});
+// the identity card is rebuilt by renderWho(), so its buttons are bound there; the
+// session is fetched once at load and again when the OAuth popup reports back
+</script>
+<script>
+/* theme switch — one knob group per page, one stored value, both pages agree */
+(function () {
+  var root = document.documentElement;
+  var mem = document.getElementById('themesw');
+  var btns = mem ? mem.querySelectorAll('[data-theme-set]') : [];
+  var meta = document.querySelector('meta[name="theme-color"]');
+  var paper = { light: '#f4f3f0', dark: '#0f0f0e' };
+
+  function paint(t) {
+    root.setAttribute('data-theme', t);
+    if (meta) meta.setAttribute('content', paper[t] || paper.light);
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-theme-set') === t));
+    }
+    if (mem) mem.setAttribute('data-on', t);
+  }
+  function set(t) {
+    if (t !== 'dark' && t !== 'light') return;
+    root.classList.add('theming');
+    window.setTimeout(function () { root.classList.remove('theming'); }, 400);
+    paint(t);
+    try { localStorage.setItem('mdr-theme', t); } catch (e) {}
+  }
+
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function () { set(this.getAttribute('data-theme-set')); });
+  }
+  paint(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+  // with no stored choice, the page keeps following the system
+  try {
+    window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function (e) {
+      var stored = null;
+      try { stored = localStorage.getItem('mdr-theme'); } catch (err) {}
+      if (!stored) paint(e.matches ? 'dark' : 'light');
+    });
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>
