@@ -853,12 +853,17 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;"
 // Official avatar: Motion's own leaderboard serves /pfp/<id>.jpg. 8 of the 79 ids have
 // no image there yet (404), so a failed load is swapped for initials in place (classes
 // re-derived from data-extra (the size), since inline onerror can only use double quotes here).
+// When the creator's X account is confirmed, its profile photo wins: it is the face
+// people actually recognise, and Motion's crop is a tiny leaderboard thumbnail that is
+// sometimes still a placeholder. Same short-circuit as the hover card.
 const AV_FB = "this.className='avatar av-fb'+(this.dataset.extra?''+this.dataset.extra:'');this.textContent=(this.dataset.ini||'?');this.onerror=null";
 const avatar = (c, size) => {
   const cls = "avatar" + (size ? " " + size : "");
   const ini = esc((((c && c.name) || "?").trim().slice(0, 2)).toUpperCase());
-  if (c && c.id) {
-    return `<img class="${cls}" src="https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${ini}" data-extra="${esc(size || "")}" onerror="${AV_FB}">`;
+  const prof = (c && DATA.profiles && DATA.profiles[c.name]) || null;
+  const src = (prof && prof.avatar) || (c && c.id ? `https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg` : "");
+  if (src) {
+    return `<img class="${cls}" src="${esc(src)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${ini}" data-extra="${esc(size || "")}" onerror="${AV_FB}">`;
   }
   return `<span class="${cls} av-fb">${ini}</span>`;
 };
