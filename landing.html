@@ -212,25 +212,6 @@
     font-size:clamp(44px,7vw,104px);line-height:.9;letter-spacing:-.05em;
     text-wrap:balance}
   .hero h2 em{font-style:normal;color:var(--faint)}
-  /* the cycling word keeps the headline's own type; the colour edge is the only
-     thing that moves, which is why no width is ever re-measured mid-sweep */
-  .hero h2.ct .ct-word{position:relative;display:inline-block;white-space:nowrap;
-    vertical-align:baseline}
-  .hero h2.ct .ct-size{visibility:hidden;display:inline-block;white-space:nowrap;
-    word-break:keep-all}
-  /* both layers are absolutely positioned or shrink-to-fit, and a bare
-     white-space:nowrap does NOT stop a word being broken mid-glyph when the box
-     is narrower than the text - keep-all does, and it is what keeps the cycling
-     word on one line instead of splitting "who falls." into "who fa" + "lls." */
-  .hero h2.ct .ct-live{position:absolute;left:0;top:0;white-space:nowrap;width:max-content;
-    word-break:keep-all;overflow-wrap:normal;
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    -webkit-text-fill-color:transparent;will-change:background-image;
-    background-size:100% 100%;background-repeat:no-repeat}
-  .hero h2.ct .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;
-    clip-path:inset(50%);white-space:nowrap}
-  /* the prefix sets a hair quieter so the moving word is the one that reads */
-  .hero h2.ct .ct-prefix{color:var(--ink)}
   .lede{max-width:62ch;font-size:14.5px;color:var(--dim);line-height:1.65;margin:0}
   .lede strong{color:var(--ink);font-weight:600}
   .hero-cta{display:flex;align-items:center;gap:12px;margin-top:26px;flex-wrap:wrap}
@@ -818,14 +799,7 @@
   <section class="hero">
     <div class="hero-main">
       <div>
-        <!-- beui Chromatic Text Reveal: the sentence stays put, the last word
-             cycles, and a colour edge sweeps it into place. The full sentence is
-             what a screen reader gets; the cycling word lives behind aria-hidden.
-             The widest word reserves the line, so the headline never reflows. -->
-        <h2 class="ct" id="heroCt" data-ct-words='["who climbs.","who falls.","who stalls.","who moves."]'>
-          <span class="ct-prefix">Where they rank now is the setup. Where they go next is</span>
-          <span class="ct-word"></span>
-        </h2>
+        <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
         <p class="lede">
           Pick five creators off Motion's public leaderboard before the next window closes. Say why
           each one wins and what would prove you wrong. The server grades every pick against the
@@ -1615,125 +1589,6 @@ fetch("/api/signals", { cache: "no-store" })
   });
   wide.addEventListener('change', function () { paint(current()); });
   paint(current());
-})();
-</script>
-<script>
-/* beui Chromatic Text Reveal, hand ported: no React, no motion, no Tailwind.
-   A fixed prefix, a cycling final word, and a colour edge that resolves it.
-   The edge is a gradient stop driven by --sweep, so the whole animation is one
-   number per frame rather than a typewriter or a per-letter span. The widest
-   word sizes the line, so the headline never reflows between words. */
-(function () {
-  var el = document.getElementById('heroCt');
-  if (!el) return;
-  var words = JSON.parse(el.getAttribute('data-ct-words') || '[]');
-  var slot = el.querySelector('.ct-word');
-  if (!words.length || !slot) return;
-  var REDUCE = window.matchMedia('(prefers-reduced-motion:reduce)');
-  var palette = ['#60a5fa', '#818cf8', '#c084fc', '#fb7185', '#fbbf24'];
-  // The sweep is a band of colour parked inside the word and slid across it.
-  // Every stop is emitted clamped to 0-100% of the element: a stop outside the
-  // box is simply dropped by background-clip:text, and the glyph nearest the
-  // edge then renders in the transparent `currentColor` and vanishes - which is
-  // exactly how the trailing letters went missing. So the band widens toward
-  // the edges instead of overflowing them.
-  var BAND = 34;
-  var SWEEP_FROM = 0, SWEEP_TO = 100;
-  function clamp(v) { return v < 0 ? 0 : v > 100 ? 100 : v; }
-  var stops = palette.map(function (c, i) {
-    var off = -BAND + (i / (palette.length - 1)) * BAND * 2;
-    return c + ' calc(var(--sweep) ' + (off < 0 ? '-' : '+') + ' ' + Math.abs(off).toFixed(2) + '%)';
-  }).join(', ');
-  var grad = 'linear-gradient(90deg,currentColor 0%,currentColor calc(var(--sweep) - ' + BAND + '%),'
-    + stops + ',currentColor calc(var(--sweep) + ' + BAND + '%),currentColor 100%)';
-
-  var widest = words.reduce(function (a, b) { return b.length > a.length ? b : a; }, '');
-  slot.innerHTML = '<span class="ct-size" aria-hidden="true"></span>'
-    + '<span class="ct-live" aria-hidden="true"></span>'
-    + '<span class="ct-sr"></span>';
-  var live = slot.querySelector('.ct-live');
-  var sr = slot.querySelector('.ct-sr');
-  var sizer = slot.querySelector('.ct-size');
-  live.style.backgroundImage = grad;
-  sizer.textContent = widest;
-  live.textContent = widest;
-  sr.textContent = widest;
-
-  var i = 0, timer = 0, raf = 0;
-
-  // a real spring, sub-stepped, so the edge decelerates into place instead of
-  // running at one speed and stopping dead
-  function spring(from, to, onFrame) {
-    var x = from, v = 0, last = 0;
-    var k = 110, c = 20, m = 1;
-    function step(now) {
-      var dt = Math.min(0.064, last ? (now - last) / 1000 : 1 / 60);
-      last = now;
-      var n = Math.max(1, Math.ceil(dt * 240)), h = dt / n;
-      for (var s = 0; s < n; s++) { v += ((-k * (x - to) - c * v) / m) * h; x += v * h; }
-      onFrame(x);
-      if (Math.abs(x - to) < 0.05 && Math.abs(v) < 0.5) { onFrame(to); raf = 0; return; }
-      raf = requestAnimationFrame(step);
-    }
-    if (raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(step);
-  }
-
-  function paint(w) { live.textContent = w; sr.textContent = w; }
-
-  function sweep() {
-    live.style.transition = 'none';
-    if (REDUCE.matches) {
-      live.style.setProperty('--sweep', (100 + BAND + 4) + '%');
-      live.style.opacity = '1'; live.style.filter = 'none'; live.style.transform = 'none';
-      return 2000;
-    }
-    live.style.setProperty('--sweep', '-' + (BAND + 4) + '%');
-    live.style.opacity = '0.5';
-    live.style.filter = 'blur(6px)';
-    live.style.transform = 'translateY(5px)';
-    spring(-(BAND + 4), 100 + BAND + 4, function (v) { live.style.setProperty('--sweep', v + '%'); });
-    requestAnimationFrame(function () {
-      live.style.transition = 'opacity .28s ease-out,filter .36s ease-out,transform .36s cubic-bezier(.22,1,.36,1)';
-      live.style.opacity = '1'; live.style.filter = 'blur(0px)'; live.style.transform = 'none';
-    });
-    return 2000;
-  }
-
-  function cycle() {
-    clearTimeout(timer);
-    paint(words[i % words.length]);
-    var wait = sweep();
-    if (words.length < 2) return;
-    timer = setTimeout(function () { i = (i + 1) % words.length; cycle(); }, wait);
-  }
-
-  paint(words[0]);
-  if (REDUCE.matches) {
-    live.style.setProperty('--sweep', (100 + BAND + 4) + '%');
-    return;
-  }
-  // starts on first sight, not on load: a hero above the fold would otherwise
-  // spend its one good performance on nobody
-  if (window.IntersectionObserver) {
-    live.style.setProperty('--sweep', '-' + (BAND + 4) + '%');
-    var io = new IntersectionObserver(function (es) {
-      if (!es[0].isIntersecting) return;
-      io.disconnect();
-      cycle();
-    }, { threshold: 0.35 });
-    io.observe(el);
-  } else { cycle(); }
-
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) clearTimeout(timer); else cycle();
-  });
-  REDUCE.addEventListener('change', function () {
-    if (REDUCE.matches) { clearTimeout(timer); live.style.transition = 'none';
-      live.style.setProperty('--sweep', (100 + BAND + 4) + '%'); live.style.opacity = '1';
-      live.style.filter = 'none'; live.style.transform = 'none'; paint(words[0]); }
-    else cycle();
-  });
 })();
 </script>
 </body>

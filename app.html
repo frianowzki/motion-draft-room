@@ -265,117 +265,6 @@
     .tab{padding:7px 9px;font-size:9px}
   }
 
-  /* beui Tabs: one thumb, measured to the chosen tab and sprung to it. The
-     thumb is a sibling of the labels, drawn UNDER them, so the label's own
-     colour change is what marks selection — the thumb only moves. */
-  .tabs{overflow:visible}
-  .tabs .tablist{position:relative;display:inline-flex;align-items:center;gap:2px;
-    max-width:100%;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
-  .tabs .tablist::-webkit-scrollbar{display:none}
-  .tabs .tabind{position:absolute;left:0;top:0;width:0;height:0;border-radius:var(--r-pill);
-    background:var(--ink);box-shadow:none;z-index:0;pointer-events:none;
-    will-change:transform,width,height;
-    transition:transform .18s cubic-bezier(.22,1,.36,1),width .18s cubic-bezier(.22,1,.36,1)}
-  .tabs .tabind.off{opacity:0}
-  .tabs .tab{position:relative;z-index:1;background:none;box-shadow:none}
-  .tabs .tab:hover{background:none}
-  .tabs .tab[aria-selected="true"]{color:var(--accent-ink);font-weight:600}
-  .tabs .tab[aria-selected="true"] b{background:rgba(255,255,255,.22);color:var(--accent-ink)}
-  :root[data-theme="dark"] .tabs .tab[aria-selected="true"]{color:var(--accent-ink);opacity:1}
-  :root[data-theme="dark"] .tabs .tab[aria-selected="true"] b{background:rgba(0,0,0,.24);color:var(--accent-ink)}
-  .tabs .tab:focus-visible{outline:none;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--ink)}
-
-  /* beui Pagination: a fixed-width slot row, so paging never resizes the pager
-     under the cursor; one pill glides to the current page. */
-  .pg{display:flex;align-items:center}
-  .pg .pglist{position:relative;display:flex;align-items:center;gap:0;margin:0;padding:0;list-style:none}
-  .pg .pgslot{width:26px;display:flex;justify-content:center}
-  .pg .pgc{position:relative;display:inline-flex;align-items:center;justify-content:center;
-    width:24px;height:24px;padding:0;border:0;border-radius:100px;background:none;
-    font-family:var(--mono);font-size:9.5px;color:var(--dim);cursor:pointer;
-    font-variant-numeric:tabular-nums;transition:color .16s ease,opacity .16s ease;
-    -webkit-tap-highlight-color:transparent}
-  .pg .pgc svg{width:12px;height:12px;display:block}
-  .pg .pgc:hover:not(:disabled){color:var(--ink)}
-  .pg .pgc:disabled{opacity:.3;cursor:default}
-  .pg .pgc:focus-visible{outline:none;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--ink)}
-  .pg .pgn.on{color:var(--accent-ink);font-weight:600}
-  .pg .pgn .pgnum{position:relative;z-index:1}
-  /* the pill lives INSIDE the current button, but is positioned from the list,
-     so it can glide across slots without leaving the row it belongs to */
-  .pg .pglist > .pgpillwrap{position:absolute;inset:0;pointer-events:none}
-  .pg .pgpill{position:absolute;left:0;top:50%;width:24px;height:24px;margin-top:-12px;
-    border-radius:100px;background:var(--ink);z-index:0;pointer-events:none;
-    transition:transform .3s cubic-bezier(.22,1,.36,1)}
-  .pg .pge .pgdots{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-    transition:opacity .16s ease,transform .16s ease}
-  .pg .pge .pgchev{position:absolute;left:50%;top:50%;display:block;width:12px;height:12px;
-    transform:translate(-50%,-50%) scale(.72);opacity:0;transition:opacity .16s ease,transform .16s ease}
-  .pg .pge .pgchev svg{width:12px;height:12px;display:block}
-  .pg .pge:hover .pgdots,.pg .pge:focus-visible .pgdots{opacity:0;transform:translate(-50%,-50%) scale(.72)}
-  .pg .pge:hover .pgchev,.pg .pge:focus-visible .pgchev{opacity:1;transform:translate(-50%,-50%) scale(1)}
-
-  /* beui Morphing Modal: a sheet that rises from the bottom edge and morphs its
-     height to whatever view it holds. The blur backdrop is what separates it
-     from the board; the scrim itself stays almost clear so the board reads
-     through and the eye keeps its place. */
-  .mmback{position:fixed;inset:0;z-index:80;border:0;padding:0;cursor:pointer;
-    background:rgba(10,10,9,.28);-webkit-backdrop-filter:blur(14px) saturate(140%);
-    backdrop-filter:blur(14px) saturate(140%);opacity:0;transition:opacity .2s ease-out}
-  :root[data-theme="dark"] .mmback{background:rgba(0,0,0,.42)}
-  body.mm-on .mmback{opacity:1}
-  .mmlayer{position:fixed;inset:0;z-index:81;display:flex;align-items:flex-end;
-    justify-content:center;padding:0;pointer-events:none}
-  .mmlayer[hidden]{display:none}
-  .mmsheet{pointer-events:auto;position:relative;width:100%;max-width:640px;
-    max-height:min(88vh,760px);overflow:hidden;background:var(--card);
-    border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;
-    box-shadow:0 -18px 48px -22px rgba(0,0,0,.4);outline:none;
-    will-change:transform,height;display:flex;flex-direction:column;
-    padding-bottom:env(safe-area-inset-bottom,0px)}
-  .mmgrip{display:block;width:34px;height:4px;border-radius:100px;background:var(--line);
-    margin:9px auto 2px;flex:none}
-  .mmbody{position:relative;overflow-y:auto;overscroll-behavior:contain;
-    padding:8px 16px 18px;-webkit-overflow-scrolling:touch}
-  .mmview{position:relative}
-  .sheethead{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
-  .sheethead .mmx{align-self:center;height:30px;flex:none}
-  .sheettag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--dim);padding:3px 8px;border-radius:100px;background:var(--sunken)}
-  .mmx{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
-    border:0;border-radius:100px;background:var(--sunken);
-    /* the close glyph is the one control on this sheet a thumb has to find
-       without looking, so it carries ink weight, not the faint grey that
-       disappears into a dark panel */
-    color:var(--ink);cursor:pointer;
-    -webkit-tap-highlight-color:transparent;transition:background .16s,color .16s}
-  .mmx:hover{background:var(--ink);color:var(--accent-ink)}
-  /* the glyph needs its own size: a bare inline svg with no width attribute
-     collapses to 0 inside a flex button and the X disappears */
-  .mmx svg{width:14px;height:14px;flex:none;display:block}
-  .sheetcard .kv{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .sheetcard .dhero h3{font-size:23px}
-  @keyframes mmIn{from{opacity:0;transform:translateY(8px);filter:blur(4px)}
-    to{opacity:1;transform:none;filter:blur(0)}}
-  @keyframes mmOut{from{opacity:1;transform:none;filter:blur(0)}
-    to{opacity:0;transform:translateY(-8px);filter:blur(4px)}}
-  @media(max-width:640px){
-    .mmsheet{max-width:100%;border-radius:20px 20px 0 0}
-    .mmbody{padding:6px 14px 16px}
-    .sheetcard .kv{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-    .sheetcard label{font-size:9px}
-  }
-  @media(min-width:641px){
-    /* on a desktop the sheet keeps its phone shape but stops being edge-to-edge:
-       it floats, so it reads as a panel that rose, not a bar glued to the glass */
-    .mmlayer{padding:24px}
-    .mmsheet{border-radius:22px;border-bottom:1px solid var(--line);max-width:520px}
-  }
-  @media(prefers-reduced-motion:reduce){
-    .mmsheet,.mmback,.pg .pgpill,.tabs .tabind{transition:none!important}
-    .mmview{animation:none!important}
-  }
-
   /* ---- layout: board is the big tile, the column beside it stacks */
   /* stretch, not start: the draft column has to be exactly as tall as the board
      beside it, otherwise the two tiles end at different heights */
@@ -1078,14 +967,7 @@
 
   <div class="stats" id="stats"></div>
 
-    <!-- beui Tabs: the rail is the tablist, the thumb is one element that springs
-         to whatever tab is chosen. Each tab carries its count, so the rail doubles
-         as a read of the board; the signals explain themselves in the SIGNAL column. -->
-    <div class="tabs" id="filters">
-      <div class="tablist" role="tablist" aria-label="Filter by signal">
-        <span class="tabind" aria-hidden="true"></span>
-      </div>
-    </div>
+    <div class="tabs" id="filters" role="group" aria-label="Filter by signal"></div>
 
   <!-- one screen on a desktop: navbar, then the numbers, then the board and the
        draft beside it. Your lineup, who is calling and the book sit under both
@@ -1510,36 +1392,21 @@ function render() {
   // its colour dot (the same one the SIGNAL column uses) and its own count.
   const tags = ["all", "SURGING", "COILED", "SLEEPER", "FADE", "QUIET"];
   const tagged = cr.filter(c => (c.tags || []).length).length;
-  const rail = $("#filters").querySelector(".tablist");
-  // the rail is rebuilt only when the labels or counts change: re-creating the
-  // buttons on every render would restart the thumb spring from zero each time
-  const sig = tags.map(t => `${t}:${t === "all" ? cr.length : cr.filter(c => c.tags.includes(t)).length}`).join("|") + "#" + FILTER;
-  if (rail.dataset.sig !== sig) {
-    rail.dataset.sig = sig;
-    rail.querySelectorAll(".tab").forEach(b => b.remove());
-    tags.forEach(t => {
-      const n = t === "all" ? cr.length : cr.filter(c => c.tags.includes(t)).length;
-      const b = el("button", "tab");
-      b.type = "button";
-      b.dataset.v = t;
-      b.setAttribute("role", "tab");
-      b.setAttribute("aria-selected", String(FILTER === t));
-      b.tabIndex = FILTER === t ? 0 : -1;
-      b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i style="background:${TAGC[t]}"></i>`}${t}`}</span><b>${n}</b>`;
-      // a creator can carry several signals, so these counts overlap and do not
-      // add up to the board size - the title says it rather than implying a partition
-      b.title = t === "all"
-        ? `${cr.length} creators on the board`
-        : `${n} of ${tagged} tagged creators carry ${t}. A creator can carry more than one signal, so the filter counts overlap.`;
-      rail.appendChild(b);
-    });
-    tabsMount($("#filters"), { onSelect: v => { if (FILTER === v) return; FILTER = v; PAGE = 1; render(); } });
-    const at = rail.querySelector('.tab[aria-selected="true"]');
-    if (at) at.tabIndex = 0;
-  }
-  // roving tabindex: exactly one tab is in the Tab order, the arrows move inside
-  rail.querySelectorAll(".tab").forEach(b => { b.tabIndex = b.getAttribute("aria-selected") === "true" ? 0 : -1; });
-  if ($("#filters").tabSync) $("#filters").tabSync();
+  $("#filters").innerHTML = "";
+  tags.forEach(t => {
+    const n = t === "all" ? cr.length : cr.filter(c => c.tags.includes(t)).length;
+    const b = el("button", "tab" + (FILTER === t ? " on" : ""));
+    b.type = "button";
+    b.setAttribute("aria-pressed", FILTER === t ? "true" : "false");
+    b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i style="background:${TAGC[t]}"></i>`}${t}`}</span><b>${n}</b>`;
+    // a creator can carry several signals, so these counts overlap and do not
+    // add up to the board size - the title says it rather than implying a partition
+    b.title = t === "all"
+      ? `${cr.length} creators on the board`
+      : `${n} of ${tagged} tagged creators carry ${t}. A creator can carry more than one signal, so the filter counts overlap.`;
+    b.onclick = () => { FILTER = t; PAGE = 1; render(); };
+    $("#filters").appendChild(b);
+  });
 
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
@@ -2003,21 +1870,29 @@ function renderTimeline() {
 function renderPager(pages, total, start, shown) {
   const box = $("#pager");
   if (!box) return;
-  if (pages <= 1) {
-    box.innerHTML = `<span class="pinfo">${total} creators</span><nav class="pg" aria-label="Pagination"></nav>`;
-    return;
+  if (pages <= 1) { box.innerHTML = `<span class="pinfo">${total} creators</span><span class="pnums"></span>`; return; }
+  const nums = [];
+  const push = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
+  if (pages <= 7) { for (let i = 1; i <= pages; i++) nums.push(push(i)); }
+  else {
+    nums.push(push(1));
+    if (PAGE > 3) nums.push('<span class="gap">…</span>');
+    for (let i = Math.max(2, PAGE - 1); i <= Math.min(pages - 1, PAGE + 1); i++) nums.push(push(i));
+    if (PAGE < pages - 2) nums.push('<span class="gap">…</span>');
+    nums.push(push(pages));
   }
-  box.innerHTML = `<span class="pinfo"><b>${start + 1}–${start + shown}</b> of ${total}</span>
-    <nav class="pg" aria-label="Pagination"><ul class="pglist"></ul></nav>`;
-  const nav = box.querySelector(".pg");
-  pagerMount(nav, {
-    pages, page: PAGE,
-    onGo: n => {
+  box.innerHTML = `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>
+    <span class="pnums"><button data-p="prev"${PAGE === 1 ? " disabled" : ""}>‹</button>
+    ${nums.join("")}<button data-p="next"${PAGE === pages ? " disabled" : ""}>›</button></span>`;
+  box.querySelectorAll("button[data-p]").forEach(b => {
+    b.onclick = () => {
+      const v = b.dataset.p;
+      const next = v === "prev" ? PAGE - 1 : v === "next" ? PAGE + 1 : parseInt(v, 10);
+      if (!next || next < 1 || next > pages || next === PAGE) return;
       // paging keeps the reader where they are: the board is already on screen,
       // so jumping to it only steals the scroll position
-      if (!n || n < 1 || n > pages || n === PAGE) return;
-      PAGE = n; render();
-    },
+      PAGE = next; render();
+    };
   });
 }
 
@@ -2114,13 +1989,9 @@ function placeCard(anchor) {
   cardEl.style.top = Math.round(top) + "px";
 }
 
-// A pointer that can hover gets the floating profile card, anchored to the row
-// it belongs to. A touch screen has no hover, so it gets the morphing sheet
-// instead — a card that follows a cursor nobody has is just a card in the way.
 function bindCard(anchor, c) {
   anchor.setAttribute("role", "button");
   anchor.setAttribute("tabindex", "0");
-  const hoverable = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
   const open = () => {
     clearTimeout(cardTimer);
     ensureCard();
@@ -2130,43 +2001,13 @@ function bindCard(anchor, c) {
     cardEl.classList.add("on");
     requestAnimationFrame(() => placeCard(anchor));
   };
-  const openSheet = () => {
-    mmOpen(anchor);
-    mmSheetFor(c);
-  };
-  if (hoverable) {
-    anchor.addEventListener("mouseenter", () => { clearTimeout(cardTimer); open(); });
-    anchor.addEventListener("mouseleave", hideCardSoon);
-    anchor.addEventListener("focus", () => { clearTimeout(cardTimer); open(); });
-    anchor.addEventListener("blur", hideCardSoon);
-  }
-  // the row's own click still selects the creator, so a tap on the name must
-  // not also fire the row's handler — it opens the sheet and stops there
-  anchor.addEventListener("click", e => {
-    e.stopPropagation();
-    clearTimeout(cardTimer);
-    if (hoverable) open(); else openSheet();
-  });
-  // keyboard users on a desktop keep the card; on touch there is no keyboard
-  // focus to speak of, so nothing is lost by it not opening there
-}
-
-// The phone sheet: one view, the app's own draft card, painted into the morphing
-// panel. Everything the card binds is bound against the sheet's own box.
-function mmSheetFor(c) {
-  mmRender(() => `<div class="sheethead">
-      <span class="sheettag">${esc(c.tags[0] || "QUIET")}</span>
-      <button type="button" class="mmx" id="mmClose" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="sheetcard" data-rail="${esc(c.tags[0] || "QUIET")}">${detailHtml(c)}</div>`);
-  const box = document.querySelector("#mmBody .mmview");
-  if (!box) return;
-  const x = box.querySelector("#mmClose");
-  if (x) x.onclick = () => mmClose();
-  const card = box.querySelector(".sheetcard");
-  if (card) bindDetail(card, c);
+  anchor.addEventListener("mouseenter", () => { clearTimeout(cardTimer); open(); });
+  anchor.addEventListener("mouseleave", hideCardSoon);
+  // a touch screen has no hover, so tapping the name opens the same card; the
+  // row's own click still selects the creator, which is what a tap used to do
+  anchor.addEventListener("click", e => { e.stopPropagation(); clearTimeout(cardTimer); open(); });
+  anchor.addEventListener("focus", () => { clearTimeout(cardTimer); open(); });
+  anchor.addEventListener("blur", hideCardSoon);
 }
 
 function barStyle(m) {
@@ -2178,14 +2019,7 @@ function barStyle(m) {
 function renderDetail() {
   const box = $("#detail");
   const c = DATA.creators.find(x => x.name === SEL);
-  if (!c) { box.innerHTML = emptyDetailHtml(); return; }
-  box.dataset.rail = c.tags[0] || "QUIET";
-  box.innerHTML = `<h2>${icon("target")}Draft a pick</h2>` + detailHtml(c);
-  bindDetail(box, c);
-}
-
-function emptyDetailHtml() {
-  return `<h2>${icon("target")}Draft a pick</h2><div class="empty">
+  if (!c) { box.innerHTML = `<h2>${icon("target")}Draft a pick</h2><div class="empty">
       <div style="margin-bottom:10px;color:var(--dim)">Pick from the board to open a draft card.</div>
       <div class="steps">
         <div><span class="n">1</span><span>click a row (or the <b>+</b>)</span></div>
@@ -2194,21 +2028,17 @@ function emptyDetailHtml() {
         <div><span class="n">4</span><span>five picks, then lock</span></div>
       </div>
       <div style="margin-top:12px">Stars total must stay under <b>${CAP}</b>. Stars only gate entry; the receipt grades rank movement.</div>
-    </div>`;
-}
+    </div>`; return; }
 
-// The draft card exists as two pieces on purpose: `detailHtml(c)` is pure markup,
-// and `bindDetail(box, c)` wires the fields once they are in the DOM. That is what
-// lets the same card serve the desktop sidebar and the phone sheet without a
-// second copy of any of it — the sheet only supplies the surface.
-function detailHtml(c) {
   const already = PICKS.find(p => p.name === c.name);
   // the pick reads top-down: who, then the one number that matters (the move),
   // then the rest of the evidence. The signal is a coloured rail, not a word in a
   // list, so the card answers "why him" before the eye reaches the fields.
   const lead = c.tags[0] || "QUIET";
   const rail = TAGC[lead] || "var(--faint)";
-  return `
+  box.dataset.rail = lead;
+  box.innerHTML = `
+    <h2>${icon("target")}Draft a pick</h2>
     <div class="dhero" style="--rail:${rail}">
       <h3><span class="ncell">${avatar(c, "lg")}${esc(c.name)}</span></h3>
       <div class="meta">
@@ -2242,19 +2072,11 @@ function detailHtml(c) {
       <button class="primary" id="addBtn">${icon("plus")}${already ? "Update pick" : "Add to lineup"}</button>
       ${already ? `<button id="rmBtn">${icon("trash")}Remove</button>` : ""}
     </div>`;
-}
 
-function bindDetail(box, c) {
-  const already = PICKS.find(p => p.name === c.name);
-  const lead = c.tags[0] || "QUIET";
-
-
-  // scoped to THIS box: with the sheet open there are two live copies of the
-  // markup (sidebar + sheet), and a document-wide query would wire both
-  const rarBtns = [...box.querySelectorAll("#rar button")];
+  const rarBtns = [...document.querySelectorAll("#rar button")];
   rarBtns.forEach(b => { b.onclick = () => { rarBtns.forEach(x => x.classList.toggle("on", x === b)); }; });
-  box.querySelector("#addBtn").onclick = () => {
-    const th = box.querySelector("#thesis").value.trim(), pm = box.querySelector("#premortem").value.trim();
+  $("#addBtn").onclick = () => {
+    const th = $("#thesis").value.trim(), pm = $("#premortem").value.trim();
     const rarity = (rarBtns.find(b => b.classList.contains("on")) || {}).dataset?.r || "Common";
     if (th.length < 8 || pm.length < 8) { alert("Thesis and pre-mortem both need at least 8 characters."); return; }
     const prev = PICKS.find(p => p.name === c.name);
@@ -2266,9 +2088,10 @@ function bindDetail(box, c) {
     PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum, rarity: prev ? prev.rarity : rarity }];
     savePicks(); render();
   };
-  const rm = box.querySelector("#rmBtn");
+  const rm = $("#rmBtn");
   if (rm) rm.onclick = () => { PICKS = PICKS.filter(p => p.name !== c.name); savePicks(); render(); };
 }
+
 function savePicks() { localStorage.setItem("mdr_picks", JSON.stringify(PICKS)); }
 
 // ---------- lineup + receipts
@@ -2434,427 +2257,6 @@ function lockLineup() {
       alert("Could not file the receipt: " + e.message);
       render();
     });
-}
-
-// ============================================================================
-// beui ports — Tabs, Pagination, Morphing Modal, Chromatic Text Reveal.
-//
-// beui.dev's registry (MIT) ships these as React + motion + Tailwind, and this
-// page has no build step, no React and no Tailwind. So each one is a hand port
-// that keeps the behaviour and the physics, and drops the framework:
-//
-//   * geometry is measured from the DOM before it is animated — a CSS
-//     transition can only move to a value somebody already knows
-//   * one real spring integrator (stiffness/damping/mass, sub-stepped per
-//     frame) drives every glide, so nothing is a fixed-duration tween
-//     dressed up as a spring
-//   * prefers-reduced-motion turns each move into an instant cut
-//
-// Spring configs are the upstream ones where beui published them: Tabs
-// 245/36/1.2, deliberately settled because an overshoot inside a scroll rail
-// would flicker a scrollbar. The others match the feel of their source.
-// ----------------------------------------------------------------------------
-
-const REDUCE_MOTION = () => window.matchMedia("(prefers-reduced-motion:reduce)").matches;
-
-// Semi-implicit Euler, sub-stepped 240Hz, so a 120Hz display integrates the
-// same path a 60Hz one does. onFrame gets every step including the settle, so
-// callers never guess a duration; dt is clamped because a backgrounded tab
-// resumes with a huge gap that would fling the value.
-function springTo(conf, from, to, onFrame, onDone) {
-  const { stiffness: k, damping: c, mass: m = 1 } = conf;
-  let x = from, v = conf.v0 || 0, target = to, raf = 0, last = 0;
-  const step = (now) => {
-    const dt = Math.min(0.064, last ? (now - last) / 1000 : 1 / 60);
-    last = now;
-    const n = Math.max(1, Math.ceil(dt * 240)), h = dt / n;
-    for (let i = 0; i < n; i++) {
-      v += ((-k * (x - target) - c * v) / m) * h;
-      x += v * h;
-    }
-    onFrame(x);
-    if (Math.abs(x - target) < 0.05 && Math.abs(v) < 0.5) { onFrame(target); if (onDone) onDone(); raf = 0; return; }
-    raf = requestAnimationFrame(step);
-  };
-  raf = requestAnimationFrame(step);
-  return {
-    stop() { if (raf) cancelAnimationFrame(raf); raf = 0; },
-    to(t) { target = t; if (!raf) { last = 0; raf = requestAnimationFrame(step); } },
-  };
-}
-
-// ---------- Tabs — beui/tabs: pill, spring indicator, icons -------
-// The indicator is one element measured to the chosen tab, then glided there,
-// so a filter change reads as a thumb sliding in a rail rather than one
-// background switching off and another switching on.
-const TAB_SPRING = { stiffness: 245, damping: 36, mass: 1.2 };
-
-function tabsMount(root, { onSelect } = {}) {
-  if (!root) return;
-  const list = root.querySelector(".tablist");
-  const ind = root.querySelector(".tabind");
-  if (!list || !ind) return;
-  let spring = null;
-
-  const geo = (btn) => {
-    // offsetLeft is offsetParent-relative and the rail scrolls, so scrollLeft
-    // comes off it or the thumb drifts by however far the rail has moved
-    const x = btn.offsetLeft - list.scrollLeft;
-    return { x, y: btn.offsetTop, w: btn.offsetWidth, h: btn.offsetHeight };
-  };
-  const paint = (ind, v) => {
-    ind.style.transform = `translate(${v.x}px,${v.y}px)`;
-    ind.style.width = v.w + "px";
-    ind.style.height = v.h + "px";
-  };
-  const place = (btn, animate) => {
-    if (!btn) { ind.classList.add("off"); return; }
-    ind.classList.remove("off");
-    const to = geo(btn);
-    const from = { x: ind.offsetLeft, y: ind.offsetTop, w: ind.offsetWidth, h: ind.offsetHeight };
-    const fresh = !ind.offsetWidth; // first paint: nothing to spring from
-    if (spring) { spring.stop(); spring = null; }
-    if (fresh || !animate || REDUCE_MOTION()) { paint(ind, to); return; }
-    // one 0→1 ramp drives all four properties, so the thumb can never skew
-    spring = springTo(TAB_SPRING, 0, 1, p => paint(ind, {
-      x: from.x + (to.x - from.x) * p,
-      y: from.y + (to.y - from.y) * p,
-      w: from.w + (to.w - from.w) * p,
-      h: from.h + (to.h - from.h) * p,
-    }));
-  };
-
-  root.tabSync = () => place(list.querySelector('.tab[aria-selected="true"]'), false);
-
-  root.addEventListener("click", e => {
-    const btn = e.target.closest(".tab");
-    if (!btn || !root.contains(btn)) return;
-    const was = btn.getAttribute("aria-selected") === "true";
-    list.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
-    place(btn, true);
-    if (was) return;
-    // a rail longer than its box scrolls the chosen tab clear of the edges
-    const pad = 6, l = btn.offsetLeft, r = l + btn.offsetWidth;
-    if (l < list.scrollLeft + pad) list.scrollTo({ left: Math.max(0, l - pad), behavior: REDUCE_MOTION() ? "auto" : "smooth" });
-    else if (r > list.scrollLeft + list.clientWidth - pad) list.scrollTo({ left: r - list.clientWidth + pad, behavior: REDUCE_MOTION() ? "auto" : "smooth" });
-    if (onSelect) onSelect(btn.dataset.v);
-  });
-
-  // ←/→ step (mirrored in RTL), Home/End jump the ends: the contract a tablist
-  // is expected to honour, and it is what makes the rail usable by keyboard
-  list.addEventListener("keydown", e => {
-    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
-    const tabs = [...list.querySelectorAll(".tab")];
-    const i = tabs.findIndex(b => b.getAttribute("aria-selected") === "true");
-    if (i < 0) return;
-    e.preventDefault();
-    const rtl = getComputedStyle(list).direction === "rtl";
-    let n = i;
-    if (e.key === "Home") n = 0;
-    else if (e.key === "End") n = tabs.length - 1;
-    else n = Math.max(0, Math.min(tabs.length - 1, i + ((e.key === "ArrowRight") !== rtl ? 1 : -1)));
-    tabs[n].focus();
-    if (n !== i) tabs[n].click();
-  });
-
-  // a reflow (font load, resize, new counts) leaves the thumb where the old
-  // label width was, so it is re-measured whenever the rail changes size
-  if (window.ResizeObserver) new ResizeObserver(() => root.tabSync()).observe(list);
-  window.addEventListener("resize", () => root.tabSync());
-  requestAnimationFrame(() => root.tabSync());
-}
-
-// ---------- Pagination — beui/pagination ---------------------------
-// boundaries at each end, siblings beside the current page, an ellipsis for
-// every gap of 2+. The slot count is FIXED, so the row keeps one length while
-// the window walks — a pager that resizes under the cursor is the exact bug
-// this shape exists to prevent.
-function pageRange(page, total, siblings = 1, boundaries = 1) {
-  const range = (a, b) => Array.from({ length: Math.max(0, b - a + 1) }, (_, i) => a + i);
-  const slots = boundaries * 2 + siblings * 2 + 3;
-  if (total <= slots) return range(1, total);
-  const left = Math.max(page - siblings, boundaries);
-  const right = Math.min(page + siblings, total - boundaries);
-  const showStart = left > boundaries + 2;
-  const showEnd = right < total - (boundaries + 1);
-  if (!showStart && showEnd) return [...range(1, siblings * 2 + boundaries + 2), "e-end", ...range(total - boundaries + 1, total)];
-  if (showStart && !showEnd) return [...range(1, boundaries), "e-start", ...range(total - (boundaries + 1 + siblings * 2), total)];
-  return [...range(1, boundaries), "e-start", ...range(left, right), "e-end", ...range(total - boundaries + 1, total)];
-}
-
-const PG_JUMP = 5;
-
-function pagerMount(nav, { pages, page, onGo }) {
-  const ul = nav.querySelector(".pglist");
-  if (!ul) return;
-  const items = pageRange(page, pages, 1, 1);
-  const cL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>`;
-  const cR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>`;
-  const cLL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 4 12l7 7M18 5l-7 7 7 7"/></svg>`;
-  const cRR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 5l7 7-7 7M6 5l7 7-7 7"/></svg>`;
-
-  let html = `<span class="pgpillwrap"><span class="pgpill"></span></span>
-    <li><button type="button" class="pgc pgstep" data-p="prev" aria-label="Previous page"${page === 1 ? " disabled" : ""}>${cL}</button></li>`;
-  html += items.map(it => {
-    if (typeof it !== "number") {
-      const back = it === "e-start";
-      return `<li class="pgslot"><button type="button" class="pgc pge" data-p="${back ? page - PG_JUMP : page + PG_JUMP}"
-        aria-label="${back ? "Back" : "Forward"} ${PG_JUMP} pages"><span class="pgdots" aria-hidden="true">…</span><span class="pgchev" aria-hidden="true">${back ? cLL : cRR}</span></button></li>`;
-    }
-    const cur = it === page;
-    return `<li class="pgslot"><button type="button" class="pgc pgn${cur ? " on" : ""}" data-p="${it}"
-      aria-label="Page ${it}"${cur ? ' aria-current="page"' : ""}><span class="pgpill" aria-hidden="true"></span><span class="pgnum">${it}</span></button></li>`;
-  }).join("");
-  html += `<li><button type="button" class="pgc pgstep" data-p="next" aria-label="Next page"${page === pages ? " disabled" : ""}>${cR}</button></li>`;
-  ul.innerHTML = html;
-
-  // the current-page pill is one element inside the row, positioned by slot
-  // index: every slot is the same width, so the travel is exact arithmetic and
-  // the CSS transition lands it without a snap
-  const pill = ul.querySelector(".pgpill");
-  const curBtn = ul.querySelector(".pgn.on");
-  if (pill && curBtn) {
-    pill.style.transition = "none";
-    pill.style.transform = `translateX(${curBtn.parentElement.offsetLeft}px)`;
-    requestAnimationFrame(() => { pill.style.transition = ""; });
-  }
-
-  ul.querySelectorAll("button[data-p]").forEach(b => b.addEventListener("click", () => {
-    const v = b.dataset.p;
-    const n = v === "prev" ? page - 1 : v === "next" ? page + 1 : parseInt(v, 10);
-    if (!n || n < 1 || n > pages || n === page) return;
-    onGo(n);
-  }));
-}
-
-// ---------- Morphing Modal — beui/morphing-modal --------------------
-// One surface whose height morphs to whatever the current view needs, with a
-// blur cross-fade between views. On a phone the card that used to hover beside
-// a hovered row becomes a sheet rising from the bottom edge; the card INSIDE is
-// still renderDetail()'s own markup, so no second copy of it exists.
-const MM_EASE = "cubic-bezier(.22,1,.36,1)";
-let MM = { open: false, opener: null, tall: 0 };
-
-function mmBuild() {
-  if (document.getElementById("mmBack")) return;
-  // backdrop and layer are siblings, both fixed: the scrim spans the viewport
-  // edges while the layer that positions the sheet stays inset off them, so the
-  // sheet can never sit flush against the glass on a notched phone
-  const back = document.createElement("button");
-  back.type = "button"; back.id = "mmBack"; back.className = "mmback";
-  back.setAttribute("aria-label", "Close modal"); back.tabIndex = -1;
-
-  const layer = document.createElement("div");
-  layer.id = "mmLayer"; layer.className = "mmlayer"; layer.hidden = true;
-  layer.innerHTML = `<div class="mmsheet" id="mmSheet" role="dialog" aria-modal="true" aria-label="Creator details" tabindex="-1">
-      <span class="mmgrip" aria-hidden="true"></span>
-      <div class="mmbody" id="mmBody"></div>
-    </div>`;
-  document.body.appendChild(back);
-  document.body.appendChild(layer);
-  back.addEventListener("click", () => mmClose());
-
-  layer.addEventListener("keydown", e => {
-    if (e.key === "Escape") { e.preventDefault(); mmClose(); return; }
-    if (e.key !== "Tab") return;
-    // the trap lists only what is VISIBLE: a view cross-fading out must not
-    // catch focus on its way to the bin
-    const f = [...layer.querySelectorAll('button:not([disabled]),a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')]
-      .filter(el => el.offsetParent !== null);
-    if (!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if (!layer.contains(document.activeElement)) { e.preventDefault(); first.focus(); return; }
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-  });
-}
-
-function mmOpen(opener) {
-  mmBuild();
-  const layer = document.getElementById("mmLayer");
-  const sheet = document.getElementById("mmSheet");
-  const body = document.getElementById("mmBody");
-  MM.open = true;
-  MM.opener = opener || document.activeElement;
-  MM.tall = 0;
-  document.body.classList.add("mm-on");
-  layer.hidden = false;
-  body.innerHTML = "";
-  sheet.style.height = "auto";
-  if (REDUCE_MOTION()) {
-    sheet.style.transition = "none"; sheet.style.transform = "none"; sheet.style.opacity = "1";
-  } else {
-    // it rises from the edge and settles a hair wider: the gesture that says
-    // this surface came from the bottom of the screen, not out of the row
-    sheet.style.transition = "none";
-    sheet.style.transform = "translateY(44px) scale(.97)";
-    sheet.style.opacity = "0";
-    requestAnimationFrame(() => {
-      sheet.style.transition = `transform .38s ${MM_EASE},opacity .2s ease-out`;
-      sheet.style.transform = "none";
-      sheet.style.opacity = "1";
-    });
-  }
-  sheet.focus({ preventScroll: true });
-}
-
-function mmClose() {
-  if (!MM.open) return;
-  const layer = document.getElementById("mmLayer");
-  const sheet = document.getElementById("mmSheet");
-  MM.open = false;
-  const done = () => {
-    layer.hidden = true;
-    document.body.classList.remove("mm-on");
-    // focus goes back where it came from; the row may have been re-rendered
-    // underneath, so a detached opener falls back to the selected row
-    const o = (MM.opener && MM.opener.isConnected) ? MM.opener
-      : document.querySelector('#rows tr[aria-selected="true"] .nm');
-    if (o && o.focus) o.focus({ preventScroll: true });
-  };
-  if (REDUCE_MOTION()) { done(); return; }
-  sheet.style.transition = "transform .19s ease-in,opacity .19s ease-in";
-  sheet.style.transform = "translateY(44px) scale(.98)";
-  sheet.style.opacity = "0";
-  setTimeout(done, 200);
-}
-
-// Paints the current view and springs the sheet's height from where it is to
-// where the new content lands. The outgoing view is lifted out of flow FIRST,
-// exactly like AnimatePresence's popLayout, so the sheet never briefly carries
-// both heights — without that it jumps tall, then shrinks, which reads as a
-// glitch rather than a morph.
-function mmRender(buildHtml) {
-  if (!MM.open) return;
-  const sheet = document.getElementById("mmSheet");
-  const body = document.getElementById("mmBody");
-  const from = MM.tall || Math.round(sheet.getBoundingClientRect().height);
-  const old = body.querySelector(".mmview");
-  if (old) {
-    old.style.position = "absolute";
-    old.style.left = "0"; old.style.right = "0"; old.style.top = "0";
-    old.style.pointerEvents = "none";
-  }
-  const view = document.createElement("div");
-  view.className = "mmview";
-  view.innerHTML = buildHtml();
-  body.appendChild(view);
-
-  const to = view.offsetHeight;
-  MM.tall = to;
-  // a painter that lands at 0 height means the view exists but has not been laid
-  // out yet (web font still loading, image not decoded). Re-paint once when it
-  // settles, or the sheet stays clamped at the old height for good.
-  if (to < 24) setTimeout(() => { if (MM.open) mmRender(buildHtml); }, 180);
-  if (REDUCE_MOTION()) {
-    sheet.style.transition = "none";
-    sheet.style.height = to + "px";
-    if (old) old.remove();
-    return;
-  }
-  sheet.style.transition = "none";
-  sheet.style.height = from + "px";
-  view.style.animation = `mmIn .3s ${MM_EASE} both`;
-  if (old) {
-    old.style.animation = "mmOut .18s ease-in both";
-    old.addEventListener("animationend", () => old.remove(), { once: true });
-    // belt and braces: an animationend that never fires must not leak a view
-    setTimeout(() => old.remove(), 600);
-  }
-  requestAnimationFrame(() => {
-    sheet.style.transition = `height .3s ${MM_EASE}`;
-    sheet.style.height = to + "px";
-  });
-}
-
-// ---------- Chromatic Text Reveal — beui/chromatic-text-reveal ------
-// A fixed prefix, a cycling final word, and a colour sweep that resolves it.
-// The sweep is a gradient whose last stop is driven by --sweep, which is the
-// whole reason this is portable: no library, just one number fed to a
-// background-image per frame. The widest word is laid out invisibly so the
-// sentence never reflows as the words swap (upstream's `sizingWords` trick).
-const CT_TRAIL = 14;
-
-function ctMount(el) {
-  if (!el || el.dataset.ctOn) return;
-  const words = JSON.parse(el.getAttribute("data-ct-words") || "[]");
-  if (!words.length) return;
-  el.dataset.ctOn = "1";
-
-  const palette = ["#60a5fa", "#818cf8", "#c084fc", "#fb7185", "#fbbf24"];
-  const stops = palette.map((c, i) => {
-    const off = palette.length === 1 ? 0 : -CT_TRAIL + (i / (palette.length - 1)) * CT_TRAIL * 2;
-    return `${c} calc(var(--sweep) ${off < 0 ? "-" : "+"} ${Math.abs(off).toFixed(2)}%)`;
-  }).join(", ");
-  const grad = `linear-gradient(90deg, currentColor 0%, currentColor calc(var(--sweep) - ${CT_TRAIL}%), ${stops}, transparent calc(var(--sweep) + ${CT_TRAIL}%), transparent 100%)`;
-
-  const slot = el.querySelector(".ct-word");
-  if (!slot) return;
-  const widest = words.reduce((a, b) => (b.length > a.length ? b : a), "");
-  slot.innerHTML = `<span class="ct-size" aria-hidden="true">${esc(widest)}</span>
-    <span class="ct-live" aria-hidden="true"></span><span class="ct-sr"></span>`;
-  const live = slot.querySelector(".ct-live");
-  const sr = slot.querySelector(".ct-sr");
-  live.style.backgroundImage = grad;
-
-  let i = 0, timer = 0, spring = null;
-
-  const paint = w => { live.textContent = w; sr.textContent = w; };
-
-  // returns how long the caller should wait before the next word
-  const sweep = () => {
-    if (spring) spring.stop();
-    live.style.transition = "none";
-    if (REDUCE_MOTION()) {
-      live.style.setProperty("--sweep", (100 + CT_TRAIL) + "%");
-      live.style.opacity = "1"; live.style.filter = "none"; live.style.transform = "none";
-      return 1600;
-    }
-    live.style.setProperty("--sweep", "-" + CT_TRAIL + "%");
-    live.style.opacity = "0.56";
-    live.style.filter = "blur(6px)";
-    live.style.transform = "translateY(5px)";
-    spring = springTo({ stiffness: 110, damping: 20, mass: 1 }, -CT_TRAIL, 100 + CT_TRAIL, v => {
-      live.style.setProperty("--sweep", v + "%");
-    });
-    // the colour edge leads; the word fades up and settles behind it
-    requestAnimationFrame(() => {
-      live.style.transition = `opacity .28s ease-out,filter .36s ease-out,transform .36s ${MM_EASE}`;
-      live.style.opacity = "1";
-      live.style.filter = "blur(0px)";
-      live.style.transform = "none";
-    });
-    return 1200 + 800; // sweep duration + the upstream pauseDuration
-  };
-
-  const cycle = () => {
-    clearTimeout(timer);
-    paint(words[i % words.length]);
-    const wait = sweep();
-    if (words.length < 2) return;
-    timer = setTimeout(() => { i = (i + 1) % words.length; cycle(); }, wait);
-  };
-
-  paint(words[0]);
-  if (!REDUCE_MOTION() && window.IntersectionObserver) {
-    // starts when the sentence is on screen, once: a hero that performs above
-    // the fold has already finished by the time anyone sees it
-    const io = new IntersectionObserver(entries => {
-      if (!entries[0].isIntersecting) return;
-      io.disconnect();
-      cycle();
-    }, { threshold: 0.35 });
-    io.observe(el);
-    live.style.setProperty("--sweep", "-" + CT_TRAIL + "%");
-  } else {
-    live.style.setProperty("--sweep", (100 + CT_TRAIL) + "%");
-  }
-
-  // a cycling hero is not worth waking a hidden tab for
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) clearTimeout(timer);
-    else cycle();
-  });
 }
 
 // ---------- go
