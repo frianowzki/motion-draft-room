@@ -1635,9 +1635,14 @@ function tlBuild() {
 
 function tlPad() {
   const stage = $("#tlStage"), track = $("#tlTrack");
-  if (!stage || !track) return;
-  // half a stage each side keeps every card reachable at the centre
-  track.style.setProperty("--tpad", `${Math.round(stage.clientWidth / 2)}px`);
+  if (!stage || !track || !track.children.length) return;
+  // Half a stage minus half a card puts the first card's centre exactly on the
+  // stage's centre with the track untranslated. Padding of a plain half stage
+  // left it short by half a card, so card 0 opened off-centre and permanently
+  // scaled at d = 0.5.
+  const cardW = track.children[0].offsetWidth || TL.w || 240;
+  const pad = Math.max(0, Math.round((stage.clientWidth - cardW) / 2));
+  track.style.setProperty("--tpad", `${pad}px`);
 }
 
 // where the track must sit to centre card i, with no clamping: cards are packed
