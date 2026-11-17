@@ -1031,11 +1031,12 @@ function render() {
       <td>${badges(c.tags)}</td>
       <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? icon("check") : icon("plus")}</td>`;
     tr.onclick = () => { SEL = c.name; render(); };
-    // pointing at a name opens the profile card; the card itself stays usable
-    // so its links and the pick button can be clicked
+    tb.appendChild(tr);
+    // pointing at a name opens the profile card; the card itself stays usable so
+    // its links and the pick button can be clicked. Bind after the row is in the
+    // document, otherwise the .ncell lookup finds nothing.
     const nm = tr.querySelector(".ncell");
     if (nm) bindCard(nm, c);
-    tb.appendChild(tr);
   });
 
   renderPager(pages, list.length, start, slice.length);
