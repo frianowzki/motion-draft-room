@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Motion Draft Room — fantasy sports for creators</title>
-<meta name="description" content="Five picks, a thesis and a pre-mortem each, graded against the next Motion leaderboard window. Every call stays in the book.">
+<title>Motion Draft Room — draft five creators, then see if you were right</title>
+<meta name="description" content="Pick five creators off Motion's public leaderboard before the next window, write why each one wins or fails, and let the server grade you. Every call stays on record.">
 <meta name="theme-color" content="#0f0f0e">
 <script>
 /* paint the stored theme before the first frame does — no white flash, and the
@@ -202,15 +202,19 @@
 
   /* ---- hero: text block left, one visual slot right ---- */
   .hero{display:block;margin-top:84px}
-  .hero-main{position:relative;border-radius:var(--r-lg);padding:52px 48px 48px;
-    background:var(--card);box-shadow:var(--lift);overflow:hidden;
+  /* no card, no shadow: the type is the structure. One rule above, one below. */
+  .hero-main{position:relative;border-radius:0;padding:46px 0 54px;
+    background:transparent;box-shadow:none;overflow:visible;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
     display:flex;flex-direction:column;justify-content:center;min-height:min(72vh,560px)}
+  .hero-main::before{content:"THE DRAFT ROOM / MOTION";position:absolute;top:-9px;left:0;
+    padding:0 12px 0 0;background:var(--bg);font-family:var(--mono);font-size:10px;
+    letter-spacing:.2em;color:var(--dim);font-weight:600}
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
     font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
-  .hero h2{margin:22px 0 24px;max-width:20ch;font-family:var(--display);font-weight:500;
-    font-size:clamp(44px,7vw,104px);line-height:.9;letter-spacing:-.05em;
-    text-wrap:balance;-webkit-mask-image:linear-gradient(180deg,#000 74%,rgba(0,0,0,.62) 100%);
-    mask-image:linear-gradient(180deg,#000 74%,rgba(0,0,0,.62) 100%)}
+  .hero h2{margin:26px 0 26px;max-width:17ch;font-family:var(--display);font-weight:500;
+    font-size:clamp(46px,7.6vw,112px);line-height:.87;letter-spacing:-.055em;
+    text-wrap:balance}
   .hero h2 em{font-style:normal;color:var(--faint)}
   .lede{max-width:62ch;font-size:14.5px;color:var(--dim);line-height:1.65;margin:0}
   .lede strong{color:var(--ink);font-weight:600}
@@ -414,18 +418,22 @@
   /* explicit block height: the body is absolutely positioned, so without it the
      cards would collapse to nothing */
   .rcard{position:relative;isolation:isolate;overflow:hidden;flex:1 1 0;min-width:0;
-    height:568px;border-radius:18px;display:block;text-decoration:none;color:#fff;
-    cursor:pointer;transition:flex-grow .55s cubic-bezier(.2,.75,.2,1)}
+    height:568px;border-radius:2px;display:block;text-decoration:none;color:#fff;
+    border:1px solid rgba(255,255,255,.14);
+    cursor:pointer;transition:flex-grow .55s cubic-bezier(.2,.75,.2,1),
+      border-color .3s}
+  .rcard:hover,.rcard[data-open]{border-color:rgba(255,255,255,.34)}
   /* the open card is the wide one; everything else shares what is left */
   .rcard[data-open]{flex-grow:2.65}
   .rcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
     pointer-events:none;user-select:none;transform:scale(1.035);
     transition:transform .7s cubic-bezier(.2,.75,.2,1)}
   .rcard::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-    background:linear-gradient(rgba(0,0,0,.27) 0%,rgba(0,0,0,.02) 36%,
-      rgba(0,0,0,.1) 55%,rgba(0,0,0,.74) 100%)}
+    background:
+      linear-gradient(to top,rgba(6,9,7,.97) 0%,rgba(6,9,7,.92) 26%,
+        rgba(6,9,7,.55) 46%,rgba(6,9,7,.06) 68%,rgba(6,9,7,.30) 100%)}
   .rcard .shade{position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:#05060b;opacity:.12}
+    background:#05060b;opacity:0}
   .rcard:focus-visible{outline:3px solid var(--ink);outline-offset:-5px}
   .rcard-body{position:absolute;inset:0;z-index:3;padding:26px;
     display:flex;flex-direction:column;min-width:0}
@@ -600,7 +608,7 @@
   @media(max-width:940px){
     .hero{grid-template-columns:minmax(0,1fr)}
     .stackghost{display:none}
-    .hero-main{min-height:0;padding:30px 24px 28px}
+    .hero-main{min-height:0;padding:26px 0 30px}
     /* stacked on small screens: the accordion is a desktop affordance only, so
        every card sits open and nothing widens on hover or tap */
     .ribbon{flex-direction:column;height:auto}
@@ -626,9 +634,9 @@
     .pillnav a{width:36px;height:36px}
     .pillnav svg{width:20px;height:20px}
     .hero{margin-top:70px}
-    .hero-main{min-height:min(64vh,470px);justify-content:flex-end}
+    .hero-main{min-height:min(60vh,440px);justify-content:flex-start}
     .receipt{max-width:none}
-    .hero-main{padding:22px 18px 20px;border-radius:24px}
+    .hero-main{padding:24px 0 26px;border-radius:0}
     .hero h2{font-size:clamp(36px,12vw,58px);margin:16px 0 16px}
     .lede{font-size:13px}
     .btn{justify-content:center}
@@ -793,9 +801,9 @@
       <div>
         <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
         <p class="lede">
-          Fantasy sports for creators, on the one dataset Motion actually publishes. Five picks with a
-          thesis and a pre-mortem each &mdash; locked, then graded against the next leaderboard window.
-          <strong>Every call stays in the book, so you can check it.</strong>
+          Pick five creators before the next Motion leaderboard window drops, then watch the board
+          tell you whether you were right. Write down why each pick works and what would kill it.
+          <strong>Everything you call stays on record, so nobody has to take your word for it.</strong>
         </p>
       </div>
     </div>
@@ -809,46 +817,46 @@
     </div>
     <div class="ribbon">
       <div class="rcard" role="button" tabindex="0" aria-expanded="true" data-wide data-open>
-        <img src="img/O8fokotEIN1oVKBtIMx9S7tyHjQ.jpg" alt="Liquid chrome ribbon, the board" loading="lazy" decoding="async">
+        <img src="img/p1.svg" alt="A slice of the Motion leaderboard with ranks, moves and star costs" loading="lazy" decoding="async">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">01 &middot; the board</span>
           </div>
           <div class="rcard-foot">
-            <h4>79 creators, one number each</h4>
+            <h4>All 79, scored the same way</h4>
             <div class="rcard-more">
-              <p>The full Motion leaderboard, live from the official API. Rank, 4-hour movement and an estimated star rating &mdash; labelled as an estimate, because Motion Score itself is not public.</p>
+              <p>Every creator on Motion's public leaderboard, re-read from the API every four hours. You get rank, how far they moved, and a star cost worked out from where they sit. The star cost is our guess, not Motion's number, and it says so.</p>
             </div>
           </div>
         </div>
       </div>
       <div class="rcard" role="button" tabindex="0" aria-expanded="false">
-        <img src="img/Y03xamjEt4yKQseebeyglKonTrU.jpg" alt="Terracotta staircase, the draft" loading="lazy" decoding="async">
+        <img src="img/p2.svg" alt="A draft sheet with five slots, a star budget and a reason and risk on each pick" loading="lazy" decoding="async">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">02 &middot; the draft</span>
           </div>
           <div class="rcard-foot">
-            <h4>Thesis and pre-mortem, or nothing</h4>
+            <h4>Five picks, two reasons each</h4>
             <div class="rcard-more">
-              <p>Five different creators under a 32-star cap. Every pick needs a reason it happens and a reason it fails &mdash; a lineup without reasoning is not a call.</p>
+              <p>Five different creators, 32 stars or fewer between them. Each pick needs a reason it should work and a reason it falls apart. Skip the reasoning and it does not count as a call.</p>
             </div>
           </div>
         </div>
       </div>
       <div class="rcard" role="button" tabindex="0" aria-expanded="false">
-        <img src="img/bJZSjHEeYwImzHivPsClN9MN1nM.jpg" alt="Red glass still life, the book" loading="lazy" decoding="async">
+        <img src="img/p3.svg" alt="The book: past lineups stamped with the score the server gave them" loading="lazy" decoding="async">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">03 &middot; the book</span>
           </div>
           <div class="rcard-foot">
-            <h4>Every call, signed and kept</h4>
+            <h4>One receipt per handle</h4>
             <div class="rcard-more">
-              <p>Locking files the lineup under your X account and the server grades it against the next window. One receipt per handle per slot, so nobody re-rolls until one hits.</p>
+              <p>Lock a lineup and it is filed against your X account. The server scores it against the next window, not you. One receipt per handle per slot, so you cannot delete a bad call and quietly try again.</p>
             </div>
           </div>
         </div>
@@ -936,7 +944,7 @@
             </div>
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
-              <p class="room-desc">thin windows, no story — the honest middle of the board</p>
+              <p class="room-desc">nothing moved and nobody noticed. where a turnaround starts</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
                 <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
               </ol></div></div>
