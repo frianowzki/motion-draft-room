@@ -1676,24 +1676,23 @@ function tlLayout(animate) {
   track.style.transition = "";
   track.style.transform = `translate3d(${-TL.x}px,0,0)`;
 
-  // scale and veil by distance from the focused card, recomputed each frame so a
-  // drag dims a card the moment it starts leaving the centre.
-  // cx is in stage coordinates: the stage rect does not move, the track does, so
-  // a card's rect already reflects the live transform and needs no correction.
-  const sRect = stage.getBoundingClientRect();
-  const half = sRect.left + sRect.width / 2;
+  // Scale and veil by distance from the stage centre. The distance must be read
+  // from geometry this loop does not touch: measuring the slots' rects would read
+  // back the scale applied on the previous frame, so a focused card never reached
+  // d = 0 and sat permanently small and off-centre. Slot centres are laid out by
+  // the flex track at fixed positions, so they are derived arithmetically here
+  // (track padding + i * card pitch) and the scale is applied after.
+  const half = stage.clientWidth / 2;
   const kids = track.children;
+  const pitch = TL.w || 240;
+  const padL = parseFloat(getComputedStyle(track).paddingLeft) || 0;
   for (let i = 0; i < kids.length; i++) {
     const k = kids[i];
-    const face = k.querySelector(".tlcard") || k;
-    const fr = face.getBoundingClientRect();
-    const centre = fr.left + fr.width / 2;
-    const d = Math.min(1, Math.abs(centre - half) / (TL.w || 240));
+    const centre = padL + i * pitch + pitch / 2 - TL.x;
+    const d = Math.min(1, Math.abs(centre - half) / pitch);
     const scale = 1 - (1 - TL_SIDE_SCALE) * d;
     k.style.transform = `scale(${scale.toFixed(3)})`;
     k.style.opacity = String(1 - 0.55 * d);
-    const card = k.querySelector(".tlcard");
-    if (card) card.style.pointerEvents = d > 0.6 ? "auto" : "auto";
     k.setAttribute("aria-selected", String(i === TL.i));
   }
   // progress rail under the stage
