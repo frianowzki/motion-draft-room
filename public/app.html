@@ -1617,10 +1617,15 @@ function tlBuild() {
     </div>`;
   }).join("");
 
-  // measure one card: the width comes from CSS so a media query can change it
+  // Measure one slot's laid-out width. offsetWidth, not getBoundingClientRect:
+  // the rect includes the scale transform this code applies, so on a board whose
+  // cards were already scaled it read 206 for a 240px slot and every downstream
+  // centre, target and threshold drifted with it. Cleared first so a rebuild
+  // measures the layout and not the last frame's scale.
   const first = track.querySelector(".tlev");
+  if (first) first.style.transform = "";
   const cs = first ? getComputedStyle(first) : null;
-  TL.w = first ? first.getBoundingClientRect().width : Number((cs && cs.width) || 240) || 240;
+  TL.w = first ? first.offsetWidth : Number((cs && cs.width) || 240) || 240;
 
   TL.i = Math.min(TL.i, evs.length - 1);
   tlPad();
