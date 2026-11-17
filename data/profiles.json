@@ -239,7 +239,18 @@
   "verified": true,
   "match": "curated-handle"
  },
- "Zohran Mamdani": null,
+ "Zohran Mamdani": {
+  "handle": "NYCMayor",
+  "displayName": "Mayor Zohran Kwame Mamdani",
+  "followers": 2867615,
+  "avatar": "https://pbs.twimg.com/profile_images/2006600789297422336/YMdJHVNE_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/19834403/1767245884",
+  "description": "Fighting every day to deliver a city that working New Yorkers can actually afford. Mayor of New York City.",
+  "url": "https://x.com/NYCMayor",
+  "website": null,
+  "verified": true,
+  "match": "curated-handle"
+ },
  "Kai Cenat": {
   "handle": "KaiCenat",
   "displayName": "Kai Cenat",
@@ -324,7 +335,18 @@
   "verified": true,
   "match": "curated-handle"
  },
- "greg": null,
+ "greg": {
+  "handle": "greg16676935420",
+  "displayName": "greg",
+  "followers": 2091404,
+  "avatar": "https://pbs.twimg.com/profile_images/1581014308397502464/NPogKMyk_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/1356434353623093249/1768322541",
+  "description": "im greg I like football and stocks and my birthday im from kentuckey. I'm a investor. I like to golf at the golf course. subscribe for just 10¢ a day ⤴️",
+  "url": "https://x.com/greg16676935420",
+  "website": null,
+  "verified": true,
+  "match": "curated-handle"
+ },
  "MINHxDYNASTY": {
   "handle": "MINHxDYNASTY",
   "displayName": "۟",
@@ -361,7 +383,18 @@
   "verified": true,
   "match": "curated-handle"
  },
- "Jason": null,
+ "Jason": {
+  "handle": "Jason",
+  "displayName": "@jason",
+  "followers": 1841966,
+  "avatar": "https://pbs.twimg.com/profile_images/1828870492633104384/o37xorx4_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/3840/1694810043",
+  "description": "Host: @twistartups @theallinpod @thisweeknai; I invest in 100 startups a year @launch & @founderuni jason@calacanis.com for life",
+  "url": "https://x.com/Jason",
+  "website": "http://calacanis.com",
+  "verified": true,
+  "match": "curated-handle"
+ },
  "Sir Doge of the Coin": {
   "handle": "dogeofficialceo",
   "displayName": "Sir Doge of the Coin ⚔️",
@@ -401,7 +434,7 @@
  "Mert Mumtaz": {
   "handle": "mert",
   "displayName": "mert",
-  "followers": 2309939,
+  "followers": 2309938,
   "avatar": "https://pbs.twimg.com/profile_images/1975912876243095552/YlVLO4Oz_normal.jpg",
   "banner": "https://pbs.twimg.com/profile_banners/1309886201944473600/1762438213",
   "description": "ceo @helius @heliusprivacy — Solana RPCs & APIs — cyphercapitalist",
@@ -830,7 +863,18 @@
   "verified": true,
   "match": "curated-handle"
  },
- "Andy": null,
+ "Andy": {
+  "handle": "Andy",
+  "displayName": "Andy Cohen",
+  "followers": 3577708,
+  "avatar": "https://pbs.twimg.com/profile_images/908707590875488256/mMVVMWqm_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/48100887/1682020064",
+  "description": "Dad,Host,Prdcr,5x NYT bstslg Author 📺: #WWHL #RHOC #RHOA #RHONY #RHOBH #RHONJ #RHOP #RHOSLC #RHOM #RHUGT #CNNNYE 📻 :@RadioAndytweets @andyskikilounge",
+  "url": "https://x.com/Andy",
+  "website": "http://AC2Live.com",
+  "verified": true,
+  "match": "curated-handle"
+ },
  "Haseeb Qureshi": {
   "handle": "hosseeb",
   "displayName": "Haseeb Qureshi ＞|＜",
