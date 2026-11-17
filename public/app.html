@@ -177,21 +177,25 @@
     column-gap:22px;row-gap:16px;margin:14px 0 2px;width:100%}
   .tally{min-width:0;border-top:1px solid var(--line);padding-top:14px}
   :root[data-theme="dark"] .tally{border-top-width:2px;border-top-color:rgba(255,255,255,.18)}
-  .tally .num{display:grid;width:max-content;max-width:100%;
-    font-family:var(--display);font-weight:500;font-size:clamp(24px,2.4vw,34px);
-    line-height:1.02;letter-spacing:-.035em;color:var(--ink);
+  /* a figure is one line: flex, not grid. A grid put the ratio's second figure and
+     its slash in the same cell as the first, so "12 / 11" stacked into three lines
+     and pushed the label sideways. Sized to the row it sits in, too — 34px figures
+     over six columns crowded each other at laptop widths. */
+  .tally .num{display:flex;align-items:baseline;gap:.24em;
+    font-family:var(--display);font-weight:500;font-size:clamp(19px,1.75vw,26px);
+    line-height:1.05;letter-spacing:-.03em;color:var(--ink);
     font-variant-numeric:tabular-nums lining-nums;
-    font-feature-settings:"tnum" 1,"lnum" 1;white-space:nowrap}
-  .tally .ghost,.tally .live{grid-area:1/1;text-align:left}
-  .tally .ghost{visibility:hidden}
-  .tally .unit{font-size:.52em;letter-spacing:0;color:var(--dim)}
-  .tally .lab{display:block;margin-top:9px;font-family:var(--mono);font-size:8.5px;
-    letter-spacing:.1em;text-transform:uppercase;color:var(--faint);line-height:1.4;
-    display:flex;align-items:center;gap:5px;overflow-wrap:anywhere}
+    font-feature-settings:"tnum" 1,"lnum" 1;white-space:nowrap;max-width:100%}
+  .tally .num .sl{font-size:.78em;color:var(--faint);font-weight:400}
+  .tally .unit{font-size:.56em;letter-spacing:0;color:var(--dim);font-weight:400}
+  .tally .lab{margin-top:8px;font-family:var(--mono);font-size:8.5px;
+    text-transform:uppercase;letter-spacing:.09em;color:var(--faint);
+    line-height:1.35;display:flex;align-items:flex-start;gap:5px}
   .tally .lab .ic{font-size:10px;opacity:.7;flex:none}
   @media(max-width:640px){
-    .stats{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:16px;row-gap:14px}
-    .tally .num{font-size:clamp(20px,6vw,26px)}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:14px}
+    .tally .num{font-size:clamp(20px,5.4vw,24px)}
+    .tally .lab{font-size:8px;letter-spacing:.06em}
   }
   @media(max-width:280px){.stats{grid-template-columns:minmax(0,1fr)}}
 
@@ -1154,8 +1158,9 @@ function tallyParts(v) {
   // a ratio's second figure gets its own counting span; the pieces are escaped
   // before they are joined, never after, or the span would be escaped with them
   const ratio = /^(\s*\/\s*)(\d[\d,]*(?:\.\d+)?)([\s\S]*)$/.exec(suf);
+  // the slash is its own element so flex spacing rules it, not a stray character
   const tail = ratio
-    ? `${esc(ratio[1])}<span class="live" data-to="${ratio[2].replace(/,/g, "")}" data-dec="0">${esc(ratio[2])}</span>${sufTail(ratio[3], unit)}`
+    ? `<span class="sl">/</span><span class="live" data-to="${ratio[2].replace(/,/g, "")}" data-dec="0">${esc(ratio[2])}</span>${sufTail(ratio[3], unit)}`
     : sufTail(suf, unit);
   return `${esc(pre)}<span class="live" data-to="${digits.replace(/,/g, "")}" data-dec="${dec}">${esc(digits)}</span>${tail}`;
 }
@@ -1241,7 +1246,11 @@ function render() {
   hideCard();
 
   // ---- stats
-  const cr = d.creators;
+  // the board reads rank-first: the raw feed arrives in arbitrary order, so sort
+  // once here and every filter, page and count inherits the order. Rank 0 means
+  // "unranked" upstream, so those sink to the bottom instead of leading.
+  const cr = [...d.creators].sort((a, b) =>
+    (a.position || 1e9) - (b.position || 1e9) || a.name.localeCompare(b.name));
   const gainers = cr.filter(c => c.delta4h > 0).length;
   const losers = cr.filter(c => c.delta4h < 0).length;
   // distinct 4-hour windows: several runs inside one window add no history
