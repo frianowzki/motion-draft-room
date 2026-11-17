@@ -1072,6 +1072,28 @@ async function loadBook() {
   renderBook();
 }
 
+// How many rows fit in the board right now. The card stretches to the draft panel
+// beside it, so the answer changes when a pick opens. Everything here is read from
+// live layout, and a zero means "not measurable yet" — the caller falls back.
+function rowsPerPage() {
+  const card = document.querySelector(".boardcard");
+  const wrap = card && card.querySelector(".tablewrap");
+  const pager = card && card.querySelector("#pager");
+  if (!card || !wrap || !pager) return PER_PAGE;
+  const head = card.querySelector("h2");
+  const table = wrap.querySelector("table");
+  const thead = table && table.querySelector("thead");
+  const cs = getComputedStyle(card);
+  const avail = card.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
+    - (head ? head.getBoundingClientRect().height + parseFloat(getComputedStyle(head).marginBottom) : 0)
+    - (thead ? thead.getBoundingClientRect().height : 0)
+    - pager.getBoundingClientRect().height
+    - parseFloat(getComputedStyle(pager).marginTop || 0);
+  const rowH = 35; // fixed by the table's own rhythm; a probe row would cost a reflow
+  if (!(avail > 0)) return PER_PAGE;
+  return Math.max(PER_PAGE, Math.min(25, Math.floor(avail / rowH)));
+}
+
 function render() {
   const d = DATA;
   // a re-render replaces every row, so any open card belongs to an element that
@@ -1131,12 +1153,16 @@ function render() {
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
 
-  // 10 rows a page. The board is 79 names deep and the page should not read as
-  // an endless scroll, so it is sliced and the pager below carries the rest.
-  const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+  // The page holds as many rows as the card can show without scrolling. The board
+  // sits beside the draft panel and stretches to match it, so a fixed ten rows
+  // left a hole when that panel grew (an open pick is ~190px taller). Rows are
+  // measured, not guessed: ask for the space, divide by the row height. The ten
+  // is a floor so an unmeasured first paint is still a sane page, the 25 a cap.
+  const perPage = rowsPerPage();
+  const pages = Math.max(1, Math.ceil(list.length / perPage));
   if (PAGE > pages) PAGE = pages;
-  const start = (PAGE - 1) * PER_PAGE;
-  const slice = list.slice(start, start + PER_PAGE);
+  const start = (PAGE - 1) * perPage;
+  const slice = list.slice(start, start + perPage);
 
   const tb = $("#rows"); tb.innerHTML = "";
   slice.forEach(c => {
@@ -1162,7 +1188,7 @@ function render() {
   // The last page holds 9 of 10 rows. Without filling the gap the table shrinks
   // and the pager jumps up, so the remainder is padded with spacer rows that keep
   // every row the identical height. They are hidden from screen readers.
-  for (let i = slice.length; i < PER_PAGE; i++) {
+  for (let i = slice.length; i < perPage; i++) {
     const ph = el("tr", "row pad");
     ph.setAttribute("aria-hidden", "true");
     // a table row with no cells has zero height, so the spacer carries one empty
