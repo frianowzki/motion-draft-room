@@ -543,7 +543,10 @@
     font-variant-numeric:tabular-nums;min-width:26px;text-align:right}
   .tlnames span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
   .tlnames .up{color:var(--up)} .tlnames .down{color:var(--down)}
-  .tlnames .none{color:var(--faint);font-size:10.5px}
+  /* a name must stay on one line and ellipsis; a sentence in the same slot must
+     be allowed to wrap, or it loses its meaning to a truncation it does not need */
+  .tlnames .none{color:var(--faint);font-size:10.5px;white-space:normal;
+    overflow:visible;text-overflow:clip;line-height:1.4}
   /* ticks in the gaps: a rhythm marker so an empty gap still reads as time */
   .tlticks{position:absolute;left:0;right:0;bottom:8px;height:9px;pointer-events:none;
     display:flex;align-items:center;justify-content:center;gap:3px;opacity:.5}
@@ -1597,7 +1600,7 @@ function tlBuild() {
       ? e.when.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })
       : e.slot;
     const mov = e.isFirst
-      ? `<div><span class="none">First snapshot — nothing to compare against yet.</span></div>`
+      ? `<div><span class="none">First snapshot — nothing to compare.</span></div>`
       : e.movers.length
         ? e.movers.map(m => m.isNew
             ? `<div><em class="up">new</em><span>${esc(m.name)}</span></div>`
