@@ -1183,9 +1183,11 @@ document.addEventListener("click", e => {
   const cta = e.target && e.target.closest && e.target.closest("#ctaDraft");
   if (!cta) return;
   const board = document.querySelector("#rows");
-  if (board && board.scrollIntoView) board.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (board && board.scrollIntoView) board.scrollIntoView({ behavior: "smooth", block: "start" });
   const first = document.querySelector("#rows tr.row");
-  if (first) first.focus && first.focus();
+  // focus without scrolling: focusing a row after scrollIntoView made the
+  // browser jump a second time and land on the last row instead of the board
+  if (first) first.focus && first.focus({ preventScroll: true });
 });
 // the identity card is rebuilt by renderWho(), so its buttons are bound there; the
 // session is fetched once at load and again when the OAuth popup reports back
