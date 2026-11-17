@@ -7,6 +7,19 @@ apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
 
+## 2026-11-17 final — 79 of 79 confirmed (live dpl_EK9jc4faUZpmaBqHRFvuRxhptT2P)
+
+The last four were settled by the person who owns the board, not by guessing:
+Zohran Mamdani → @NYCMayor, Greg → @greg16676935420, Jason → @Jason,
+Andy → @Andy. Mert was already @mert. Every creator now has a confirmed X
+account, so `UNCONFIRMED` is empty and no row falls back to initials.
+
+Two of these deliberately break the name-similarity test and must keep working:
+@NYCMayor displays as "Mayor Zohran Kwame Mamdani", @Jason as "@jason". That is
+why the curated path checks existence + verification + follower floor only.
+If someone later "tightens" the curated path to require a name match, these two
+silently disappear — that is a regression, not a fix.
+
 ## 2026-11-17 later — curated handles replace guessing (main, live dpl_Ap8u45GYuSdsnxFRzoQVnyuQAL7f)
 
 **75 of 79 creators now have a confirmed X account.** The handles live in
