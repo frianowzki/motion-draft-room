@@ -1645,7 +1645,11 @@ function tlTargetRaw(i) {
   const el = track && track.children[i];
   if (!el || !stage) return 0;
   const tr = track.getBoundingClientRect();
-  const er = el.getBoundingClientRect();
+  // measure the card, not its slot: .tlev carries padding for the gap between
+  // cards, so the slot's centre is not the card's centre and every target would
+  // land off by half that padding
+  const face = el.querySelector(".tlcard") || el;
+  const er = face.getBoundingClientRect();
   // the track's live transform moves the rects together, so this is the card's
   // position inside the track, independent of where the track currently sits
   const centreInTrack = (er.left - tr.left) + er.width / 2;
@@ -1673,12 +1677,17 @@ function tlLayout(animate) {
   track.style.transform = `translate3d(${-TL.x}px,0,0)`;
 
   // scale and veil by distance from the focused card, recomputed each frame so a
-  // drag dims a card the moment it starts leaving the centre
-  const half = stage.clientWidth / 2;
+  // drag dims a card the moment it starts leaving the centre.
+  // cx is in stage coordinates: the stage rect does not move, the track does, so
+  // a card's rect already reflects the live transform and needs no correction.
+  const sRect = stage.getBoundingClientRect();
+  const half = sRect.left + sRect.width / 2;
   const kids = track.children;
   for (let i = 0; i < kids.length; i++) {
     const k = kids[i];
-    const centre = k.offsetLeft + k.offsetWidth / 2 - TL.x;
+    const face = k.querySelector(".tlcard") || k;
+    const fr = face.getBoundingClientRect();
+    const centre = fr.left + fr.width / 2;
     const d = Math.min(1, Math.abs(centre - half) / (TL.w || 240));
     const scale = 1 - (1 - TL_SIDE_SCALE) * d;
     k.style.transform = `scale(${scale.toFixed(3)})`;
