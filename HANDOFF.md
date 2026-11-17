@@ -1,63 +1,11 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-17 09:05 UTC (`main` `ff375c3`, `data` `5f2fd3b`,
-live `dpl_6B2VEGWmo8zGhFcb9rmX3UFscnoE`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-17 07:45 UTC (`main` `59a7cc6`, `data` `5f2fd3b`,
+live `dpl_7j6ePDTQxB6GoDUhbXmK6kkbRUwq`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
-
-## Sesi 2026-11-17 (lanjutan 2): copy + art landing
-
-Permintaan user: "seo pake humanizer, box jgn pasaran, suruh ganti yg anti ai slop".
-Artinya dua hal: prosa pemasaran jangan berbau LLM, dan kartu jangan berbentuk
-template.
-
-**Copy yang diganti**
-
-- Lede hero dulu: "Fantasy sports for creators, on the one dataset Motion actually
-  publishes." Itu fakta internal yang tidak dicari pengunjung. Sekarang: apa yang
-  kamu lakukan dan apa yang tetap tercatat.
-- `<title>` dan meta description ditulis ulang (SEO). `title` sekarang menyebut
-  aksinya, bukan kategori.
-- Tiga judul kartu how-it-works: "79 creators, one number each" → "All 79, scored
-  the same way"; "Thesis and pre-mortem, or nothing" → "Five picks, two reasons
-  each"; "Every call, signed and kept" → "One receipt per handle".
-- Deskripsi tag QUIET dulu bilang "the honest middle of the board" — itu tag untuk
-  orang yang benar-benar beku, bukan yang di tengah. Diganti.
-- Audit terukur atas 690 kata terlihat: nol hit untuk "not just X but Y",
-  seamless/robust/leverage/elevate/unlock/empower, delve/myriad/plethora/tapestry,
-  testament/landscape/realm/game-changing, furthermore/moreover/additionally,
-  "in the world of"/"at its core"/"when it comes to", dan nol tanda seru. Dua belas
-  em dash yang tersisa semuanya di format kamus FAQ ("**Tournament** — Mon 09:00 ET"),
-  di mana dash itu memang berfungsi.
-
-**Art yang diganti**
-
-Tiga kartu how-it-works memakai foto stok abstrak (liquid chrome, gradien oranye,
-foil merah) yang tidak berhubungan dengan board, draft sheet, atau buku. Diganti
-tiga panel SVG yang digambar dari konsepnya sendiri: `img/p1.svg` (baris board
-dengan delta nyata), `img/p2.svg` (draft sheet dengan budget bintang dan
-why/if-wrong per pick), `img/p3.svg` (lineup lampau dengan stempel SCORED).
-
-**Bentuk**
-
-Hero tidak lagi kotak rounded dengan soft shadow; sekarang tipografi di antara dua
-garis tipis, dengan label mono kecil menempel di garis atas. Kartu: radius 2px,
-border hairline, bukan 18px + shadow.
-
-**Jebakan penting: `public/` di-gitignore.** `build.sh` menyalin dari `img/` di root
-repo, bukan dari `public/img`. Saya sempat menaruh SVG di `public/img`, deploy, dan
-ketiganya 404 di produksi. Yang benar: taruh di `img/`, commit, baru deploy. Verifikasi
-dengan `curl -o /dev/null -w "%{http_code} %{content_type}"` per file — jangan percaya
-"deploy sukses".
-
-**Soal vision model:** beberapa kali melaporkan headline kartu 01 "bertabrakan dengan
-baris leaderboard". Itu salah. Uji A/B: dengan `img` disembunyikan, area di belakang
-headline kosong bersih; terukur baris terakhir di y=583 dan headline mulai y=643.
-Yang dia lihat adalah baris redup di zona gradient. Jangan buang waktu "memperbaiki"
-sesuatu yang tidak rusak hanya karena vision bilang begitu — ukur dulu.
-
 
 ## Sesi 2026-11-17 (paling baru, lanjutan)
 
