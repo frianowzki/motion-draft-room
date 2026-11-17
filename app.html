@@ -266,7 +266,11 @@
   /* ---- table: one row height everywhere. The spacer row that fills the last
      page inherits it, so a page of 9 looks exactly like a page of 10. */
   tr.row.pad{background:none;box-shadow:none;pointer-events:none}
-  tr.row.pad td{border:0;height:1px;padding:0}
+  tr.row.pad td{border:0;padding:0}
+  /* the same vertical rhythm as a real row, so the empty slot occupies a row's
+     worth of space instead of collapsing to nothing */
+  tr.row.pad td:first-child{padding:14px 0}
+  tr.row.pad td:first-child:before{content:"";display:block;height:15px}
 
   /* ---- table */
   .tablewrap{overflow-x:auto;margin:0 -6px;padding:0 6px}
