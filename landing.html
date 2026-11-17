@@ -403,6 +403,10 @@
     letter-spacing:-.02em}
   .sec-head .kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
     text-transform:uppercase;color:var(--faint)}
+  /* a window older than two publishes is said out loud, not smoothed over */
+  [data-room-stamp]{white-space:nowrap}
+  [data-room-stamp][data-stale]{color:#b4552d}
+  :root[data-theme="dark"] [data-room-stamp][data-stale]{color:#e08b5f}
 
   /* ---- feature ribbon: one wide card, two narrow, hovered one opens up ---- */
   /* min-width:0 so a long headline shrinks instead of dictating the column width */
@@ -856,6 +860,7 @@
   <section class="block" id="showcase">
     <div class="sec-head">
       <h3>The room itself</h3>
+      <span class="kicker" data-room-stamp aria-live="polite">reading the board…</span>
     </div>
     <div class="room" id="room" data-room role="region" aria-label="Top five creators per signal">
       <div class="room-grid">
@@ -1466,62 +1471,118 @@ fetch("/api/signals", { cache: "no-store" })
   // fill from the same payload the app reads. A short signal (coiled and fade
   // have two names today) shows what exists and says so, rather than padding
   // the list with names the board never tagged.
-  fetch('/api/signals', { cache: 'no-store' })
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-    .then(function (d) {
-      var all = (d && d.creators) || [];
-      cards.forEach(function (card, ci) {
-        var tag = card.getAttribute('data-tag');
-        var rows = all.filter(function (c) {
-          return c && c.tags && c.tags.indexOf(tag) > -1;
-        }).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
-        var list = card.querySelector('.room-list');
-        if (!rows.length) {
-          list.innerHTML = '<li class="room-row ph"><span class="room-rank">--</span>' +
-            '<span class="room-av fb">--</span>' +
-            '<span class="room-name">nothing on the board right now</span>' +
-            '<span class="room-numv">--</span></li>';
-          return;
-        }
-        list.innerHTML = rows.slice(0, 5).map(function (c, i) {
-          var m = typeof c.momentum === 'number' ? c.momentum : null;
-          var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
-          var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
-          var nm = (c.name || c.handle || 'unnamed').replace(/[<>&"]/g, '');
-          // the board publishes a face per creator id, but it rate-limits a burst,
-          // so the face is fetched a beat after its row is in the DOM and the
-          // slot is staggered per card — initials hold the seat until it lands
-          var face = c.id
-            ? '<span class="room-av fb" data-face="' + PFP + encodeURIComponent(c.id) + '.jpg">' +
-              initials(nm) + '</span>'
-            : '<span class="room-av fb">' + initials(nm) + '</span>';
-          return '<li class="room-row"><span class="room-rank">0' + (i + 1) + '</span>' +
-            face + '<span class="room-name">' + nm + '</span>' +
-            '<span class="room-num' + cls + '">' + num + '</span></li>';
-        }).join('');
-        buildDots(card);
-        // faces land in sequence: 5 per card, a card every 120ms, two at a time
-        var slots = [].slice.call(list.querySelectorAll('[data-face]'));
-        slots.forEach(function (slot, si) {
-          setTimeout(function () {
-            var url = slot.getAttribute('data-face');
-            if (!url) return;
-            var im = new Image();
-            im.onload = function () {
-              if (!slot.parentNode) return;
-              im.className = 'room-av';
-              im.alt = '';
-              slot.parentNode.replaceChild(im, slot);
-            };
-            // a missing face leaves the initials in place; nothing to undo
-            im.src = url;
-          }, 90 * si + 120 * ci);
-        });
+  var stamp = document.querySelector('[data-room-stamp]');
+  var lastPayload = null;
+
+  function ago(iso) {
+    var t = Date.parse(iso);
+    if (!t) return null;
+    var m = Math.round((Date.now() - t) / 60000);
+    if (m < 1) return 'just now';
+    if (m < 60) return m + ' min ago';
+    var h = Math.round(m / 60);
+    if (h < 48) return h + (h === 1 ? ' hr ago' : ' hrs ago');
+    return Math.round(h / 24) + ' days ago';
+  }
+
+  // The card says when the board it is showing was published, so a stale window
+  // reads as stale instead of looking live. `dataAsOf` is Motion's own asOf for
+  // the newest snapshot we hold; `generatedAt` is when we last rebuilt signals.
+  function paintStamp(d) {
+    if (!stamp) return;
+    var asof = d && d.dataAsOf;
+    var parts = [];
+    if (asof) {
+      parts.push('board as of ' + String(asof).slice(11, 16) + 'Z');
+      var a = ago(asof);
+      if (a && a !== 'just now') parts.push(a);
+    }
+    if (d && d.latestSnapshot) {
+      var s = ago(d.latestSnapshot);
+      if (s) parts.push('checked ' + s);
+    }
+    stamp.textContent = parts.length ? parts.join(' · ') : 'board unavailable';
+    // anything older than two windows is called out rather than dressed up
+    var ageH = asof ? (Date.now() - Date.parse(asof)) / 3600000 : 0;
+    if (ageH > 8) stamp.setAttribute('data-stale', '');
+    else stamp.removeAttribute('data-stale');
+  }
+
+  function paint(d) {
+    lastPayload = d;
+    var all = (d && d.creators) || [];
+    cards.forEach(function (card, ci) {
+      var tag = card.getAttribute('data-tag');
+      var rows = all.filter(function (c) {
+        return c && c.tags && c.tags.indexOf(tag) > -1;
+      }).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
+      var list = card.querySelector('.room-list');
+      if (!rows.length) {
+        list.innerHTML = '<li class="room-row ph"><span class="room-rank">--</span>' +
+          '<span class="room-av fb">--</span>' +
+          '<span class="room-name">nothing on the board right now</span>' +
+          '<span class="room-numv">--</span></li>';
+        return;
+      }
+      list.innerHTML = rows.slice(0, 5).map(function (c, i) {
+        var m = typeof c.momentum === 'number' ? c.momentum : null;
+        var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
+        var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
+        var nm = (c.name || c.handle || 'unnamed').replace(/[<>&"]/g, '');
+        // the board publishes a face per creator id, but it rate-limits a burst,
+        // so the face is fetched a beat after its row is in the DOM and the
+        // slot is staggered per card — initials hold the seat until it lands
+        var face = c.id
+          ? '<span class="room-av fb" data-face="' + PFP + encodeURIComponent(c.id) + '.jpg">' +
+            initials(nm) + '</span>'
+          : '<span class="room-av fb">' + initials(nm) + '</span>';
+        return '<li class="room-row"><span class="room-rank">0' + (i + 1) + '</span>' +
+          face + '<span class="room-name">' + nm + '</span>' +
+          '<span class="room-num' + cls + '">' + num + '</span></li>';
+      }).join('');
+      buildDots(card);
+      // faces land in sequence: 5 per card, a card every 120ms, two at a time
+      var slots = [].slice.call(list.querySelectorAll('[data-face]'));
+      slots.forEach(function (slot, si) {
+        setTimeout(function () {
+          var url = slot.getAttribute('data-face');
+          if (!url) return;
+          var im = new Image();
+          im.onload = function () {
+            if (!slot.parentNode) return;
+            im.className = 'room-av';
+            im.alt = '';
+            slot.parentNode.replaceChild(im, slot);
+          };
+          // a missing face leaves the initials in place; nothing to undo
+          im.src = url;
+        }, 90 * si + 120 * ci);
       });
-    })
-    .catch(function () {
-      // the page keeps its placeholders; the app still has the latest snapshot
     });
+    paintStamp(d);
+  }
+
+  // Motion publishes a window every four hours; polling faster than that buys
+  // nothing, and the endpoint is cached for a minute anyway. The poll is what
+  // makes a new window appear on an open tab without a reload.
+  function load() {
+    return fetch('/api/signals', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(paint)
+      .catch(function () {
+        // the page keeps whatever it last drew; the stamp ages in public
+        if (stamp && !stamp.textContent.trim()) stamp.textContent = 'board unavailable';
+      });
+  }
+
+  load();
+  setInterval(function () { if (!document.hidden) load(); }, 5 * 60 * 1000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) load();
+  });
+  // the stamp is a relative time, so it has to age between polls too
+  setInterval(function () { if (lastPayload) paintStamp(lastPayload); }, 60 * 1000);
+  var lastPayload = null;
   // the placeholder row is a single item, so dots appear once the data lands
   cards.forEach(buildDots);
 })();

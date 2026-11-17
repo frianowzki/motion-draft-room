@@ -515,6 +515,9 @@
     .tab{padding:9px 12px;min-height:38px;display:inline-flex;align-items:center}
     input,textarea{padding:12px 13px;min-height:46px;font-size:13px;border-radius:12px}
     button{min-height:44px}
+    /* the theme switch is two 28px icon targets inside a 34px pill; the blanket
+       44px tap rule above would stretch them and push the icons into the knob */
+    #themesw .tgs-b{min-height:0}
     .rar button{min-height:48px}
     table{font-size:11.5px;min-width:392px}
     .pos{width:26px}
@@ -567,7 +570,7 @@
      content column — right-aligned on desktop, its own row on a phone, so it can
      never land on the nav pill or the back-home chip */
   .apphead{display:flex;justify-content:flex-end;padding-top:14px}
-  .apphead #themesw{position:relative;z-index:70;pointer-events:auto}
+  .apphead #themesw{position:relative;z-index:70;pointer-events:auto;height:34px;flex:none}
   @media(max-width:940px){.apphead{padding:10px 10px 0}}
   /* ---- Arrow CTA button (Framer "Arrow CTA Button"): outlined pill whose
      label sits left and whose arrow rides inside a solid disc on the right;

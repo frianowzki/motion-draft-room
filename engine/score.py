@@ -15,7 +15,8 @@ which Motion publishes every 4 hours; nothing here is insider information):
   volatility   stdev of d4h across our snapshots
   heat         how active the creator's rank has been (movement volume)
   momentum     blended forward score, -100..100
-  tags         SLEEPER | COILED | FADE | SURGING | QUIET
+  tags         exactly one of SURGING | FADE | SLEEPER | COILED | QUIET | STEADY,
+               assigned in that priority order so no creator is filed twice
 
 Star estimate: the game assigns 1-8 stars from a creator's performance relative to
 the pool over the trailing 14 days (docs.motion.game/docs/get-cards/understanding-cards).
@@ -155,18 +156,29 @@ def build() -> dict:
 
         stars = est_stars(r["position"], total)
 
+        # Tags are exclusive: a card claims a creator once, so the five cards in
+        # the UI can never print the same five names. The order is the priority —
+        # a climb is SURGING first, and only creators who are NOT already climbing
+        # can read as coiled, sleeping or fading. A 24h move is corroboration when
+        # we hold one, never a requirement: until 24h of windows exist it is null
+        # for everyone, and gating on it would leave SURGING permanently empty.
         tags = []
-        if momentum >= 12:
+        if d4h >= 2 and momentum >= 12:
             tags.append("SURGING")
-        if d4h >= 2 and volatility < 2.5:
-            tags.append("COILED")
-        if d4h < 0 and r["position"] <= int(total * 0.4):
+        elif d4h < 0 and r["position"] <= int(total * 0.4):
             tags.append("FADE")
-        if stars <= 3 and momentum > 0:
+        elif stars <= 3 and momentum > 0:
             tags.append("SLEEPER")
-        if d4h == 0 and volatility == 0:
+        elif d4h == 0 and volatility == 0:
+            # dead flat: the crowd is gone and nothing has moved at all
             tags.append("QUIET")
-        if not tags:
+        elif abs(d4h) <= 1 and volatility <= 1.5:
+            # "flat for days with the crowd gone quiet" — the setup, not the move.
+            # It used to demand d4h >= 2, which described a creator already running,
+            # so this card kept printing the same names as SURGING. Tested after
+            # QUIET so the truly frozen names are not swallowed by the wider bucket.
+            tags.append("COILED")
+        else:
             tags.append("STEADY")
 
         # value: momentum per star spent
@@ -206,10 +218,26 @@ def build() -> dict:
             "projectedMomentum": round(sum(c["momentum"] for c in picked), 1),
         }
 
+    # "Sleeper heavy" and "contrarian" are only different strategies if they rank
+    # the pool differently. Drawn straight off the momentum-sorted list they came
+    # back as the same five names as "balanced" — three labels, one lineup. So each
+    # pool gets its own ordering: sleepers by value per star, contrarian by how far
+    # a name has been sliding (the crowd is out; the position is cheap).
+    by_value = sorted(out_rows, key=lambda x: -x["value"])
+    by_fall = sorted(out_rows, key=lambda x: (x["delta4h"], -x["momentum"]))
+
     lineups = {
-        "balanced": greedy(out_rows),
-        "sleeperHeavy": greedy([c for c in out_rows if c["estStars"] <= 3]),
-        "contrarian": greedy(sorted([c for c in out_rows if "FADE" not in c["tags"]], key=lambda x: x["value"], reverse=True)),
+        "balanced": greedy(by_value),
+        # sleepers first, then the best value fills the rest of the budget —
+        # filtering on star cost alone drew the same five names as balanced,
+        # because the cheapest high-value names happen to be cheap already
+        "sleeperHeavy": greedy(
+            sorted(
+                by_value,
+                key=lambda x: (0 if "SLEEPER" in x["tags"] else 1, -x["value"]),
+            )
+        ),
+        "contrarian": greedy([c for c in by_fall if c["delta4h"] <= 0]),
     }
 
     return {
