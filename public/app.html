@@ -169,21 +169,34 @@
   .appcta{display:flex;margin:0}
   .appcta .primary{min-height:42px;padding:0 18px}
 
-  /* ---- stats: four tiles that break out of the grid on desktop */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 0}
-  .stat{position:relative;background:var(--card);border-radius:var(--r-md);padding:13px 15px 12px;
-    box-shadow:var(--lift);overflow:hidden}
-  .stat .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--faint);display:flex;align-items:center;gap:5px}
-  .stat .k .ic{font-size:11px;opacity:.75}
-  .stat .v{font-family:var(--display);font-size:26px;line-height:1;margin-top:8px;
-    letter-spacing:-.05em;font-weight:500}
-  .stat .v.txt{font-size:14px;letter-spacing:-.01em;line-height:1.3;margin-top:14px;
-    font-family:var(--sans);font-weight:500;color:var(--dim)}
-  .stat .s{font-size:9px;color:var(--faint);margin-top:5px;letter-spacing:.01em;line-height:1.35}
+  /* ---- stats: a tally row, not a row of tiles. Each figure sits over its own
+     hairline with the label underneath, and the number counts up once when the
+     row comes into view. No cards, no shadows — the rule above each figure is the
+     only structure it needs. */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    column-gap:22px;row-gap:16px;margin:14px 0 2px;width:100%}
+  .tally{min-width:0;border-top:1px solid var(--line);padding-top:14px}
+  :root[data-theme="dark"] .tally{border-top-width:2px;border-top-color:rgba(255,255,255,.18)}
+  .tally .num{display:grid;width:max-content;max-width:100%;
+    font-family:var(--display);font-weight:500;font-size:clamp(24px,2.4vw,34px);
+    line-height:1.02;letter-spacing:-.035em;color:var(--ink);
+    font-variant-numeric:tabular-nums lining-nums;
+    font-feature-settings:"tnum" 1,"lnum" 1;white-space:nowrap}
+  .tally .ghost,.tally .live{grid-area:1/1;text-align:left}
+  .tally .ghost{visibility:hidden}
+  .tally .unit{font-size:.52em;letter-spacing:0;color:var(--dim)}
+  .tally .lab{display:block;margin-top:9px;font-family:var(--mono);font-size:8.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--faint);line-height:1.4;
+    display:flex;align-items:center;gap:5px;overflow-wrap:anywhere}
+  .tally .lab .ic{font-size:10px;opacity:.7;flex:none}
+  @media(max-width:640px){
+    .stats{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:16px;row-gap:14px}
+    .tally .num{font-size:clamp(20px,6vw,26px)}
+  }
+  @media(max-width:280px){.stats{grid-template-columns:minmax(0,1fr)}}
 
   /* ---- honest limits */
-  .warn{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;
+  .warn{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;
     background:#f6efe1;border-radius:var(--r-md);
     box-shadow:inset 0 0 0 1px rgba(168,106,23,.22);
     color:#6b4a15;font-size:12px;padding:13px 15px;line-height:1.55}
@@ -211,21 +224,38 @@
   .rulesGrid b{display:block;color:var(--ink);font-family:var(--mono);font-size:9px;
     text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;font-weight:600}
 
-  /* ---- filters */
-  .tabs{display:flex;gap:6px;margin:13px 0 9px;flex-wrap:wrap;align-items:center}
-  .tab{font-family:var(--mono);font-size:10px;padding:8px 13px;border-radius:var(--r-pill);
-    background:rgba(255,255,255,.7);color:var(--dim);cursor:pointer;border:0;
-    box-shadow:inset 0 0 0 1px var(--line);letter-spacing:.04em;text-transform:uppercase;
-    transition:color .16s ease,background .16s ease,box-shadow .16s ease}
-  .tab:hover{color:var(--ink);background:#fff}
-  .tab.on{background:var(--ink);color:var(--accent-ink);font-weight:500;
-    box-shadow:inset 0 0 0 1px var(--ink)}
-  .tab .ic{font-size:11px;display:inline-block;vertical-align:-1px;margin-right:5px}
-
-  .legend{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;
-    color:var(--faint);margin:-2px 0 10px;align-items:center;text-transform:uppercase;letter-spacing:.05em}
-  .legend span{display:inline-flex;align-items:center;gap:5px}
-  .legend i{width:6px;height:6px;border-radius:2px;display:block;flex:none}
+  /* ---- filters: one rail, one thumb. The active filter is a solid pill that
+     slides inside the track, and every option carries its own count so the rail
+     doubles as a read of the board. The legend that used to sit under it is gone:
+     the signals explain themselves in the SIGNAL column. */
+  .tabs{display:inline-flex;align-items:center;gap:2px;margin:12px 0 10px;padding:3px;
+    border-radius:var(--r-pill);background:var(--sunken);max-width:100%;
+    box-shadow:inset 0 0 0 1px var(--line);overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{position:relative;display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+    padding:7px 11px;border:0;border-radius:var(--r-pill);background:none;
+    color:var(--dim);cursor:pointer;white-space:nowrap;
+    transition:color .18s ease,background .18s ease}
+  .tab:hover{color:var(--ink)}
+  .tab.on{background:var(--ink);color:var(--accent-ink);font-weight:600}
+  /* the count: a small tabular chip that inverts with the pill */
+  .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
+    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.07);color:var(--faint);
+    font-variant-numeric:tabular-nums;transition:background .18s ease,color .18s ease}
+  .tab:hover b{background:rgba(17,17,17,.11);color:var(--dim)}
+  .tab.on b{background:rgba(255,255,255,.22);color:var(--accent-ink)}
+  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.09);color:var(--faint)}
+  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.14);color:var(--dim)}
+  :root[data-theme="dark"] .tab.on b{background:rgba(0,0,0,.22);color:var(--accent-ink)}
+  /* the dot in front of a signal name carries its palette colour, so the filter
+     reads at a glance without a legend to spell it out */
+  .tab i{width:5px;height:5px;border-radius:2px;display:block;flex:none;opacity:.9}
+  .tab.on i{opacity:1}
+  @media(max-width:640px){
+    .tabs{display:flex;width:100%;margin:10px 0 9px}
+    .tab{padding:7px 9px;font-size:9px}
+  }
 
   /* ---- layout: board is the big tile, the column beside it stacks */
   /* stretch, not start: the draft column has to be exactly as tall as the board
@@ -312,6 +342,9 @@
   tr.row.sel td{background:#fff}
   tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
+  tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
+  tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
+  tr.row .ncell .avatar:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;flex:none;
     background:#d8d5cf;box-shadow:inset 0 0 0 1px var(--line)}
   .avatar.lg{width:36px;height:36px}
@@ -455,13 +488,41 @@
   tr.row:hover .add,tr.row.picked .add{color:var(--ink)}
 
   /* ---- detail / draft */
+  /* the pick opens on a hero block: a rail in the creator's signal colour down the
+     left, name and rank, then the move itself set large. It answers "why him"
+     before the form asks for anything. */
+  .detail .dhero{position:relative;padding:0 0 0 13px;margin:0 0 13px}
+  .detail .dhero:before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:3px;
+    border-radius:3px;background:var(--rail)}
   .detail h3{margin:0;font-family:var(--display);font-size:21px;font-weight:500;letter-spacing:-.03em}
-  .detail .meta{color:var(--faint);font-size:11px;margin:6px 0 15px;font-family:var(--mono);
-    display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-  .kv{display:grid;grid-template-columns:1fr auto;gap:8px 12px;font-size:12px;
-    margin-bottom:15px;padding:14px;border-radius:var(--r-md);
-    background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line-soft)}
-  .kv .k{color:var(--faint)} .kv .v{font-family:var(--mono);font-size:11.5px;text-align:right}
+  .detail .meta{color:var(--faint);font-size:11px;margin:7px 0 0;font-family:var(--mono);
+    display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .detail .meta .rank{color:var(--dim)}
+  .detail .signalPill{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;
+    border-radius:var(--r-pill);background:var(--rail);color:#fff}
+  .detail .signalPill b{font-size:8.5px;font-weight:600;letter-spacing:.08em}
+  :root[data-theme="dark"] .detail .signalPill{color:#0f0f0e}
+  .detail .meta .stars{color:var(--ink);letter-spacing:-1px}
+  .detail .meta .estn{font-variant-numeric:tabular-nums}
+  .detail .bigmove{display:flex;align-items:baseline;gap:8px;margin-top:11px}
+  .detail .bigmove b{font-family:var(--display);font-size:29px;line-height:.95;
+    letter-spacing:-.045em;font-weight:500;font-variant-numeric:tabular-nums}
+  .detail .bigmove span{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--faint)}
+
+  /* six small cells rather than a two-column list: the evidence reads as an
+     instrument panel and takes half the height of the old key/value block */
+  .kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
+    margin-bottom:14px;border-radius:var(--r-md);overflow:hidden;
+    background:var(--line-soft)}
+  .kv .cell{background:var(--sunken);padding:9px 10px 10px;min-width:0}
+  .kv .k{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kv .v{font-family:var(--mono);font-size:12.5px;margin-top:5px;color:var(--ink);
+    font-variant-numeric:tabular-nums;
+    display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+  .kv .v.sig{font-size:8.5px;letter-spacing:.04em;line-height:1.3}
+  .kv .v.sig i{width:5px;height:5px;border-radius:2px;display:inline-block;flex:none}
   label{display:block;font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
     letter-spacing:.12em;color:var(--faint);margin:13px 0 6px}
   input,textarea{width:100%;background:#fff;border:0;border-radius:var(--r-sm);
@@ -824,8 +885,7 @@
 
   <div class="stats" id="stats"></div>
 
-    <div class="tabs" id="filters"></div>
-  <div class="legend" id="legend"></div>
+    <div class="tabs" id="filters" role="group" aria-label="Filter by signal"></div>
 
   <!-- one screen on a desktop: navbar, then the numbers, then the board and the
        draft beside it. Your lineup, who is calling and the book sit under both
@@ -949,6 +1009,10 @@ const STAR = "★";
 let PROF = null;
 let DATA = null, FILTER = "all", SEL = null, PICKS = [];
 let PAGE = 1;
+// One colour per signal, used by the filter rail and the draft card alike, so a
+// creator's colour means the same thing wherever it appears on the page.
+const TAGC = { SURGING: "var(--up)", COILED: "var(--warm)", SLEEPER: "var(--cool)",
+  FADE: "var(--down)", QUIET: "var(--faint)" };
 const PER_PAGE = 10;
 
 // ---------- utils
@@ -1072,6 +1136,67 @@ async function loadBook() {
   renderBook();
 }
 
+// Split a figure into prefix, digits and suffix so a count-up can animate the
+// digits alone: "62%" keeps its sign, "$12M" keeps its unit, "a / b" counts both.
+// Anything without a number (an em dash, a word) is left exactly as it is.
+function tallyParts(v) {
+  const t = String(v == null ? "" : v).trim();
+  const m = /^([^0-9]*?)(\d[\d,]*(?:\.\d+)?)(.*)$/.exec(t);
+  if (!m) return `<span>${esc(t)}</span>`;
+  const [, pre, digits, suf] = m;
+  const dec = (digits.split(".")[1] || "").length;
+  const unit = /\s|[A-Za-z]{2,}/.test(suf);
+  // ratios such as "41 / 38" carry a second figure: count both, once
+  const rest = suf.replace(/^(\s*\/\s*)(\d[\d,]*(?:\.\d+)?)/, (all, sep, n2) =>
+    `${sep}<span class="live" data-to="${n2.replace(/,/g, "")}" data-dec="0">${n2}</span>`);
+  return `${esc(pre)}<span class="live" data-to="${digits.replace(/,/g, "")}" data-dec="${dec}">${digits}</span>${
+    rest ? (unit ? `<span class="unit">${esc(rest)}</span>` : esc(rest)) : ""}`;
+}
+
+// Count the figures up once, when the row comes into view, and never again: the
+// numbers are a read of the board, not decoration, so re-running it on every
+// render (which happens on each page change) would be a twitch, not a reveal.
+function countUp() {
+  const box = $("\#stats");
+  if (!box || box.dataset.counted === "1") return;
+  const lives = [...box.querySelectorAll(".live")];
+  if (!lives.length) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || typeof window.requestAnimationFrame !== "function") return;
+  const run = () => {
+    if (box.dataset.counted === "1") return;
+    box.dataset.counted = "1";
+    const DUR = 1200, STAGGER = 80;
+    // biggest figure first, the rest follow, like a proof counter
+    const order = lives.map((_, i) => i)
+      .sort((a, b) => Math.abs(+lives[b].dataset.to) - Math.abs(+lives[a].dataset.to) || a - b);
+    const delay = [];
+    order.forEach((idx, rank) => { delay[idx] = rank * STAGGER; });
+    const finals = lives.map(el => +el.dataset.to || 0);
+    const decs = lives.map(el => +el.dataset.dec || 0);
+    let t0 = -1;
+    const tick = now => {
+      if (t0 < 0) t0 = now;
+      let done = true;
+      lives.forEach((el, i) => {
+        const p = Math.min(1, Math.max(0, (now - t0 - delay[i]) / DUR));
+        if (p < 1) done = false;
+        const eased = 1 - Math.pow(1 - p, 3);
+        const f = Math.pow(10, decs[i]);
+        const val = p >= 1 ? finals[i] : Math.round(finals[i] * eased * f) / f;
+        el.textContent = val.toLocaleString("en-US", { minimumFractionDigits: decs[i], maximumFractionDigits: decs[i] });
+      });
+      if (!done) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+  if (typeof IntersectionObserver === "undefined") { run(); return; }
+  const io = new IntersectionObserver(entries => {
+    if (entries.some(e => e.isIntersecting)) { io.disconnect(); run(); }
+  }, { threshold: 0.5 });
+  io.observe(box);
+}
+
 // How many rows fit in the board right now. The card stretches to the draft panel
 // beside it, so the answer changes when a pick opens. Everything here is read from
 // live layout, and a zero means "not measurable yet" — the caller falls back.
@@ -1119,8 +1244,12 @@ function render() {
         : (BOOK && BOOK.summary && BOOK.summary.pending ? BOOK.summary.pending + " pending" : "no calls yet"),
       BOOK && BOOK.summary && BOOK.summary.settled ? `${BOOK.summary.settled} settled · public` : "first receipt is open"],
   ];
-  $("#stats").innerHTML = stats.map(([ico, k, v, sub]) =>
-    `<div class="stat"><div class="k">${icon(ico)}${k}</div><div class="v${typeof v === "number" || /^[\d.\/%+\-]+$/.test(String(v)) ? "" : " txt"}">${esc(v)}</div>${sub ? `<div class="s">${esc(sub)}</div>` : ""}</div>`).join("");
+  // A tally row: figure over a hairline, label under it. Each figure splits into
+  // prefix / number / suffix so the number can count while the units stay put.
+  $("\#stats").innerHTML = stats.map(([ico, k, v, sub]) =>
+    `<div class="tally"><div class="num">${tallyParts(v)}</div>
+      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span style="opacity:.55">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join("");
+  countUp();
 
   // ---- honest limits banner
   if (slotWindows < 3) {
@@ -1134,13 +1263,17 @@ function render() {
     }
   }
 
-  // ---- filters
+  // ---- filters: the rail doubles as a read of the board, so each option carries
+  // its colour dot (the same one the SIGNAL column uses) and its own count.
   const tags = ["all", "SURGING", "COILED", "SLEEPER", "FADE", "QUIET"];
   const tagged = cr.filter(c => (c.tags || []).length).length;
   $("#filters").innerHTML = "";
   tags.forEach(t => {
     const n = t === "all" ? cr.length : cr.filter(c => c.tags.includes(t)).length;
-    const b = el("button", "tab" + (FILTER === t ? " on" : ""), t === "all" ? `ALL ${cr.length}` : t + " " + n);
+    const b = el("button", "tab" + (FILTER === t ? " on" : ""));
+    b.type = "button";
+    b.setAttribute("aria-pressed", FILTER === t ? "true" : "false");
+    b.innerHTML = `${t === "all" ? "" : `<i style="background:${TAGC[t]}"></i>`}${t === "all" ? "All" : t}<b>${n}</b>`;
     // a creator can carry several signals, so these counts overlap and do not
     // add up to the board size - the title says it rather than implying a partition
     b.title = t === "all"
@@ -1181,8 +1314,11 @@ function render() {
     // pointing at a name opens the profile card; the card itself stays usable so
     // its links and the pick button can be clicked. Bind after the row is in the
     // document, otherwise the .ncell lookup finds nothing.
-    const nm = tr.querySelector(".ncell");
-    if (nm) bindCard(nm, c);
+    // only the avatar opens the card: hovering the name is how you read the row,
+    // and a card covering the table every time the pointer crossed a name made
+    // the board hard to read. The row itself still selects the creator.
+    const av = tr.querySelector(".ncell .avatar");
+    if (av) bindCard(av, c);
   });
 
   // The last page holds 9 of 10 rows. Without filling the gap the table shrinks
@@ -1199,10 +1335,6 @@ function render() {
 
   renderPager(pages, list.length, start, slice.length);
 
-  const LEGEND = [["SURGING", "up", "climbing now"], ["COILED", "accent", "flat, about to move"],
-    ["SLEEPER", "cool", "quiet but cheap"], ["FADE", "down", "losing ground"], ["QUIET", "faint", "no signal"]];
-  $("#legend").innerHTML = LEGEND.map(([t, c, d]) =>
-    `<span><i style="background:var(--${c})"></i>${t} <span style="opacity:.6">&middot; ${d}</span></span>`).join("");
 
   renderDetail();
   renderLineup();
@@ -1416,21 +1548,32 @@ function renderDetail() {
     </div>`; return; }
 
   const already = PICKS.find(p => p.name === c.name);
+  // the pick reads top-down: who, then the one number that matters (the move),
+  // then the rest of the evidence. The signal is a coloured rail, not a word in a
+  // list, so the card answers "why him" before the eye reaches the fields.
+  const lead = c.tags[0] || "QUIET";
+  const rail = TAGC[lead] || "var(--faint)";
+  box.dataset.rail = lead;
   box.innerHTML = `
     <h2>${icon("target")}Draft a pick</h2>
-    <h3><span class="ncell">${avatar(c, "lg")}${esc(c.name)}</span></h3>
-    <div class="meta">
-      <span>rank #${c.position}</span><span>·</span>
-      <span class="stars">${STAR.repeat(c.estStars)}</span><span>est.</span><span>·</span>
-      <span>momentum ${fmt(c.momentum)}</span>
+    <div class="dhero" style="--rail:${rail}">
+      <h3><span class="ncell">${avatar(c, "lg")}${esc(c.name)}</span></h3>
+      <div class="meta">
+        <span class="rank">#${c.position}</span>
+        <span class="signalPill"><b>${esc(lead)}</b></span>
+        <span class="stars" title="estimated stars">${STAR.repeat(c.estStars)}</span><span class="estn">${c.estStars}/${CAP}</span>
+      </div>
+      <div class="bigmove ${cls(c.delta4h)}">
+        <b>${signed(c.delta4h)}</b><span>rank places, last 4h</span>
+      </div>
     </div>
     <div class="kv">
-      <div class="k">Δ last 4h</div><div class="v ${cls(c.delta4h)}">${signed(c.delta4h)}</div>
-      <div class="k">Δ over tracked slots</div><div class="v ${cls(c.delta24h)}">${signed(c.delta24h)}</div>
-      <div class="k">Acceleration</div><div class="v ${cls(c.acceleration)}">${fmt(c.acceleration, 2)}</div>
-      <div class="k">Volatility</div><div class="v">${fmt(c.volatility, 2)}</div>
-      <div class="k">Value (mom / star)</div><div class="v">${fmt(c.value)}</div>
-      <div class="k">Signal</div><div class="v">${c.tags.join(" · ")}</div>
+      <div class="cell"><div class="k">Δ tracked</div><div class="v ${cls(c.delta24h)}">${signed(c.delta24h)}</div></div>
+      <div class="cell"><div class="k">Accel</div><div class="v ${cls(c.acceleration)}">${fmt(c.acceleration, 2)}</div></div>
+      <div class="cell"><div class="k">Volatility</div><div class="v">${fmt(c.volatility, 2)}</div></div>
+      <div class="cell"><div class="k">Value</div><div class="v">${fmt(c.value)}</div></div>
+      <div class="cell"><div class="k">Momentum</div><div class="v">${fmt(c.momentum)}</div></div>
+      <div class="cell"><div class="k">Signal</div><div class="v sig">${c.tags.map(t => `<i style="background:${TAGC[t] || "var(--faint)"}"></i>${esc(t)}`).join(" ")}</div></div>
     </div>
     <label>Card rarity — sets the Score Boost in the real formula</label>
     <div class="rar" id="rar" role="group" aria-label="card rarity">
