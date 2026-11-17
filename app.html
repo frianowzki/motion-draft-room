@@ -1143,7 +1143,12 @@ function render() {
   // and the pager jumps up, so the remainder is padded with spacer rows that keep
   // every row the identical height. They are hidden from screen readers.
   for (let i = slice.length; i < PER_PAGE; i++) {
-    tb.appendChild(el("tr", "row pad"));
+    const ph = el("tr", "row pad");
+    ph.setAttribute("aria-hidden", "true");
+    // a table row with no cells has zero height, so the spacer carries one empty
+    // cell per column to hold the same vertical rhythm as a real row
+    ph.innerHTML = "<td></td>".repeat(7);
+    tb.appendChild(ph);
   }
 
   renderPager(pages, list.length, start, slice.length);
