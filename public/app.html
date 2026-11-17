@@ -9,7 +9,7 @@
   if(t!=='light'&&t!=='dark')t='dark';   /* dark is the house default, not the system */
   document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f0f0e">
 <title>Motion Draft Room — draft five creators, get graded</title>
 <meta name="description" content="Draft five creators from Motion's public leaderboard, write your reasoning, and get scored when the window closes. Every receipt stays public.">
@@ -308,9 +308,15 @@
   .bc .track{position:absolute;left:0;right:0;top:5px;height:6px;border-radius:3px;background:rgba(17,17,17,.07)}
   .bc .fill{position:absolute;left:0;top:5px;height:6px;border-radius:3px;min-width:3px;background:var(--ink);opacity:.82}
   .bc .target{position:absolute;top:1px;bottom:1px;width:1.5px;background:var(--ink);opacity:.34;border-radius:1px}
+  .bc.up .fill{background:var(--up);opacity:1}
+  .bc.down .fill{background:var(--down);opacity:1}
+  .bc.up .target{background:var(--up)}
+  .bc.down .target{background:var(--down)}
   :root[data-theme="dark"] .bc .track{background:rgba(255,255,255,.1)}
   :root[data-theme="dark"] .bc .fill{background:#f4f3f0}
   :root[data-theme="dark"] .bc .target{background:#f4f3f0}
+  :root[data-theme="dark"] .bc.up .fill{background:var(--up)}
+  :root[data-theme="dark"] .bc.down .fill{background:var(--down)}
 
   /* ---- paging under the board */
   .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -328,7 +334,7 @@
   :root[data-theme="dark"] .pager button:hover:not(:disabled){background:rgba(255,255,255,.06)}
 
   /* ---- creator profile card on hover */
-  .pcard{position:fixed;z-index:400;width:284px;border-radius:16px;overflow:hidden;
+  .pcard{position:fixed;z-index:400;width:284px;max-width:calc(100vw - 24px);border-radius:16px;overflow:hidden;
     background:var(--card);box-shadow:0 18px 44px rgba(17,17,17,.22),inset 0 0 0 1px var(--line);
     opacity:0;transform:translateY(5px);pointer-events:none;transition:opacity .14s ease,transform .14s ease}
   .pcard.on{opacity:1;transform:translateY(0);pointer-events:auto}
@@ -363,7 +369,14 @@
   :root[data-theme="dark"] .pcard{box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 0 0 1px var(--line)}
   :root[data-theme="dark"] .pcard .soc a:hover{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .pcard .pick{background:#f4f3f0;color:#111}
-  @media(max-width:760px){.pcard{display:none!important}}
+  /* On a phone there is no hover, so the card docks to the bottom edge where a
+     thumb can reach the pick button, and the backdrop catches the dismiss tap. */
+  @media(max-width:760px){
+    .pcard{width:auto;left:10px!important;right:10px;top:auto!important;bottom:10px;
+      max-width:none;border-radius:18px}
+    .pcard .pick{min-height:44px;font-size:11px}
+    .pcard .soc a{width:30px;height:30px}
+  }
   .mbar{position:relative;height:6px;background:rgba(17,17,17,.08);border-radius:3px;min-width:58px;
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.05)}
   .mbar:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;
@@ -534,17 +547,35 @@
        44px tap rule above would stretch them and push the icons into the knob */
     #themesw .tgs-b{min-height:0}
     .rar button{min-height:48px}
-    table{font-size:11.5px;min-width:392px}
-    .pos{width:26px}
-    .tablewrap{margin:0 -16px;padding:0 16px}
-    /* handing the board a fixed min width and a scroll shadow is more honest
-       than truncating every signal tag into "SURGI" */
-    .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;background:
-        linear-gradient(90deg,rgba(17,17,17,.05),transparent 12px) left/12px 100% no-repeat,
-        linear-gradient(270deg,rgba(17,17,17,.05),transparent 12px) right/12px 100% no-repeat}
-    tr.row .add{width:34px;padding-right:6px}
-    th:nth-child(4),td:nth-child(4){width:70px}
+    /* A side-scrolling table hides the signal column behind a gesture nobody
+       makes, so each row becomes a two-line block that fits the screen instead:
+       rank, face, name and the X column on top; delta, momentum, stars and the
+       signal under it. No horizontal scroll, nothing truncated. */
+    table{font-size:12px;min-width:0;display:block}
+    thead{display:none}
+    tbody{display:block}
+    tr.row{display:grid;grid-template-columns:30px minmax(0,1fr) 30px;
+      grid-template-areas:"pos name add" "pos meta add";
+      align-items:center;column-gap:2px;row-gap:4px;
+      padding:10px 0;border-top:1px solid var(--line-soft)}
+    tr.row:first-child{border-top:0}
+    tr.row td{border:0!important;padding:0}
+    tr.row td:nth-child(1){grid-area:pos;width:auto;align-self:start;padding-top:3px}
+    tr.row td:nth-child(2){grid-area:name;min-width:0}
+    tr.row td:nth-child(7){grid-area:add;width:auto;align-self:center}
+    /* The four meta cells are laid out as a nested flex row, not as grid areas:
+       they need to share one line under the name and shrink together. */
+    tr.row td:nth-child(n+3):nth-child(-n+6){
+      grid-area:meta;width:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px}
+    tr.row td:nth-child(5){text-align:left}
+    .tablewrap{margin:0;padding:0;overflow:visible;background:none}
+    tr.row .add{width:34px;padding-right:0}
+    .bc{min-width:34px}
+    .bc .track,.bc .fill{height:5px}
+    .pos{font-size:10.5px}
+    .name{max-width:none}
+    .avatar{width:26px;height:26px}
+    .tag{font-size:9px;padding:2px 5px}
     .slot .s{min-height:34px;align-items:center}
     footer{border-radius:24px;padding:20px 18px}
   }
@@ -725,7 +756,7 @@
 
   <div class="grid">
     <div class="card">
-      <h2><svg class="ic"><use href="#i-users"/></svg>Creators <span class="pill" id="count"></span></h2>
+      <h2><svg class="ic"><use href="#i-users"/></svg>Creators</h2>
       <div class="tablewrap" id="board">
         <table>
           <thead><tr>
@@ -840,7 +871,7 @@ const STAR = "★";
 let PROF = null;
 let DATA = null, FILTER = "all", SEL = null, PICKS = [];
 let PAGE = 1;
-const PER_PAGE = 15;
+const PER_PAGE = 10;
 
 // ---------- utils
 const $ = s => document.querySelector(s);
@@ -1021,9 +1052,8 @@ function render() {
 
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
-  $("#count").textContent = list.length + " shown";
 
-  // 15 rows a page. The board is 79 names deep and the page should not read as
+  // 10 rows a page. The board is 79 names deep and the page should not read as
   // an endless scroll, so it is sliced and the pager below carries the rest.
   const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
   if (PAGE > pages) PAGE = pages;
@@ -1074,7 +1104,10 @@ function bullet(m) {
   if (m == null || !isFinite(m)) return '<span class="bc"></span>';
   const share = Math.max(0, Math.min(100, Math.abs(m)));
   const tgt = AVG_MOM ? Math.max(2, Math.min(98, Math.abs(AVG_MOM))) : null;
-  return `<span class="bc" aria-hidden="true"><span class="track"></span>`
+  // the bar wears the same colour as the number beside it, so up reads green and
+  // down reads red without having to compare two colour systems
+  const tone = m > 0 ? " up" : m < 0 ? " down" : "";
+  return `<span class="bc${tone}" aria-hidden="true"><span class="track"></span>`
     + `<span class="fill" style="width:${share.toFixed(1)}%"></span>`
     + (tgt != null ? `<span class="target" style="left:${tgt.toFixed(1)}%"></span>` : "")
     + `</span>`;
@@ -1185,15 +1218,22 @@ function hideCardSoon() { clearTimeout(cardTimer); cardTimer = setTimeout(hideCa
 function hideCard() { if (cardEl) { cardEl.classList.remove("on"); cardFor = null; } }
 
 function placeCard(anchor) {
-  const r = anchor.getBoundingClientRect();
-  const w = 284, pad = 12;
+  // Anchor to the avatar, not the name cell: the card should look like it belongs
+  // to the face you pointed at, and its top edge should line up with that face.
+  const face = anchor.querySelector(".avatar") || anchor;
+  const r = face.getBoundingClientRect();
+  const pad = 12;
+  const w = cardEl.offsetWidth || 284;
+  const h = cardEl.offsetHeight || 300;
   let left = r.right + pad;
   if (left + w > window.innerWidth - pad) left = Math.max(pad, r.left - w - pad);
-  const h = cardEl.offsetHeight || 300;
-  let top = r.top - 8;
-  if (top + h > window.innerHeight - pad) top = Math.max(pad, window.innerHeight - h - pad);
-  cardEl.style.left = left + "px";
-  cardEl.style.top = Math.max(pad, top) + "px";
+  // align the card's banner top with the avatar's top, then pull back inside
+  let top = r.top - 6;
+  const maxTop = window.innerHeight - h - pad;
+  if (top > maxTop) top = maxTop;
+  if (top < pad) top = pad;
+  cardEl.style.left = Math.round(left) + "px";
+  cardEl.style.top = Math.round(top) + "px";
 }
 
 function bindCard(anchor, c) {
