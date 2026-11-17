@@ -1,8 +1,37 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-16 18:55 UTC (commit `922cbc7` + receipt fix, live). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-17 07:20 UTC (`main` `fdd43dc`, `data` `a7c7cdf`, live). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+---
+
+## Sesi 2026-11-17 (paling baru)
+
+**Run terjadwal pertama yang sungguhan sudah hijau**: run `44006245905`, `schedule`,
+02:53Z, sukses. Jadi pertanyaan "apakah cron benar-benar jalan" terjawab ya — dan
+`verify.py` di run itu melaporkan 4 snapshot / 4 window / OK.
+
+Yang dikerjakan sesi ini:
+
+1. **`delta24h` / `delta72h` ternyata bohong.** `d24h` = posisi terbaru − posisi
+   tertua dari snapshot yang ada, jadi dua window yang jaraknya 3 jam tercetak sebagai
+   "24h"; `d72h = d24h` (salinan literal). Sekarang `moves_over(snaps, jam)` di
+   `engine/score.py` mengukur mundur dari `asOf` terbaru pada window yang benar-benar
+   dimiliki, dan **null** selama rentangnya belum tertutup. Dengan 4 window (~12 jam),
+   `d24h` sekarang terisi 79/79 dan `d72h` semuanya `null` + catatan `delta72hNote`.
+2. **`collector/` di `data` disamakan dengan `main`** (verify.py + workflow). Ini
+   penyebab `verify.py` lokal melaporkan 5 slot hilang dari worktree `data` yang basi;
+   bukan bug.
+3. **Docstring `verify.py`** masih menjelaskan aturan jam-dinding padahal logikanya
+   sudah ber-anchor ke `asOf` Motion + `COLLECTING_SINCE`. Diselaraskan supaya tidak
+   ada yang "membetulkan" verifier yang sudah benar. Jalur gap diuji ulang dengan
+   menghapus snapshot 08:00Z → exit 1 dengan slot yang tepat.
+
+**Kesimpulan soal data**: Motion **tidak menerbitkan window baru** antara
+`2026-11-16T12:00Z` dan `2026-11-17T07:00Z` (asOf masih 12:00, `capturedAt` baru).
+Cron-nya sehat; sumbernya yang belum bergerak. Jangan mengarang snapshot untuk slot
+yang belum dipublikasikan.
 
 ---
 
@@ -157,8 +186,9 @@ run terjadwal pertama akan merah. Sudah disamakan dengan `main` per `6c97755`. *
 mengubah `collector/`, `engine/`, atau workflow di `main`, salin juga ke `data`** —
 kalau tidak, cron tetap menjalankan versi lama tanpa ada yang memberi tahu.
 
-Rekaman sekarang: **1 snapshot, 1 window** (`asOf 2026-11-15T20:00:00Z`,
-`motion-official`). Dua file dibuang karena tidak jujur: `20261115T201601Z` berasal
+Rekaman sekarang (17 Nov 07:00Z): **4 snapshot, 4 window** — `asOf` 11-15T20:00,
+11-16T04:00, 11-16T08:00, 11-16T12:00, semua `motion-official`, masing-masing 79 rows.
+Sebelumnya dua file dibuang karena tidak jujur: `20261115T201601Z` berasal
 dari motionradar (beda posisi di 37 dari 79 kreator vs resmi, bikin `verify.py` exit 2)
 dan `20261115T202105Z` duplikat identik dari window yang sama.
 
@@ -217,10 +247,10 @@ Urut prioritas. Nomor 1 dan 2 adalah satu-satunya yang benar-benar menahan submi
    akun X user. Deadline 19 Nov 2026. Posting harus memuat: apa produknya, link live,
    satu kalimat metodologi jujur (sumber API resmi, star estimasi, boost asumsi), dan
    sesuatu yang menunjukkan judgment manusia, bukan output satu klik.
-2. **Tunggu run cron pertama yang benar-benar terjadwal.** Sejauh ini semua snapshot
-   datang dari run manual di dalam slot yang sama, jadi `delta24h`/`delta72h` masih
-   `null`. Setelah ada ≥3 window berbeda, angka itu terisi sendiri. Kalau run terjadwal
-   gagal, `collector/verify.py` akan memerahkannya.
+2. ~~Tunggu run cron pertama yang benar-benar terjadwal.~~ **Beres**: run 02:53Z hijau.
+   Sisa yang perlu dipantau: `delta72h` baru terisi setelah kira-kira 3 hari window
+   (yaitu sekitar 19-20 Nov) — dan itu **setelah deadline**, jadi di submission
+   cukup sebut `delta24h` saja atau `null` yang jujur. `delta24h` sudah terisi.
 3. **Isi receipt book dengan call nyata.** Book sekarang kosong dan itu memang benar:
    receipt pertama harus call sungguhan, bukan data tes. Kalau menguji, pakai handle
    tes lalu **hapus lagi** dari branch `data` (lihat catatan di bawah).
