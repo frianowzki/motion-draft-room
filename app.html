@@ -267,8 +267,11 @@
   /* the wrap takes whatever height the row has left over, and the table inside
      grows with it: otherwise the leftover space sits inside the card as a hole
      between the last row and the pager */
-  .boardcard > .tablewrap{flex:1 1 auto;display:flex;flex-direction:column}
-  .boardcard > .tablewrap > table{flex:1 1 auto;height:100%}
+  /* The board sits beside the draft panel and stretches to match it, but the rows
+     keep their own height: when a pick is open the panel is much taller, and
+     pulling ten rows apart to fill it left the table looking slack. The spare
+     height stays with the table wrap, under the rows, above the pager. */
+  .boardcard > .tablewrap{flex:1 1 auto}
   .card h2{margin:0 0 10px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
     letter-spacing:.16em;color:var(--faint);font-weight:500;
     display:flex;align-items:center;gap:7px}
@@ -301,7 +304,7 @@
     overflow:hidden}
   /* when the draft panel beside the board is taller than ten rows, the rows share
      the difference instead of the card ending in a stretch of empty background */
-  #rows tr.row:not(.pad) > td{height:100%}
+
   td:nth-child(6){white-space:normal;line-height:1.5}
   tr.row:first-child td{border-top:0}
   tr.row{cursor:pointer;transition:background .13s ease}
@@ -373,7 +376,9 @@
 
   /* ---- paging under the board */
   .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+    margin-top:auto;padding-top:8px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+  /* margin-top:auto parks the pager on the bottom edge of the card, so any spare
+     height lands between the rows and the pager instead of below it */
   .pager .pinfo{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--faint);white-space:nowrap}
   .pager .pnums{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
