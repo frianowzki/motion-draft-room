@@ -1,0 +1,389 @@
+{
+ "Coffeezilla": null,
+ "Mark Cuban": null,
+ "Jim Cramer": {
+  "handle": "jimcramer",
+  "displayName": "Jim Cramer",
+  "followers": 2542239,
+  "avatar": "https://pbs.twimg.com/profile_images/1461426655046606860/PzlSk4fZ_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/14216123/1759524361",
+  "description": "Host of @madmoneyoncnbc and I run the CNBC Investing Club. \n\nMy new book is out now: https://a.co/d/ceqGc37",
+  "url": "https://x.com/jimcramer",
+  "website": {
+   "url": "http://madmoney.cnbc.com",
+   "display_url": "madmoney.cnbc.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "DJ Akademiks": null,
+ "Logan Paul": {
+  "handle": "LoganPaul",
+  "displayName": "Logan Paul",
+  "followers": 6323225,
+  "avatar": "https://pbs.twimg.com/profile_images/1401837042934468611/okzqIoMb_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/410409666/1768663284",
+  "description": "Artist, Boxer, Wrestler — Founder @PrimeHydrate — Host @IMPAULSIVE podcast",
+  "url": "https://x.com/LoganPaul",
+  "website": {
+   "url": "https://originals.com",
+   "display_url": "originals.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Pat McAfee": null,
+ "Dave Portnoy": null,
+ "Jake Lucky": null,
+ "David Senra": {
+  "handle": "davidsenra",
+  "displayName": "David Senra",
+  "followers": 290754,
+  "avatar": "https://pbs.twimg.com/profile_images/1970530587510231040/wbVXBu_Q_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/255793931/1757701592",
+  "description": "Conversations with the greatest living founders.",
+  "url": "https://x.com/davidsenra",
+  "website": {
+   "url": "https://www.davidsenra.com",
+   "display_url": "davidsenra.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "DogeDesigner": null,
+ "rasmr": null,
+ "Beff Jezos": null,
+ "PlaqueBoyMax": null,
+ "Tarek Mansour": null,
+ "Roon": null,
+ "Toly": null,
+ "Paul Graham": null,
+ "Vlad Tenev": {
+  "handle": "vladtenev",
+  "displayName": "Vlad Tenev",
+  "followers": 1099742,
+  "avatar": "https://pbs.twimg.com/profile_images/2080475011765428224/UHDHTB9T_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/605700792/1728483887",
+  "description": "CEO and Co-Founder @RobinhoodApp 📈📱Executive Chairman and Co-Founder @HarmonicMath 👁️‍🗨️👨‍🏫",
+  "url": "https://x.com/vladtenev",
+  "website": {
+   "url": "https://www.robinhood.com",
+   "display_url": "robinhood.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "IShowSpeed": null,
+ "Marques Brownlee": null,
+ "Zohran Mamdani": null,
+ "Kai Cenat": {
+  "handle": "KaiCenat",
+  "displayName": "Kai Cenat",
+  "followers": 3132372,
+  "avatar": "https://pbs.twimg.com/profile_images/2001015256663949316/X75Sm7jo_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/830435768514596866/1713752615",
+  "description": "Any Means Possible",
+  "url": "https://x.com/KaiCenat",
+  "website": {
+   "url": "https://www.twitch.tv/kaicenat",
+   "display_url": "twitch.tv/kaicenat"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Lex Fridman": {
+  "handle": "lexfridman",
+  "displayName": "Lex Fridman",
+  "followers": 5584132,
+  "avatar": "https://pbs.twimg.com/profile_images/1854713863817646088/nTmsz7jR_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/427089628/1763664435",
+  "description": "Host of Lex Fridman Podcast.\nInterested in robots and humans.",
+  "url": "https://x.com/lexfridman",
+  "website": {
+   "url": "https://youtube.com/lexfridman",
+   "display_url": "youtube.com/lexfridman"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Bryan Johnson": {
+  "handle": "bryan_johnson",
+  "displayName": "Bryan Johnson",
+  "followers": 2170154,
+  "avatar": "https://pbs.twimg.com/profile_images/1888004001872101378/jVNJQ-iu_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/17468569/1704825657",
+  "description": "Conquering death will be humanity’s greatest achievement.\n\nFounder Immortals, Blueprint, Kernel, Braintree Venmo.",
+  "url": "https://x.com/bryan_johnson",
+  "website": {
+   "url": "https://bryanjohnson.komi.io/",
+   "display_url": "bryanjohnson.komi.io"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Jake Paul": {
+  "handle": "jakepaul",
+  "displayName": "Jake Paul",
+  "followers": 4446851,
+  "avatar": "https://pbs.twimg.com/profile_images/1976638310517817344/6AxWkIIP_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/581301629/1770072191",
+  "description": "@antifund \n@mostvpromotions\n@betr",
+  "url": "https://x.com/jakepaul",
+  "website": {
+   "url": "http://link.me/jakepaul",
+   "display_url": "link.me/jakepaul"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Shams Charania": {
+  "handle": "ShamsCharania",
+  "displayName": "Shams Charania",
+  "followers": 4122338,
+  "avatar": "https://pbs.twimg.com/profile_images/1896948936008511488/EhA-z5ac_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/178580925/1728323693",
+  "description": "ESPN Senior NBA Insider",
+  "url": "https://x.com/ShamsCharania",
+  "website": {
+   "url": "https://tinyurl.com/3sjnn36c",
+   "display_url": "tinyurl.com/3sjnn36c"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Druski": null,
+ "Valkyrae": null,
+ "greg": null,
+ "MINHxDYNASTY": null,
+ "Threadguy": null,
+ "Murray Hill Guy": null,
+ "Jason": null,
+ "Sir Doge of the Coin": null,
+ "Bill Ackman": null,
+ "ChooseRich": null,
+ "Mert Mumtaz": null,
+ "Palmer Luckey": {
+  "handle": "PalmerLuckey",
+  "displayName": "Palmer Luckey",
+  "followers": 1272776,
+  "avatar": "https://pbs.twimg.com/profile_images/1592034442171719680/trGJr315_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/294306372/1730695450",
+  "description": "I am a technology enthusiast, writer, and modder. Founder of @ModRetro, @Oculus VR, and @Anduriltech. Keeping American superheroes safe with autonomous systems.",
+  "url": "https://x.com/PalmerLuckey",
+  "website": {
+   "url": "http://Anduril.com",
+   "display_url": "Anduril.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Nikita Bier": {
+  "handle": "nikitabier",
+  "displayName": "Nikita Bier",
+  "followers": 1356826,
+  "avatar": "https://pbs.twimg.com/profile_images/1755448801957945344/Fh2HNw5Y_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/636513296/1777070372",
+  "description": "former head of product @x, ex-founder @thetbhapp (acq by @meta), ex-founder @gasappteam (acq by @discord)",
+  "url": "https://x.com/nikitabier",
+  "website": {
+   "url": "http://intro.co/nikitabier",
+   "display_url": "intro.co/nikitabier"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "AlexFinn": null,
+ "Mike Solana": null,
+ "Tim Dillon": null,
+ "Balaji": null,
+ "Brian Armstrong": {
+  "handle": "brian_armstrong",
+  "displayName": "Brian Armstrong",
+  "followers": 3951771,
+  "avatar": "https://pbs.twimg.com/profile_images/2078293582918934528/YZjOB_hV_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/14379660/1739931003",
+  "description": "Co-founder & CEO @Coinbase. Creating more economic freedom in the world. Co-founder @researchhub @newlimit.\nNot investment advice.",
+  "url": "https://x.com/brian_armstrong",
+  "website": {
+   "url": "https://www.coinbase.com/",
+   "display_url": "coinbase.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Jack Butcher": {
+  "handle": "jackbutcher",
+  "displayName": "@jackbutcher",
+  "followers": 354201,
+  "avatar": "https://pbs.twimg.com/profile_images/2094875295740243968/XWoHVEOq_normal.png",
+  "banner": "https://pbs.twimg.com/profile_banners/52188203/1790383804",
+  "description": "symbolist @visualizevalue",
+  "url": "https://x.com/jackbutcher",
+  "website": {
+   "url": "http://jack.art",
+   "display_url": "jack.art"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "John Coogan": null,
+ "xQc": null,
+ "Andrej Karpathy": null,
+ "Aaron Levie": null,
+ "Marc Andreessen": null,
+ "Dylan Field": null,
+ "Jordi Hays": {
+  "handle": "jordihays",
+  "displayName": "Jordi Hays",
+  "followers": 49037,
+  "avatar": "https://pbs.twimg.com/profile_images/1849605778866405376/fCBIJvqb_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/4188045073/1767735756",
+  "description": "Host @TBPN",
+  "url": "https://x.com/jordihays",
+  "website": {
+   "url": "http://www.tbpn.com",
+   "display_url": "tbpn.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Vitalik Buterin": null,
+ "Kai Trump": {
+  "handle": "kaitrump",
+  "displayName": "Kai Trump",
+  "followers": 879065,
+  "avatar": "https://pbs.twimg.com/profile_images/1943110409197682688/eED5z8al_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/1828995458343026689/1787161477",
+  "description": "@MiamiHurricanes ‘30",
+  "url": "https://x.com/kaitrump",
+  "website": {
+   "url": "https://kaitrump.shop/",
+   "display_url": "kaitrump.shop"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "David Holz": null,
+ "Cobie": null,
+ "Jynxzi": null,
+ "Chris Dixon": null,
+ "Shayne Coplan": {
+  "handle": "shayne_coplan",
+  "displayName": "Shayne Coplan 🦅",
+  "followers": 249004,
+  "avatar": "https://pbs.twimg.com/profile_images/1458132114105413633/youFcLMv_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/3474685637/1759857830",
+  "description": "CEO @Polymarket. Ethereum since ’14. I love music and collect art.",
+  "url": "https://x.com/shayne_coplan",
+  "website": {
+   "url": "http://polymarket.com",
+   "display_url": "polymarket.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Brian Chesky": null,
+ "Ludwig": null,
+ "Greg Isenberg": {
+  "handle": "gregisenberg",
+  "displayName": "GREG ISENBERG",
+  "followers": 764209,
+  "avatar": "https://pbs.twimg.com/profile_images/1577116785656139776/5mi0qgTz_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/14642331/1722363147",
+  "description": "I drop startup ideas daily. Host @startupideaspod. CEO: @latecheckoutplz we build companies like @ideabrowser, @meetLCA, @boringmarketer etc",
+  "url": "https://x.com/gregisenberg",
+  "website": {
+   "url": "http://gregisenberg.com/",
+   "display_url": "gregisenberg.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Gary Vaynerchuk": null,
+ "Andrew Huberman": null,
+ "Grimes": null,
+ "Theo Von": {
+  "handle": "TheoVon",
+  "displayName": "Theo Von",
+  "followers": 1691641,
+  "avatar": "https://pbs.twimg.com/profile_images/1494113550251347975/F6TI6s6l_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/17955081/1634325142",
+  "description": "Your second cousin",
+  "url": "https://x.com/TheoVon",
+  "website": {
+   "url": "http://instagram.com/theovon",
+   "display_url": "instagram.com/theovon"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Naval": null,
+ "Ansem": null,
+ "Mark Rober": {
+  "handle": "MarkRober",
+  "displayName": "Mark Rober",
+  "followers": 498311,
+  "avatar": "https://pbs.twimg.com/profile_images/1323419184571711490/9UwZusZa_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/490932793/1604362696",
+  "description": "Former NASA and Apple engineer. Current YouTuber and friend of science. CrunchLabs founder- http://crunchlabs.com",
+  "url": "https://x.com/MarkRober",
+  "website": {
+   "url": "http://youtube.com/markrober",
+   "display_url": "youtube.com/markrober"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "David Sacks": {
+  "handle": "DavidSacks",
+  "displayName": "David Sacks",
+  "followers": 1775311,
+  "avatar": "https://pbs.twimg.com/profile_images/1879600809693917185/GkBxdTd9_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/1137701/1667750503",
+  "description": "Tech founder & investor @Craft_Ventures @theallinpod. Co-Chair, President’s Council of Advisors on Science & Technology.",
+  "url": "https://x.com/DavidSacks",
+  "website": {
+   "url": "http://sacks.substack.com",
+   "display_url": "sacks.substack.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Flood": null,
+ "Taiki Maeda": null,
+ "Andy": null,
+ "Haseeb Qureshi": null,
+ "Clemente": null,
+ "Michael Saylor": null,
+ "Martin Shkreli": {
+  "handle": "MartinShkreli",
+  "displayName": "Martin Shkreli",
+  "followers": 638818,
+  "avatar": "https://pbs.twimg.com/profile_images/2097525632427282432/c7tdYJlv_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/312653402/1787925672",
+  "description": "https://godelterminal.com\nhttps://linktr.ee/mshkreli - join our start-up focused Discord!",
+  "url": "https://x.com/MartinShkreli",
+  "website": {
+   "url": "http://www.godelterminal.com",
+   "display_url": "godelterminal.com"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Garry Tan": {
+  "handle": "garrytan",
+  "displayName": "Garry Tan",
+  "followers": 1146327,
+  "avatar": "https://pbs.twimg.com/profile_images/2102142455281811456/-kNX65wI_normal.jpg",
+  "banner": "https://pbs.twimg.com/profile_banners/11768582/1789657007",
+  "description": "President & CEO @ycombinator —Founder @garryslist—Creator of GStack & GBrain—designer/engineer who helps founders—SF Dem accelerating the boom loop",
+  "url": "https://x.com/garrytan",
+  "website": {
+   "url": "https://youtube.com/garrytan?sub_confirmation=1",
+   "display_url": "youtube.com/garrytan?sub_c…"
+  },
+  "verified": true,
+  "match": "verified-name-followers"
+ },
+ "Chamath Palihapitiya": null
+}

@@ -280,6 +280,87 @@
   .tag.SLEEPER{color:var(--cool);box-shadow:inset 0 0 0 1px rgba(58,94,158,.3);background:rgba(58,94,158,.07)}
   .tag.FADE{color:var(--down);box-shadow:inset 0 0 0 1px rgba(192,57,43,.3);background:rgba(192,57,43,.07)}
   .tag.QUIET{color:var(--faint)}
+
+  /* ---- status badges: dot, label, tinted field. Six states, each with a hue,
+     so the board reads at a glance instead of being scanned word by word. */
+  .sb{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;
+    letter-spacing:.07em;text-transform:uppercase;padding:3px 7px 3px 6px;border-radius:var(--r-pill);
+    white-space:nowrap;color:var(--dim);background:rgba(17,17,17,.045);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.08)}
+  .sb i{width:5px;height:5px;border-radius:50%;flex:none;background:currentColor;
+    box-shadow:0 0 0 2.5px color-mix(in srgb,currentColor 16%,transparent)}
+  .sb.SURGING{color:#1d7a44;background:rgba(29,122,68,.09);box-shadow:inset 0 0 0 1px rgba(29,122,68,.22)}
+  .sb.COILED{color:#6b5b00;background:rgba(160,137,0,.11);box-shadow:inset 0 0 0 1px rgba(160,137,0,.24)}
+  .sb.SLEEPER{color:#3a5e9e;background:rgba(58,94,158,.09);box-shadow:inset 0 0 0 1px rgba(58,94,158,.22)}
+  .sb.FADE{color:#c0392b;background:rgba(192,57,43,.09);box-shadow:inset 0 0 0 1px rgba(192,57,43,.22)}
+  .sb.QUIET{color:var(--faint);background:rgba(17,17,17,.03);box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
+  .sb.STEADY{color:#4a5568;background:rgba(74,85,104,.08);box-shadow:inset 0 0 0 1px rgba(74,85,104,.2)}
+  :root[data-theme="dark"] .sb{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
+  :root[data-theme="dark"] .sb.SURGING{color:#5fd18b;background:rgba(60,190,120,.13);box-shadow:inset 0 0 0 1px rgba(95,209,139,.26)}
+  :root[data-theme="dark"] .sb.COILED{color:#d8c86a;background:rgba(216,200,106,.13);box-shadow:inset 0 0 0 1px rgba(216,200,106,.26)}
+  :root[data-theme="dark"] .sb.SLEEPER{color:#8ab0ec;background:rgba(90,140,220,.14);box-shadow:inset 0 0 0 1px rgba(138,176,236,.28)}
+  :root[data-theme="dark"] .sb.FADE{color:#ef8878;background:rgba(230,90,70,.14);box-shadow:inset 0 0 0 1px rgba(239,136,120,.28)}
+  :root[data-theme="dark"] .sb.QUIET{color:#8f8d86;background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .sb.STEADY{color:#a9b2c3;background:rgba(160,175,200,.11);box-shadow:inset 0 0 0 1px rgba(169,178,195,.22)}
+
+  /* ---- bullet chart: momentum as a track, a fill and a target tick */
+  .bc{position:relative;display:block;width:100%;min-width:60px;height:15px}
+  .bc .track{position:absolute;left:0;right:0;top:5px;height:6px;border-radius:3px;background:rgba(17,17,17,.07)}
+  .bc .fill{position:absolute;left:0;top:5px;height:6px;border-radius:3px;min-width:3px;background:var(--ink);opacity:.82}
+  .bc .target{position:absolute;top:1px;bottom:1px;width:1.5px;background:var(--ink);opacity:.34;border-radius:1px}
+  :root[data-theme="dark"] .bc .track{background:rgba(255,255,255,.1)}
+  :root[data-theme="dark"] .bc .fill{background:#f4f3f0}
+  :root[data-theme="dark"] .bc .target{background:#f4f3f0}
+
+  /* ---- paging under the board */
+  .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-top:12px;padding-top:11px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+  .pager .pinfo{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--faint);white-space:nowrap}
+  .pager .pnums{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+  .pager button{font-family:var(--mono);font-size:9.5px;min-width:26px;height:26px;padding:0 7px;
+    border-radius:7px;background:transparent;color:var(--dim);cursor:pointer;
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .pager button:hover:not(:disabled){color:var(--ink);background:rgba(17,17,17,.04)}
+  .pager button[aria-current="page"]{background:var(--ink);color:var(--accent-ink);box-shadow:none;font-weight:600}
+  .pager button:disabled{opacity:.35;cursor:default}
+  .pager .gap{font-size:10px;color:var(--faint);padding:0 1px}
+  :root[data-theme="dark"] .pager button:hover:not(:disabled){background:rgba(255,255,255,.06)}
+
+  /* ---- creator profile card on hover */
+  .pcard{position:fixed;z-index:400;width:284px;border-radius:16px;overflow:hidden;
+    background:var(--card);box-shadow:0 18px 44px rgba(17,17,17,.22),inset 0 0 0 1px var(--line);
+    opacity:0;transform:translateY(5px);pointer-events:none;transition:opacity .14s ease,transform .14s ease}
+  .pcard.on{opacity:1;transform:translateY(0);pointer-events:auto}
+  .pcard .ban{height:72px;background:var(--sunken) center/cover no-repeat;position:relative}
+  .pcard .ban:after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 45%,rgba(17,17,17,.2))}
+  .pcard .pad{padding:0 15px 15px;position:relative}
+  .pcard .pf{width:52px;height:52px;border-radius:50%;object-fit:cover;margin-top:-26px;
+    position:relative;z-index:1;box-shadow:0 0 0 3px var(--card);background:var(--sunken)}
+  .pcard .nm{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);
+    margin-top:8px;line-height:1.2;letter-spacing:-.01em}
+  .pcard .hd{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:2px}
+  .pcard .soc{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap}
+  .pcard .soc a{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+    border-radius:7px;color:var(--dim);box-shadow:inset 0 0 0 1px var(--line)}
+  .pcard .soc a:hover{color:var(--ink);background:rgba(17,17,17,.05)}
+  .pcard .soc svg{width:13px;height:13px;fill:currentColor}
+  .pcard .stat{display:flex;align-items:baseline;gap:5px;margin-top:11px;
+    padding-top:10px;border-top:1px solid var(--line-soft)}
+  .pcard .stat b{font-family:var(--display);font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+  .pcard .stat span{font-family:var(--mono);font-size:8.5px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--faint)}
+  .pcard .pick{width:100%;margin-top:11px;min-height:34px;border-radius:9px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--ink);color:var(--accent-ink);font-weight:600;border:0}
+  .pcard .pick:hover{opacity:.88}
+  .pcard .note{font-family:var(--mono);font-size:8px;color:var(--faint);margin-top:8px;line-height:1.5}
+  :root[data-theme="dark"] .pcard{box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 0 0 1px var(--line)}
+  :root[data-theme="dark"] .pcard .soc a:hover{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .pcard .pick{background:#f4f3f0;color:#111}
+  @media(hover:none),(max-width:760px){.pcard{display:none!important}}
   .mbar{position:relative;height:6px;background:rgba(17,17,17,.08);border-radius:3px;min-width:58px;
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.05)}
   .mbar:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;
@@ -752,7 +833,10 @@ const CAP = 32, SIZE = 5;
 const RARITY = ["Common", "Rare", "Epic", "Legendary"];
 let BOOST = { Common: 1, Rare: 1.1, Epic: 1.25, Legendary: 1.5 };
 const STAR = "★";
+let PROF = null;
 let DATA = null, FILTER = "all", SEL = null, PICKS = [];
+let PAGE = 1;
+const PER_PAGE = 15;
 
 // ---------- utils
 const $ = s => document.querySelector(s);
@@ -818,6 +902,12 @@ async function disconnectX() {
 async function load() {
   // /api/signals is the live copy (refetched from the data branch). /signals.json is the
   // snapshot bundled at build time — it keeps the page working if the API is unreachable.
+  // X profiles are resolved separately: a build-time copy plus /api/profiles, and
+  // the board still renders without them (the card just says it cannot confirm one)
+  try {
+    const pr = await fetch("/api/profiles", { headers: { accept: "application/json" } });
+    if (pr.ok) { const pj = await pr.json(); PROF = pj.profiles || pj; }
+  } catch (e) {}
   const urls = ["/api/signals", "/signals.json"];
   let lastErr = null;
   for (const u of urls) {
@@ -834,6 +924,7 @@ async function load() {
   }
   if (DATA.rarity && DATA.rarity.assumedBoost) BOOST = DATA.rarity.assumedBoost;
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
+  if (PROF) DATA.profiles = PROF;
   render();
   loadBook();
   // the identity card used to be drawn only from load()'s render path, so whichever of
@@ -904,28 +995,42 @@ function render() {
     b.title = t === "all"
       ? `${cr.length} creators on the board`
       : `${n} of ${tagged} tagged creators carry ${t}. A creator can carry more than one signal, so the filter counts overlap.`;
-    b.onclick = () => { FILTER = t; render(); };
+    b.onclick = () => { FILTER = t; PAGE = 1; render(); };
     $("#filters").appendChild(b);
   });
 
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
   $("#count").textContent = list.length + " shown";
+
+  // 15 rows a page. The board is 79 names deep and the page should not read as
+  // an endless scroll, so it is sliced and the pager below carries the rest.
+  const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+  if (PAGE > pages) PAGE = pages;
+  const start = (PAGE - 1) * PER_PAGE;
+  const slice = list.slice(start, start + PER_PAGE);
+
   const tb = $("#rows"); tb.innerHTML = "";
-  list.forEach(c => {
+  slice.forEach(c => {
     const picked = PICKS.some(p => p.name === c.name);
     const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
     tr.innerHTML = `
       <td class="pos">${c.position}</td>
       <td class="name"><span class="ncell">${avatar(c)}<span class="nwrap">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</span></span></td>
       <td class="mono ${cls(c.delta4h)}">${signed(c.delta4h)}</td>
-      <td title="momentum ${fmt(c.momentum)} (rank-weighted move, ±${fmt(100, 0)})"><div class="mbar"><i style="${barStyle(c.momentum)}"></i></div></td>
+      <td title="momentum ${fmt(c.momentum)} out of ${fmt(100, 0)} — rank-weighted move">${bullet(c.momentum)}</td>
       <td class="mono stars" title="estimated stars (1-8)">${c.estStars}<span>/${8}</span></td>
-      <td>${c.tags.map(t => `<span class="tag ${t}">${t}</span>`).join("")}</td>
+      <td>${badges(c.tags)}</td>
       <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? icon("check") : icon("plus")}</td>`;
     tr.onclick = () => { SEL = c.name; render(); };
+    // pointing at a name opens the profile card; the card itself stays usable
+    // so its links and the pick button can be clicked
+    const nm = tr.querySelector(".ncell");
+    if (nm) bindCard(nm, c);
     tb.appendChild(tr);
   });
+
+  renderPager(pages, list.length, start, slice.length);
 
   const LEGEND = [["SURGING", "up", "climbing now"], ["COILED", "accent", "flat, about to move"],
     ["SLEEPER", "cool", "quiet but cheap"], ["FADE", "down", "losing ground"], ["QUIET", "faint", "no signal"]];
@@ -935,6 +1040,146 @@ function render() {
   renderDetail();
   renderLineup();
   syncClear();
+}
+
+// ---- momentum as a bullet chart: a track, a fill the size of the move, and a
+// target tick at the average so a bar reads against something, not in a void.
+const AVG_MOM = (() => {
+  const vals = ((DATA && DATA.creators) || []).map(c => Math.abs(c.momentum || 0)).filter(v => v > 0);
+  return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+})();
+
+function bullet(m) {
+  if (m == null || !isFinite(m)) return '<span class="bc"></span>';
+  const share = Math.max(0, Math.min(100, Math.abs(m)));
+  const tgt = AVG_MOM ? Math.max(2, Math.min(98, Math.abs(AVG_MOM))) : null;
+  return `<span class="bc" aria-hidden="true"><span class="track"></span>`
+    + `<span class="fill" style="width:${share.toFixed(1)}%"></span>`
+    + (tgt != null ? `<span class="target" style="left:${tgt.toFixed(1)}%"></span>` : "")
+    + `</span>`;
+}
+
+// ---- status badge: a dot plus the word, tinted by state
+const BADGE_WORD = { SURGING: "surging", COILED: "coiled", SLEEPER: "sleeper",
+  FADE: "fading", QUIET: "quiet", STEADY: "steady" };
+function badges(tags) {
+  const seen = new Set();
+  return (tags || []).filter(t => BADGE_WORD[t])
+    .filter(t => { if (seen.has(t)) return false; seen.add(t); return true; })
+    .map(t => `<span class="sb ${t}"><i></i>${BADGE_WORD[t]}</span>`).join(" ");
+}
+
+// ---- pager: numbered, with neighbours around the current page
+function renderPager(pages, total, start, shown) {
+  const box = $("#pager");
+  if (!box) return;
+  if (pages <= 1) { box.innerHTML = `<span class="pinfo">${total} creators</span><span class="pnums"></span>`; return; }
+  const nums = [];
+  const push = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
+  if (pages <= 7) { for (let i = 1; i <= pages; i++) nums.push(push(i)); }
+  else {
+    nums.push(push(1));
+    if (PAGE > 3) nums.push('<span class="gap">…</span>');
+    for (let i = Math.max(2, PAGE - 1); i <= Math.min(pages - 1, PAGE + 1); i++) nums.push(push(i));
+    if (PAGE < pages - 2) nums.push('<span class="gap">…</span>');
+    nums.push(push(pages));
+  }
+  box.innerHTML = `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>
+    <span class="pnums"><button data-p="prev"${PAGE === 1 ? " disabled" : ""}>‹</button>
+    ${nums.join("")}<button data-p="next"${PAGE === pages ? " disabled" : ""}>›</button></span>`;
+  box.querySelectorAll("button[data-p]").forEach(b => {
+    b.onclick = () => {
+      const v = b.dataset.p;
+      const next = v === "prev" ? PAGE - 1 : v === "next" ? PAGE + 1 : parseInt(v, 10);
+      if (!next || next < 1 || next > pages || next === PAGE) return;
+      PAGE = next; render();
+      const board = $("#board");
+      if (board) window.scrollTo({ top: board.getBoundingClientRect().top + window.scrollY - 90, behavior: "smooth" });
+    };
+  });
+}
+
+// ---- creator profile card, opened by pointing at a name. Built from a profile
+// resolved against X and proven to be the same person; when nothing could be
+// proven the card says so instead of showing someone else's numbers.
+function socIcons(prof) {
+  const out = [];
+  if (!prof) return "";
+  const w = (prof.website || "").toLowerCase();
+  out.push(`<a href="${esc(prof.url)}" target="_blank" rel="noopener noreferrer" title="X profile" aria-label="X profile">`
+    + `<svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L6 22H2.9l7.5-8.6L2.5 2H9l4.5 6.6L18.9 2zm-1.1 18h1.7L7.3 3.8H5.5L17.8 20z"/></svg></a>`);
+  if (/youtube\.com|youtu\.be/.test(w))
+    out.push(`<a href="${esc(prof.website)}" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube">`
+      + `<svg viewBox="0 0 24 24"><path d="M23 12s0-3.4-.4-5c-.3-1-.9-1.8-1.9-2C19 4.6 12 4.6 12 4.6s-7 0-8.7.4c-1 .2-1.6 1-1.9 2C1 8.6 1 12 1 12s0 3.4.4 5c.3 1 .9 1.8 1.9 2 1.7.4 8.7.4 8.7.4s7 0 8.7-.4c1-.2 1.6-1 1.9-2 .4-1.6.4-5 .4-5zM9.8 15.6V8.4l5.8 3.6-5.8 3.6z"/></svg></a>`);
+  if (/instagram\.com/.test(w))
+    out.push(`<a href="${esc(prof.website)}" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram">`
+      + `<svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 18.6 12 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11a1.5 1.5 0 1 1-1.5-1.6 1.6 1.6 0 0 1 1.5 1.6z"/></svg></a>`);
+  return out.join("");
+}
+
+function cardHtml(c) {
+  const prof = (DATA.profiles || {})[c.name] || null;
+  const ini = esc((c.name || "?").trim().slice(0, 2).toUpperCase());
+  const av = c.id
+    ? `<img class="pf" src="https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`
+    : `<span class="pf" style="display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--faint)">${ini}</span>`;
+  const ban = prof && prof.banner
+    ? ` style="background-image:url('${esc(prof.banner)}')"`
+    : "";
+  const followers = prof
+    ? `<div class="stat"><b>${prof.followers >= 1000 ? (prof.followers / 1000).toFixed(prof.followers >= 10000 ? 0 : 1) + "K" : prof.followers}</b><span>followers on X</span></div>`
+    : `<div class="stat"><b>—</b><span>no verified X account matched</span></div>`;
+  const handleLine = prof ? `<div class="hd">@${esc(prof.handle)}</div>` : `<div class="hd">rank #${c.position} · unverified on X</div>`;
+  return `<div class="ban"${ban}></div>
+    <div class="pad">${av}
+      <div class="nm">${esc(c.name)}</div>${handleLine}
+      <div class="soc">${socIcons(prof)}</div>
+      ${followers}
+      <button class="pick" data-pick="${esc(c.name)}">${icon("plus")} Draft this pick</button>
+      ${prof ? "" : `<div class="note">Profile links and follower counts are only shown when a verified X account matches this name exactly. Nothing is guessed.</div>`}
+    </div>`;
+}
+
+let cardEl = null, cardTimer = null, cardFor = null;
+function ensureCard() {
+  if (cardEl) return cardEl;
+  cardEl = el("div", "pcard");
+  cardEl.addEventListener("mouseenter", () => clearTimeout(cardTimer));
+  cardEl.addEventListener("mouseleave", hideCardSoon);
+  cardEl.addEventListener("click", e => {
+    const b = e.target.closest("[data-pick]");
+    if (!b) return;
+    SEL = b.dataset.pick; render(); hideCard();
+  });
+  document.body.appendChild(cardEl);
+  return cardEl;
+}
+function hideCardSoon() { clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 140); }
+function hideCard() { if (cardEl) { cardEl.classList.remove("on"); cardFor = null; } }
+
+function placeCard(anchor) {
+  const r = anchor.getBoundingClientRect();
+  const w = 284, pad = 12;
+  let left = r.right + pad;
+  if (left + w > window.innerWidth - pad) left = Math.max(pad, r.left - w - pad);
+  const h = cardEl.offsetHeight || 300;
+  let top = r.top - 8;
+  if (top + h > window.innerHeight - pad) top = Math.max(pad, window.innerHeight - h - pad);
+  cardEl.style.left = left + "px";
+  cardEl.style.top = Math.max(pad, top) + "px";
+}
+
+function bindCard(anchor, c) {
+  anchor.addEventListener("mouseenter", () => {
+    clearTimeout(cardTimer);
+    ensureCard();
+    cardEl.innerHTML = cardHtml(c);
+    cardFor = c.name;
+    cardEl.style.left = "-9999px"; cardEl.style.top = "0px";
+    cardEl.classList.add("on");
+    requestAnimationFrame(() => placeCard(anchor));
+  });
+  anchor.addEventListener("mouseleave", hideCardSoon);
 }
 
 function barStyle(m) {
