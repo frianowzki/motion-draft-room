@@ -230,14 +230,14 @@
   /* ---- layout: board is the big tile, the column beside it stacks */
   /* stretch, not start: the draft column has to be exactly as tall as the board
      beside it, otherwise the two tiles end at different heights */
-  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:14px;align-items:stretch}
+  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:12px;align-items:stretch}
   .grid > .boardcard{align-self:stretch}
   @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
 
   /* your lineup, who is calling and the book run the full width under the
      board, in the same three-column rhythm the page already uses */
-  .under{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;
-    align-items:stretch;margin-top:12px}
+  .under{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+    align-items:stretch;margin-top:10px}
   .under > .card{margin-top:0!important;min-width:0;padding:14px 16px 15px}
   .under > .card h2{margin-bottom:7px}
   /* the three lower cards carry supporting copy, so their type steps down a
@@ -847,7 +847,6 @@
       <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
       <div class="slot" id="slot"></div>
       <div class="projline" id="proj"></div>
-      <div class="hint" id="slotHint">A pick needs a thesis and a pre-mortem. That is the whole point — a lineup without reasoning is not a call.</div>
       <div class="rowbtns">
         <button id="clearBtn" hidden><svg class="ic"><use href="#i-x"/></svg>Clear</button>
         <button class="primary" id="lockBtn" disabled><svg class="ic"><use href="#i-lock"/></svg>Lock lineup</button>
