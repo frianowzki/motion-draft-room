@@ -476,15 +476,37 @@
   :root[data-theme="dark"] .pcard .soc a:hover{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .pcard .pick{background:#f4f3f0;color:#111}
   /* On a phone there is no hover, so the card docks to the bottom edge where a
-     thumb can reach the pick button, and the backdrop catches the dismiss tap. */
+     thumb can reach the pick button. It is a real sheet: it slides up from the
+     bottom edge, dims the page behind it, traps focus, closes on Esc or a drag
+     down, and leaves the body scroll locked while it is open. */
   @media(max-width:760px){
-    .pcard{width:auto;left:10px!important;right:10px;top:auto!important;bottom:10px;
-      max-width:none;border-radius:18px}
+    .pcard{width:auto;left:0!important;right:0;top:auto!important;bottom:0;
+      max-width:none;border-radius:20px 20px 0 0;
+      box-shadow:0 -18px 44px rgba(17,17,17,.28),inset 0 1px 0 var(--line);
+      transform:translateY(100%);transition:transform .26s cubic-bezier(.32,.72,0,1),opacity .2s ease;
+      opacity:1;max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
+      padding-bottom:env(safe-area-inset-bottom,0px)}
+    .pcard.on{transform:translateY(0)}
+    /* the grab rail: the one affordance that says "this comes down" */
+    .pcard:before{content:"";position:sticky;top:0;display:block;height:18px;flex:none;
+      background:linear-gradient(180deg,var(--card) 55%,transparent);
+      border-radius:20px 20px 0 0;z-index:2}
     /* a sheet docked at the bottom has no pointer to leave, so it carries its
        own close control in the top right corner */
-    .pcard .cardx{display:flex;width:30px;height:30px}
+    .pcard .cardx{display:flex;width:34px;height:34px;top:12px;right:12px}
+    .pcard .cardx .ic{font-size:15px}
     .pcard .pick{min-height:44px;font-size:11px}
     .pcard .soc a{width:30px;height:30px}
+    .pcard.dragging{transition:none}
+    .cardback{position:fixed;inset:0;z-index:399;background:rgba(12,12,11,.44);
+      opacity:0;pointer-events:none;transition:opacity .22s ease;
+      -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+    .cardback.on{opacity:1;pointer-events:auto}
+    body.sheetopen{overflow:hidden}
+  }
+  @media(min-width:761px){ .cardback{display:none} }
+  @media(prefers-reduced-motion:reduce){
+    .pcard,.cardback{transition-duration:.01ms}
   }
   .mbar{position:relative;height:6px;background:rgba(17,17,17,.08);border-radius:3px;min-width:58px;
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.05)}
@@ -1944,10 +1966,14 @@ function cardHtml(c) {
     </div>`;
 }
 
-let cardEl = null, cardTimer = null, cardFor = null;
+let cardEl = null, cardTimer = null, cardFor = null, cardBack = null, sheetOpener = null;
+const isSheet = () => window.matchMedia("(max-width:760px)").matches;
 function ensureCard() {
   if (cardEl) return cardEl;
   cardEl = el("div", "pcard");
+  cardEl.setAttribute("role", "dialog");
+  cardEl.setAttribute("aria-modal", "true");
+  cardEl.setAttribute("aria-label", "Creator profile");
   cardEl.addEventListener("mouseenter", () => clearTimeout(cardTimer));
   cardEl.addEventListener("mouseleave", hideCardSoon);
   cardEl.addEventListener("click", e => {
@@ -1956,11 +1982,58 @@ function ensureCard() {
     if (!b) return;
     SEL = b.dataset.pick; render(); hideCard();
   });
+  cardBack = el("div", "cardback");
+  cardBack.addEventListener("click", hideCard);
+  document.body.appendChild(cardBack);
   document.body.appendChild(cardEl);
+  // a drag down on the sheet dismisses it, like any native bottom sheet. The
+  // move is only treated as a drag once it passes a small threshold, so a tap
+  // on the pick button never gets swallowed.
+  let dragY = null, dragFrom = 0;
+  cardEl.addEventListener("pointerdown", e => {
+    if (!isSheet() || e.target.closest("button,a,input,select,textarea")) return;
+    dragY = e.clientY; dragFrom = 0;
+  });
+  cardEl.addEventListener("pointermove", e => {
+    if (dragY === null) return;
+    dragFrom = Math.max(0, e.clientY - dragY);
+    if (dragFrom < 6) return;
+    cardEl.classList.add("dragging");
+    cardEl.style.transform = `translateY(${dragFrom}px)`;
+  });
+  const endDrag = () => {
+    if (dragY === null) return;
+    const moved = dragFrom;
+    dragY = null; dragFrom = 0;
+    cardEl.classList.remove("dragging");
+    cardEl.style.transform = "";
+    if (moved > 90) hideCard();
+  };
+  cardEl.addEventListener("pointerup", endDrag);
+  cardEl.addEventListener("pointercancel", endDrag);
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && cardEl && cardEl.classList.contains("on")) { hideCard(); }
+    if (e.key === "Tab" && isSheet() && cardEl && cardEl.classList.contains("on")) {
+      const f = cardEl.querySelectorAll('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
   return cardEl;
 }
-function hideCardSoon() { clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 140); }
-function hideCard() { if (cardEl) { cardEl.classList.remove("on"); cardFor = null; } }
+function hideCardSoon() { if (isSheet()) return; clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 140); }
+function hideCard() {
+  if (!cardEl) return;
+  cardEl.classList.remove("on");
+  cardEl.style.transform = "";
+  if (cardBack) cardBack.classList.remove("on");
+  document.body.classList.remove("sheetopen");
+  cardFor = null;
+  if (sheetOpener && document.contains(sheetOpener)) { try { sheetOpener.focus({ preventScroll: true }); } catch (_) {} }
+  sheetOpener = null;
+}
 
 function placeCard(anchor) {
   // Anchor to the avatar, not the name cell: the card should look like it belongs
@@ -1997,17 +2070,46 @@ function bindCard(anchor, c) {
     ensureCard();
     cardEl.innerHTML = cardHtml(c);
     cardFor = c.name;
+    if (isSheet()) {
+      // sheet: no anchoring, no hover to keep it alive — it is a modal surface
+      sheetOpener = anchor;
+      cardEl.style.left = ""; cardEl.style.top = "";
+      cardEl.classList.add("on");
+      cardBack.classList.add("on");
+      document.body.classList.add("sheetopen");
+      const f = cardEl.querySelector("[data-close]");
+      if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (_) {} }, 60);
+      return;
+    }
     cardEl.style.left = "-9999px"; cardEl.style.top = "0px";
     cardEl.classList.add("on");
-    requestAnimationFrame(() => placeCard(anchor));
+    // measure and place right away, then again on the next frame so the card
+    // lands correctly once fonts and the banner have settled. A background tab
+    // can starve requestAnimationFrame, so the first pass must not depend on it.
+    placeCard(anchor);
+    requestAnimationFrame(() => { if (cardFor === c.name) placeCard(anchor); });
   };
-  anchor.addEventListener("mouseenter", () => { clearTimeout(cardTimer); open(); });
-  anchor.addEventListener("mouseleave", hideCardSoon);
-  // a touch screen has no hover, so tapping the name opens the same card; the
-  // row's own click still selects the creator, which is what a tap used to do
+  if (!isSheet()) {
+    anchor.addEventListener("mouseenter", () => { clearTimeout(cardTimer); open(); });
+    anchor.addEventListener("mouseleave", hideCardSoon);
+    // Losing window focus (switching tabs, alt-tab, a screenshot) also fires
+    // blur. Only close when focus actually moved to another element on the
+    // page, otherwise the card vanishes while the reader is still on it.
+    anchor.addEventListener("blur", () => {
+      setTimeout(() => {
+        if (!document.hasFocus()) return;
+        if (anchor.contains(document.activeElement)) return;
+        hideCardSoon();
+      }, 0);
+    });
+  }
+  // a touch screen has no hover, so tapping the name opens the same card as a
+  // bottom sheet; the row's own click still selects the creator underneath
   anchor.addEventListener("click", e => { e.stopPropagation(); clearTimeout(cardTimer); open(); });
-  anchor.addEventListener("focus", () => { clearTimeout(cardTimer); open(); });
-  anchor.addEventListener("blur", hideCardSoon);
+  anchor.addEventListener("focus", () => { if (!isSheet()) { clearTimeout(cardTimer); open(); } });
+  anchor.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); open(); }
+  });
 }
 
 function barStyle(m) {
