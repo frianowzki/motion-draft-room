@@ -554,20 +554,24 @@
     table{font-size:12px;min-width:0;display:block}
     thead{display:none}
     tbody{display:block}
-    tr.row{display:grid;grid-template-columns:30px minmax(0,1fr) 30px;
-      grid-template-areas:"pos name add" "pos meta add";
-      align-items:center;column-gap:2px;row-gap:4px;
+    /* five tracks: rank, name/meta, and the + button. The meta cells occupy
+       their own columns on the second line so they sit beside each other
+       instead of stacking on top of one another in a single grid area. */
+    tr.row{display:grid;
+      grid-template-columns:26px auto auto minmax(40px,1fr) auto 30px;
+      grid-template-areas:"pos name name name name add" "dlt mom stars sig sig add";
+      align-items:center;column-gap:7px;row-gap:4px;
       padding:10px 0;border-top:1px solid var(--line-soft)}
     tr.row:first-child{border-top:0}
     tr.row td{border:0!important;padding:0}
     tr.row td:nth-child(1){grid-area:pos;width:auto;align-self:start;padding-top:3px}
     tr.row td:nth-child(2){grid-area:name;min-width:0}
     tr.row td:nth-child(7){grid-area:add;width:auto;align-self:center}
-    /* The four meta cells are laid out as a nested flex row, not as grid areas:
-       they need to share one line under the name and shrink together. */
-    tr.row td:nth-child(n+3):nth-child(-n+6){
-      grid-area:meta;width:auto;display:inline-flex;align-items:center;gap:5px;font-size:11px}
-    tr.row td:nth-child(5){text-align:left}
+    tr.row td:nth-child(3){grid-area:dlt}
+    tr.row td:nth-child(4){grid-area:mom}
+    tr.row td:nth-child(5){grid-area:stars;text-align:left}
+    tr.row td:nth-child(6){grid-area:sig}
+    tr.row td:nth-child(n+3):nth-child(-n+6){width:auto;font-size:11px;white-space:nowrap}
     .tablewrap{margin:0;padding:0;overflow:visible;background:none}
     tr.row .add{width:34px;padding-right:0}
     .bc{min-width:34px}
