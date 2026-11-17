@@ -1234,7 +1234,7 @@ function placeCard(anchor) {
   // The avatar should sit level with the card's own photo, not with its banner:
   // the card's face is 26px below the banner plus a -26px pull, so shifting the
   // card down by that offset lines the two faces up.
-  const cardFaceOffset = 72 - 26 - 15; // banner height, minus the avatar's negative margin, minus the pad above the name
+  const cardFaceOffset = 72 - 26 + 15; // banner height minus the avatar's negative margin, plus the pad above the name
   let top = r.top - cardFaceOffset;
   const maxTop = window.innerHeight - h - pad;
   // Near the bottom of the screen there is no room to hang the card beside the
