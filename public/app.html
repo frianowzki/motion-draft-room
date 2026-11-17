@@ -165,7 +165,7 @@
   /* the dashboard opens on one navbar: the CTA on the left, the theme switch on
      the right, so the numbers start one line below it instead of two */
   .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding-top:14px}
+    padding-top:10px}
   .appcta{display:flex;margin:0}
   .appcta .primary{min-height:42px;padding:0 18px}
 
@@ -173,14 +173,14 @@
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 0}
   .stat{position:relative;background:var(--card);border-radius:var(--r-md);padding:13px 15px 12px;
     box-shadow:var(--lift);overflow:hidden}
-  .stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;
+  .stat .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
     color:var(--faint);display:flex;align-items:center;gap:5px}
   .stat .k .ic{font-size:11px;opacity:.75}
   .stat .v{font-family:var(--display);font-size:26px;line-height:1;margin-top:8px;
     letter-spacing:-.05em;font-weight:500}
   .stat .v.txt{font-size:14px;letter-spacing:-.01em;line-height:1.3;margin-top:14px;
     font-family:var(--sans);font-weight:500;color:var(--dim)}
-  .stat .s{font-size:10px;color:var(--faint);margin-top:7px;letter-spacing:.01em}
+  .stat .s{font-size:9px;color:var(--faint);margin-top:5px;letter-spacing:.01em;line-height:1.35}
 
   /* ---- honest limits */
   .warn{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;
@@ -237,8 +237,10 @@
   /* your lineup, who is calling and the book run the full width under the
      board, in the same three-column rhythm the page already uses */
   .under{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;
-    align-items:stretch;margin-top:14px}
-  .under > .card{margin-top:0!important;min-width:0}
+    align-items:stretch;margin-top:12px}
+  .under > .card{margin-top:0!important;min-width:0;padding:16px 18px}
+  .under > .card h2{margin-bottom:8px}
+  .under .hint{margin-top:4px;line-height:1.4}
   @media(max-width:1100px){.under{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:760px){.under{grid-template-columns:minmax(0,1fr)}}
 
@@ -257,7 +259,7 @@
   .grid > .side > .card.detail > .empty{margin:auto 0}
   .boardcard{display:flex;flex-direction:column;min-width:0}
   .boardcard > .tablewrap{flex:1 1 auto}
-  .card h2{margin:0 0 14px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
+  .card h2{margin:0 0 10px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
     letter-spacing:.16em;color:var(--faint);font-weight:500;
     display:flex;align-items:center;gap:7px}
   .card h2 .ic{font-size:12px;color:var(--ink)}
@@ -357,7 +359,7 @@
 
   /* ---- paging under the board */
   .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    margin-top:12px;padding-top:11px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+    margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
   .pager .pinfo{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--faint);white-space:nowrap}
   .pager .pnums{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
