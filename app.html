@@ -495,6 +495,75 @@
   tr.row .add .ic{margin-left:auto}
   tr.row:hover .add,tr.row.picked .add{color:var(--ink)}
 
+  /* ---- timeline (ported from beui.dev's draggable timeline) */
+  /* The stage is a window; the track is one long row of cards that slides inside
+     it. Nothing is scrolled by the browser: the track's transform is driven by
+     hand, so a flick can coast past a card and settle with a spring instead of
+     stopping dead on the nearest one. */
+  .tline{margin-top:14px;overflow:hidden}
+  .tline > h2{margin-bottom:12px}
+  .tlstage{position:relative;height:198px;overflow:hidden;
+    border-radius:var(--r-md);cursor:grab;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+    touch-action:pan-y;outline:none}
+  .tlstage:active{cursor:grabbing}
+  .tlstage:focus-visible{box-shadow:inset 0 0 0 2px var(--ink);border-radius:var(--r-md)}
+  /* the ruler a focused card is measured against */
+  .tlstage:before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;
+    background:var(--line-soft);pointer-events:none}
+  .tltrack{position:absolute;top:0;height:100%;left:0;display:flex;align-items:center;
+    will-change:transform}
+  .tlev{flex:none;width:var(--w,240px);height:100%;display:flex;align-items:center;
+    justify-content:center;padding:0 7px;box-sizing:border-box;
+    transform-origin:center center;will-change:transform}
+  /* a card that is not the focused one: smaller and veiled, but still solid —
+     a veil in the page colour, not opacity, so nothing shows through it */
+  .tlcard{width:100%;border-radius:12px;background:var(--card);padding:12px 13px;
+    box-shadow:inset 0 0 0 1px var(--line);cursor:pointer;overflow:hidden;
+    transition:box-shadow .2s ease}
+  .tlev[aria-selected="true"] .tlcard{box-shadow:inset 0 0 0 1.5px var(--ink),
+    0 12px 30px -18px rgba(0,0,0,.42)}
+  .tlwhen{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--faint)}
+  .tlwhen .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;
+    border-radius:var(--r-pill);background:var(--sunken);color:var(--dim);
+    letter-spacing:.06em;text-transform:none;font-size:8px}
+  .tlbig{display:flex;align-items:baseline;gap:7px;margin:9px 0 2px}
+  .tlbig b{font-family:var(--display);font-weight:500;font-size:26px;line-height:1;
+    letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .tlbig span{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
+    letter-spacing:.09em;color:var(--faint)}
+  .tlnames{margin-top:9px;display:flex;flex-direction:column;gap:5px}
+  .tlnames div{display:flex;align-items:baseline;gap:6px;font-size:11px;color:var(--dim);
+    min-width:0}
+  .tlnames em{font-style:normal;flex:none;font-family:var(--mono);font-size:9px;
+    font-variant-numeric:tabular-nums;min-width:26px;text-align:right}
+  .tlnames span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+  .tlnames .up{color:var(--up)} .tlnames .down{color:var(--down)}
+  .tlnames .none{color:var(--faint);font-size:10.5px}
+  /* ticks in the gaps: a rhythm marker so an empty gap still reads as time */
+  .tlticks{position:absolute;left:0;right:0;bottom:8px;height:9px;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;gap:3px;opacity:.5}
+  .tlticks i{width:1px;height:5px;background:var(--ink);opacity:.35;border-radius:1px}
+  .tlticks i:nth-child(2n){height:8px;opacity:.5}
+  .tlhint{margin:9px 0 0;font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--faint)}
+  .tlrailrow{display:flex;align-items:center;gap:7px;margin-top:10px}
+  .tlrailrow .tlrail{flex:1 1 auto;height:2px;border-radius:2px;background:var(--line);
+    position:relative;overflow:hidden}
+  .tlrailrow .tlrail i{position:absolute;top:0;bottom:0;left:0;width:0;
+    background:var(--ink);opacity:.6;border-radius:2px;transition:width .3s ease}
+  .tlrailrow b{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;
+    color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  @media(max-width:640px){
+    .tlstage{height:186px}
+    .tlev{padding:0 5px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .tlev{transition:none!important}
+  }
+
   /* ---- detail / draft */
   /* the pick opens on a hero block: a rail in the creator's signal colour down the
      left, name and rank, then the move itself set large. It answers "why him"
@@ -922,6 +991,18 @@
     </div>
   </div>
 
+  <!-- The timeline sits directly under the board: it answers the question the
+       board cannot, which is "what actually moved between windows", and it reads
+       left-to-right in the same direction as the rank column above it. -->
+  <section class="card tline" id="tline" aria-label="Board history">
+    <h2><svg class="ic"><use href="#i-clock"/></svg>Board history <span class="pill" id="tlCount"></span></h2>
+    <div class="tlstage" id="tlStage" role="group" aria-label="Snapshots, newest last"
+         tabindex="0" aria-describedby="tlHint">
+      <div class="tltrack" id="tlTrack"></div>
+    </div>
+    <p class="tlhint" id="tlHint">Drag, or use the arrow keys, to walk the windows.</p>
+  </section>
+
   <div class="under">
     <div class="card" style="margin-top:14px">
       <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
@@ -1119,6 +1200,22 @@ async function load() {
     $("#rows").innerHTML = `<tr><td colspan="7" class="empty">Could not load signals (${esc(lastErr && lastErr.message)}). The collector runs every 4 hours.</td></tr>`;
     return;
   }
+  // history is a separate read: the board must paint even if it fails, so it is
+  // fetched after DATA and the Timeline simply says so when there is nothing yet
+  try {
+    const hr = await fetch("/api/history", { headers: { accept: "application/json" } });
+    if (hr.ok) {
+      const hj = await hr.json();
+      // /api/history names the field "windows"; keep the page's own shape so the
+      // Timeline reads the same object whether it came from the API or a bundle
+      DATA.history = (hj.windows || []).map(w => ({
+        slot: w.slot || w.asOf || w.collectedAt,
+        asOf: w.asOf,
+        collectedAt: w.collectedAt,
+        rows: w.rows || [],
+      }));
+    }
+  } catch (e) {}
   if (DATA.rarity && DATA.rarity.assumedBoost) BOOST = DATA.rarity.assumedBoost;
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   if (PROF) DATA.profiles = PROF;
@@ -1362,6 +1459,9 @@ function render() {
   renderDetail();
   renderLineup();
   syncClear();
+  // the timeline is a read of history, so it renders with the panels and not
+  // with the rows: paging the board must not rebuild it or reset its position
+  renderTimeline();
 
   // The draft panel just changed height, and the board stretches to match it, so
   // the number of rows that fit has changed too. One deferred re-render after the
@@ -1407,6 +1507,318 @@ function badges(tags) {
 }
 
 // ---- pager: numbered, with neighbours around the current page
+/* ---- timeline ---------------------------------------------------------------
+   Ported from beui.dev's draggable timeline, minus React and Tailwind. The same
+   four behaviours are kept because they are what makes it feel like a timeline
+   and not a carousel: a press only becomes a drag past a few pixels, a flick
+   coasts on for as many events as its velocity earns, the track rubber-bands at
+   the ends instead of hard-stopping, and the settle is a spring, not a tween.
+   Cards are laid out once by transform, so a 40-slot history still drags smoothly
+   on a phone. */
+const TL = {
+  i: 0,              // focused event index
+  x: 0,              // current track offset, px
+  dragging: false,
+  vel: 0,
+  lastT: 0,
+  raf: 0,
+  events: [],
+  w: 240,            // card width from CSS (--w)
+  settle: 0,         // spring state
+};
+
+const TL_SPRING = { stiffness: 120, damping: 24, mass: 1 };
+const TL_DRAG_THRESHOLD = 4;   // px before a press is a drag, not a click
+const TL_FLICK = 0.3;          // events per (px/s) of release velocity
+const TL_FLICK_MAX = 4;        // cap, so a hard flick cannot jump the whole history
+const TL_RUBBER = 0.3;         // past either end the track follows at this fraction
+const TL_SIDE_SCALE = 0.72;
+
+function tlEvents() {
+  // One event per recorded window. A snapshot carries the whole board at that
+  // moment, so the interesting part is the movement since the previous one: the
+  // movers are the story, the absolute ranks are already in the table above.
+  const hist = (DATA && DATA.history) || [];
+  const out = [];
+  for (let i = 0; i < hist.length; i++) {
+    const h = hist[i];
+    const prev = hist[i - 1];
+    const rank = new Map((h.rows || []).map(r => [r.name, r.position]));
+    const before = prev ? new Map((prev.rows || []).map(r => [r.name, r.position])) : null;
+    const movers = [];
+    if (before) {
+      rank.forEach((pos, name) => {
+        const was = before.get(name);
+        if (was == null) { movers.push({ name, d: null, isNew: true }); return; }
+        const d = was - pos;            // a smaller position number is a better rank
+        if (d) movers.push({ name, d });
+      });
+      movers.sort((a, b) => Math.abs(b.d || 0) - Math.abs(a.d || 0));
+    }
+    const slot = h.slot || h.collectedAt || "";
+    out.push({
+      id: slot || String(i),
+      when: slot ? new Date(slot.length > 10 ? slot : slot + ":00:00Z") : null,
+      slot,
+      rows: (h.rows || []).length,
+      movers: movers.slice(0, 3),
+      moved: movers.length,
+      isFirst: !before,
+    });
+  }
+  return out;
+}
+
+function tlBuild() {
+  const stage = $("#tlStage"), track = $("#tlTrack"), root = $("#tline");
+  if (!stage || !track || !root) return;
+  if (DATA && DATA.history && !root.dataset.built) {
+    // keep the last known history if a later load brings a shorter one
+  }
+  TL.events = tlEvents();
+  const evs = TL.events;
+
+  const cnt = $("#tlCount");
+  if (cnt) cnt.textContent = evs.length ? `${evs.length} window${evs.length === 1 ? "" : "s"}` : "no windows yet";
+
+  if (!evs.length) {
+    track.innerHTML = `<div class="tlev" style="--w:auto"><div class="tlcard">
+      <div class="tlwhen">No history yet</div>
+      <div class="tlnames"><div><span class="none">The first window lands after the next collection.</span></div></div>
+    </div></div>`;
+    stage.style.cursor = "default";
+    return;
+  }
+
+  track.innerHTML = evs.map((e, i) => {
+    const when = e.when
+      ? e.when.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })
+      : e.slot;
+    const mov = e.isFirst
+      ? `<div><span class="none">First snapshot — nothing to compare against yet.</span></div>`
+      : e.movers.length
+        ? e.movers.map(m => m.isNew
+            ? `<div><em class="up">new</em><span>${esc(m.name)}</span></div>`
+            : `<div><em class="${m.d > 0 ? "up" : "down"}">${m.d > 0 ? "+" : ""}${m.d}</em><span>${esc(m.name)}</span></div>`
+          ).join("")
+        : `<div><span class="none">Nobody moved.</span></div>`;
+    const big = e.isFirst
+      ? `<span>creators</span><b style="margin-left:auto">${e.rows}</b>`
+      : `<b>${e.moved}</b><span>moved</span>`;
+    return `<div class="tlev" role="tab" aria-selected="${i === 0}" data-i="${i}">
+      <div class="tlcard">
+        <div class="tlwhen"><span>${esc(when)}</span><span class="tag">${e.isFirst ? "baseline" : "4h"}</span></div>
+        <div class="tlbig">${big}</div>
+        <div class="tlnames">${mov}</div>
+      </div>
+      <div class="tlticks"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>`;
+  }).join("");
+
+  // measure one card: the width comes from CSS so a media query can change it
+  const first = track.querySelector(".tlev");
+  const cs = first ? getComputedStyle(first) : null;
+  TL.w = first ? first.getBoundingClientRect().width : Number((cs && cs.width) || 240) || 240;
+
+  TL.i = Math.min(TL.i, evs.length - 1);
+  tlBind();
+  tlLayout(true);
+}
+
+function tlMax() {
+  const stage = $("#tlStage"), track = $("#tlTrack");
+  if (!stage || !track) return 0;
+  return Math.max(0, track.scrollWidth - stage.clientWidth);
+}
+
+function tlTarget(i) {
+  // centre event i in the stage, clamped so the ends do not show air
+  const stage = $("#tlStage"), track = $("#tlTrack");
+  if (!stage || !track) return 0;
+  const el = track.children[i];
+  if (!el) return 0;
+  const centre = el.offsetLeft + el.offsetWidth / 2;
+  const want = centre - stage.clientWidth / 2;
+  return Math.max(0, Math.min(tlMax(), want));
+}
+
+function tlLayout(animate) {
+  const track = $("#tlTrack"), stage = $("#tlStage");
+  if (!track || !stage) return;
+  if (!animate) TL.x = tlTarget(TL.i);
+  track.style.transition = "";
+  track.style.transform = `translate3d(${-TL.x}px,0,0)`;
+
+  // scale and veil by distance from the focused card, recomputed each frame so a
+  // drag dims a card the moment it starts leaving the centre
+  const half = stage.clientWidth / 2;
+  const kids = track.children;
+  for (let i = 0; i < kids.length; i++) {
+    const k = kids[i];
+    const centre = k.offsetLeft + k.offsetWidth / 2 - TL.x;
+    const d = Math.min(1, Math.abs(centre - half) / (TL.w || 240));
+    const scale = 1 - (1 - TL_SIDE_SCALE) * d;
+    k.style.transform = `scale(${scale.toFixed(3)})`;
+    k.style.opacity = String(1 - 0.55 * d);
+    const card = k.querySelector(".tlcard");
+    if (card) card.style.pointerEvents = d > 0.6 ? "auto" : "auto";
+    k.setAttribute("aria-selected", String(i === TL.i));
+  }
+  // progress rail under the stage
+  const rail = document.querySelector(".tlrailrow i"), lbl = document.querySelector(".tlrailrow b");
+  if (rail) rail.style.width = `${TL.events.length > 1 ? (TL.i / (TL.events.length - 1)) * 100 : 100}%`;
+  if (lbl) lbl.textContent = `${TL.i + 1} / ${TL.events.length}`;
+}
+
+function tlSpringTo(idx) {
+  const from = TL.x, to = tlTarget(idx);
+  const stage = $("#tlStage");
+  if (!stage) return;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || Math.abs(to - from) < 0.5) { TL.x = to; tlLayout(); return; }
+
+  cancelAnimationFrame(TL.settle);
+  let v = 0, x = from;
+  const { stiffness, damping, mass } = TL_SPRING;
+  let last = performance.now();
+  const step = (now) => {
+    const dt = Math.min(0.064, (now - last) / 1000);
+    last = now;
+    // a spring, integrated semi-implicitly: it keeps the flick's momentum as its
+    // initial velocity, so a hard throw overshoots slightly and comes back
+    const a = (-stiffness * (x - to) - damping * v) / mass;
+    v += a * dt;
+    x += v * dt;
+    TL.x = x;
+    tlLayout();
+    if (Math.abs(x - to) < 0.4 && Math.abs(v) < 8) {
+      TL.x = to; tlLayout(); TL.settle = 0; return;
+    }
+    TL.settle = requestAnimationFrame(step);
+  };
+  TL.settle = requestAnimationFrame(step);
+}
+
+function tlGo(i, spring) {
+  const n = TL.events.length;
+  if (!n) return;
+  TL.i = Math.max(0, Math.min(n - 1, i));
+  if (spring) tlSpringTo(TL.i);
+  else { TL.x = tlTarget(TL.i); tlLayout(); }
+}
+
+function tlBind() {
+  const stage = $("#tlStage"), track = $("#tlTrack");
+  if (!stage || !track || stage.dataset.bound === "1") return;
+  stage.dataset.bound = "1";
+
+  let startX = 0, startOffset = 0, downT = 0, moved = false, lastX = 0, lastT = 0;
+
+  const onDown = (e) => {
+    if (e.button != null && e.button !== 0) return;
+    cancelAnimationFrame(TL.settle);
+    TL.dragging = false; moved = false;
+    startX = lastX = e.clientX;
+    startOffset = TL.x;
+    downT = performance.now();
+    lastT = downT;
+    TL.vel = 0;
+    stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
+  };
+
+  const onMove = (e) => {
+    if (!stage.hasPointerCapture || !stage.hasPointerCapture(e.pointerId)) return;
+    const dx = e.clientX - startX;
+    if (!moved && Math.abs(dx) < TL_DRAG_THRESHOLD) return;
+    moved = true;
+    TL.dragging = true;
+    const now = performance.now();
+    const dt = now - lastT;
+    if (dt > 0) TL.vel = (e.clientX - lastX) / dt * 1000;  // px/s, for the flick
+    lastX = e.clientX; lastT = now;
+
+    let x = startOffset - dx;
+    const max = tlMax();
+    // rubber band: past either end, follow the finger at a fraction and ease
+    if (x < 0) x = x * TL_RUBBER;
+    else if (x > max) x = max + (x - max) * TL_RUBBER;
+    TL.x = x;
+    tlLayout();
+  };
+
+  const onUp = (e) => {
+    if (!stage.hasPointerCapture || !stage.hasPointerCapture(e.pointerId)) return;
+    stage.releasePointerCapture && stage.releasePointerCapture(e.pointerId);
+    const wasDrag = TL.dragging;
+    TL.dragging = false;
+
+    if (!wasDrag) {
+      // a press that never moved is a click on whichever card it landed on
+      const ev = e.target.closest && e.target.closest(".tlev");
+      const i = ev ? Number(ev.dataset.i) : null;
+      if (Number.isFinite(i)) tlGo(i, true);
+      else if (!Number.isFinite(i)) tlGo(TL.i, true);
+      return;
+    }
+
+    // a flick coasts for as many events as its velocity earns, capped, then the
+    // position is snapped to that event and the spring does the settle
+    const per = TL.w * TL_SIDE_SCALE + TL.w * 0.22;
+    const earned = Math.max(-TL_FLICK_MAX, Math.min(TL_FLICK_MAX, (-TL.vel * TL_FLICK) / (per || 240)));
+    let target = Math.round(TL.i + Math.sign(TL.x - tlTarget(TL.i)) * 0 + earned);
+    // settle to the nearest event to wherever the drag actually stopped
+    let best = TL.i, bestD = Infinity;
+    for (let i = 0; i < TL.events.length; i++) {
+      const d = Math.abs(tlTarget(i) - TL.x);
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    target = Math.max(0, Math.min(TL.events.length - 1, best + Math.round(earned)));
+    TL.i = target;
+    tlSpringTo(target);
+  };
+
+  stage.addEventListener("pointerdown", onDown);
+  stage.addEventListener("pointermove", onMove);
+  stage.addEventListener("pointerup", onUp);
+  stage.addEventListener("pointercancel", onUp);
+
+  stage.addEventListener("keydown", (e) => {
+    let i = TL.i;
+    if (e.key === "ArrowRight") i += 1;
+    else if (e.key === "ArrowLeft") i -= 1;
+    else if (e.key === "Home") i = 0;
+    else if (e.key === "End") i = TL.events.length - 1;
+    else return;
+    e.preventDefault();
+    tlGo(i, true);
+  });
+
+  // a click on a veiled neighbour focuses it; the card itself is the button
+  track.addEventListener("click", (e) => {
+    if (TL.dragging) return;
+    const ev = e.target.closest && e.target.closest(".tlev");
+    if (!ev) return;
+    const i = Number(ev.dataset.i);
+    if (Number.isFinite(i) && i !== TL.i) tlGo(i, true);
+  });
+
+  window.addEventListener("resize", () => { if (TL.events.length) tlLayout(false); });
+}
+
+function renderTimeline() {
+  tlBuild();
+  // the rail is markup, not generated per event: one bar and one counter
+  const root = $("#tline");
+  if (root && !root.querySelector(".tlrailrow")) {
+    const row = document.createElement("div");
+    row.className = "tlrailrow";
+    row.innerHTML = '<div class="tlrail"><i></i></div><b></b>';
+    const hint = root.querySelector(".tlhint");
+    root.insertBefore(row, hint);
+  }
+  if (TL.events.length) tlLayout(false);
+}
+
 function renderPager(pages, total, start, shown) {
   const box = $("#pager");
   if (!box) return;
