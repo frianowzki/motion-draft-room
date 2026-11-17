@@ -8,8 +8,9 @@ Signal definitions (all derived from PUBLIC data only — positions and rank del
 which Motion publishes every 4 hours; nothing here is insider information):
 
   d4h          current delta, as published by Motion (rank change vs 4h baseline)
-  d24h         position change over ~24h of our own snapshots
-  d72h         position change over ~72h of our own snapshots
+  d24h         position change over the 24h ending at the newest window we hold,
+               counted on published windows only (null until 24h is covered)
+  d72h         same over 72h (null until 3 days are covered)
   acceleration d4h now minus the mean d4h of the previous snapshots
   volatility   stdev of d4h across our snapshots
   heat         how active the creator's rank has been (movement volume)
@@ -28,7 +29,7 @@ from __future__ import annotations
 import json
 import statistics
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -71,6 +72,33 @@ def index_deltas(snaps: list[dict]) -> dict[str, list[int]]:
     return series
 
 
+def _parse_asof(s: str) -> datetime:
+    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+
+
+def moves_over(snaps: list[dict], hours: int) -> dict[str, int]:
+    """creator name -> rank change over the window that ENDS at the newest window.
+
+    The window that ends at the latest `asOf` and starts at `asOf - hours`. Only
+    published windows are counted, so three 4-hour windows are what a 12-hour span
+    actually holds; if the span is not covered the creator is simply absent from
+    the result (and the field stays null) instead of borrowing a shorter move.
+    Positive = climbed, matching the sign of the API's own `delta`.
+    """
+    if len(snaps) < 2:
+        return {}
+    snaps = sorted(snaps, key=lambda s: _parse_asof(s["asOf"]))
+    end = _parse_asof(snaps[-1]["asOf"])
+    start = end - timedelta(hours=hours)
+    before = [s for s in snaps if _parse_asof(s["asOf"]) <= start]
+    if not before:
+        return {}
+    base = before[-1]
+    old = {r["name"]: r["position"] for r in base.get("rows", [])}
+    new = {r["name"]: r["position"] for r in snaps[-1].get("rows", [])}
+    return {n: old[n] - new[n] for n in new if n in old}
+
+
 def est_stars(position: int, total: int) -> int:
     """Estimate stars (1-8, the game's real range) from rank percentile.
 
@@ -97,6 +125,8 @@ def build() -> dict:
 
     positions = index_positions(snaps)
     deltas = index_deltas(snaps)
+    moves24 = moves_over(snaps, 24)
+    moves72 = moves_over(snaps, 72)
 
     out_rows = []
     for r in rows:
@@ -105,8 +135,11 @@ def build() -> dict:
         dhist = deltas.get(name, [r["delta"]])
 
         d4h = r["delta"]
-        d24h = phist[0] - phist[-1] if len(phist) >= 2 else None
-        d72h = d24h  # same window until we have >24h of history
+        # Both windows are measured from the newest published asOf backwards, and
+        # only on windows we actually hold. Copying d24h into d72h (the old code)
+        # printed a one-window move under a 3-day label.
+        d24h = moves24.get(name)
+        d72h = moves72.get(name)
         prev = dhist[:-1]
         acceleration = round(d4h - (sum(prev) / len(prev)), 2) if prev else None
         volatility = round(statistics.pstdev(dhist), 2) if len(dhist) > 1 else 0.0
