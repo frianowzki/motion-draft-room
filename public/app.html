@@ -1237,7 +1237,12 @@ function placeCard(anchor) {
   const cardFaceOffset = 72 - 26; // banner height minus the avatar's negative margin
   let top = r.top - cardFaceOffset;
   const maxTop = window.innerHeight - h - pad;
-  if (top > maxTop) top = maxTop;
+  // Near the bottom of the screen there is no room to hang the card beside the
+  // face, so lift it above the avatar rather than sliding it down out of line.
+  if (top > maxTop) {
+    const above = r.top - h + (r.height || 22) - cardFaceOffset;
+    top = above >= pad ? above : maxTop;
+  }
   if (top < pad) top = pad;
   cardEl.style.left = Math.round(left) + "px";
   cardEl.style.top = Math.round(top) + "px";
