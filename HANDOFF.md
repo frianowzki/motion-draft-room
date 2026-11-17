@@ -1,4 +1,4 @@
-# HANDOFF
+# Motion Draft Room — handoff
 
 Terakhir ditulis: 2026-11-17 09:28 UTC (`main` `d5c858f`, `data` `5f2fd3b`,
 live `dpl_7EaBw3myVH1vtA1yEzF6b28s8wL2`). Kalau kamu (agent baru) membaca ini setelah
@@ -6,6 +6,43 @@ live `dpl_7EaBw3myVH1vtA1yEzF6b28s8wL2`). Kalau kamu (agent baru) membaca ini se
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
+
+## 2026-11-17 — board features shipped (main 36e717b, data ffc7b33, live dpl_EW33jvbFB2xYvELQsJdXnnCsH5oX)
+
+**Status signal → badge.** `badges()` renders `<span class="sb STATE"><i></i>word</span>`; six
+states with their own hue in both themes (`.sb.SURGING` … `.sb.STEADY`). Replaces the old
+`.tag` pills in the Signal column.
+
+**MoM → bullet chart.** `bullet(m)` draws a track, a fill sized by `|momentum|`, and a target
+tick at the board average. CSS `.bc` + dark overrides.
+
+**Paging.** 15 rows a page, `PER_PAGE`, `PAGE`, `renderPager()` with numbered buttons,
+prev/next, `1–15 of 79`. Filter changes reset `PAGE = 1`.
+
+**Hover profile card.** `cardHtml()` + `bindCard()`. Opens on `mouseenter` **and** click/focus
+(a touch screen reports `hover:none`, so hover alone was unreachable there). Banner, avatar,
+name, @handle, follower count, social icon links, and a "Draft this pick" button.
+
+**Where profile data comes from — and the rule that gates it.** Motion's leaderboard API has
+**no** handle, avatar, banner or social link: only `id`, `name`, `position`, `delta`. Motion
+*does* serve real avatars at `leaderboard.motion.game/pfp/<id>.jpg`, so every row has a picture.
+Everything beyond that comes from `collector/profiles.py`, which only accepts an X account when
+**all** of these hold: the account is verified, the normalised names contain one another, and it
+clears 1k followers. Single-word Motion names are rejected outright ("Andy" → Andy Cohen).
+Result: **22 of 79** creators resolve. The rest fall back to Motion's avatar + initials and the
+card says it could not confirm an account. Do not relax these checks: guessing produced
+Coffeezilla → an unrelated private account and Mark Cuban → a 3k-follower impostor.
+
+**Plumbing.** `api/profiles.py` mirrors `api/signals.py` against `data/profiles.json`;
+`build.sh` copies it from the data branch into `public/`; the client tries `/api/profiles`
+then `/profiles.json`. The map is published to the `data` branch, which is what the build reads.
+
+**Traps hit while shipping this (all fixed):**
+- The pager container never made it into the template, so the board silently showed only 15 rows.
+- `bindCard()` ran before `appendChild`, so `.ncell` did not exist and every row got a dead listener.
+- fxtwitter returns `website` as `{url, display_url}`; `.toLowerCase()` on it threw inside the
+  card builder, so no card could render. Normalised in the resolver *and* read defensively in the client.
+- Headless Chrome reports `hover:none`, which is why the card was gated behind hover only at first.
 
 ## Sesi 2026-11-17 (paling baru): hero tanpa card, stamp & note dibuang, copy humanized
 
