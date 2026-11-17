@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -140 760 1180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="The book: past lineups stamped with the score the server gave them">
+<rect width="760" height="900" fill="#0d100f"/>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+<text x="48" y="74" font-size="12" letter-spacing="1.8" fill="#5e7a67">THE BOOK</text>
+<text x="48" y="104" font-size="11" fill="#41554a">one receipt per handle per slot</text>
+
+<g transform="translate(48,150)"><rect width="664" height="150" fill="#141816" stroke="#243028"/>
+<text x="22" y="38" font-size="13" fill="#8fa294">@frianowzki</text><text x="530" y="38" font-size="12" fill="#41554a">W-46</text>
+<text x="22" y="74" font-size="16" fill="#e6ece7">nadia.builds · paper.cut.club · yuki.draws</text>
+<text x="22" y="104" font-size="12" fill="#7f9487">73 of 100</text>
+<g transform="translate(468,66) rotate(-9)"><rect width="168" height="46" fill="none" stroke="#3fa86b" stroke-width="2.5"/>
+<text x="84" y="30" text-anchor="middle" font-size="15" letter-spacing="2" fill="#3fa86b">SCORED</text></g></g>
+
+<g transform="translate(48,318)"><rect width="664" height="150" fill="#141816" stroke="#243028"/>
+<text x="22" y="38" font-size="13" fill="#8fa294">@quietmouth</text><text x="530" y="38" font-size="12" fill="#41554a">W-45</text>
+<text x="22" y="74" font-size="16" fill="#e6ece7">moss.audio · ravi.after.hours · half.tone</text>
+<text x="22" y="104" font-size="12" fill="#7f9487">31 of 100</text>
+<g transform="translate(468,66) rotate(-9)"><rect width="168" height="46" fill="none" stroke="#c45a44" stroke-width="2.5"/>
+<text x="84" y="30" text-anchor="middle" font-size="15" letter-spacing="2" fill="#c45a44">SCORED</text></g></g>
+
+<g transform="translate(48,486)" opacity=".45"><rect width="664" height="150" fill="#111413" stroke="#1c2521"/>
+<text x="22" y="38" font-size="13" fill="#6d8175">@lowlight</text><text x="530" y="38" font-size="12" fill="#33443b">W-44</text>
+<text x="22" y="74" font-size="16" fill="#a9b7ad">still.frame.o · glasswing.tt · cold.open</text>
+<text x="22" y="104" font-size="12" fill="#5e7266">58 of 100</text></g>
+
+<g opacity=".2"><g transform="translate(48,654)"><rect width="664" height="150" fill="#111413" stroke="#1c2521"/>
+<text x="22" y="38" font-size="13" fill="#6d8175">@moss</text><text x="530" y="38" font-size="12" fill="#33443b">W-43</text>
+<text x="22" y="74" font-size="16" fill="#a9b7ad">kenji.mp4 · the.other.ana · warm.static</text></g></g>
+</g></svg>
