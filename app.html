@@ -960,6 +960,10 @@ async function loadBook() {
 
 function render() {
   const d = DATA;
+  // a re-render replaces every row, so any open card belongs to an element that
+  // no longer exists — paging or filtering with it up left a stale card pinned
+  // to the screen showing the previous page's creator
+  hideCard();
 
   // ---- stats
   const cr = d.creators;
