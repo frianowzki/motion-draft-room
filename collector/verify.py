@@ -15,8 +15,8 @@ an upper bound: a slot after the newest published window is not owed.
 
 Two more things are explicitly NOT gaps, because crying wolf here trains people to
 ignore the red build:
-  * slots before the first snapshot we ever took - nothing exists to backfill from,
-    and inventing a past window is worse than a short history;
+  * slots before the first snapshot we ever took AND before COLLECTING_SINCE -
+    nothing exists to backfill from, and inventing a past window is worse;
   * slots whose window is still open on the clock - the cron is 4-hourly, so a run
     at 16:05 is inside the 16:00 window and has not failed to record it yet.
 
