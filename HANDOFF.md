@@ -7,6 +7,42 @@ apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
 
+## 2026-11-17 later — curated handles replace guessing (main, live dpl_Ap8u45GYuSdsnxFRzoQVnyuQAL7f)
+
+**75 of 79 creators now have a confirmed X account.** The handles live in
+`collector/curated.py` as a written-down table, each one supplied deliberately and
+still checked against X at build time (account exists, verified, ≥1k followers).
+`resolve()` tries the curated handle first and only falls back to guessing for
+names that are not in the table; guessing kept its old strict gates.
+
+**Four names are deliberately absent** and must stay absent: Zohran Mamdani (two
+plausible accounts, personal vs office), Greg (@greg16676935420 unlinked to rank
+28), Jason (Calacanis likeliest, unconfirmed), Andy (no candidate fits). Their
+cards show Motion's avatar, "rank #N · unverified on X", followers "—" and no
+social links. Do not fill these in by guessing — a wrong face under someone's
+rank is the failure mode this whole design exists to prevent.
+
+Motion often lowercases names (`rasmr`, `greg`) while the table is written
+normally, so `curated_handle()` matches case-folded.
+
+**Cards now use the X avatar and banner, not Motion's photo**, when an account is
+confirmed. Creators with no banner get a tinted wash, because a flat grey block
+reads as a broken image.
+
+**Bugs found and fixed in this stretch, all of which broke the card:**
+- `prof.avatar` was read before the null check, so every *unconfirmed* creator
+  threw mid-build and the card kept showing the previous creator's contents.
+  This is the one that made the fix look done while it was not.
+- `render()` did not hide the card, so paging left a card pinned showing a
+  creator from the previous page.
+- fxtwitter throttles a 79-name walk and a throttled miss is indistinguishable
+  from "no such account" (17 real creators silently dropped); `fetch()` now
+  retries with a widening pause.
+
+**When testing the card, note:** headless Chrome reports `hover:none`, so hover
+cannot open it — click or focus does. Also match rows by exact `.ncell` text;
+`textContent.includes(name)` matches card-body text and other creators' rows.
+
 ## 2026-11-17 — board features shipped (main 36e717b, data ffc7b33, live dpl_EW33jvbFB2xYvELQsJdXnnCsH5oX)
 
 **Status signal → badge.** `badges()` renders `<span class="sb STATE"><i></i>word</span>`; six
