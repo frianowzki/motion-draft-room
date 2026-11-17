@@ -1,9 +1,51 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-17 07:45 UTC (`main` `59a7cc6`, `data` `5f2fd3b`,
-live `dpl_7j6ePDTQxB6GoDUhbXmK6kkbRUwq`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-17 09:28 UTC (`main` `d5c858f`, `data` `5f2fd3b`,
+live `dpl_7EaBw3myVH1vtA1yEzF6b28s8wL2`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+---
+
+## Sesi 2026-11-17 (paling baru): hero tanpa card, stamp & note dibuang, copy humanized
+
+Empat permintaan, semuanya di landing. Tiga pembuangan, satu penyuntingan.
+
+1. **Hero tidak lagi di dalam card.** `.hero-main` sekarang `background:transparent`,
+   `box-shadow:none`, `border-radius:0`, `padding:46px 0 54px`. Mask gradien pada
+   `<h2>` ikut dibuang — dulu gunanya memberi kesan kedalaman di atas card, tanpa
+   card itu cuma membuat huruf bawah kusam. Tiga override mobile disamakan
+   (padding horizontal 0, `justify-content:flex-start`).
+2. **Stempel kesegaran dibuang dari landing.** Span `[data-room-stamp]`, CSS
+   `[data-stale]`, fungsi `ago()`/`paintStamp()`, pemanggilan di `paint()`, dan
+   `setInterval` 60 detik yang membuatnya menua — semuanya hilang. **Catatan:**
+   stempel itu dulu satu-satunya cara pengunjung tahu board-nya ketinggalan ~20 jam
+   (Motion `asOf` mandek). Kalau nanti mau kejujuran itu balik, taruh sebagai satu
+   kalimat diskret dekat board, jangan di header seksi.
+3. **Teks "Scored server-side from the snapshot that closes the window." dibuang**
+   bersama `.hc-note` (CSS-nya juga). Detail implementasi, bukan hal yang dicari
+   pengunjung.
+4. **Copy di-humanize di kedua halaman.** Lede lama "Fantasy sports for creators, on
+   the one dataset Motion actually publishes" — itu pola "the only X that Y",
+   bicara soal kita, bukan soal apa yang pengunjung lakukan. Sekarang: apa yang
+   kamu kerjakan, apa yang dinilai, apa yang tetap tercatat. Judul kartu
+   how-it-works diganti (tiga-tiganya mengikuti pola "X, Y each" / "A and B, or
+   nothing"). `<title>` + meta description landing dan `/app` ditulis ulang
+   memakai kata kerja. Footer `/app` juga. Audit terukur: **nol** hit untuk semua
+   pola AI di 684 kata landing dan 541 kata app.
+
+**Pelajaran:** jangan hapus CSS atau blok JS dengan `str.replace` per baris kalau
+rule-nya multi-baris — saya sempat memotong `.hc-note` di tengah dan menyisakan
+fragmen `font-size:10px;...}` yang menggantung. Ganti satu blok utuh, lalu
+`node --check` semua inline `<script>` untuk memastikan tidak ada pemanggil yatim.
+
+**Riwayat revert:** commit `68bd711`/`a8dc51e`/`f78a177` membatalkan percobaan
+copy+art sebelumnya (foto stok diganti panel SVG, radius 2px). User membatalkannya;
+jangan ulangi tanpa diminta. Commit `d5c858f` di atas adalah yang berlaku sekarang.
+
+**Status jebakan `public/`:** tetap berlaku. `public/` di-gitignore; sumber aset
+dan HTML adalah root repo, `build.sh` yang menyalin. Verifikasi hasil deploy dengan
+curl per file, jangan percaya "deploy sukses".
 
 ---
 
