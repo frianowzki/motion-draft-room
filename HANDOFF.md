@@ -1,12 +1,58 @@
 # HANDOFF
 
-Terakhir ditulis: 2026-11-17 07:20 UTC (`main` `fdd43dc`, `data` `a7c7cdf`, live). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-17 07:45 UTC (`main` `59a7cc6`, `data` `5f2fd3b`,
+live `dpl_7j6ePDTQxB6GoDUhbXmK6kkbRUwq`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
 
-## Sesi 2026-11-17 (paling baru)
+## Sesi 2026-11-17 (paling baru, lanjutan)
+
+**Yang diperbaiki di sesi ini** (semua sudah live dan sudah diverifikasi di produksi):
+
+1. **Tag di "The Room itself" saling tumpang tindih.** SURGING dan COILED
+   mencetak lima nama yang sama persis. Penyebabnya: tag di engine tidak
+   eksklusif (`if`, bukan `elif`), dan COILED justru menuntut `d4h >= 2` —
+   yaitu creator yang *sedang* naik, bukan yang datar. Tag sekarang eksklusif
+   dengan urutan prioritas SURGING → FADE → SLEEPER → QUIET → COILED → STEADY,
+   satu tag per orang. QUIET diuji **sebelum** COILED supaya nama yang benar-benar
+   beku tidak ditelan ember yang lebih lebar. Bukti di produksi: SURGING 8,
+   SLEEPER 10, COILED 32, QUIET 21, STEADY 5, FADE 3, `multi-tag 0`, dan kelima
+   kartu berisi nama berbeda semua.
+
+2. **Tiga lineup saran isinya identik.** `balanced`, `sleeperHeavy`, dan
+   `contrarian` semuanya mengambil dari daftar yang sudah diurut momentum, jadi
+   hasilnya lima nama yang sama. Sekarang tiap pool punya urutan sendiri:
+   balanced = value per bintang, sleeperHeavy = SLEEPER dulu lalu value,
+   contrarian = yang paling turun (`delta4h <= 0`). Terverifikasi 3 dari 3
+   lineup berbeda.
+
+3. **The Room tidak pernah bilang datanya dari kapan.** Sekarang ada stempel di
+   sebelah judul: `board as of 12:00Z · 20 hrs ago · checked 13 hrs ago`.
+   `dataAsOf` = `asOf` Motion untuk snapshot terbaru yang kita pegang,
+   `latestSnapshot` = kapan terakhir kita cek. Kalau jendelanya lebih tua dari
+   dua kali publish (>8 jam), stempelnya berubah warna (`[data-stale]`) — jadi
+   data basi kelihatan basi, tidak dibungkus seolah live. Halaman juga polling
+   `/api/signals` tiap 5 menit dan saat tab kembali fokus, dan waktu relatifnya
+   menua sendiri tiap menit.
+
+4. **Toggle dark/light di mobile dashboard numpuk.** Ini bukan dua toggle —
+   `#themesw` cuma satu. Penyebab asli: rule mobile `button{min-height:44px}`
+   ikut mengenai dua tombol ikon 28px di dalam pill 34px, jadi tingginya jadi
+   44px dan pill membengkak 62x50, ikonnya menabrak knob. Perbaikan: netralkan
+   rule itu untuk switch (`#themesw .tgs-b{min-height:0}`) dan paku tinggi pill
+   (`height:34px;flex:none`). Terukur di 320/360/390/414: pill 62x34, dua tombol
+   28x28, knob pas di ikon aktif. **Yang lama tidak dihapus karena memang tidak
+   pernah ada toggle kedua.**
+
+**Catatan penting buat agent berikutnya:** `data` branch sempat saya rusak di
+tengah sesi — `git reset --hard` lalu `python3 engine/score.py` dijalankan
+sebelum tree-nya bersih, jadi `signals.json` sempat ditulis dari 2 snapshot saja
+dan `verify.py` sempat menandai 8 slot hilang. Sudah pulih (4 snapshot, 4 window,
+verify hijau). **Selalu `ls data/snapshots | wc -l` sebelum dan sesudah
+regenerasi signals.**
+
 
 **Run terjadwal pertama yang sungguhan sudah hijau**: run `44006245905`, `schedule`,
 02:53Z, sukses. Jadi pertanyaan "apakah cron benar-benar jalan" terjawab ya — dan
