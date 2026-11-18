@@ -459,8 +459,9 @@
      name and the ink rank ride on top so the state survives a screenshot at
      phone size. Hover is a half-strength version of the same fill so the two
      states stay related instead of being two unrelated tints. */
-  tr.row:hover td{background:color-mix(in srgb,var(--card-2) 55%,transparent)}
-  tr.row.sel td{background:var(--card-2)}
+  tr.row:hover{background:color-mix(in srgb,var(--card-2) 55%,transparent)}
+  tr.row.sel{background:var(--card-2)}
+  tr.row.sel td{background:transparent}
   tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
   tr.row.sel .name{font-weight:600}
   tr.row.sel .pos{color:var(--ink)}
@@ -941,11 +942,17 @@
     /* five tracks: rank, name/meta, and the + button. The meta cells occupy
        their own columns on the second line so they sit beside each other
        instead of stacking on top of one another in a single grid area. */
+    /* The grid makes every cell its own box, so a filled row would be filled
+       cell by cell - seven rectangles with gutters between them, which reads as
+       a striped band. The fill therefore lives on the <tr> itself, which spans
+       the full width, and the cells stay transparent; the negative inline margin
+       lets the paint reach the card's padding edge so the band has square ends
+       instead of stopping short of the card border. */
     tr.row{display:grid;
       grid-template-columns:26px auto auto minmax(40px,1fr) auto 30px;
       grid-template-areas:"pos name name name name add" "dlt mom stars sig sig add";
       align-items:center;column-gap:7px;row-gap:4px;
-      padding:10px 0;border-top:1px solid var(--line-soft)}
+      padding:10px 8px;margin:0 -8px;border-top:1px solid var(--line-soft)}
     tr.row:first-child{border-top:0}
     tr.row td{border:0!important;padding:0}
     tr.row td:nth-child(1){grid-area:pos;width:auto;align-self:start;padding-top:3px}
