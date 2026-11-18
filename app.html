@@ -11,7 +11,7 @@
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f0f0e">
-<title>Side Door — five creators, five reasons, one grade</title>
+<title>Motion Market — five creators, five reasons, one grade</title>
 <meta name="description" content="Draft five creators from Motion's public leaderboard, write your reasoning, and get scored when the window closes. Every receipt stays public.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +52,9 @@
     --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     --display:'Inter Tight','Inter',-apple-system,sans-serif;
     --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
-    --r-sm:10px; --r-md:18px; --r-lg:28px; --r-pill:100px;
+    /* Market chips and lineup slots are rectangular now, so the pill radius it
+       inherited would round them back into capsules. One token, one shape. */
+    --r-sm:10px; --r-md:18px; --r-lg:28px; --r-pill:6px;
     --acta-line:rgba(17,17,17,.24);
     --acta-line-hi:rgba(17,17,17,.42);
     --acta-hover:rgba(17,17,17,.05);
@@ -282,8 +284,8 @@
     padding:10px;border-radius:20px;background:var(--card);
     -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
     box-shadow:inset 0 0 0 1px var(--line),0 10px 30px -24px rgba(17,17,17,.5)}
-  .rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--faint);padding:4px 10px 8px}
+  .rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;text-align:left;white-space:nowrap;
+    color:var(--faint);padding:4px 10px 8px;display:block}
   /* Ported from beui's animated-sidebar: the selected state is not painted on
      each item — one pill is positioned behind the rail and springs to whichever
      item is active, so the highlight travels instead of blinking. The items keep
@@ -339,13 +341,20 @@
   .rail-item{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:9px 10px;
     border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;
     font-size:12.5px;font-weight:600;letter-spacing:-.01em;cursor:pointer;text-align:left;
-    width:100%;transition:color .2s ease;
+    width:100%;transition:color .26s cubic-bezier(.4,0,.2,1);
     /* the shared `button` rule paints every button with a sunken fill and a 1px
        inset ring. A rail tab is not a button on a page — it is a line of text over
        the pill — so both have to be cleared here or every tab wears the ring and
        the hover fill has nowhere to show up. */
     box-shadow:none}
-  .rail-item[aria-selected="true"]{transition-delay:.1s}
+  /* The delay is only half the story. A tab losing selection used to fall back to a
+     bare `.2s ease` colour transition with no delay, so leaving a tab snapped while
+     entering one eased — the same move looked different depending on direction, and
+     on the way back to Market the label drifted through several greys. Both states
+     now share one duration and one curve, and the delay is symmetrical, so the trip
+     in and the trip out are the same gesture. */
+  .rail-item[aria-selected="true"]{transition:color .26s cubic-bezier(.4,0,.2,1) .1s}
+  .rail-item[aria-selected="false"]{transition:color .26s cubic-bezier(.4,0,.2,1) 0s}
   .rail-item .ic{width:15px;height:15px;flex:none;opacity:.72;transition:opacity .28s ease}
   .rail-item::before{content:"";position:absolute;inset:0;border-radius:12px;
     background:var(--sunken);opacity:0;transition:opacity .18s ease;z-index:-1}
@@ -529,7 +538,7 @@
     color:var(--ink);cursor:pointer;white-space:nowrap;
     --hue:var(--faint);
     transition:color .2s ease,background .2s ease,box-shadow .2s ease}
-  .tab{border-radius:999px;box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  .tab{border-radius:var(--r-pill);box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
   :root[data-theme="dark"] .tab{box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
   .tab:hover{color:var(--ink);background:rgba(17,17,17,.045)}
   :root[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06)}
@@ -1323,7 +1332,7 @@
   .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .f1-social svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
     stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-  .f1-social a[href*="x.com"] svg{width:15px;height:15px}
+  .f1-social a[href*="behance"] svg{width:16px;height:16px}
   .f1-social a[href*="github.com"] svg{width:18px;height:18px}
   .f1-social svg path[fill="currentColor"]{stroke:none}
   :root[data-theme="dark"] .f1-bar p{color:var(--ink)}
@@ -1569,7 +1578,13 @@
 <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 9V5C7 3.89543 7.89543 3 9 3H15C16.10457 3 17 3.89543 17 5V9C17 11.76142 14.76142 14 12 14C9.23858 14 7 11.76142 7 9ZM10 14V16C10 18 7 18 7 21M14 14V16C14 18 17 18 17 21M6 21H18M7 5H5C3.89543 5 3 5.89543 3 7C3 8.10457 3.89543 9 5 9H7M17 5H19C20.10457 5 21 5.89543 21 7C21 8.10457 20.10457 9 19 9H17"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><path d="M8 7C8 9.20914 9.79086 11 12 11C14.20914 11 16 9.20914 16 7C16 4.79086 14.20914 3 12 3C9.79086 3 8 4.79086 8 7ZM6 21C6 17.68629 8.68629 15 12 15C15.31371 15 18 17.68629 18 21"/></symbol>
 <symbol id="i-users" viewBox="0 0 24 24"><path d="M5 7C5 9.20914 6.79086 11 9 11C11.20914 11 13 9.20914 13 7C13 4.79086 11.20914 3 9 3C6.79086 3 5 4.79086 5 7ZM3 21C3 17.68629 5.68629 15 9 15C12.31371 15 15 17.68629 15 21M15 3C17.20914 3 19 4.79086 19 7C19 9.20914 17.20914 11 15 11M16 15C18.76142 15 21 17.68629 21 21"/></symbol>
-<symbol id="i-x" viewBox="0 0 24 24"><path d="M4 20L10 12M14 12L20 4M4 4H8L20 20H16Z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6L18 18M18 6L6 18"/></symbol>
+<!-- icons from Framer's asset library, brought in as symbols so they inherit
+     currentColor like the rest of the set -->
+<symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M 0 0 L 14 0" transform="translate(4 12)" stroke-width="1.5"/><path d="M 0 0 L 6 6 L 0 12" transform="translate(12 6)" stroke-width="1.5"/></symbol>
+<symbol id="i-alert-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M 0 10 C 0 4.477 4.477 0 10 0 C 15.523 0 20 4.477 20 10 C 20 15.523 15.523 20 10 20 C 4.477 20 0 15.523 0 10 Z" transform="translate(2 2)" stroke-width="2"/><path d="M 0 0 L 0 4" transform="translate(12 8)" stroke-width="2"/><path d="M 0 0 L 0.01 0" transform="translate(12 16)" stroke-width="2"/></symbol>
+<symbol id="i-circle-exclamation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M 9 5 L 9 10 M 9 13 L 9.01 13 M 18 9 C 18 13.971 13.971 18 9 18 C 4.029 18 0 13.971 0 9 C 0 4.029 4.029 0 9 0 C 13.971 0 18 4.029 18 9 Z" transform="translate(3 3)" stroke-width="1.5"/></symbol>
+<symbol id="fi-behance" viewBox="0 0 40 40" fill="currentColor"><path d="M 26.868 20.279 C 27.682 21.031 28.77 21.417 29.878 21.347 C 30.746 21.369 31.598 21.106 32.302 20.597 C 32.875 20.226 33.309 19.675 33.535 19.034 L 37.628 19.034 C 37.192 20.862 36.128 22.48 34.62 23.607 C 33.172 24.564 31.462 25.05 29.726 24.996 C 28.486 25.012 27.257 24.78 26.109 24.312 C 25.071 23.881 24.14 23.228 23.381 22.4 C 22.626 21.533 22.045 20.528 21.671 19.442 C 21.252 18.227 21.047 16.948 21.065 15.664 C 21.057 14.401 21.269 13.146 21.692 11.955 C 22.861 8.522 26.111 6.226 29.748 6.265 C 31.057 6.238 32.352 6.544 33.51 7.154 C 34.556 7.726 35.459 8.528 36.151 9.499 C 36.858 10.517 37.364 11.659 37.644 12.866 C 37.951 14.162 38.06 15.496 37.969 16.826 L 25.778 16.826 C 25.679 18.073 26.07 19.311 26.868 20.279 Z M 10.999 0.002 C 12.026 -0.016 13.051 0.089 14.052 0.315 C 14.896 0.498 15.696 0.84 16.411 1.322 C 17.073 1.8 17.596 2.444 17.928 3.188 C 18.31 4.102 18.493 5.087 18.468 6.077 C 18.512 7.165 18.234 8.242 17.667 9.173 C 17.072 10.052 16.25 10.754 15.287 11.205 C 16.594 11.556 17.732 12.361 18.497 13.474 C 19.231 14.653 19.6 16.024 19.557 17.411 C 19.583 18.518 19.353 19.615 18.888 20.62 C 18.458 21.497 17.827 22.261 17.046 22.85 C 16.244 23.434 15.341 23.866 14.381 24.124 C 13.387 24.399 12.36 24.537 11.329 24.533 L 0 24.533 L 0 0.002 Z M 10.627 20.369 C 11.115 20.375 11.603 20.323 12.078 20.212 C 12.512 20.117 12.924 19.939 13.291 19.688 C 13.652 19.439 13.941 19.102 14.136 18.711 C 14.361 18.21 14.465 17.664 14.438 17.118 C 14.538 16.107 14.162 15.107 13.422 14.41 C 12.647 13.842 11.697 13.56 10.737 13.613 L 5.132 13.613 L 5.132 20.369 Z M 32.216 10.948 C 31.526 10.26 30.571 9.903 29.597 9.971 C 28.958 9.946 28.324 10.087 27.756 10.379 C 27.306 10.626 26.909 10.959 26.587 11.358 C 26.301 11.732 26.088 12.156 25.96 12.609 C 25.843 12.986 25.77 13.374 25.744 13.768 L 33.294 13.768 C 33.228 12.742 32.854 11.76 32.219 10.949 Z M 10.346 9.925 C 11.153 9.958 11.947 9.717 12.599 9.241 C 13.23 8.681 13.56 7.852 13.485 7.01 C 13.506 6.526 13.409 6.043 13.203 5.604 C 13.028 5.254 12.756 4.962 12.42 4.762 C 12.079 4.542 11.695 4.394 11.294 4.33 C 10.859 4.245 10.415 4.206 9.972 4.214 L 5.132 4.214 L 5.132 9.947 L 10.346 9.947 Z M 34.232 1.641 L 24.77 1.641 L 24.77 4.052 L 34.232 4.052 Z" transform="translate(1 7)" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-zap" viewBox="0 0 24 24"><path d="M9.375 8.5L6.24505 12.4348C5.74227 13.06686 6.19236 14 7 14H8.25C9.35457 14 10.25 14.89543 10.25 16V19C10.25 19.6612 11.08344 19.95225 11.49505 19.4348L17.75495 11.5652C18.25773 10.93314 17.80764 10 17 10H15.75C14.64543 10 13.75 9.10457 13.75 8V5C13.75 4.3388 12.91656 4.04775 12.50495 4.5652L9.375 8.5Z"/></symbol>
 </defs></svg>
 
@@ -1586,7 +1601,7 @@
   <div class="shell">
   <nav class="rail" id="rail" role="tablist" aria-label="Sections" aria-orientation="vertical">
     <span class="rail-pill" id="railPill" aria-hidden="true"></span>
-    <div class="rail-brand">Side Door</div>
+    <div class="rail-brand">Motion Market</div>
     <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market">
       <svg class="ic"><use href="#i-users"/></svg>Market
       <span class="rail-count" id="railMarket">79</span>
@@ -1652,10 +1667,10 @@
       <div class="slot" id="slot"></div>
       <div class="projline" id="proj"></div>
       <div class="rowbtns">
-        <button id="clearBtn" hidden><svg class="ic"><use href="#i-x"/></svg>Clear</button>
+        <button id="clearBtn" hidden><svg class="ic"><use href="#i-circle-exclamation"/></svg>Clear</button>
         <button class="acta acta-solid" id="lockBtn" disabled aria-label="Lock the lineup">
           <span class="acta-t">Lock lineup</span>
-          <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+          <span class="acta-ic" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"/></svg></span>
         </button>
       </div>
     </div>
@@ -1672,7 +1687,7 @@
       <p class="lb-lead">This is where the players go, not the creators. You will see who
          is out in front this window, how their lineup is built, and what it has already
          paid out.</p>
-      <p class="lb-note">It is not switched on yet. Side Door grades every receipt
+      <p class="lb-note">It is not switched on yet. Motion Market grades every receipt
          it holds, but the standings need a player table the server does not publish
          today — and a scoreboard stitched together by hand would just be a guess wearing
          a rank badge. So the panel stays quiet until the numbers are real.</p>
@@ -1724,7 +1739,7 @@
     <div class="f1-bar">
       <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
       <div class="f1-social">
-        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
+        <a href="https://www.behance.net" target="_blank" rel="noopener" aria-label="Behance"><svg><use href="#fi-behance"/></svg></a>
         <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
         <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
         <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
