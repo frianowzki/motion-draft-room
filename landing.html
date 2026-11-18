@@ -363,10 +363,7 @@
     font-weight:500;color:var(--slab-dim);text-transform:uppercase}
   .room-name{min-width:0;font-size:12px;font-weight:500;color:var(--slab-ink);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .room-numv{font-family:var(--mono);font-size:10.5px;color:var(--slab-dim);
-    font-variant-numeric:tabular-nums}
-  .room-numv.up{color:#3f9d63}
-  .room-numv.down{color:#b45a4f}
+  /* the row is a face and a name: the rank lives in the board, not in the strip */
   .room-row.ph{opacity:.55}
   .room-row.ph .room-name{font-style:italic}
   .room-dots{display:none}
@@ -967,7 +964,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Surging</h4>
               <p class="room-desc">what the board is bidding up right now, ranked by acceleration</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">loading the board…</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">loading the board…</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -982,7 +979,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Coiled</h4>
               <p class="room-desc">flat for days with the crowd gone quiet — the setup, not the move</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -997,7 +994,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Sleeper</h4>
               <p class="room-desc">scored low by the board while the work keeps landing</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1012,7 +1009,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
               <p class="room-desc">thin windows, no story — the honest middle of the board</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1027,7 +1024,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
               <p class="room-desc">momentum leaving faster than the rank shows</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1045,7 +1042,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Steady</h4>
               <p class="room-desc">holding rank — no move either way</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1065,7 +1062,7 @@
     <div class="rail" data-rail>
       <article class="rail-card" data-rail-card data-open role="button" tabindex="0" aria-expanded="true">
         <div class="rail-top">
-          <span class="rail-k">01 &middot; creators tracked</span>
+          <span class="rail-k">creators tracked</span>
         </div>
         <div class="rail-v" id="pCreators"><span class="ph">[—]</span></div>
         <div class="rail-h">every name the board scores</div>
@@ -1073,7 +1070,7 @@
       </article>
       <article class="rail-card" data-rail-card role="button" tabindex="0" aria-expanded="false">
         <div class="rail-top">
-          <span class="rail-k">02 &middot; snapshot windows</span>
+          <span class="rail-k">snapshot windows</span>
         </div>
         <div class="rail-v" id="pSlots"><span class="ph">[—]</span></div>
         <div class="rail-h">windows recorded so far</div>
@@ -1081,7 +1078,7 @@
       </article>
       <article class="rail-card" data-rail-card role="button" tabindex="0" aria-expanded="false">
         <div class="rail-top">
-          <span class="rail-k">03 &middot; update rhythm</span>
+          <span class="rail-k">update rhythm</span>
         </div>
         <div class="rail-v">4h</div>
         <div class="rail-h">between leaderboard windows</div>
@@ -1089,7 +1086,7 @@
       </article>
       <article class="rail-card" data-rail-card role="button" tabindex="0" aria-expanded="false">
         <div class="rail-top">
-          <span class="rail-k">04 &middot; star cap</span>
+          <span class="rail-k">star cap</span>
         </div>
         <div class="rail-v">32</div>
         <div class="rail-h">stars per lineup</div>
@@ -1657,7 +1654,7 @@ fetch("/api/signals", { cache: "no-store" })
         list.innerHTML = '<li class="room-row ph">' +
           '<span class="room-av fb">--</span>' +
           '<span class="room-name">nothing on the board right now</span>' +
-          '<span class="room-numv">--</span></li>';
+          '</li>';
         return;
       }
       // the room is a preview, not the board: five names per signal, ordered by
@@ -1675,8 +1672,7 @@ fetch("/api/signals", { cache: "no-store" })
             initials(nm) + '</span>'
           : '<span class="room-av fb">' + initials(nm) + '</span>';
         return '<li class="room-row">' +
-          face + '<span class="room-name">' + nm + '</span>' +
-          '<span class="room-num' + cls + '">' + num + '</span></li>';
+          face + '<span class="room-name">' + nm + '</span></li>';
       }).join('');
       buildDots(card);
       // faces land in sequence: 5 per card, a card every 120ms, two at a time
