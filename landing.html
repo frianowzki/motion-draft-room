@@ -266,14 +266,20 @@
   .hc-who i{font-style:normal;font-size:13px;font-weight:500;color:var(--hc-dim);
     margin-left:6px;letter-spacing:-.01em}
   .hc-sub{font-size:11px;line-height:1.5;color:var(--hc-dim);margin-top:7px}
-  /* the pill action: what this card is, not a purchase */
-  .hc-act{display:flex;align-items:center;justify-content:center;gap:8px;
-    margin:14px 0 0;padding:10px 14px;border-radius:var(--r-pill);
-    background:var(--hc-ink);color:var(--hc-bg);text-decoration:none;
-    font-size:11.5px;font-weight:500;letter-spacing:-.01em;
-    transition:opacity .2s ease}
-  .hc-act:hover{opacity:.88}
-  .hc-act .ic{font-size:12px}
+  /* The action is the landing's own arrow pill, not a second button language:
+     same shape, same disc, same lean on hover as "Enter the room". Only the
+     colours change, and they come from the card's tokens so light and dark are
+     one block. The pill is what the card is NOT, the disc is what it is. */
+  .pickcard .hc-act{margin:16px 0 0;align-self:flex-start;
+    font-family:var(--sans);font-size:12.5px;font-weight:600;letter-spacing:-.01em;
+    background:var(--pc-ink);color:var(--hc-bg);
+    box-shadow:inset 0 0 0 1px var(--pc-line)}
+  .pickcard .hc-act .acta-ic{background:var(--hc-bg);color:var(--pc-ink)}
+  .pickcard .hc-act:hover{background:var(--pc-ink);
+    box-shadow:inset 0 0 0 1px var(--pc-ink)}
+  :root[data-theme="dark"] .pickcard .hc-act{background:var(--pc-ink);color:#111}
+  :root[data-theme="dark"] .pickcard .hc-act .acta-ic{background:#111;color:var(--pc-ink)}
+  :root[data-theme="dark"] .pickcard .hc-act:hover{background:#fff}
   /* the checked list replaces the four loose rows */
   .hc-rows{list-style:none;margin:16px 0 0;padding:0;display:flex;
     flex-direction:column;gap:9px}
@@ -314,8 +320,7 @@
     align-items:center;justify-content:space-between;padding:20px 0 22px;
     opacity:1;transition:opacity .25s ease}
   .room-card[data-open] .room-strip{opacity:0;pointer-events:none}
-  .room-num{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
-    color:var(--slab-dim)}
+  /* no numbering: the strip carries the signal name alone, top to bottom */
   .room-vt{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);
     font-size:21px;font-weight:500;letter-spacing:-.02em;color:var(--slab-ink);
     white-space:nowrap}
@@ -324,8 +329,6 @@
     padding:18px 20px 18px;opacity:0;pointer-events:none;
     transition:opacity .3s ease .1s}
   .room-card[data-open] .room-open{opacity:1;pointer-events:auto}
-  .room-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .room-top .room-num{color:var(--slab-dim)}
   .room-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
   .room-tag{font-family:var(--mono);font-size:9px;letter-spacing:.09em;
     text-transform:uppercase;padding:5px 9px;border-radius:100px;
@@ -532,13 +535,19 @@
      the landing page looks like a thing the app actually produces. Every colour
      is a --pc-* token so light and dark are one block, not two. */
   .herocard.pickcard{--pc-ink:var(--hc-ink);--pc-dim:var(--hc-dim);
-    --pc-line:rgba(127,127,127,.20);--pc-cell:rgba(127,127,127,.085);
+    --pc-line:rgba(17,17,17,.24);--pc-cell:rgba(127,127,127,.085);
     --pc-rail:var(--up);--pc-up:#1f8a4c;--pc-down:#b4453a;
     padding:18px 18px 16px;
     background:radial-gradient(150% 90% at -12% -30%,rgba(33,120,222,.30) 0%,rgba(33,120,222,.07) 36%,var(--card-glow-end) 64%);
-    border-radius:18px;box-shadow:inset 0 0 0 1px var(--pc-line),0 1px 2px rgba(0,0,0,.04),0 10px 28px -22px rgba(0,0,0,.45)}
+    border-radius:18px;
+    /* one hairline, the same weight on all four sides and in both themes: the
+       shadow's spread is not scaled by the radius, so it reads as a drawn line
+       rather than a soft edge. Light gets ink, dark gets paper. */
+    box-shadow:0 0 0 var(--pc-edge) var(--pc-line) inset,
+      0 1px 2px rgba(0,0,0,.04),0 10px 28px -22px rgba(0,0,0,.45)}
+  .herocard.pickcard{--pc-edge:1px}
   :root[data-theme="dark"] .herocard.pickcard{--pc-ink:#f2f1ee;--pc-dim:#9a978f;
-    --pc-line:rgba(255,255,255,.13);--pc-cell:rgba(255,255,255,.055);
+    --pc-line:rgba(255,255,255,.17);--pc-cell:rgba(255,255,255,.055);
     --pc-up:#7fd6a0;--pc-down:#e88c80}
   .pickcard .pc-kicker{display:flex;align-items:center;gap:7px;margin:0 0 14px;
     font-family:var(--display);font-size:13px;font-weight:500;letter-spacing:-.02em;
@@ -951,14 +960,10 @@
       <div class="room-grid">
         <article class="room-card" data-tag="SURGING" data-open>
           <div class="room-strip" aria-hidden="true">
-            <span class="room-num">01</span>
             <span class="room-vt">Surging</span>
           </div>
           <div class="room-open">
-            <div class="room-top">
-              <span class="room-num">01</span>
-            </div>
-            <div class="room-content">
+                        <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Surging</h4>
               <p class="room-desc">what the board is bidding up right now, ranked by acceleration</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
@@ -970,14 +975,10 @@
         </article>
         <article class="room-card" data-tag="COILED">
           <div class="room-strip" aria-hidden="true">
-            <span class="room-num">02</span>
             <span class="room-vt">Coiled</span>
           </div>
           <div class="room-open">
-            <div class="room-top">
-              <span class="room-num">02</span>
-            </div>
-            <div class="room-content">
+                        <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Coiled</h4>
               <p class="room-desc">flat for days with the crowd gone quiet — the setup, not the move</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
@@ -989,14 +990,10 @@
         </article>
         <article class="room-card" data-tag="SLEEPER">
           <div class="room-strip" aria-hidden="true">
-            <span class="room-num">03</span>
             <span class="room-vt">Sleeper</span>
           </div>
           <div class="room-open">
-            <div class="room-top">
-              <span class="room-num">03</span>
-            </div>
-            <div class="room-content">
+                        <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Sleeper</h4>
               <p class="room-desc">scored low by the board while the work keeps landing</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
@@ -1008,14 +1005,10 @@
         </article>
         <article class="room-card" data-tag="QUIET">
           <div class="room-strip" aria-hidden="true">
-            <span class="room-num">04</span>
             <span class="room-vt">Quiet</span>
           </div>
           <div class="room-open">
-            <div class="room-top">
-              <span class="room-num">04</span>
-            </div>
-            <div class="room-content">
+                        <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
               <p class="room-desc">thin windows, no story — the honest middle of the board</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
@@ -1027,14 +1020,10 @@
         </article>
         <article class="room-card" data-tag="FADE">
           <div class="room-strip" aria-hidden="true">
-            <span class="room-num">05</span>
             <span class="room-vt">Fade</span>
           </div>
           <div class="room-open">
-            <div class="room-top">
-              <span class="room-num">05</span>
-            </div>
-            <div class="room-content">
+                        <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
               <p class="room-desc">momentum leaving faster than the rank shows</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
@@ -1049,14 +1038,10 @@
              disagreed with the app's table -->
         <article class="room-card" data-tag="STEADY">
           <div class="room-strip" aria-hidden="true">
-            <span class="room-num">06</span>
             <span class="room-vt">Steady</span>
           </div>
           <div class="room-open">
-            <div class="room-top">
-              <span class="room-num">06</span>
-            </div>
-            <div class="room-content">
+                        <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Steady</h4>
               <p class="room-desc">holding rank — no move either way</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
@@ -1125,7 +1110,7 @@
       <div class="herocard pickcard" data-tag="SURGING">
         <h2 class="pc-kicker"><svg class="ic"><use href="#i-target"/></svg>Draft a pick</h2>
         <div class="dhero">
-          <h3><span class="ncell"><span class="room-av fb">SM</span>Sable Moreau</span></h3>
+          <h3><span class="ncell"><span class="room-av fb" id="pcAv">--</span><span id="pcName">Sable Moreau</span></span></h3>
           <div class="meta">
             <span class="rank">#4</span>
             <span class="signalPill"><b>SURGING</b></span>
@@ -1155,8 +1140,10 @@
           <span>card &middot; rare &times;1.10</span>
           <b>filed 19:58Z</b>
         </div>
-        <a class="hc-act" href="/app">Read how a call is scored
-          <svg class="ic"><use href="#i-arrow-right"/></svg></a>
+        <a class="hc-act acta acta-sm" href="/app" aria-label="Read how a call is scored">
+          <span class="acta-t">Read how a call is scored</span>
+          <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+        </a>
       </div>
       <div class="rc-side">
         <p class="rc-lede">One page per call. What you believed, what you risked, and what the board said when the window shut.</p>
@@ -1605,8 +1592,61 @@ fetch("/api/signals", { cache: "no-store" })
   // fill from the same payload the app reads. A short signal (coiled and fade
   // have two names today) shows what exists and says so, rather than padding
   // the list with names the board never tagged.
+  // THE CALL CARD is worked from the board, not typed into the markup: the
+  // strongest Surging name of the current window gets its face, rank and move,
+  // so the example cannot drift from the table beside it. The reasoning stays
+  // written by hand - it is the one part the board cannot supply.
+  function paintCall(rows) {
+    var c = rows && rows[0];
+    var nm = document.getElementById('pcName');
+    var av = document.getElementById('pcAv');
+    var rank = document.querySelector('.pickcard .meta .rank');
+    var move = document.querySelector('.pickcard .bigmove');
+    var cells = document.querySelectorAll('.pickcard .kv .cell .v');
+    if (!c) return;
+    var name = (c.name || c.handle || 'unnamed').replace(/[<>&"]/g, '');
+    if (nm) nm.textContent = name;
+    if (av) {
+      av.textContent = initials(name);
+      if (c.id) {
+        var face = new Image();
+        face.onload = function () {
+          face.className = 'room-av';
+          face.alt = '';
+          if (av.parentNode) av.parentNode.replaceChild(face, av);
+        };
+        face.src = PFP + encodeURIComponent(c.id) + '.jpg';
+      }
+    }
+    if (rank) rank.textContent = '#' + (c.position == null ? '--' : c.position);
+    if (move) {
+      var d = typeof c.delta4h === 'number' ? c.delta4h : 0;
+      move.className = 'bigmove ' + (d >= 0 ? 'up' : 'down');
+      move.innerHTML = '<b>' + (d >= 0 ? '+' : '') + d + '</b><span>rank places, last 4h</span>';
+    }
+    // the six evidence cells, in the order the card prints them
+    var vals = [
+      (typeof c.delta24h === 'number' ? (c.delta24h >= 0 ? '+' : '') + c.delta24h : '--'),
+      typeof c.acceleration === 'number' ? c.acceleration.toFixed(2) : '--',
+      typeof c.volatility === 'number' ? c.volatility.toFixed(2) : '--',
+      typeof c.value === 'number' ? c.value.toFixed(1) : '--',
+      typeof c.momentum === 'number' ? c.momentum.toFixed(0) : '--',
+      (c.tags && c.tags[0]) || '--'
+    ];
+    vals.forEach(function (v, k) {
+      if (!cells[k]) return;
+      cells[k].textContent = v;
+      cells[k].className = 'v' + (k === 0 && v.charAt(0) === '+' ? ' up' : '') + (k === 5 ? ' sig' : '');
+    });
+  }
+
   function paint(d) {
     var all = (d && d.creators) || [];
+    (function () {
+      var top = all.filter(function (c) { return c && c.tags && c.tags.indexOf('SURGING') > -1; })
+        .sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
+      paintCall(top);
+    })();
     cards.forEach(function (card, ci) {
       var tag = card.getAttribute('data-tag');
       var rows = all.filter(function (c) {

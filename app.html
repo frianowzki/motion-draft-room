@@ -940,36 +940,6 @@
     border-radius:50%;display:grid;place-items:center;background:var(--ink);
     color:var(--accent-ink);margin-top:1px}
 
-  /* ---- closing bento: four tiles, the wide one carries a huge ghost icon */
-  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0 0}
-  .tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;
-    min-height:168px;padding:18px 18px 16px;border-radius:var(--r-lg);overflow:hidden;
-    background:var(--card);box-shadow:var(--lift);transition:transform .2s ease,box-shadow .2s ease}
-  a.tile{cursor:pointer}
-  a.tile:hover{transform:translateY(-2px);box-shadow:var(--lift),0 12px 26px -18px rgba(17,17,17,.4)}
-  .tile .tag-top{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--faint);display:block;margin-bottom:auto;position:relative;z-index:1}
-  .tile b{display:block;font-family:var(--display);font-size:clamp(19px,1.6vw,24px);
-    font-weight:500;letter-spacing:-.035em;line-height:1.14;margin:14px 0 6px;
-    max-width:17ch;position:relative;z-index:1}
-  .tile .tag-bot{font-size:11px;color:var(--dim);position:relative;z-index:1;max-width:20ch}
-  .tile-ic{position:absolute;right:-10px;bottom:-14px;font-size:96px;color:rgba(17,17,17,.055);
-    pointer-events:none;z-index:0}
-  .tile-ic .ic{width:1em;height:1em;stroke-width:1.3}
-  .t4{background:var(--ink);color:#f8f7f4}
-  .t4 .tag-top{color:rgba(248,247,244,.5)}
-  .t4 .tag-bot{color:rgba(248,247,244,.68)}
-  .t4 b{color:#f8f7f4}
-  .t4 .tile-ic{color:rgba(255,255,255,.09)}
-  .t1{background:linear-gradient(160deg,#e7e5e0,#dedbd4)}
-  .t3{background:linear-gradient(160deg,#eceae6,#e2ded6)}
-  @media(max-width:600px){
-    .gallery{grid-template-columns:1fr;gap:10px}
-    .tile{min-height:132px;border-radius:22px}
-    .tile b{font-size:20px}
-    .tile-ic{font-size:76px;right:-6px;bottom:-10px}
-  }
-
   /* ---- footer: the landing's sign-off, not a card - the same bar, the same
      icons, so the two pages end the same way. Nothing here explains the page. */
   footer{margin-top:24px;padding-top:0}
@@ -1282,12 +1252,7 @@
     </div>
   </div>
 
-  <section class="gallery" aria-label="What is on this page">
-    <a class="tile t1" href="#rows"><span class="tag-top">01 &middot; the board</span><b>79 creators, one number each</b><span class="tag-bot">live from the official API</span><span class="tile-ic"><svg class="ic"><use href="#i-users"/></svg></span></a>
-    <a class="tile t2" href="#detail"><span class="tag-top">02 &middot; the draft</span><b>Thesis and pre-mortem, or nothing</b><span class="tag-bot">reasoning is the submission</span><span class="tile-ic"><svg class="ic"><use href="#i-target"/></svg></span></a>
 
-    <div class="tile t4"><span class="tag-top">04 &middot; the limits</span><b>No invented motion scores</b><span class="tag-bot">stars gate entry, they add no points</span><span class="tile-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span></div>
-  </section>
 
     <!-- Board history closes the page. It answers the question the board cannot -
        what actually moved between windows - and reading it last keeps the order
@@ -1451,25 +1416,14 @@ async function load() {
   }
   // history is a separate read: the board must paint even if it fails, so it is
   // fetched after DATA and the Timeline simply says so when there is nothing yet
-  try {
-    const hr = await fetch("/api/history", { headers: { accept: "application/json" } });
-    if (hr.ok) {
-      const hj = await hr.json();
-      // /api/history names the field "windows"; keep the page's own shape so the
-      // Timeline reads the same object whether it came from the API or a bundle
-      DATA.history = (hj.windows || []).map(w => ({
-        slot: w.slot || w.asOf || w.collectedAt,
-        asOf: w.asOf,
-        collectedAt: w.collectedAt,
-        rows: w.rows || [],
-      }));
-    }
-  } catch (e) {}
+  await refreshHistory();
   if (DATA.rarity && DATA.rarity.assumedBoost) BOOST = DATA.rarity.assumedBoost;
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   if (PROF) DATA.profiles = PROF;
   render();
   BOOTED = true;
+  SIG_FP = JSON.stringify(DATA);
+  HIST_LAST = TL.events ? TL.events.length - 1 : 0;
   bindBar();
   loadBook();
   // the identity card used to be drawn only from load()'s render path, so whichever of
@@ -1480,6 +1434,36 @@ async function load() {
 // The bar goes solid only once there is something under it. A scroll listener on
 // a passive event, read from the layout rather than a magic offset, so it works
 // whatever the board's height turns out to be.
+// ---------- board history: read live, not once
+// The collector writes a new window every four hours, so a page left open on a
+// desk would keep showing the windows it booted with. This pulls /api/history on
+// the same beat the board does, and redraws only when the newest slot or the
+// window count actually changed - a refetch that re-renders every minute would
+// yank the rail back to the newest card while someone is reading an old one.
+let HIST_FP = null;
+async function refreshHistory() {
+  try {
+    const hr = await fetch("/api/history", { headers: { accept: "application/json" }, cache: "no-store" });
+    if (!hr.ok) return false;
+    const hj = await hr.json();
+    // /api/history names the field "windows"; keep the page's own shape so the
+    // Timeline reads the same object whether it came from the API or a bundle
+    const wins = (hj.windows || []).map(w => ({
+      slot: w.slot || w.asOf || w.collectedAt,
+      asOf: w.asOf,
+      collectedAt: w.collectedAt,
+      rows: w.rows || [],
+    }));
+    const fp = wins.length + "|" + (wins.length ? (wins[wins.length - 1].slot || "") : "");
+    const changed = fp !== HIST_FP;
+    HIST_FP = fp;
+    DATA.history = wins;
+    return changed;
+  } catch (e) {
+    return false;
+  }
+}
+
 function bindBar() {
   const bar = document.querySelector(".appbar");
   if (!bar) return;
@@ -2778,6 +2762,39 @@ function lockLineup() {
 // ---------- go
 load();
 loadSession();
+
+// A desk keeps this page open for hours, and the board publishes every four. So
+// the page pulls again on a minute beat, the same beat the landing room uses, and
+// skips the work while the tab is hidden. History rides along: refreshHistory()
+// reports whether anything new arrived, and only then is the timeline redrawn in
+// place - the reader keeps whatever card they were on unless the rail itself
+// grew a new one, in which case it slides to it.
+let SIG_FP = null, HIST_LAST = 0;
+const POLL_MS = 60000;
+async function poll() {
+  if (document.hidden || !DATA) return;
+  try {
+    const r = await fetch("/api/signals", { headers: { accept: "application/json" }, cache: "no-store" });
+    if (r.ok) {
+      const next = await r.json();
+      const sig = JSON.stringify(next);
+      if (sig !== SIG_FP) {
+        SIG_FP = sig;
+        DATA = next;
+        render();
+      }
+    }
+  } catch (e) {}
+  const grew = await refreshHistory();
+  if (grew) {
+    renderTimeline();
+    const last = TL.events.length - 1;
+    if (last > HIST_LAST) tlGo(last, true);
+    HIST_LAST = last;
+  }
+}
+setInterval(poll, POLL_MS);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
 // the CTA under the switch is a shortcut into the board, not a second flow
 document.addEventListener("click", e => {
   const cta = e.target && e.target.closest && e.target.closest("#ctaDraft");
