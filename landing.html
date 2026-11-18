@@ -46,6 +46,17 @@
     --pink:#EB185D;
     --accent:var(--pink);
     --accent-ink:#ffffff;
+    /* the ink/paper pair the two landing CTAs wear, and the pill a room list
+       entry sits in: paper surfaces with ink type in light, ink surfaces with
+       paper type in dark (the dark block below flips both). */
+    --cta-bg:var(--ink);
+    --cta-ink:#ffffff;
+    --pill-bg:#ffffff;
+    --pill-ink:#111111;
+    --pill-line:rgba(17,17,17,.10);
+    /* the scrim the "how it works" photos carry at the foot so the headline
+       reads against any image */
+    --rcard-scrim:#0c0c0b;
     --up:#1d7a44;
     --down:#c0392b;
     --lift:0 1px 0 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(17,17,17,.045);
@@ -73,6 +84,11 @@
     --accent-ink:#ffffff;
     --dim:var(--ink);
     --faint:#7e7c75;
+    --cta-bg:#f3f1ec;
+    --cta-ink:#111111;
+    --pill-bg:#111111;
+    --pill-ink:#ffffff;
+    --pill-line:rgba(255,255,255,.22);
     --up:#4ec27c;
     --down:#e5766a;
     --lift:0 1px 0 0 rgba(255,255,255,.05) inset, 0 1px 2px rgba(0,0,0,.5);
@@ -360,6 +376,15 @@
   .room-scroller{overflow:hidden;min-height:0}
   .room-list{display:flex;flex-direction:column;gap:6px;margin:14px 0 0;padding:0;
     list-style:none}
+  /* one pill per creator, matching the pill tokens of the card it sits in: paper
+     with ink type in light, ink with paper type in dark. */
+  .room-pill{display:inline-flex;align-items:center;gap:8px;max-width:100%;
+    padding:6px 12px 6px 6px;border-radius:var(--r-pill,100px);
+    background:var(--pill-bg);color:var(--pill-ink);
+    box-shadow:inset 0 0 0 1px var(--pill-line)}
+  .room-pill .room-av{width:22px;height:22px}
+  .room-pill .room-name{font-size:12px;line-height:1}
+  .room-pill.ph .room-name{font-style:italic}
   .room-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
     align-items:center;gap:10px;padding:7px 10px;border-radius:11px;
     background:var(--slab-2,rgba(127,127,127,.10))}
@@ -424,16 +449,14 @@
   .rcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
     pointer-events:none;user-select:none;transform:scale(1.035);
     transition:transform .7s cubic-bezier(.2,.75,.2,1)}
-  /* The room cards are the accent now, so the photo sits *inside* a pink frame
-     instead of being the whole card: a wash of the accent over the image keeps the
-     card reading pink while the creator is still visible under it. */
-  .rcard{background:var(--accent)}
+  /* The photo is the card, as it was: a scrim at the foot only, so the headline
+     stays readable and the image is never tinted. `--rcard-scrim` is what makes
+     the same markup white type in light mode and ink type in dark mode. */
   .rcard::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-    background:linear-gradient(color-mix(in srgb,var(--accent) 62%,transparent) 0%,
-      color-mix(in srgb,var(--accent) 34%,transparent) 42%,
-      color-mix(in srgb,var(--accent) 82%,transparent) 100%)}
-  .rcard .shade{position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:var(--accent);opacity:.16}
+    background:linear-gradient(rgba(12,12,11,0) 44%,
+      color-mix(in srgb,var(--rcard-scrim) 72%,transparent) 78%,
+      var(--rcard-scrim) 100%)}
+  .rcard .shade{display:none}
   .rcard:focus-visible{outline:3px solid var(--ink);outline-offset:-5px}
   .rcard-body{position:absolute;inset:0;z-index:3;padding:26px;
     display:flex;flex-direction:column;min-width:0}
@@ -786,30 +809,34 @@
   /* ---- Arrow CTA button (Framer "Arrow CTA Button"): outlined pill whose
      label sits left and whose arrow rides inside a solid disc on the right;
      on hover the disc grows and the arrow leans ---- */
+  /* `--cta-bg`/`--cta-ink` are the ink/paper pair: ink pill with paper type in
+     light, paper pill with ink type in dark. The disc inverts against the pill. */
   .acta{display:inline-flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;
-    border-radius:var(--r-pill);background:var(--accent);color:#fff;
-    box-shadow:inset 0 0 0 1px var(--accent);text-decoration:none;
+    border-radius:var(--r-pill);background:var(--cta-bg);color:var(--cta-ink);
+    box-shadow:inset 0 0 0 1px var(--cta-bg);text-decoration:none;
     font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
     transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content}
   .acta-t{display:block;white-space:nowrap}
   /* the disc is paper and the arrow is the accent, so the arrow always reads
      against its own coin no matter what it is sitting on */
   .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
-    background:#fff;color:var(--accent);transition:transform .28s ease,background .22s ease}
+    background:var(--cta-ink);color:var(--cta-bg);transition:transform .28s ease,background .22s ease}
   .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
     stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
-  .acta:hover{background:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);filter:brightness(1.06)}
+  .acta:hover{background:var(--cta-bg);box-shadow:inset 0 0 0 1px var(--cta-bg);filter:brightness(1.06)}
+  :root[data-theme="dark"] .acta:hover{filter:brightness(.94)}
   .acta:hover .acta-ic{transform:scale(1.08)}
   .acta:hover .acta-ic svg{transform:translateX(2px)}
-  .acta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
   .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
   .acta-sm .acta-ic{width:30px;height:30px}
   .acta-sm .acta-ic svg{width:13px;height:13px}
 
   /* in the dark, the closing slab is paper: the button flips to ink-on-paper so
      it still reads as the strongest thing on the card */
-  :root[data-theme="dark"] .acta{background:var(--accent);color:#fff;box-shadow:inset 0 0 0 1px var(--accent)}
-  :root[data-theme="dark"] .acta-ic{background:#fff;color:var(--accent)}
+  :root[data-theme="dark"] .acta{background:var(--cta-bg);color:var(--cta-ink);
+    box-shadow:inset 0 0 0 1px var(--cta-bg)}
+  :root[data-theme="dark"] .acta-ic{background:var(--cta-ink);color:var(--cta-bg)}
   /* On the closing slab the button takes the colour the slab is NOT, so it keeps
      the highest contrast on the panel in both themes: in light the slab is ink,
      so the button is paper with an ink arrow; in dark the slab is paper, so the
@@ -1012,7 +1039,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Surging</h4>
               <p class="room-desc">what the board is bidding up right now, ranked by acceleration</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">loading the board…</span></li>
+                <li class="room-row"><span class="room-pill ph"><span class="room-av fb">--</span><span class="room-name">loading the board…</span></span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1027,7 +1054,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Coiled</h4>
               <p class="room-desc">flat for days with the crowd gone quiet — the setup, not the move</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
+                <li class="room-row"><span class="room-pill ph"><span class="room-av fb">--</span><span class="room-name">—</span></span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1042,7 +1069,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Sleeper</h4>
               <p class="room-desc">scored low by the board while the work keeps landing</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
+                <li class="room-row"><span class="room-pill ph"><span class="room-av fb">--</span><span class="room-name">—</span></span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1057,7 +1084,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
               <p class="room-desc">thin windows, no story — the honest middle of the board</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
+                <li class="room-row"><span class="room-pill ph"><span class="room-av fb">--</span><span class="room-name">—</span></span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1072,7 +1099,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
               <p class="room-desc">momentum leaving faster than the rank shows</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
+                <li class="room-row"><span class="room-pill ph"><span class="room-av fb">--</span><span class="room-name">—</span></span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1090,7 +1117,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Steady</h4>
               <p class="room-desc">holding rank — no move either way</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span></li>
+                <li class="room-row"><span class="room-pill ph"><span class="room-av fb">--</span><span class="room-name">—</span></span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1699,10 +1726,10 @@ fetch("/api/signals", { cache: "no-store" })
       }).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
       var list = card.querySelector('.room-list');
       if (!rows.length) {
-        list.innerHTML = '<li class="room-row ph">' +
+        list.innerHTML = '<li class="room-row"><span class="room-pill ph">' +
           '<span class="room-av fb">--</span>' +
           '<span class="room-name">nothing on the board right now</span>' +
-          '</li>';
+          '</span></li>';
         return;
       }
       // the room is a preview, not the board: five names per signal, ordered by
@@ -1719,8 +1746,8 @@ fetch("/api/signals", { cache: "no-store" })
           ? '<span class="room-av fb" data-face="' + PFP + encodeURIComponent(c.id) + '.jpg">' +
             initials(nm) + '</span>'
           : '<span class="room-av fb">' + initials(nm) + '</span>';
-        return '<li class="room-row">' +
-          face + '<span class="room-name">' + nm + '</span></li>';
+        return '<li class="room-row"><span class="room-pill">' +
+          face + '<span class="room-name">' + nm + '</span></span></li>';
       }).join('');
       buildDots(card);
       // faces land in sequence: 5 per card, a card every 120ms, two at a time
