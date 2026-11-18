@@ -219,22 +219,8 @@
   .btn.ghost:hover{background:#fff}
 
   /* ---- hero: text block left, one visual slot right ---- */
-  .hero{display:block;margin-top:84px;position:relative;isolation:isolate}
-  /* Night-sky plate behind the hero type. The Framer component is React +
-     framer-motion, so its behaviour is reproduced here instead of shipping the
-     runtime: a seeded star field that twinkles, plus occasional comets that
-     streak across and fade. Painted only in dark mode - light mode keeps the page
-     as it is - and the canvas is inert under prefers-reduced-motion. */
-  /* the plate is the linked Framer component (vendor/nightsky.js) painting into this
-     layer: fixed to the viewport so the sky keeps moving behind the hero while the
-     page scrolls, masked so it dissolves into the page instead of ending on a seam */
-  .nightsky{position:fixed;left:0;right:0;top:0;height:min(100vh,900px);
-    z-index:-1;pointer-events:none;display:none;opacity:0;
-    -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 62%,transparent 100%);
-    mask-image:linear-gradient(to bottom,#000 0,#000 62%,transparent 100%);
-    transition:opacity .6s ease}
-  :root[data-theme="dark"] .nightsky{display:block;opacity:1}
-  @media(prefers-reduced-motion:reduce){.nightsky{display:none !important}}
+  .hero{display:block;margin-top:84px}
+>>>>>>> parent of 7700545 (landing: a night sky behind the hero in dark mode)
   /* no card: the hero is type on the page, not a box on the page */
   .hero-main{position:relative;padding:46px 0 54px;
     background:transparent;box-shadow:none;border-radius:0;overflow:visible;
@@ -960,7 +946,7 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero">
-    <div class="nightsky" aria-hidden="true"></div>
+>>>>>>> parent of 7700545 (landing: a night sky behind the hero in dark mode)
     <div class="hero-main">
       <div>
         <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
@@ -1844,8 +1830,7 @@ fetch("/api/signals", { cache: "no-store" })
   wide.addEventListener('change', function () { paint(current()); });
   paint(current());
 })();
-
+>>>>>>> parent of 7700545 (landing: a night sky behind the hero in dark mode)
 </script>
-<script defer src="vendor/nightsky.js"></script>
 </body>
 </html>

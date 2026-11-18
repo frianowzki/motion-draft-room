@@ -24,12 +24,6 @@ if [ -d fonts ]; then
   cp -R fonts public/fonts
 fi
 
-# pre-bundled Framer code component (nightsky.js = the linked NightSkyBackground
-# wrapped with react + framer-motion by esbuild; rebuild with npm run sky)
-if [ -d vendor ]; then
-  cp -R vendor public/vendor
-fi
-
 # The repository is private, so the anonymous tarball host answers 404. Use a
 # fine-grained read-only token when the build environment has one; without it the
 # deploy just leans on /api/signals at request time.
