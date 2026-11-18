@@ -32,6 +32,7 @@
     --card:#eceae6;
     --card-2:#e3e1dc;
     --sunken:#f7f6f3;
+    --bc-track:rgba(17,17,17,.09);
     --line:rgba(17,17,17,.10);
     --line-soft:rgba(17,17,17,.07);
     --ink:#111111;
@@ -62,12 +63,17 @@
     --bg:#0f0f0e;
     --card:#191918;
     --card-2:#141413;
-    --sunken:#121211;
+    /* sunken is a well in light and an inset chip in dark, so it has to sit
+       above the card there (#121211 was darker than the card and read as a hole) */
+    --sunken:#232321;
+    --bc-track:rgba(255,255,255,.14);
     --line:rgba(255,255,255,.13);
     --line-soft:rgba(255,255,255,.09);
     --ink:#f3f1ec;
-    --dim:#a9a7a0;
-    --faint:#7e7c75;
+    --dim:#b4b2ab;
+    /* the faint tier carries 9-12px labels; #7e7c75 only reaches ~3.4:1 on the card,
+       which is under AA for text that small, so it is lifted until it clears it */
+    --faint:#95938b;
     --accent:#f3f1ec;
     --accent-ink:#0f0f0e;
     --up:#4ec27c;
@@ -525,11 +531,11 @@
   .stars{color:var(--ink);font-weight:600;white-space:nowrap}
   .stars span{color:var(--faint);font-weight:400;font-size:10px}
   .pill{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:var(--r-pill);
-    background:rgba(255,255,255,.75);color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
+    background:var(--sunken);color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
     white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
   .tag{display:inline-block;font-family:var(--mono);font-size:8px;padding:2px 5px;
     border-radius:4px;margin:1px 3px 1px 0;letter-spacing:.06em;text-transform:uppercase;
-    box-shadow:inset 0 0 0 1px var(--line);color:var(--dim);white-space:nowrap;background:rgba(255,255,255,.5)}
+    box-shadow:inset 0 0 0 1px var(--line);color:var(--dim);white-space:nowrap;background:var(--sunken)}
   .tag.SURGING{color:var(--up);box-shadow:inset 0 0 0 1px rgba(29,122,68,.3);background:rgba(29,122,68,.07)}
   .tag.COILED{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(17,17,17,.24);background:rgba(17,17,17,.05)}
   .tag.SLEEPER{color:var(--cool);box-shadow:inset 0 0 0 1px rgba(58,94,158,.3);background:rgba(58,94,158,.07)}
@@ -560,7 +566,9 @@
 
   /* ---- bullet chart: momentum as a track, a fill and a target tick */
   .bc{position:relative;display:block;width:100%;min-width:60px;height:15px}
-  .bc .track{position:absolute;left:0;right:0;top:5px;height:6px;border-radius:3px;background:rgba(17,17,17,.07)}
+  /* the track is a well in light and a raised ruler in dark; rgba(17,17,17,.07) is
+     invisible on a #191918 card, which left the bars reading as blank cells */
+  .bc .track{position:absolute;left:0;right:0;top:5px;height:6px;border-radius:3px;background:var(--bc-track)}
   .bc .fill{position:absolute;left:0;top:5px;height:6px;border-radius:3px;min-width:3px;background:var(--ink);opacity:.82}
   .bc .target{position:absolute;top:1px;bottom:1px;width:1.5px;background:var(--ink);opacity:.34;border-radius:1px}
   .bc.up .fill{background:var(--up);opacity:1}
@@ -848,7 +856,7 @@
   .kv .v.sig i{width:5px;height:5px;border-radius:2px;display:inline-block;flex:none}
   label{display:block;font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
     letter-spacing:.12em;color:var(--faint);margin:13px 0 6px}
-  input,textarea{width:100%;background:#fff;border:0;border-radius:var(--r-sm);
+  input,textarea{width:100%;background:var(--sunken);border:0;border-radius:var(--r-sm);
     color:var(--ink);font-family:var(--sans);font-size:12.5px;padding:10px 12px;resize:vertical;
     box-shadow:inset 0 0 0 1px var(--line)}
   input::placeholder,textarea::placeholder{color:#a5a29b}
@@ -863,11 +871,11 @@
   .tlstage{touch-action:none}
 
   button{font-family:var(--mono);font-size:11px;padding:9px 15px;border-radius:var(--r-pill);
-    border:0;background:rgba(255,255,255,.85);color:var(--ink);cursor:pointer;
+    border:0;background:var(--sunken);color:var(--ink);cursor:pointer;
     box-shadow:inset 0 0 0 1px var(--line);
     transition:background .16s ease,transform .12s ease,box-shadow .16s ease;
     display:inline-flex;align-items:center;gap:6px;justify-content:center;letter-spacing:.02em}
-  button:hover:not(:disabled){background:#fff}
+  button:hover:not(:disabled){background:var(--card-2)}
   button:active:not(:disabled){transform:translateY(1px)}
   button.primary{background:var(--ink);color:var(--accent-ink);font-weight:500;
     box-shadow:inset 0 0 0 1px var(--ink)}
@@ -889,8 +897,8 @@
   .slot{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
   .slot .s{font-family:var(--mono);font-size:9px;padding:6px 10px;border-radius:var(--r-pill);
     color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-soft);
-    background:rgba(255,255,255,.5);white-space:nowrap}
-  .slot .s.spent{color:var(--ink);background:#fff;
+    background:var(--sunken);white-space:nowrap}
+  .slot .s.spent{color:var(--ink);background:var(--card-2);
     box-shadow:inset 0 0 0 1px var(--line);
     display:inline-flex;align-items:center;gap:5px}
   .slot .s.spent b{font-weight:500;color:var(--ink)}
@@ -903,7 +911,7 @@
 
   /* ---- identity / connect X */
   .idcard{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-md);
-    background:#fff;box-shadow:inset 0 0 0 1px var(--line);margin-bottom:12px}
+    background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line);margin-bottom:12px}
   .idcard .who{min-width:0;flex:1}
   .idcard .h{font-family:var(--mono);font-size:12px;color:var(--ink);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
