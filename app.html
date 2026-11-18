@@ -49,6 +49,9 @@
     --display:'Inter Tight','Inter',-apple-system,sans-serif;
     --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --r-sm:10px; --r-md:18px; --r-lg:28px; --r-pill:100px;
+    --acta-line:rgba(17,17,17,.24);
+    --acta-line-hi:rgba(17,17,17,.42);
+    --acta-hover:rgba(17,17,17,.05);
   }
 
   /* ---- dark theme: same room, lights off. Tokens first, then the few
@@ -73,6 +76,9 @@
     --warm:#d9a24f;
     --ring:0 0 0 1px rgba(255,255,255,.16);
     --lift:0 1px 0 0 rgba(255,255,255,.05) inset, 0 1px 2px rgba(0,0,0,.5);
+    --acta-line:rgba(255,255,255,.26);
+    --acta-line-hi:rgba(255,255,255,.46);
+    --acta-hover:rgba(255,255,255,.07);
   }
   :root[data-theme="dark"] ::selection{background:var(--ink);color:var(--bg)}
   :root[data-theme="dark"] .aura{opacity:.6;
@@ -107,7 +113,9 @@
   :root[data-theme="dark"] .live-dot{box-shadow:0 0 0 3px rgba(255,255,255,.14)}
 
   *{box-sizing:border-box}
-  .backhome{position:fixed;left:14px;bottom:14px;z-index:50;display:inline-flex;
+  /* it used to float over the bottom-left corner and cover the board; as a CTA it
+     belongs in the page flow, under the nav */
+  .backhome{position:relative;display:inline-flex;
     align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
     text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.6);
     -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8);
@@ -1227,11 +1235,75 @@
     .tgs-b svg{width:15px;height:15px}
   }
 
+  /* ---- CTA (same shape as the landing page's arrow button) ----
+     The landing pill is outlined with its arrow on a disc. The dashboard needs it
+     twice: as a way back to the landing page, and on the one action that gives the
+     room something (lock the lineup). Tokens are derived from the page ink so the
+     button follows the theme instead of hardcoding a second palette. */
+  .acta{display:inline-flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;
+    border-radius:999px;background:transparent;color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--acta-line);text-decoration:none;
+    font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
+    transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content;
+    cursor:pointer;border:0;appearance:none}
+  .acta-t{display:block;white-space:nowrap}
+  .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
+    background:var(--ink);color:var(--bg);transition:transform .28s ease,background .22s ease}
+  .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
+    stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
+  .acta:hover{background:var(--acta-hover);box-shadow:inset 0 0 0 1px var(--acta-line-hi)}
+  .acta:hover .acta-ic{transform:scale(1.08)}
+  .acta:hover .acta-ic svg{transform:translateX(2px)}
+  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
+  .acta-sm .acta-ic{width:30px;height:30px}
+  .acta-sm .acta-ic svg{width:13px;height:13px}
+  .acta[disabled]{opacity:.42;pointer-events:none}
+  .ghosty{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;
+    background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--acta-line);
+    font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;border:0;
+    transition:background .2s ease,box-shadow .2s ease}
+  .ghosty:hover{background:var(--acta-hover);box-shadow:inset 0 0 0 1px var(--acta-line-hi)}
+  .ghosty svg,.ghosty .ic{width:13px;height:13px}
+  .backhome.acta{margin:2px 0 14px;color:var(--dim);z-index:1}
+  .backhome.acta:hover{color:var(--ink)}
+  .backhome.acta .acta-ic{background:var(--ink);color:var(--bg)}
+  :root[data-theme="dark"] .backhome.acta{background:transparent;color:var(--dim)}
+  :root[data-theme="dark"] .backhome.acta:hover{background:var(--acta-hover);color:var(--ink)}
+  .acta.acta-solid{background:var(--ink);color:var(--bg);
+    box-shadow:inset 0 0 0 1px transparent}
+  .acta.acta-solid .acta-ic{background:var(--bg);color:var(--ink)}
+  .acta.acta-solid:hover{background:var(--ink);filter:brightness(1.14);
+    box-shadow:inset 0 0 0 1px transparent}
+  @media (max-width:640px){
+    .acta{font-size:13px;padding:6px 6px 6px 20px;gap:10px}
+    .acta-ic{width:32px;height:32px}
+  }
+
+  /* ---- footer: pinned, not parked at the end of the page ----
+     The desk view is one screen of board, and the footer used to live somewhere
+     below it, so it only appeared to anyone who scrolled. It is now fixed to the
+     bottom edge; the page reserves the same height at the end so the last card can
+     still be read and never hides underneath it. Left/bottom only, so the phone's
+     URL bar and the desktop scrollbar can't shift it. */
+  body{padding-bottom:calc(var(--fbar-h,52px) + env(safe-area-inset-bottom,0px))}
+  footer{position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:color-mix(in srgb, var(--bg) 86%, transparent);
+    -webkit-backdrop-filter:saturate(140%) blur(14px);
+    backdrop-filter:saturate(140%) blur(14px);
+    border-top:1px solid var(--line);
+    padding-bottom:env(safe-area-inset-bottom,0px)}
+  footer .f1-bar{padding:12px 0}
+  @media (max-width:640px){
+    footer .f1-bar{padding:9px 0}
+  }
+
 </style>
 </head>
 <body>
-<a class="backhome" href="/" aria-label="Back to the landing page">
-  <svg class="ic" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Motion Draft Room
+<a class="backhome acta acta-sm" href="/" aria-label="Back to the landing page">
+  <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12H6M11.5 18.5 5 12l6.5-6.5"/></svg></span>
+  <span class="acta-t">Landing Page</span>
 </a>
 <div class="aura" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
@@ -1344,18 +1416,21 @@
 
 
   <div class="under">
+    <div class="card identity" style="margin-top:14px">
+      <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
+      <div id="whoBody"></div>
+    </div>
     <div class="card" style="margin-top:14px">
       <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
       <div class="slot" id="slot"></div>
       <div class="projline" id="proj"></div>
       <div class="rowbtns">
         <button id="clearBtn" hidden><svg class="ic"><use href="#i-x"/></svg>Clear</button>
-        <button class="primary" id="lockBtn" disabled><svg class="ic"><use href="#i-lock"/></svg>Lock lineup</button>
+        <button class="acta acta-solid" id="lockBtn" disabled aria-label="Lock the lineup">
+          <span class="acta-t">Lock lineup</span>
+          <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+        </button>
       </div>
-    </div>
-    <div class="card identity" style="margin-top:14px">
-      <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
-      <div id="whoBody"></div>
     </div>
     <!-- Your own record. The full book stays public at /api/receipts, but a player
          reads their own positions here first: what is pending, what it settled at,
@@ -1396,6 +1471,17 @@
 </div>
 
 <script>
+// the footer is pinned, so the page has to know how tall it is: a two-row bar on a
+// phone is taller than one on a desk, and the body reserves exactly that much.
+function measureFooter(){
+  const f = document.querySelector("footer"); if (!f) return;
+  document.documentElement.style.setProperty("--fbar-h", Math.round(f.offsetHeight) + "px");
+}
+measureFooter();
+addEventListener("resize", measureFooter, {passive:true});
+addEventListener("orientationchange", () => setTimeout(measureFooter, 120));
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureFooter);
+
 const CAP = 32, SIZE = 5;
 // Rarity drives the Score Boost in the real formula. Motion publishes the formula
 // and the tier order, not the multipliers - so the UI shows the boost it is using
@@ -1539,7 +1625,8 @@ async function load() {
   SIG_FP = JSON.stringify(DATA);
   HIST_LAST = TL.events ? TL.events.length - 1 : 0;
   bindBar();
-  loadBook();
+  loadBook();          // redraws both the public book and the receipts card
+
   // the identity card used to be drawn only from load()'s render path, so whichever of
   // the two finished last could leave it empty; draw it with the session it is waiting on
   renderWho();
@@ -1593,17 +1680,40 @@ function bindBar() {
 
 // ---------- public receipt book
 let BOOK = null, BOOK_ERR = null;
+// BOOK_TRIES drives a short retry: a cold lambda or a dropped packet should not
+// leave the card saying the book is gone for the rest of the visit. Three attempts,
+// then it waits for the minute beat, which retries anything that failed.
+let BOOK_TRIES = 0, BOOK_BUSY = false, LAST_BOOK = null;
 async function loadBook() {
+  if (BOOK_BUSY) return;           // the poll and the post-lock refresh can collide
+  BOOK_BUSY = true;
   try {
-    const r = await fetch("/api/receipts", { headers: { accept: "application/json" }, cache: "no-store" });
-    if (!r.ok) throw new Error("HTTP " + r.status);
-    BOOK = await r.json();
-    BOOK_ERR = null;
-  } catch (e) {
-    BOOK = null;
-    BOOK_ERR = e.message || "unreachable";
+    let last = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const r = await fetch("/api/receipts", { headers: { accept: "application/json" }, cache: "no-store" });
+        if (!r.ok) throw new Error(r.status === 404 ? "offline" : r.status === 401 ? "sign-in expired" : "HTTP " + r.status);
+        BOOK = await r.json();
+        LAST_BOOK = BOOK;
+        BOOK_ERR = null; BOOK_TRIES = 0;
+        last = null;
+        break;
+      } catch (e) {
+        last = e; BOOK_TRIES++;
+        if (attempt < 2) await new Promise(r => setTimeout(r, 400 * (attempt + 1)));
+      }
+    }
+    // A failed attempt must not blind the card for the rest of the visit: the last
+    // good book stays on screen with a stale note, and the minute beat keeps trying.
+    if (last) {
+      BOOK_ERR = last.message || "no response";
+      BOOK = LAST_BOOK;
+    }
+  } finally {
+    BOOK_BUSY = false;
   }
   renderBook();
+  renderMine();     // the receipts card reads the same object and used to lag a beat behind
 }
 
 // Split a figure into prefix, digits and suffix so a count-up can animate the
@@ -2460,7 +2570,7 @@ function cardHtml(c) {
     ? ` style="background-image:url('${esc(prof.banner)}')"`
     : "";
   const followers = prof
-    ? `<div class="stat"><b>${prof.followers >= 1000 ? (prof.followers / 1000).toFixed(prof.followers >= 10000 ? 0 : 1) + "K" : prof.followers}</b><span>followers on X</span></div>`
+    ? `<div class="stat" title="${esc(String(prof.followers))} followers"><b>${shortNum(prof.followers)}</b><span>followers on X</span></div>`
     : `<div class="stat"><b>—</b><span>no verified X account matched</span></div>`;
   const handleLine = prof ? `<div class="hd">@${esc(prof.handle)}</div>` : `<div class="hd">rank #${c.position} · unverified on X</div>`;
   return `<button class="cardx" type="button" data-close="1" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
@@ -2744,11 +2854,35 @@ function renderLineup() {
   const h = handle();
   const lb = $("#lockBtn");
   lb.disabled = PICKS.length !== SIZE || !h;
-  lb.innerHTML = icon("lock") + (!h && PICKS.length === SIZE
-    ? "Connect X to lock"
-    : `Lock lineup (${PICKS.length}/${SIZE})`);
+  ctaLabel(lb, lockLabel(h));
   lb.onclick = lockLineup;
   renderWho();
+}
+
+// The landing CTA is a label plus a disc, so its label is a child span rather than
+// the button's text; writing textContent here would delete the arrow.
+// Counts on X are read at a glance, so they shorten to K and M — and a million
+// keeps three decimals, because the difference between 3.3M and 4.18M is the whole
+// point of showing the number. Flooring stops a near-miss reading as a bigger
+// number than it is (399,999 must not print as 400K when it is 399K).
+function shortNum(n) {
+  const v = Number(n);
+  if (!isFinite(v) || v < 0) return "—";
+  const cut = (x, d) => (Math.floor(x * 10 ** d) / 10 ** d);
+  if (v >= 1e9) return cut(v / 1e9, 2).toString().replace(/\.0+$/, "") + "B";
+  if (v >= 1e6) return cut(v / 1e6, 3).toString().replace(/\.0+$/, "") + "M";
+  if (v >= 1e3) return cut(v / 1e3, 1).toString().replace(/\.0$/, "") + "K";
+  return String(Math.round(v));
+}
+
+function ctaLabel(btn, text) {
+  if (!btn) return;
+  const t = btn.querySelector(".acta-t");
+  if (t) t.textContent = text; else btn.textContent = text;
+}
+function lockLabel(h) {
+  if (!h && PICKS.length === SIZE) return "Connect X to lock";
+  return `Lock lineup (${PICKS.length}/${SIZE})`;
 }
 
 function renderWho() {
@@ -2820,8 +2954,15 @@ function renderMine() {
     return;
   }
   if (!BOOK) {
-    state.textContent = "";
-    box.innerHTML = `<div class="empty">The book is unreachable (${esc(BOOK_ERR || "no response")}), so your positions cannot be read right now.</div>`;
+    // "unreachable" told the reader nothing. The card names what failed, says the
+    // retry is already running, and keeps the manual way out one click away.
+    state.textContent = "offline";
+    box.innerHTML = `<div class="empty">
+        The book did not answer just now${BOOK_ERR ? ` (${esc(BOOK_ERR)})` : ""} — nothing is lost, the page keeps trying every minute.
+        <button class="ghosty" id="mineRetry" type="button" style="margin-top:10px">${icon("layers")}Try again</button>
+      </div>`;
+    const rb = $("#mineRetry");
+    if (rb) rb.onclick = () => { rb.disabled = true; rb.textContent = "Trying…"; loadBook(); };
     return;
   }
   const all = BOOK.receipts || [];
@@ -2889,7 +3030,7 @@ function renderBook() {
   if (!BOOK) {
     meta.textContent = "";
     const hr0 = $("#hitRate"); if (hr0) hr0.textContent = "—";
-    box.innerHTML = `<div class="empty">The public book is unreachable (${esc(BOOK_ERR || "no response")}). This browser cannot file or score receipts right now.</div>`;
+    box.innerHTML = `<div class="empty">The book could not be read just now (${esc(BOOK_ERR || "no response")}). Retrying on the next beat — nothing has been lost.</div>`;
     return;
   }
   const s = BOOK.summary || {};
@@ -3003,7 +3144,7 @@ function lockLineup() {
     picks: PICKS.map(p => ({ name: p.name, positionAtLock: p.position, estStars: p.estStars, rarity: p.rarity, thesis: p.thesis, premortem: p.premortem })),
   };
   const btn = $("#lockBtn");
-  btn.disabled = true; btn.textContent = "Filing…";
+  btn.disabled = true; ctaLabel(btn, "Filing…");
   fetch("/api/receipts", { method: "POST", headers: { "content-type": "application/json" },
       credentials: "same-origin", body: JSON.stringify(body) })
     .then(async r => {
@@ -3053,6 +3194,9 @@ async function poll() {
       }
     }
   } catch (e) {}
+  // a book that failed to load is retried on the same minute beat, so a cold start
+  // or a dropped packet repairs itself without a reload
+  if (!BOOK) loadBook();
   const grew = await refreshHistory();
   if (grew) {
     renderTimeline();
