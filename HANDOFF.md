@@ -1,11 +1,56 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 09:40 UTC (`main` `ecb9083`, live `dpl_5SFVTDJDcbXvfrweEaW7fGtSAHPn`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 11:15 UTC (`main` `bfdae61`, live `dpl_At7vqE6yimSY5ASb415MmknyhWpU`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
 
+## 2026-11-18 — dashboard mobile: stats jadi marquee, board 5 per halaman (main bfdae61)
+
+Diminta frian: di mobile, bar stats jadi **satu baris** yang bergerak, dan list
+creator **maksimal 5 per halaman** dengan pagination yang "simple but elegant".
+
+**Stats.** Markup lama (grid `.tally`) dibungkus jadi satu `.track` berisi dua
+`.stat-grp` identik; yang kedua `aria-hidden`. CSS desktop memakai
+`display:contents` pada `.track`/`.stat-grp` supaya tallies tetap jadi anak
+langsung grid — **tanpa ini keenam angka menumpuk satu kolom**, karena track
+jadi satu grid item. Di HP `.stats` jadi band ber-overflow-hidden dengan mask
+gradient di tepi, animasi `statscroll` menggeser -50% (seam tidak kelihatan).
+Kecepatan dihitung dari lebar sendiri: `--mdr = (scrollWidth/2)/6` detik, jadi
+selalu ~6px/detik berapa pun panjang angkanya. Tahan jari → atribut
+`data-paused` → `animation-play-state:paused`. `prefers-reduced-motion` mematikan
+animasi, menyembunyikan grup duplikat, dan `.stats` jadi `overflow-x:auto`.
+
+**Board.** `PER_PAGE_PHONE = 5`, `perPageNow()` = satu-satunya jawaban "berapa
+baris satu halaman" dan dipakai render, pager, dan fit-check, sehingga
+"10 of 79" tidak mungkin nongol di bawah halaman 5 baris. Pager HP:
+`PREV · 7 / 16 · NEXT` (flex, pill outline) + 5 titik yang jendelanya bergeser
+(`pageWindow()`; `···` untuk lompatan), titik aktif jadi pill 18px.
+Desktop tetap 10 baris dan tombol angka `‹ 1 2 … 8 ›`.
+
+**Dua bug yang ketemu saat verifikasi (jangan diulang):**
+1. `let cardEl = …` dulu dideklarasikan **setelah** `render()`, padahal
+   `render()` memanggil `hideCard()` yang membaca `cardEl` → temporal dead zone
+   → seluruh dashboard mati ("Cannot access 'cardEl' before initialization").
+   Deklarasinya sekarang dipindah dekat `PER_PAGE`, di atas `render()`.
+2. `matchMedia().matches` yang dibaca saat load bisa "desktop" walau nanti di
+   layar HP. Sekarang `PHONE_MQ` + listener `change`, plus resize/orientation
+   debounce (`refitSoon`) yang reset `PAGE = 1` dan render ulang.
+   `scrollWidth` juga 0 kalau diukur di frame yang sama saat markup ditulis —
+   ukur di `requestAnimationFrame`.
+
+**Cara ukur marquee di harness:** kalau tab `document.visibilityState` =
+`hidden` (banyak tab sisa sesi sebelumnya), animasi CSS **tidak tick** dan
+`getAnimations()[0].currentTime` tetap 0. Tutup tab lain + `Target.activateTarget`
+dulu, baru ukur drift `getBoundingClientRect().x` antar detik.
+
+Verifikasi produksi (390×844, `https://motion-draft-room.vercel.app/app`):
+5 baris/halaman, `1 / 16` dengan 5 titik, drift 18px per 3 detik (=6px/s),
+`scrollWidth == innerWidth`, PREV/NEXT pindah halaman dengan benar; md5
+`public/app.html` == live `/app`.
+
+---
 ## 2026-11-18 — art baru di section How it works (main ecb9083)
 
 Tiga gambar dari frian menggantikan art lama, **berurutan** sesuai langkahnya:
