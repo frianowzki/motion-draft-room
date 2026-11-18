@@ -154,6 +154,8 @@
   .themesw svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;
     stroke-linecap:round;stroke-linejoin:round;display:block}
   html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
+  /* the root starts from the same paper, so the fade has nothing to travel through */
+  html{background-color:var(--bg)}
   @media (prefers-reduced-motion:reduce){
     html.theming,html.theming body{transition:none}
     .themesw button{transition:none}
@@ -161,6 +163,10 @@
 
   *,*::before,*::after{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
+  /* the canvas is painted too, not just the body: while the theme cross-fades,
+     the body is half-way between the two papers, and an unpainted html showed
+     through as a light frame around a page that has not finished changing */
+  html{background:var(--bg)}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
     font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility}
@@ -220,7 +226,6 @@
 
   /* ---- hero: text block left, one visual slot right ---- */
   .hero{display:block;margin-top:84px}
->>>>>>> parent of 7700545 (landing: a night sky behind the hero in dark mode)
   /* no card: the hero is type on the page, not a box on the page */
   .hero-main{position:relative;padding:46px 0 54px;
     background:transparent;box-shadow:none;border-radius:0;overflow:visible;
@@ -946,7 +951,6 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero">
->>>>>>> parent of 7700545 (landing: a night sky behind the hero in dark mode)
     <div class="hero-main">
       <div>
         <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
@@ -1830,7 +1834,6 @@ fetch("/api/signals", { cache: "no-store" })
   wide.addEventListener('change', function () { paint(current()); });
   paint(current());
 })();
->>>>>>> parent of 7700545 (landing: a night sky behind the hero in dark mode)
 </script>
 </body>
 </html>
