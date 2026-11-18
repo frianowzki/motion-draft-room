@@ -576,11 +576,16 @@
      scrolls inside itself. The lineup below is deliberately past the fold — you
      scroll to your own picks once you have made one. */
   @media(min-width:941px){
-    /* the first screen is exactly one viewport tall: stats + filters + the board
-       and draft pair. The lineup card is pushed below it by the min-height, so it
-       is one scroll away and the pair above never has to share room with it. */
-    #v-market > .grid{min-height:calc(100dvh - 168px)}
-    #v-market > .grid > .boardcard > .tablewrap{overflow-y:auto}
+    /* The first screen is exactly one viewport tall, whatever the page size is:
+       stats + filters + the board and draft pair, with the lineup one scroll
+       below. Two pages worth of rows would otherwise stretch the board past the
+       fold and drag the draft panel out of sight with it. Both panels are given
+       their fraction of that height and scroll inside themselves, so the page
+       frame never grows to fit twenty rows. */
+    #v-market > .grid{height:calc(100dvh - 168px);min-height:0}
+    #v-market > .grid > .boardcard,
+    #v-market > .grid > .side{height:100%;min-height:0}
+    #v-market > .grid > .boardcard > .tablewrap{flex:1 1 auto;min-height:0;overflow-y:auto}
     #v-market > .grid > .side > .card.detail{overflow-y:auto}
   }
   @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
@@ -1750,13 +1755,16 @@ const TAGC = { SURGING: "var(--up)", COILED: "var(--warm)", SLEEPER: "var(--cool
 // creator grew the panel, the board grew with it, and the same board showed ten
 // rows before the pick and fourteen after — the pager said 1/8 and then 1/6 for
 // the same list. A fixed page keeps the board's height its own business.
-const PER_PAGE = 15;
+const PER_PAGE = 20;
 // A phone shows five: a page you scroll is not a page, and five rows plus the
 // pager still leaves the draft panel and the timeline within a thumb's reach.
 const PER_PAGE_PHONE = 5;
 // A board row is a fixed 31px (see .row in the stylesheet); the fit check needs
 // that as a number, not as a computed style read on every render.
 const ROW_H = 31;
+// the wrap height the current page was laid out for, so a settled layout can tell
+// that the page it holds was built for a different budget
+let builtForH = 0, repaintQueued = false;
 // The breakpoint these two rules are written against, read live. .matches is
 // checked at call time on purpose: a page that loads before mobile emulation is
 // applied captured "desktop" once and paged ten rows for the whole session.
@@ -2042,18 +2050,31 @@ function countUp() {
   io.observe(box);
 }
 
-// How many rows a page holds. On a desk the board is handed the leftover viewport
-// height so that creators and the draft panel share one screen, which means the
-// page size has to be derived from that height — a fixed fifteen would either
-// scroll inside the card or leave a hole, depending on the window. Measured from
-// the table wrap's own box, never from the row count, so the answer cannot depend
-// on whether a pick is open. Falls back to the counted page if nothing is laid out.
+// How many rows a page holds: a flat twenty on a desk, five on a phone. A short
+// card is fine now — the board sits in the top half of one screen next to the
+// draft panel, and asking it to swallow every spare pixel made each page feel
+// like a wall. Twelve rows is the one exception: below that height the page is
+// trimmed rather than scrolled inside the card, so a laptop in landscape never
+// ends up with a second scrollbar in the middle of the board.
 function rowsPerPage() {
   if (isPhone()) return PER_PAGE_PHONE;
   const wrap = document.querySelector(".boardcard > .tablewrap");
   if (!wrap) return PER_PAGE;
-  const fit = Math.floor((wrap.clientHeight - 6) / ROW_H);
-  return Math.max(6, Math.min(25, fit || PER_PAGE));
+  // The card is a fixed slice of one screen, so the page size is a division, not a
+  // measurement of whatever rows happen to be mounted: the header plus a whole
+  // number of 31px rows. Doing it this way means the answer is the same on the
+  // first paint and on every re-render — measuring the live table made the count
+  // shrink a row at a time as each pass trimmed its own output.
+  const head = wrap.querySelector("thead");
+  const headH = head ? head.getBoundingClientRect().height : 0;
+  // clientHeight is an integer and the rows are exactly ROW_H, so the only slack
+  // needed is for the header's own sub-pixel tail: round it up, not down, or a box
+  // that fits twenty rows exactly loses one to a rounding error.
+  const chrome = Math.ceil(headH);
+  builtForH = wrap.clientHeight;
+  const fit = Math.floor((wrap.clientHeight - chrome) / ROW_H);
+  if (!fit) return PER_PAGE;
+  return Math.min(PER_PAGE, Math.max(6, fit));
 }
 
 function render() {
@@ -2212,8 +2233,23 @@ function paintRail(rail) {
 
   tb.innerHTML = "";
   tb.appendChild(batch);
+  // Now the rows are real, so the card's box is final. If the last one hangs past
+  // the fold the page was one row too generous (the first read can catch the flex
+  // chain mid-settle). Take that row back and paint once more; the guard keeps the
+  // retry from repeating, and the budget only ever shrinks.
   renderPager(pages, list.length, start, slice.length);
-
+  // The first paint can land before the flex chain has given the card its final
+  // height, so the page may have been sized for a box that does not exist yet.
+  // One rAF later the box is settled: if it disagrees, rebuild for the real budget.
+  // The equality guard makes this terminate — the second pass sees its own height.
+  if (!isPhone() && !repaintQueued) {
+    repaintQueued = true;
+    requestAnimationFrame(function () {
+      repaintQueued = false;
+      const wrapNow = document.querySelector(".boardcard > .tablewrap");
+      if (wrapNow && Math.abs(wrapNow.clientHeight - builtForH) > 2) render();
+    });
+  }
 
   renderDetail();
   renderLineup();
