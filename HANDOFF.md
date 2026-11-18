@@ -1,6 +1,6 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 (`main` `6a28bea`, live `dpl_EWzFHL5AXPHZfZP6NrwgokPyXgw4`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 (`main` `936781b`, live `dpl_EWzFHL5AXPHZfZP6NrwgokPyXgw4`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
@@ -47,6 +47,38 @@ di-paint** — kalau tidak, flash-nya balik.
 `setInterval` 25ms mencatat `getComputedStyle(html).backgroundColor ===
 getComputedStyle(body).backgroundColor` per frame. Toggle di landing = `.tgs`, di
 dashboard juga `.tgs` (bukan `.themesw` seperti yang sempat dikira).
+
+**Status submission hari ini.** Semua yang bisa dikerjakan agent untuk Mogathon sudah
+selesai: produk live, docs-parity, OAuth X tersambung (`widyakrnwn`), Supabase menulis
+receipt, book berisi 1 receipt pending. **Yang belum: post submission ke X dengan tag
+@callmogbot — itu harus dari akun X frian sendiri, deadline 19 Nov 2026.** Jangan
+klaim submit sudah jalan.
+
+**Alat lokal yang perlu dihidupkan ulang tiap sesi baru** (VM ini standby 30 menit):
+```sh
+cd /data/workspace/motion-draft-room
+sh build.sh >/dev/null 2>&1            # publikasikan index/app, TAPI menghapus public/api/*
+mkdir -p public/api
+cp /tmp/sig.json public/api/signals; cp /tmp/prof.json public/api/profiles; cp /tmp/hist.json public/api/history
+cp /tmp/sig.json public/signals.json; cp /tmp/prof.json public/profiles.json
+python3 -m http.server 8791 --directory public   # jalankan dengan terminal(background=true)
+```
+`/tmp/sig.json` dkk. hilang kalau VM restart — ambil ulang dari
+`https://motion-draft-room.vercel.app/api/{signals,profiles,receipts}`. Tanpa itu app
+menampilkan "Could not load signals (/signals.json 404)".
+
+**Cek sintaks sebelum deploy** (kedua halaman, script inline terbesar):
+```sh
+python3 - <<'PY'
+import re
+for f,n in (("app.html","appjs"),("landing.html","landjs")):
+    A=open(f).read()
+    open("/tmp/%s.js"%n,"w").write(max(re.findall(r"<script(?![^>]*src)[^>]*>(.*?)</script>",A,re.S),key=len))
+PY
+node --check /tmp/appjs.js && node --check /tmp/landjs.js && echo JS_OK
+```
+Habis itu `./deploy.sh`, lalu ukur di produksi dengan `?v=<tag>` (cache-buster), jangan
+percaya "deploy sukses".
 
 ## 2026-11-18 — receipt book pindah ke Postgres / Supabase (`02b2471`)
 
