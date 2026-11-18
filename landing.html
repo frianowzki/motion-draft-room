@@ -347,11 +347,10 @@
   .room-scroller{overflow:hidden;min-height:0}
   .room-list{display:flex;flex-direction:column;gap:6px;margin:14px 0 0;padding:0;
     list-style:none}
-  .room-row{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;
+  .room-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;
     align-items:center;gap:10px;padding:7px 10px;border-radius:11px;
     background:var(--slab-2,rgba(127,127,127,.10))}
-  .room-rank{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
-    color:var(--slab-dim)}
+
   /* the face: the same /pfp art the official leaderboard serves, so nobody has to
      trust a name string to recognise a creator */
   .room-av{width:24px;height:24px;border-radius:50%;flex:none;object-fit:cover;
@@ -525,6 +524,76 @@
   /* ---- FAQ (empty shells, same disclosure pattern as the app) ---- */
   /* ---- FAQ (Framer "SplitFAQ" port): the open row splits off into its own
      card and the rest close ranks beneath it ---- */
+  /* ---- the example draft card, rebuilt on the dashboard's own anatomy
+     A pick card in the app reads: eyebrow, the creator and their signal rail, the
+     move set large, then a 3x2 evidence grid, then the reasoning, then a rule and
+     a footer. This mirrors that structure and its type scale, so the example on
+     the landing page looks like a thing the app actually produces. Every colour
+     is a --pc-* token so light and dark are one block, not two. */
+  .herocard.pickcard{--pc-ink:var(--hc-ink);--pc-dim:var(--hc-dim);
+    --pc-line:rgba(127,127,127,.20);--pc-cell:rgba(127,127,127,.085);
+    --pc-rail:var(--up);--pc-up:#1f8a4c;--pc-down:#b4453a;
+    padding:18px 18px 16px;
+    background:radial-gradient(150% 90% at -12% -30%,rgba(33,120,222,.30) 0%,rgba(33,120,222,.07) 36%,var(--card-glow-end) 64%);
+    border-radius:18px;box-shadow:inset 0 0 0 1px var(--pc-line),0 1px 2px rgba(0,0,0,.04),0 10px 28px -22px rgba(0,0,0,.45)}
+  :root[data-theme="dark"] .herocard.pickcard{--pc-ink:#f2f1ee;--pc-dim:#9a978f;
+    --pc-line:rgba(255,255,255,.13);--pc-cell:rgba(255,255,255,.055);
+    --pc-up:#7fd6a0;--pc-down:#e88c80}
+  .pickcard .pc-kicker{display:flex;align-items:center;gap:7px;margin:0 0 14px;
+    font-family:var(--display);font-size:13px;font-weight:500;letter-spacing:-.02em;
+    color:var(--pc-ink);text-transform:none}
+  .pickcard .pc-kicker .ic{width:13px;height:13px;color:var(--pc-dim)}
+  .pickcard .dhero{position:relative;padding:0 0 0 13px;margin:0 0 14px}
+  .pickcard .dhero:before{content:"";position:absolute;left:0;top:2px;bottom:2px;
+    width:3px;border-radius:3px;background:var(--pc-rail)}
+  .pickcard .dhero h3{margin:0;font-family:var(--display);font-size:21px;
+    font-weight:500;letter-spacing:-.03em;color:var(--pc-ink);line-height:1.15}
+  .pickcard .ncell{display:flex;align-items:center;gap:9px;min-width:0}
+  .pickcard .room-av{width:26px;height:26px;border-radius:50%;flex:none;display:grid;
+    place-items:center;font-family:var(--mono);font-size:9px;font-weight:500;
+    letter-spacing:.04em;color:var(--pc-dim);background:var(--pc-cell)}
+  .pickcard .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+    margin:8px 0 0;font-family:var(--mono);font-size:10.5px;color:var(--pc-dim)}
+  .pickcard .meta .stars{color:var(--pc-ink);letter-spacing:-1px;font-size:10px}
+  .pickcard .meta .estn{font-variant-numeric:tabular-nums}
+  .pickcard .signalPill{display:inline-flex;align-items:center;padding:2px 7px;
+    border-radius:999px;background:var(--pc-rail);color:#0f0f0e}
+  .pickcard .signalPill b{font-size:8px;font-weight:600;letter-spacing:.08em}
+  .pickcard .bigmove{display:flex;align-items:baseline;gap:8px;margin-top:11px}
+  .pickcard .bigmove b{font-family:var(--display);font-size:29px;line-height:.95;
+    font-weight:500;letter-spacing:-.045em;font-variant-numeric:tabular-nums;
+    color:var(--pc-up)}
+  .pickcard .bigmove span{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--pc-dim)}
+  .pickcard .kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
+    border-radius:12px;overflow:hidden;background:var(--pc-line)}
+  .pickcard .kv .cell{background:var(--pc-cell);padding:9px 10px 10px;min-width:0}
+  .pickcard .kv .k{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;
+    letter-spacing:.1em;color:var(--pc-dim);white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis}
+  .pickcard .kv .v{font-family:var(--mono);font-size:12.5px;margin-top:5px;
+    color:var(--pc-ink);font-variant-numeric:tabular-nums;display:flex;
+    align-items:center;gap:4px}
+  .pickcard .kv .v.up{color:var(--pc-up)}
+  .pickcard .kv .v.sig{font-size:8.5px;letter-spacing:.04em}
+  .pickcard .kv .v.sig i{width:5px;height:5px;border-radius:2px;background:var(--pc-rail)}
+  .pickcard .pc-field{margin-top:12px}
+  .pickcard .pc-field .k{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;
+    letter-spacing:.12em;color:var(--pc-dim)}
+  .pickcard .pc-field p{margin:5px 0 0;font-size:11.5px;line-height:1.5;
+    color:var(--pc-ink)}
+  .pickcard .pc-foot{display:flex;justify-content:space-between;align-items:baseline;
+    gap:10px;margin-top:14px;padding-top:11px;border-top:1px solid var(--pc-line);
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--pc-dim)}
+  .pickcard .pc-foot b{color:var(--pc-ink);font-weight:500}
+  .pickcard .hc-act{margin:12px 0 0;background:var(--pc-ink);color:var(--card-glow-end)}
+  :root[data-theme="dark"] .pickcard .hc-act{color:#141413}
+  @media(max-width:600px){
+    .pickcard .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .pickcard .dhero h3{font-size:19px}
+  }
+
   /* one column now that the explainer is gone — cards stretch to the section */
   .sfaq{margin-top:44px;display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-items:start}
   .sfaq-tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
@@ -574,12 +643,15 @@
   html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   body,button,a{touch-action:manipulation}
 
-  footer{margin-top:34px;padding-top:0}
-  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;
-    flex-wrap:wrap;padding:16px 0 14px;border-top:1px solid var(--line)}
-  .f1-bar p{margin:0;font-size:12px;letter-spacing:-.005em;color:var(--faint)}
+  footer{margin-top:24px;padding-top:0}
+  /* one row at every width, same as the dashboard: the copyright shrinks, the
+     four circles stay put, and the sign-off costs under 50px instead of ~60 */
+  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    flex-wrap:nowrap;padding:9px 0 7px;border-top:1px solid var(--line);min-height:0}
+  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--faint);
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .f1-social{display:flex;gap:9px}
-  .f1-social a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+  .f1-social a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
     color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);background:transparent;
     transition:color .2s ease,box-shadow .2s ease,background .2s ease,transform .2s ease}
   .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
@@ -635,9 +707,10 @@
     .sfaq-points{display:none}
     .sfaq-q{font-size:12.5px;padding:15px 16px}
     .sfaq-a-in{padding-left:16px;padding-right:16px;font-size:12px}
-    .f1-bar{padding:14px 0 10px;gap:14px}
+    .f1-bar{padding:8px 0 6px;gap:10px}
+  .f1-bar p{font-size:9.5px}
     .f1-social{gap:7px}
-    .f1-social a{width:34px;height:34px}
+    .f1-social a{width:28px;height:28px}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -888,7 +961,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Surging</h4>
               <p class="room-desc">what the board is bidding up right now, ranked by acceleration</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">loading the board…</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">loading the board…</span><span class="room-numv">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -907,7 +980,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Coiled</h4>
               <p class="room-desc">flat for days with the crowd gone quiet — the setup, not the move</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -926,7 +999,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Sleeper</h4>
               <p class="room-desc">scored low by the board while the work keeps landing</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -945,7 +1018,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
               <p class="room-desc">thin windows, no story — the honest middle of the board</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -964,7 +1037,7 @@
               <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
               <p class="room-desc">momentum leaving faster than the rank shows</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
-                <li class="room-row ph"><span class="room-rank">01</span><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
               </ol></div></div>
               <div class="room-dots" data-room-dots></div>
             </div>
@@ -1023,25 +1096,44 @@
       <h3>How a call reads</h3>
     </div>
     <div class="receipt">
-      <div class="herocard">
-        <div class="hc-top">
-          <span class="hc-label"><svg class="ic"><use href="#i-receipt"/></svg>call receipt</span>
-          <span class="hc-state">example</span>
+      <!-- the example is built as the dashboard's own draft card: same eyebrow,
+           same signal rail, same move set large, same 3x2 evidence grid, same
+           footer rule - so a reader who has drafted a pick recognises it -->
+      <div class="herocard pickcard" data-tag="SURGING">
+        <h2 class="pc-kicker"><svg class="ic"><use href="#i-target"/></svg>Draft a pick</h2>
+        <div class="dhero">
+          <h3><span class="ncell"><span class="room-av fb">SM</span>Sable Moreau</span></h3>
+          <div class="meta">
+            <span class="rank">#4</span>
+            <span class="signalPill"><b>SURGING</b></span>
+            <span class="stars" title="estimated stars">&#9733;&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="estn">6/32</span>
+          </div>
+          <div class="bigmove up">
+            <b>+7</b><span>rank places, last 4h</span>
+          </div>
         </div>
-        <div class="hc-who">@yourhandle <i>5 picks</i></div>
-        <div class="hc-sub">Filed before the window closed. Graded by the board after it, nothing edited since.</div>
+        <div class="kv">
+          <div class="cell"><div class="k">&Delta; tracked</div><div class="v up">+12</div></div>
+          <div class="cell"><div class="k">Accel</div><div class="v">1.84</div></div>
+          <div class="cell"><div class="k">Volatility</div><div class="v">0.31</div></div>
+          <div class="cell"><div class="k">Value</div><div class="v">0.72</div></div>
+          <div class="cell"><div class="k">Momentum</div><div class="v">86</div></div>
+          <div class="cell"><div class="k">Signal</div><div class="v sig"><i class="s1"></i>SURGING</div></div>
+        </div>
+        <div class="pc-field">
+          <span class="k">Thesis</span>
+          <p>Three positive slots back to back and nobody above him is holding.</p>
+        </div>
+        <div class="pc-field">
+          <span class="k">Pre-mortem</span>
+          <p>A bigger account posts tonight and pushes him four places down.</p>
+        </div>
+        <div class="pc-foot">
+          <span>card &middot; rare &times;1.10</span>
+          <b>filed 19:58Z</b>
+        </div>
         <a class="hc-act" href="/app">Read how a call is scored
           <svg class="ic"><use href="#i-arrow-right"/></svg></a>
-        <ul class="hc-rows">
-          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>thesis + pre-mortem</span><b>filed</b></li>
-          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>star total</span><b>24 / 32</b></li>
-          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>window close</span><b>20:00Z</b></li>
-          <li class="hc-row"><svg class="ic ck"><use href="#i-check"/></svg><span>rank after</span><b class="up">+3</b></li>
-        </ul>
-        <div class="hc-foot">
-          <span>score boost &middot; 1.0&times;</span>
-          <b>24 pts</b>
-        </div>
       </div>
       <div class="rc-side">
         <p class="rc-lede">One page per call. What you believed, what you risked, and what the board said when the window shut.</p>
@@ -1499,13 +1591,15 @@ fetch("/api/signals", { cache: "no-store" })
       }).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
       var list = card.querySelector('.room-list');
       if (!rows.length) {
-        list.innerHTML = '<li class="room-row ph"><span class="room-rank">--</span>' +
+        list.innerHTML = '<li class="room-row ph">' +
           '<span class="room-av fb">--</span>' +
           '<span class="room-name">nothing on the board right now</span>' +
           '<span class="room-numv">--</span></li>';
         return;
       }
-      list.innerHTML = rows.slice(0, 5).map(function (c, i) {
+      // every creator the board tagged, not a top-five slice: the room has to
+      // read the same board the app's table does, all 79 of them
+      list.innerHTML = rows.map(function (c, i) {
         var m = typeof c.momentum === 'number' ? c.momentum : null;
         var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
         var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
@@ -1517,7 +1611,7 @@ fetch("/api/signals", { cache: "no-store" })
           ? '<span class="room-av fb" data-face="' + PFP + encodeURIComponent(c.id) + '.jpg">' +
             initials(nm) + '</span>'
           : '<span class="room-av fb">' + initials(nm) + '</span>';
-        return '<li class="room-row"><span class="room-rank">0' + (i + 1) + '</span>' +
+        return '<li class="room-row">' +
           face + '<span class="room-name">' + nm + '</span>' +
           '<span class="room-num' + cls + '">' + num + '</span></li>';
       }).join('');
@@ -1554,8 +1648,11 @@ fetch("/api/signals", { cache: "no-store" })
       });
   }
 
+  // The board publishes a window every four hours, so a minute's poll is plenty
+  // and keeps the room within one window of the app's table - a tab left open
+  // overnight wakes up to the same rows the dashboard shows.
   load();
-  setInterval(function () { if (!document.hidden) load(); }, 5 * 60 * 1000);
+  setInterval(function () { if (!document.hidden) load(); }, 60 * 1000);
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden) load();
   });

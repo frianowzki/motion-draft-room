@@ -286,11 +286,13 @@
      their signal dot and their count, the active one lifts on a frosted thumb and
      takes its own hue as a ring and a tint. Colour does the telling, so the rail
      reads at a glance in either theme without a legend. */
-  .tabs{display:inline-flex;align-items:center;gap:2px;margin:12px 0 10px;padding:3px;
-    border-radius:var(--r-pill);
-    background:rgba(255,255,255,.5);
-    box-shadow:inset 0 0 0 1px rgba(17,17,17,.07),0 1px 2px rgba(17,17,17,.04);
-    -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+  /* Each filter is its own pill: the outer oval read as one big bordered
+     control and made the row look like a segmented widget. Without it every tab
+     carries its own hairline chip and the active one is the only thing that
+     fills - the gap between pills does the grouping on its own. */
+  .tabs{display:inline-flex;align-items:center;gap:6px;margin:12px 0 10px;padding:0;
+    border-radius:0;background:none;box-shadow:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none;
     max-width:100%;overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
   /* on a phone six options cannot fit, so the rail fades at its right edge: that
@@ -299,22 +301,23 @@
   .tabs.atrail{-webkit-mask-image:var(--mask);mask-image:var(--mask)}
   .tabs.atboth{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 26px),transparent 100%);
     mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 26px),transparent 100%)}
-  :root[data-theme="dark"] .tabs{background:rgba(255,255,255,.055);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 1px 2px rgba(0,0,0,.25)}
+  :root[data-theme="dark"] .tabs{background:none;box-shadow:none}
   .tab{position:relative;display:inline-flex;align-items:center;gap:6px;
     font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
     padding:7px 11px;border:0;border-radius:var(--r-pill);background:none;
     color:var(--dim);cursor:pointer;white-space:nowrap;
     --hue:var(--faint);
     transition:color .2s ease,background .2s ease,box-shadow .2s ease}
+  .tab{border-radius:999px;box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  :root[data-theme="dark"] .tab{box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
   .tab:hover{color:var(--ink);background:rgba(17,17,17,.045)}
   :root[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06)}
   /* the active filter: a raised thumb tinted with its own signal colour, ringed in
      the same hue. In light mode the tint is 12% of the hue so the label stays ink;
      in dark mode 22% because the page under it is nearly black. */
   .tab.on{color:var(--ink);font-weight:600;
-    background:color-mix(in srgb,var(--hue) 12%,#fff);
-    box-shadow:0 1px 2px rgba(17,17,17,.1),inset 0 0 0 1px color-mix(in srgb,var(--hue) 40%,transparent)}
+    background:color-mix(in srgb,var(--hue) 14%,#fff);
+    box-shadow:0 1px 2px rgba(17,17,17,.08),inset 0 0 0 1px color-mix(in srgb,var(--hue) 55%,transparent)}
   :root[data-theme="dark"] .tab.on{background:color-mix(in srgb,var(--hue) 22%,#111);
     box-shadow:0 1px 2px rgba(0,0,0,.4),inset 0 0 0 1px color-mix(in srgb,var(--hue) 48%,transparent)}
   .tab.on:hover{background:color-mix(in srgb,var(--hue) 16%,#fff)}
@@ -338,7 +341,7 @@
   .tab.zero:hover{opacity:.7}
   .tab:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   @media(max-width:640px){
-    .tabs{display:flex;width:100%;margin:10px 0 9px}
+    .tabs{display:flex;width:100%;margin:10px 0 9px;gap:6px}
     .tab{padding:7px 8px;font-size:8.5px;letter-spacing:.03em;gap:4px}
     .tab b{font-size:8px;padding:1px 4px}
   }
@@ -417,6 +420,10 @@
     #pager{padding-top:10px;gap:6px}
     .pager .pinfo{display:none}
   }
+  /* the counter under the pager repeated numbers the board header already
+     carries, and on a phone it pushed the arrows off their line - it is hidden
+     at every width rather than only on the desk */
+  .pager .pinfo{display:none}
   /* the wrap takes whatever height the row has left over, and the table inside
      grows with it: otherwise the leftover space sits inside the card as a hole
      between the last row and the pager */
@@ -482,6 +489,16 @@
   /* a hairline of card colour between ring and photo keeps the ring from
      touching the image on light themes where line and photo are both dark */
   tr.row.sel .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--ink)}
+  /* a creator already in the lineup carries a white card edge in dark mode.
+     Paint the four cell edges instead of the <tr>: a border on a row inside a
+     collapsed table gets dropped by Chrome, and a 1000px inset shadow bleeds
+     over the neighbouring rows. */
+  :root[data-theme="dark"] tr.row.picked > td{box-shadow:inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked > td:first-child{box-shadow:inset 1px 0 0 #fff,inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked > td:last-child{box-shadow:inset -1px 0 0 #fff,inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked + tr.row > td{box-shadow:inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px #fff}
+  :root[data-theme="dark"] tr.row.picked .name .tag{box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
@@ -761,6 +778,15 @@
     background:var(--ink);opacity:.6;border-radius:2px;transition:width .3s ease}
   .tlrailrow b{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;
     color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* the step buttons are the mouse user's swipe: bare glyphs, no chrome, so
+     they read as part of the rail rather than two more controls */
+  .tlstep{flex:none;width:22px;height:22px;display:grid;place-items:center;padding:0;
+    border:0;border-radius:6px;background:none;color:var(--faint);cursor:pointer;
+    box-shadow:none;transition:color .15s ease,background .15s ease}
+  .tlstep .ic{width:13px;height:13px}
+  .tlstep:hover{color:var(--ink);background:var(--card-2)}
+  .tlstep:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+  .tlstep[data-end="1"]{opacity:.32;pointer-events:none}
   @media(max-width:640px){
     .tlstage{height:186px}
     .tlev{padding:0 5px}
@@ -773,6 +799,13 @@
   /* the pick opens on a hero block: a rail in the creator's signal colour down the
      left, name and rank, then the move itself set large. It answers "why him"
      before the form asks for anything. */
+  /* in dark mode the draft card's own edge has to read white: the old hairline
+     sat within a shade of the card fill and the panel dissolved into the page,
+     which made a tracked creator look like it had no boundary at all */
+  :root[data-theme="dark"] .grid > .side > .card.detail{box-shadow:inset 0 0 0 1px rgba(255,255,255,.66),
+    0 1px 2px rgba(0,0,0,.4),0 18px 44px -28px rgba(0,0,0,.7)}
+  :root[data-theme="dark"] .grid > .side > .card.detail.dragover{box-shadow:inset 0 0 0 2px #fff,
+    0 1px 2px rgba(0,0,0,.4)}
   .detail .dhero{position:relative;padding:0 0 0 13px;margin:0 0 13px}
   .detail .dhero:before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:3px;
     border-radius:3px;background:var(--rail)}
@@ -939,12 +972,17 @@
 
   /* ---- footer: the landing's sign-off, not a card - the same bar, the same
      icons, so the two pages end the same way. Nothing here explains the page. */
-  footer{margin-top:34px;padding-top:0}
-  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;
-    flex-wrap:wrap;padding:14px 0 10px}
-  .f1-bar p{margin:0;font-size:12px;letter-spacing:-.005em;color:var(--faint)}
+  footer{margin-top:24px;padding-top:0}
+  /* The bar is two things on a phone - the copyright and four circles - and
+     stacking them bought nothing but height. It stays one row at every width:
+     the line shrinks, the circles keep their size, and the whole footer lands
+     under 50px instead of the ~60 it took when it was allowed to wrap. */
+  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    flex-wrap:nowrap;padding:8px 0 6px;min-height:0}
+  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--faint);
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .f1-social{display:flex;gap:9px}
-  .f1-social a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+  .f1-social a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
     color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
     transition:color .16s ease,box-shadow .16s ease,transform .16s ease}
   .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
@@ -958,9 +996,10 @@
   :root[data-theme="dark"] .f1-social a{color:#cfccc5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
   :root[data-theme="dark"] .f1-social a:hover{color:#0f0f0e;background:#f4f3f0;box-shadow:none}
   @media(max-width:600px){
-    .f1-bar{padding-bottom:26px;gap:14px}
-    .f1-social{gap:7px}
-    .f1-social a{width:34px;height:34px}
+    .f1-bar{padding:7px 0 5px;gap:10px}
+    .f1-bar p{font-size:9.5px}
+    .f1-social{gap:6px}
+    .f1-social a{width:28px;height:28px}
   }
 
   /* ---- mobile: the promise is "one tap, no signup" - so make targets tappable */
@@ -1226,17 +1265,6 @@
     </div>
   </div>
 
-  <!-- The timeline sits directly under the board: it answers the question the
-       board cannot, which is "what actually moved between windows", and it reads
-       left-to-right in the same direction as the rank column above it. -->
-  <section class="card tline" id="tline" aria-label="Board history">
-    <h2><svg class="ic"><use href="#i-clock"/></svg>Board history <span class="pill" id="tlCount"></span></h2>
-    <div class="tlstage" id="tlStage" role="group" aria-label="Snapshots, newest last"
-         tabindex="0" aria-describedby="tlHint">
-      <div class="tltrack" id="tlTrack"></div>
-    </div>
-    <p class="tlhint" id="tlHint">Drag, or use the arrow keys, to walk the windows.</p>
-  </section>
 
   <div class="under">
     <div class="card" style="margin-top:14px">
@@ -1261,7 +1289,20 @@
     <div class="tile t4"><span class="tag-top">04 &middot; the limits</span><b>No invented motion scores</b><span class="tag-bot">stars gate entry, they add no points</span><span class="tile-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span></div>
   </section>
 
-  <footer>
+    <!-- Board history closes the page. It answers the question the board cannot -
+       what actually moved between windows - and reading it last keeps the order
+       of work intact: board, draft, lineup, identity, then the record. It sits
+       directly above the footer with nothing between them. -->
+  <section class="card tline" id="tline" style="margin-top:0" aria-label="Board history">
+    <h2><svg class="ic"><use href="#i-clock"/></svg>Board history <span class="pill" id="tlCount"></span></h2>
+    <div class="tlstage" id="tlStage" role="group" aria-label="Snapshots, newest last"
+         tabindex="0" aria-describedby="tlHint">
+      <div class="tltrack" id="tlTrack"></div>
+    </div>
+    <p class="tlhint" id="tlHint">Use &larr; &rarr; to walk the windows, or scroll and drag.</p>
+  </section>
+
+<footer>
     <div class="f1-bar">
       <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
       <div class="f1-social">
@@ -2001,6 +2042,7 @@ function tlGo(i, spring) {
   TL.i = Math.max(0, Math.min(n - 1, i));
   if (spring) tlSpringTo(TL.i);
   else { TL.x = tlTarget(TL.i); tlLayout(); }
+  if (TL.syncSteps) TL.syncSteps();
 }
 
 function tlBind() {
@@ -2078,6 +2120,9 @@ function tlBind() {
   stage.addEventListener("pointerup", onUp);
   stage.addEventListener("pointercancel", onUp);
 
+  // Walking the windows should not require a drag. A mouse user has no swipe,
+  // so arrows on the stage, a wheel/trackpad flick, and the two buttons beside
+  // the rail all do the same one-step move.
   stage.addEventListener("keydown", (e) => {
     let i = TL.i;
     if (e.key === "ArrowRight") i += 1;
@@ -2088,6 +2133,42 @@ function tlBind() {
     e.preventDefault();
     tlGo(i, true);
   });
+
+  let wheelAcc = 0, wheelT = 0, wheelLock = false;
+  stage.addEventListener("wheel", (e) => {
+    // only take over when the gesture is sideways or clearly a flick, so a
+    // vertical page scroll over the strip still scrolls the page
+    const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) && Math.abs(e.deltaY) < 18) return;
+    e.preventDefault();
+    const now = performance.now();
+    if (now - wheelT > 260) wheelAcc = 0;
+    wheelT = now;
+    if (wheelLock) return;
+    wheelAcc += dx;
+    if (Math.abs(wheelAcc) < 40) return;
+    wheelAcc = 0;
+    wheelLock = true;
+    setTimeout(() => { wheelLock = false; }, 230);
+    tlGo(TL.i + (dx > 0 ? 1 : -1), true);
+  }, { passive: false });
+
+  // Bound on the section rather than on the buttons themselves: the rail row is
+  // painted after the first render, so binding the nodes here would miss them.
+  const tline = $("#tline");
+  if (tline) tline.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".tlstep");
+    if (!b) return;
+    e.preventDefault();
+    tlGo(TL.i + (b.id === "tlNext" ? 1 : -1), true);
+  });
+  const syncSteps = () => {
+    const p = $("#tlPrev"), n = $("#tlNext"), last = TL.events.length - 1;
+    if (p) p.dataset.end = TL.i <= 0 ? "1" : "0";
+    if (n) n.dataset.end = TL.i >= last ? "1" : "0";
+  };
+  TL.syncSteps = syncSteps;
+  syncSteps();
 
   // a click on a veiled neighbour focuses it; the card itself is the button
   track.addEventListener("click", (e) => {
@@ -2112,7 +2193,9 @@ function renderTimeline() {
   if (root && !root.querySelector(".tlrailrow")) {
     const row = document.createElement("div");
     row.className = "tlrailrow";
-    row.innerHTML = '<div class="tlrail"><i></i></div><b></b>';
+    row.innerHTML = '<button class="tlstep" id="tlPrev" type="button" aria-label="Previous window"><svg class="ic"><use href="#i-chev-l"/></svg></button>'
+      + '<div class="tlrail"><i></i></div><b></b>'
+      + '<button class="tlstep" id="tlNext" type="button" aria-label="Next window"><svg class="ic"><use href="#i-chev-r"/></svg></button>';
     const hint = root.querySelector(".tlhint");
     root.insertBefore(row, hint);
   }

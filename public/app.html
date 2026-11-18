@@ -88,14 +88,13 @@
   :root[data-theme="dark"] button:hover:not(:disabled),
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
-  :root[data-theme="dark"] tr.row:hover td{background:rgba(255,255,255,.04)}
-  :root[data-theme="dark"] tr.row.sel td{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] input,
   :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] input::placeholder,
   :root[data-theme="dark"] textarea::placeholder{color:var(--faint)}
-  :root[data-theme="dark"] .backhome{background:rgba(20,20,19,.92);color:var(--dim)}
-  :root[data-theme="dark"] .backhome:hover{background:rgba(40,40,38,.95);color:var(--ink)}
+  :root[data-theme="dark"] .backhome{background:rgba(24,24,22,.6);color:var(--dim);
+    -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8)}
+  :root[data-theme="dark"] .backhome:hover{background:rgba(44,44,40,.75);color:var(--ink)}
   :root[data-theme="dark"] .rar button.on i{color:rgba(15,15,14,.7)}
   :root[data-theme="dark"] .slot .s.spent{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .tag.COILED{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
@@ -110,10 +109,11 @@
   *{box-sizing:border-box}
   .backhome{position:fixed;left:14px;bottom:14px;z-index:50;display:inline-flex;
     align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.92);
-    backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px var(--line);
+    text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.6);
+    -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.08),0 8px 22px -16px rgba(17,17,17,.5);
     padding:8px 12px 8px 9px;border-radius:var(--r-pill)}
-  .backhome:hover{color:var(--ink);background:#fff}
+  .backhome:hover{color:var(--ink);background:rgba(255,255,255,.8)}
   .backhome .ic{font-size:11px;stroke-width:2}
   ::-webkit-scrollbar{width:9px;height:9px}
   ::-webkit-scrollbar-track{background:#eceae6}
@@ -165,7 +165,37 @@
   /* the dashboard opens on one navbar: the CTA on the left, the theme switch on
      the right, so the numbers start one line below it instead of two */
   .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding-top:10px}
+    padding-top:10px;
+    /* the navbar floats on frosted glass: it sticks to the top of the viewport,
+       blurs whatever slides under it and keeps a hairline of light along its top
+       edge, the way a translucent iOS bar separates itself from content. */
+    position:sticky;top:0;z-index:40;
+    margin:0 -16px;padding:10px 16px;
+    background:rgba(244,243,240,.62);
+    -webkit-backdrop-filter:blur(22px) saturate(1.9);backdrop-filter:blur(22px) saturate(1.9);
+    transition:background .25s ease,box-shadow .25s ease,backdrop-filter .25s ease}
+  /* once content is behind it the bar firms up: glass over a still page is
+     invisible, glass over moving content needs a little more body */
+  .appbar.stuck{background:rgba(244,243,240,.78);
+    box-shadow:0 1px 0 rgba(17,17,17,.07),0 8px 24px -18px rgba(17,17,17,.5)}
+  :root[data-theme="dark"] .appbar{background:rgba(18,18,17,.55)}
+  :root[data-theme="dark"] .appbar.stuck{background:rgba(18,18,17,.74);
+    box-shadow:0 1px 0 rgba(255,255,255,.08),0 8px 24px -18px #000}
+  /* the pills inside the bar are glass too, one step brighter than the bar */
+  .appbar .primary{box-shadow:0 6px 18px -10px rgba(17,17,17,.55)}
+  .appbar .tgs{background:rgba(255,255,255,.5);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.08),0 1px 2px rgba(17,17,17,.05),
+      0 8px 20px -14px rgba(17,17,17,.4)}
+  :root[data-theme="dark"] .appbar .tgs{background:rgba(255,255,255,.08);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.13),0 8px 20px -14px #000}
+  @media(prefers-reduced-transparency:reduce){
+    .appbar,.appbar.stuck{background:var(--card);-webkit-backdrop-filter:none;
+      backdrop-filter:none;box-shadow:0 1px 0 var(--line)}
+  }
+  @media(max-width:640px){
+    .appbar{margin:0 -14px;padding:9px 14px}
+    .appbar .primary{min-height:38px;padding:0 14px;font-size:10px}
+  }
   .appcta{display:flex;margin:0}
   .appcta .primary{min-height:42px;padding:0 18px}
 
@@ -175,6 +205,17 @@
      only structure it needs. */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
     column-gap:22px;row-gap:16px;margin:14px 0 2px;width:100%}
+  /* the marquee lane is a phone device only: on a wide screen .track dissolves so
+     the tallies are the grid's own children. Wrapped, the track was one grid item
+     and the six figures stacked in a single column. */
+  .stats .track,.stats .stat-grp{display:contents}
+  /* the second group exists only to make the phone loop seamless. On a wide
+     screen .track dissolves into the grid, so both copies became grid items and
+     every figure appeared twice — at 1400px the six tallies wrapped into nine
+     columns and two rows. The copy is off on a desk; the phone block below turns
+     it back on. */
+  .stats .stat-grp[aria-hidden]{display:none}
+  .stats .sep{display:none}
   .tally{min-width:0;border-top:1px solid var(--line);padding-top:14px}
   :root[data-theme="dark"] .tally{border-top-width:2px;border-top-color:rgba(255,255,255,.18)}
   /* a figure is one line: flex, not grid. A grid put the ratio's second figure and
@@ -192,12 +233,47 @@
     text-transform:uppercase;letter-spacing:.09em;color:var(--faint);
     line-height:1.35;display:flex;align-items:flex-start;gap:5px}
   .tally .lab .ic{font-size:10px;opacity:.7;flex:none}
+  /* the phone pager shows 3 / 16 on its face; the exact range still goes to a
+     screen reader rather than being dropped */
+  .sronly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  /* ---- on a phone the tally row would cost three rows of height, so it becomes
+     one line that drifts: the same six figures set inline, hatched apart, in a
+     band that pauses under a finger and follows one by scrolling by hand. Two
+     identical tracks sit side by side and slide by exactly half the strip, so the
+     seam never shows and the loop has no jump cut. */
   @media(max-width:640px){
-    .stats{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:14px}
-    .tally .num{font-size:clamp(20px,5.4vw,24px)}
-    .tally .lab{font-size:8px;letter-spacing:.06em}
+    /* on a phone the lane and its two groups stop being "contents" so the track
+       can be one long flex row again */
+    .stats .track{display:flex}
+    .stats .stat-grp{display:flex}
+    .stats .stat-grp[aria-hidden]{display:flex}
+    .stats{display:block;position:relative;overflow:hidden;margin:12px 0 2px;
+      border-radius:13px;background:var(--card);
+      box-shadow:inset 0 0 0 1px var(--line-soft);
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+    .stats .track{display:flex;width:max-content;padding:9px 0;
+      animation:statscroll var(--mdr,42s) linear infinite;will-change:transform}
+    .stats:hover .track,.stats:active .track,.stats[data-paused] .track{animation-play-state:paused}
+    .stat-grp{display:flex;align-items:center;flex:none}
+    .stat-grp .tally{display:flex;align-items:baseline;gap:7px;border:0;padding:0 0 0 15px;
+      white-space:nowrap}
+    .stat-grp .tally .num{font-size:14px;letter-spacing:-.02em}
+    .stat-grp .tally .lab{margin:0;font-size:8.5px;letter-spacing:.08em;white-space:nowrap;
+      display:inline-flex;align-items:baseline;gap:4px}
+    .stat-grp .tally .lab .ic{font-size:9px;opacity:.5}
+    .stat-grp .tally .lab .sub{opacity:.4}
+    /* the hatch between figures: a short 45° rule, not a bullet */
+    .stat-grp .sep{flex:none;width:1px;height:11px;margin-left:15px;
+      background:linear-gradient(180deg,transparent,var(--line),transparent)}
+    @keyframes statscroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+    @media(prefers-reduced-motion:reduce){
+      .stats .track{animation:none}
+      .stats{overflow-x:auto;scrollbar-width:none}
+      .stats .track[aria-hidden]{display:none}
+    }
   }
-  @media(max-width:280px){.stats{grid-template-columns:minmax(0,1fr)}}
 
   /* ---- honest limits */
   .warn{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;
@@ -206,44 +282,77 @@
     color:#6b4a15;font-size:12px;padding:13px 15px;line-height:1.55}
   .warn .ic{font-size:14px;color:var(--warm);margin-top:2.5px;flex:none}
 
-  /* ---- filters: one rail, one thumb. The active filter is a solid pill that
-     slides inside the track, and every option carries its own count so the rail
-     doubles as a read of the board. The legend that used to sit under it is gone:
-     the signals explain themselves in the SIGNAL column. */
-  .tabs{display:inline-flex;align-items:center;gap:2px;margin:12px 0 10px;padding:3px;
-    border-radius:var(--r-pill);background:var(--sunken);max-width:100%;
-    box-shadow:inset 0 0 0 1px var(--line);overflow-x:auto;scrollbar-width:none}
+  /* ---- filters. A quiet glass rail, not a solid one: the options are text with
+     their signal dot and their count, the active one lifts on a frosted thumb and
+     takes its own hue as a ring and a tint. Colour does the telling, so the rail
+     reads at a glance in either theme without a legend. */
+  /* Each filter is its own pill: the outer oval read as one big bordered
+     control and made the row look like a segmented widget. Without it every tab
+     carries its own hairline chip and the active one is the only thing that
+     fills - the gap between pills does the grouping on its own. */
+  .tabs{display:inline-flex;align-items:center;gap:6px;margin:12px 0 10px;padding:0;
+    border-radius:0;background:none;box-shadow:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    max-width:100%;overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{position:relative;display:inline-flex;align-items:center;gap:7px;
-    font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+  /* on a phone six options cannot fit, so the rail fades at its right edge: that
+     edge is the affordance for "there is more", and it scrolls without a scrollbar */
+  .tabs{--mask:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%)}
+  .tabs.atrail{-webkit-mask-image:var(--mask);mask-image:var(--mask)}
+  .tabs.atboth{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 26px),transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 26px),transparent 100%)}
+  :root[data-theme="dark"] .tabs{background:none;box-shadow:none}
+  .tab{position:relative;display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
     padding:7px 11px;border:0;border-radius:var(--r-pill);background:none;
     color:var(--dim);cursor:pointer;white-space:nowrap;
-    transition:color .18s ease,background .18s ease}
-  :root[data-theme="dark"] .tab{color:var(--ink);opacity:.82}
-  :root[data-theme="dark"] .tab:hover{opacity:1}
-  :root[data-theme="dark"] .tab.on{opacity:1}
-  .tab:hover{color:var(--ink)}
-  .tab.on{background:var(--ink);color:var(--accent-ink);font-weight:600}
-  /* the count: a small tabular chip that inverts with the pill */
-  .tab .tl{display:inline-flex;align-items:center}
+    --hue:var(--faint);
+    transition:color .2s ease,background .2s ease,box-shadow .2s ease}
+  .tab{border-radius:999px;box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  :root[data-theme="dark"] .tab{box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
+  .tab:hover{color:var(--ink);background:rgba(17,17,17,.045)}
+  :root[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06)}
+  /* the active filter: a raised thumb tinted with its own signal colour, ringed in
+     the same hue. In light mode the tint is 12% of the hue so the label stays ink;
+     in dark mode 22% because the page under it is nearly black. */
+  .tab.on{color:var(--ink);font-weight:600;
+    background:color-mix(in srgb,var(--hue) 14%,#fff);
+    box-shadow:0 1px 2px rgba(17,17,17,.08),inset 0 0 0 1px color-mix(in srgb,var(--hue) 55%,transparent)}
+  :root[data-theme="dark"] .tab.on{background:color-mix(in srgb,var(--hue) 22%,#111);
+    box-shadow:0 1px 2px rgba(0,0,0,.4),inset 0 0 0 1px color-mix(in srgb,var(--hue) 48%,transparent)}
+  .tab.on:hover{background:color-mix(in srgb,var(--hue) 16%,#fff)}
+  :root[data-theme="dark"] .tab.on:hover{background:color-mix(in srgb,var(--hue) 26%,#111)}
+  /* the count: a hairline chip, tabular, quiet until its row is active */
+  .tab .tl{display:inline-flex;align-items:center;gap:5px}
   .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
-    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.07);color:var(--faint);
-    font-variant-numeric:tabular-nums;transition:background .18s ease,color .18s ease}
-  .tab:hover b{background:rgba(17,17,17,.11);color:var(--dim)}
-  .tab.on b{background:rgba(255,255,255,.22);color:var(--accent-ink)}
-  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.09);color:var(--faint)}
-  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.14);color:var(--dim)}
-  :root[data-theme="dark"] .tab.on b{background:rgba(0,0,0,.22);color:var(--accent-ink)}
-  /* the dot in front of a signal name carries its palette colour, so the filter
-     reads at a glance without a legend to spell it out */
-  .tab i{width:5px;height:5px;border-radius:2px;display:block;flex:none;opacity:.9}
-  .tab.on i{opacity:1}
+    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.06);color:var(--faint);
+    font-variant-numeric:tabular-nums;transition:background .2s ease,color .2s ease}
+  .tab:hover b{background:rgba(17,17,17,.1);color:var(--dim)}
+  .tab.on b{background:color-mix(in srgb,var(--hue) 22%,#fff);color:var(--ink)}
+  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.08);color:var(--faint)}
+  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.12);color:var(--dim)}
+  :root[data-theme="dark"] .tab.on b{background:color-mix(in srgb,var(--hue) 30%,#111);color:var(--ink)}
+  /* the dot carries the signal's palette colour. An empty count fades the whole
+     option rather than showing a zero with a live dot beside it. */
+  .tab i{width:5px;height:5px;border-radius:50%;display:block;flex:none;
+    background:var(--hue);opacity:.9}
+  .tab.on i{opacity:1;box-shadow:0 0 0 2.5px color-mix(in srgb,var(--hue) 22%,transparent)}
+  .tab.zero{opacity:.45}
+  .tab.zero:hover{opacity:.7}
+  .tab:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   @media(max-width:640px){
-    .tabs{display:flex;width:100%;margin:10px 0 9px}
-    .tab{padding:7px 9px;font-size:9px}
+    .tabs{display:flex;width:100%;margin:10px 0 9px;gap:6px}
+    .tab{padding:7px 8px;font-size:8.5px;letter-spacing:.03em;gap:4px}
+    .tab b{font-size:8px;padding:1px 4px}
+  }
+  @media(max-width:400px){
+    .tab{padding:7px 6px;font-size:8px;letter-spacing:0;gap:3px}
+  }
+  @media(prefers-reduced-transparency:reduce){
+    .tabs{background:var(--sunken);-webkit-backdrop-filter:none;backdrop-filter:none}
   }
 
-  /* ---- layout: board is the big tile, the column beside it stacks */
+/* ---- layout: board is the big tile, the column beside it stacks */
   /* stretch, not start: the draft column has to be exactly as tall as the board
      beside it, otherwise the two tiles end at different heights */
   .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:12px;align-items:stretch}
@@ -280,6 +389,41 @@
      the space the board occupies */
   .grid > .side > .card.detail > .empty{margin:auto 0}
   .boardcard{display:flex;flex-direction:column;min-width:0}
+  /* A page holds fifteen rows, so the board is fifteen rows tall whatever it is
+     showing. The last page carries four creators and used to shrink to a stub,
+     which pulled the pager up under the rows and made the page look like it had
+     failed to load. The height is the table's own rhythm — a header row, the
+     rows, and the pager's box — held as a minimum so a page that somehow grows
+     (a long name wrapping) still fits instead of clipping. Sixteen slots, not
+     fifteen: fifteen creators plus the spacer rows that pad the page out. */
+  /* One screen, not one scroll. On a desktop the whole board - navbar, the
+     tally row, the fifteen rows and the pager - has to land above the fold at
+     100vh, so the parts that carried slack give it up: a tighter bar, a tighter
+     tally, and rows at 31px instead of 35. Sixteen slots stays, and the spacer
+     rows keep the last page the same height as the first. */
+  @media(min-width:761px){
+    .boardcard{--board-rows:16}
+    .boardcard > .tablewrap{min-height:calc(
+      (var(--board-rows) * 31px)
+      + 26px   /* the header row */
+      + 56px   /* the pager and its breathing room */
+      + 2px)}
+    .appbar{padding-top:6px;padding-bottom:6px}
+    .appbar .primary{min-height:36px}
+    .stats{margin:10px 0 0}
+    .stats .stat .v{font-size:20px}
+    .tabs{margin:10px 0 8px}
+    .card.boardcard{padding:16px 18px 14px}
+    .card.boardcard > h2{margin:0 0 6px}
+    tr.row{height:31px}
+    tr.row td{padding-top:0;padding-bottom:0}
+    #pager{padding-top:10px;gap:6px}
+    .pager .pinfo{display:none}
+  }
+  /* the counter under the pager repeated numbers the board header already
+     carries, and on a phone it pushed the arrows off their line - it is hidden
+     at every width rather than only on the desk */
+  .pager .pinfo{display:none}
   /* the wrap takes whatever height the row has left over, and the table inside
      grows with it: otherwise the leftover space sits inside the card as a hole
      between the last row and the pager */
@@ -324,9 +468,37 @@
   td:nth-child(6){white-space:normal;line-height:1.5}
   tr.row:first-child td{border-top:0}
   tr.row{cursor:pointer;transition:background .13s ease}
-  tr.row:hover td{background:rgba(255,255,255,.55)}
-  tr.row.sel td{background:#fff}
-  tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
+  /* Selection is a rail, not a fill. Any background - white slab, warm grey tint,
+     even 5% ink - reads as a coloured block punched through the table and fights
+     the momentum bars and signal pills it sits next to. So the row keeps the
+     card's own background and states its selection three quiet ways: an ink rail
+     on the left edge, the name at 600, and the rank picking up ink instead of
+     faint. Nothing is painted, so both themes and every status colour stay legible. */
+  /* The picked creator is filled with --card-2, one step off the card's own
+     --card. That step is deliberate: on light it is a shade deeper than the
+     paper, on dark a shade lighter than the card, so the row reads as a filled
+     band in both themes without ever becoming a bright slab. The rail, the 600
+     name and the ink rank ride on top so the state survives a screenshot at
+     phone size. Hover is a half-strength version of the same fill so the two
+     states stay related instead of being two unrelated tints. */
+  tr.row:hover{background:color-mix(in srgb,var(--card-2) 55%,transparent)}
+  tr.row.sel{background:var(--card-2)}
+  tr.row.sel td{background:transparent}
+  tr.row.sel .name{font-weight:600}
+  tr.row.sel .pos{color:var(--ink)}
+  /* a hairline of card colour between ring and photo keeps the ring from
+     touching the image on light themes where line and photo are both dark */
+  tr.row.sel .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--ink)}
+  /* a creator already in the lineup carries a white card edge in dark mode.
+     Paint the four cell edges instead of the <tr>: a border on a row inside a
+     collapsed table gets dropped by Chrome, and a 1000px inset shadow bleeds
+     over the neighbouring rows. */
+  :root[data-theme="dark"] tr.row.picked > td{box-shadow:inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked > td:first-child{box-shadow:inset 1px 0 0 #fff,inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked > td:last-child{box-shadow:inset -1px 0 0 #fff,inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked + tr.row > td{box-shadow:inset 0 1px 0 #fff}
+  :root[data-theme="dark"] tr.row.picked .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px #fff}
+  :root[data-theme="dark"] tr.row.picked .name .tag{box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
@@ -393,22 +565,67 @@
   :root[data-theme="dark"] .bc.up .fill{background:var(--up)}
   :root[data-theme="dark"] .bc.down .fill{background:var(--down)}
 
-  /* ---- paging under the board */
-  .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    margin-top:auto;padding-top:8px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+  /* ---- paging under the board: Longroom's pager
+     Vermilion-on-slate in the reference; here the accent is the page's own ink,
+     because the board already spends its colour on signals and a third accent
+     would fight them. What is borrowed is the shape: a quiet rule, then a centred
+     row of small soft-cornered squares, the current one filled dark, an ellipsis
+     for the stretch it skipped, and round-arrow prev/next at the ends. The same
+     row serves both widths - at 390px it holds one digit fewer on either side of
+     the current page, which lands on a row that still fits a thumb. */
+  .pager{display:flex;flex-direction:column;align-items:center;gap:9px;
+    margin-top:auto;padding-top:14px;border-top:1px solid var(--line-soft)}
   /* margin-top:auto parks the pager on the bottom edge of the card, so any spare
      height lands between the rows and the pager instead of below it */
   .pager .pinfo{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--faint);white-space:nowrap}
-  .pager .pnums{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-  .pager button{font-family:var(--mono);font-size:9.5px;min-width:26px;height:26px;padding:0 7px;
-    border-radius:7px;background:transparent;color:var(--dim);cursor:pointer;
-    box-shadow:inset 0 0 0 1px var(--line)}
-  .pager button:hover:not(:disabled){color:var(--ink);background:rgba(17,17,17,.04)}
-  .pager button[aria-current="page"]{background:var(--ink);color:var(--accent-ink);box-shadow:none;font-weight:600}
-  .pager button:disabled{opacity:.35;cursor:default}
-  .pager .gap{font-size:10px;color:var(--faint);padding:0 1px}
-  :root[data-theme="dark"] .pager button:hover:not(:disabled){background:rgba(255,255,255,.06)}
+  .pager .pnums{display:flex;align-items:center;justify-content:center;gap:4px}
+  /* box-shadow:none is load-bearing: the global button rule draws a hairline ring,
+     which turned every page number into a chip. The reference has no rings - only
+     the current page is filled. */
+  .pager button{font-family:var(--sans);font-size:12.5px;font-weight:600;width:30px;height:30px;
+    padding:0;border:0;border-radius:8px;background:transparent;color:var(--dim);
+    box-shadow:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    transition:background-color .25s cubic-bezier(.16,1,.3,1),color .25s cubic-bezier(.16,1,.3,1)}
+  .pager button:hover:not(:disabled):not([aria-current]){background:var(--sunken);color:var(--ink);
+    box-shadow:none}
+  /* the reference's current page is a solid dark chip with light digits, not an
+     ink-coloured one - in dark mode --ink is near-white and would turn the chip
+     into a glaring white square. Near-black keeps the shape in both themes. */
+  .pager button[aria-current="page"]{background:#16181b;color:#fafbfd;font-weight:600;
+    box-shadow:none}
+  :root[data-theme="dark"] .pager button[aria-current="page"]{background:#f4f3f0;color:#16181b}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .pager button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  /* the arrows never take a background - not on hover either. They are marks on
+     the card, not chips, so nothing lights up next to the digits mid-tap. */
+  .pager .pstep{width:26px;background:transparent;color:var(--dim)}
+  .pager .pstep:hover:not(:disabled){background:transparent;color:var(--ink)}
+  .pager .pstep .ic{width:14px;height:14px;font-size:14px;opacity:.9}
+  .pager .pstep span{display:none}
+  /* the ellipsis is held to exactly one button's width, so a page that gains a
+     second ellipsis does not widen the row and slide the arrows out from under
+     the thumb that is about to tap next again */
+  .pager .gap{font-size:12px;font-weight:500;color:var(--faint);user-select:none;
+    width:30px;display:inline-flex;align-items:center;justify-content:center}
+  .pager .gap.pad{width:30px;font-size:12px}
+  :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:rgba(255,255,255,.08)}
+  @media(max-width:640px){
+    .pager{gap:8px;padding-top:13px}
+    .pager .pnums{gap:3px}
+    .pager button{width:28px;height:28px;border-radius:7px;font-size:12px}
+    .pager .pstep{width:26px}
+    .pager .gap,.pager .gap.pad{width:28px}
+  }
+  /* the reference keeps one row at every width; below 400px two digits either
+     side of the current page would push the arrows off the card, so the pager
+     trims to a single neighbour and lets the ellipsis carry the rest */
+  @media(max-width:400px){
+    .pager .pnums{gap:2px}
+    .pager button{width:27px;height:27px;font-size:11.5px;padding:0}
+    .pager .pstep{width:24px}
+    .pager .gap,.pager .gap.pad{width:27px}
+  }
 
   /* ---- creator profile card on hover */
   .pcard .cardx{display:none;position:absolute;top:8px;right:8px;z-index:3;
@@ -561,6 +778,15 @@
     background:var(--ink);opacity:.6;border-radius:2px;transition:width .3s ease}
   .tlrailrow b{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;
     color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* the step buttons are the mouse user's swipe: bare glyphs, no chrome, so
+     they read as part of the rail rather than two more controls */
+  .tlstep{flex:none;width:22px;height:22px;display:grid;place-items:center;padding:0;
+    border:0;border-radius:6px;background:none;color:var(--faint);cursor:pointer;
+    box-shadow:none;transition:color .15s ease,background .15s ease}
+  .tlstep .ic{width:13px;height:13px}
+  .tlstep:hover{color:var(--ink);background:var(--card-2)}
+  .tlstep:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+  .tlstep[data-end="1"]{opacity:.32;pointer-events:none}
   @media(max-width:640px){
     .tlstage{height:186px}
     .tlev{padding:0 5px}
@@ -573,6 +799,13 @@
   /* the pick opens on a hero block: a rail in the creator's signal colour down the
      left, name and rank, then the move itself set large. It answers "why him"
      before the form asks for anything. */
+  /* in dark mode the draft card's own edge has to read white: the old hairline
+     sat within a shade of the card fill and the panel dissolved into the page,
+     which made a tracked creator look like it had no boundary at all */
+  :root[data-theme="dark"] .grid > .side > .card.detail{box-shadow:inset 0 0 0 1px rgba(255,255,255,.66),
+    0 1px 2px rgba(0,0,0,.4),0 18px 44px -28px rgba(0,0,0,.7)}
+  :root[data-theme="dark"] .grid > .side > .card.detail.dragover{box-shadow:inset 0 0 0 2px #fff,
+    0 1px 2px rgba(0,0,0,.4)}
   .detail .dhero{position:relative;padding:0 0 0 13px;margin:0 0 13px}
   .detail .dhero:before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:3px;
     border-radius:3px;background:var(--rail)}
@@ -613,6 +846,13 @@
   input::placeholder,textarea::placeholder{color:#a5a29b}
   input:focus,textarea:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--ink)}
   .hint{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.5}
+
+  /* ---- no double-tap zoom: a phone reading a board does not need the page to
+     jump when it taps a row twice. zooming out is still available through the
+     browser itself, so the text stays resizable. */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body,button,a,input,select,textarea{touch-action:manipulation}
+  .tlstage{touch-action:none}
 
   button{font-family:var(--mono);font-size:11px;padding:9px 15px;border-radius:var(--r-pill);
     border:0;background:rgba(255,255,255,.85);color:var(--ink);cursor:pointer;
@@ -730,15 +970,37 @@
     .tile-ic{font-size:76px;right:-6px;bottom:-10px}
   }
 
-  /* ---- footer */
-  footer{margin-top:18px;padding:26px 26px 24px;border-radius:var(--r-lg);
-    background:var(--card);box-shadow:var(--lift);
-    color:var(--faint);font-size:11px;line-height:1.75}
-  footer strong{color:var(--ink);font-weight:600}
-  footer code{font-family:var(--mono);color:var(--dim);font-size:10.5px;
-    background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px var(--line);
-    padding:1px 5px;border-radius:4px}
-  footer br{line-height:2}
+  /* ---- footer: the landing's sign-off, not a card - the same bar, the same
+     icons, so the two pages end the same way. Nothing here explains the page. */
+  footer{margin-top:24px;padding-top:0}
+  /* The bar is two things on a phone - the copyright and four circles - and
+     stacking them bought nothing but height. It stays one row at every width:
+     the line shrinks, the circles keep their size, and the whole footer lands
+     under 50px instead of the ~60 it took when it was allowed to wrap. */
+  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    flex-wrap:nowrap;padding:8px 0 6px;min-height:0}
+  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--faint);
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .f1-social{display:flex;gap:9px}
+  .f1-social a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
+    transition:color .16s ease,box-shadow .16s ease,transform .16s ease}
+  .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
+  .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .f1-social svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .f1-social a[href*="x.com"] svg{width:15px;height:15px}
+  .f1-social a[href*="github.com"] svg{width:18px;height:18px}
+  .f1-social svg path[fill="currentColor"]{stroke:none}
+  :root[data-theme="dark"] .f1-bar p{color:#a5a29a}
+  :root[data-theme="dark"] .f1-social a{color:#cfccc5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+  :root[data-theme="dark"] .f1-social a:hover{color:#0f0f0e;background:#f4f3f0;box-shadow:none}
+  @media(max-width:600px){
+    .f1-bar{padding:7px 0 5px;gap:10px}
+    .f1-bar p{font-size:9.5px}
+    .f1-social{gap:6px}
+    .f1-social a{width:28px;height:28px}
+  }
 
   /* ---- mobile: the promise is "one tap, no signup" - so make targets tappable */
   @media(max-width:600px){
@@ -764,11 +1026,17 @@
     /* five tracks: rank, name/meta, and the + button. The meta cells occupy
        their own columns on the second line so they sit beside each other
        instead of stacking on top of one another in a single grid area. */
+    /* The grid makes every cell its own box, so a filled row would be filled
+       cell by cell - seven rectangles with gutters between them, which reads as
+       a striped band. The fill therefore lives on the <tr> itself, which spans
+       the full width, and the cells stay transparent; the negative inline margin
+       lets the paint reach the card's padding edge so the band has square ends
+       instead of stopping short of the card border. */
     tr.row{display:grid;
       grid-template-columns:26px auto auto minmax(40px,1fr) auto 30px;
       grid-template-areas:"pos name name name name add" "dlt mom stars sig sig add";
       align-items:center;column-gap:7px;row-gap:4px;
-      padding:10px 0;border-top:1px solid var(--line-soft)}
+      padding:10px 8px;margin:0 -8px;border-top:1px solid var(--line-soft)}
     tr.row:first-child{border-top:0}
     tr.row td{border:0!important;padding:0}
     tr.row td:nth-child(1){grid-area:pos;width:auto;align-self:start;padding-top:3px}
@@ -788,7 +1056,6 @@
     .avatar{width:26px;height:26px}
     .tag{font-size:9px;padding:2px 5px}
     .slot .s{min-height:34px;align-items:center}
-    footer{border-radius:24px;padding:20px 18px}
   }
 
   /* ============================================================
@@ -896,6 +1163,10 @@
 
 <!-- coolicons by Kryston Schwarze — MIT — via Framer Marketplace -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="fi-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162L22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299l-.929-1.329L3.076 1.56h3.182l5.965 8.532l.929 1.329l7.754 11.09h-3.182z"/></symbol>
+<symbol id="fi-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+<symbol id="fi-docs" viewBox="0 0 24 24"><path d="M6.5 3.5h7.2L18.5 8v12.5h-12a1.5 1.5 0 0 1-1.5-1.5V5a1.5 1.5 0 0 1 1.5-1.5Z"/><path d="M13.4 3.7V8h4.6"/><path d="M8.6 12.2h6.2"/><path d="M8.6 15.6h6.2"/><path d="M8.6 18.4h3.6"/></symbol>
+<symbol id="fi-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 12h16.8"/><path d="M12 3.4c2.2 2.35 3.4 5.3 3.4 8.6S14.2 18.25 12 20.6c-2.2-2.35-3.4-5.3-3.4-8.6S9.8 5.75 12 3.4Z"/></symbol>
 <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12C4.79157 12 6.40281 10.79157 7 9L9 3L15 21L17 15C17.59719 13.20843 19.20843 12 21 12"/></symbol>
 <symbol id="i-api" viewBox="0 0 24 24"><path d="M7 8L3 12L7 16M17 8L21 12L17 16M10 12H14"/></symbol>
 <symbol id="i-arrow-down-right" viewBox="0 0 24 24"><path d="M10 17H17V10M17 17L7 7"/></symbol>
@@ -904,7 +1175,9 @@
 <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 20V9C12 6.79086 13.79086 5 16 5H17C19.20914 5 21 6.79086 21 9V14C21 15.65685 19.65685 17 18 17H17C15.71942 17 14.64029 17.35971 14 18L12 20ZM12 20V9C12 6.79086 10.20914 5 8 5H7C4.79086 5 3 6.79086 3 9V14C3 15.65685 4.34315 17 6 17H7C8.28058 17 9.35971 17.35971 10 18L12 20Z"/></symbol>
 <symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 16L6 13C7.10457 11.89543 8.89543 11.89543 10 13C11.10457 14.10457 12.89543 14.10457 14 13L21 6M3 4V16C3 18.20914 4.79086 20 7 20H21"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M6 12L10 16L18 8"/></symbol>
-<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M8 10L12 14L16 10"/></symbol>
+<symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M8 10L12 14L16 10"/></symbol>
 <symbol id="i-circle-dot" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM11 12C11 12.55228 11.44772 13 12 13C12.55228 13 13 12.55228 13 12C13 11.44772 12.55228 11 12 11C11.44772 11 11 11.44772 11 12Z"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM12 7V12H17"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><path d="M3 11C3 8.79086 4.79086 7 7 7H13C15.20914 7 17 8.79086 17 11V17C17 19.20914 15.20914 21 13 21H7C4.79086 21 3 19.20914 3 17ZM7 3H17C19.20914 3 21 4.79086 21 7V17"/></symbol>
@@ -992,17 +1265,6 @@
     </div>
   </div>
 
-  <!-- The timeline sits directly under the board: it answers the question the
-       board cannot, which is "what actually moved between windows", and it reads
-       left-to-right in the same direction as the rank column above it. -->
-  <section class="card tline" id="tline" aria-label="Board history">
-    <h2><svg class="ic"><use href="#i-clock"/></svg>Board history <span class="pill" id="tlCount"></span></h2>
-    <div class="tlstage" id="tlStage" role="group" aria-label="Snapshots, newest last"
-         tabindex="0" aria-describedby="tlHint">
-      <div class="tltrack" id="tlTrack"></div>
-    </div>
-    <p class="tlhint" id="tlHint">Drag, or use the arrow keys, to walk the windows.</p>
-  </section>
 
   <div class="under">
     <div class="card" style="margin-top:14px">
@@ -1018,23 +1280,38 @@
       <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
       <div id="whoBody"></div>
     </div>
-    <div class="card receipts" style="margin-top:14px">
-      <h2><svg class="ic"><use href="#i-book-open"/></svg>The book <span class="pill" id="hitRate">—</span></h2>
-      <div class="bookmeta" id="bookMeta"></div>
-      <div id="receipts"><div class="empty">No locked lineups yet.</div></div>
-    </div>
   </div>
 
   <section class="gallery" aria-label="What is on this page">
     <a class="tile t1" href="#rows"><span class="tag-top">01 &middot; the board</span><b>79 creators, one number each</b><span class="tag-bot">live from the official API</span><span class="tile-ic"><svg class="ic"><use href="#i-users"/></svg></span></a>
     <a class="tile t2" href="#detail"><span class="tag-top">02 &middot; the draft</span><b>Thesis and pre-mortem, or nothing</b><span class="tag-bot">reasoning is the submission</span><span class="tile-ic"><svg class="ic"><use href="#i-target"/></svg></span></a>
-    <a class="tile t3" href="#receipts"><span class="tag-top">03 &middot; the book</span><b>Every call, signed and kept</b><span class="tag-bot">graded against the next window</span><span class="tile-ic"><svg class="ic"><use href="#i-receipt"/></svg></span></a>
+
     <div class="tile t4"><span class="tag-top">04 &middot; the limits</span><b>No invented motion scores</b><span class="tag-bot">stars gate entry, they add no points</span><span class="tile-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span></div>
   </section>
 
-  <footer>
-    <strong>Motion Draft Room</strong> &mdash; a place to call the Motion creator leaderboard and get graded.
-    Every number comes from <code>docs.motion.game</code>; nothing here is invented.
+    <!-- Board history closes the page. It answers the question the board cannot -
+       what actually moved between windows - and reading it last keeps the order
+       of work intact: board, draft, lineup, identity, then the record. It sits
+       directly above the footer with nothing between them. -->
+  <section class="card tline" id="tline" style="margin-top:0" aria-label="Board history">
+    <h2><svg class="ic"><use href="#i-clock"/></svg>Board history <span class="pill" id="tlCount"></span></h2>
+    <div class="tlstage" id="tlStage" role="group" aria-label="Snapshots, newest last"
+         tabindex="0" aria-describedby="tlHint">
+      <div class="tltrack" id="tlTrack"></div>
+    </div>
+    <p class="tlhint" id="tlHint">Use &larr; &rarr; to walk the windows, or scroll and drag.</p>
+  </section>
+
+<footer>
+    <div class="f1-bar">
+      <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
+      <div class="f1-social">
+        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
+        <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
+        <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
+        <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
+      </div>
+    </div>
   </footer>
 
 </div>
@@ -1054,7 +1331,27 @@ let PAGE = 1;
 // creator's colour means the same thing wherever it appears on the page.
 const TAGC = { SURGING: "var(--up)", COILED: "var(--warm)", SLEEPER: "var(--cool)",
   FADE: "var(--down)", QUIET: "var(--faint)" };
-const PER_PAGE = 10;
+// Fifteen on a desk, and not one row fewer when the draft panel opens beside
+// the board. The page used to be measured to the board's height, so picking a
+// creator grew the panel, the board grew with it, and the same board showed ten
+// rows before the pick and fourteen after — the pager said 1/8 and then 1/6 for
+// the same list. A fixed page keeps the board's height its own business.
+const PER_PAGE = 15;
+// A phone shows five: a page you scroll is not a page, and five rows plus the
+// pager still leaves the draft panel and the timeline within a thumb's reach.
+const PER_PAGE_PHONE = 5;
+// The breakpoint these two rules are written against, read live. .matches is
+// checked at call time on purpose: a page that loads before mobile emulation is
+// applied captured "desktop" once and paged ten rows for the whole session.
+const PHONE_MQ = window.matchMedia("(max-width:640px)");
+const isPhone = () => PHONE_MQ.matches;
+// The one place that answers "how many rows is a page": render, the pager and the
+// fit check all read it, so a 5-row page can never claim 10 of 79 underneath.
+const perPageNow = () => (isPhone() ? PER_PAGE_PHONE : PER_PAGE);
+// Declared here, above render(): render() closes any open card, and a `let` that
+// appears later in the file is still in its temporal dead zone on the first paint
+// — the whole dashboard then failed with "Cannot access 'cardEl' before init".
+let cardEl = null, cardTimer = null, cardFor = null, cardBack = null, sheetOpener = null;
 
 // ---------- utils
 const $ = s => document.querySelector(s);
@@ -1172,10 +1469,28 @@ async function load() {
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   if (PROF) DATA.profiles = PROF;
   render();
+  BOOTED = true;
+  bindBar();
   loadBook();
   // the identity card used to be drawn only from load()'s render path, so whichever of
   // the two finished last could leave it empty; draw it with the session it is waiting on
   renderWho();
+}
+
+// The bar goes solid only once there is something under it. A scroll listener on
+// a passive event, read from the layout rather than a magic offset, so it works
+// whatever the board's height turns out to be.
+function bindBar() {
+  const bar = document.querySelector(".appbar");
+  if (!bar) return;
+  let queued = false;
+  const read = () => { queued = false; bar.classList.toggle("stuck", window.scrollY > 8); };
+  window.addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(read);
+  }, { passive: true });
+  read();
 }
 
 // ---------- public receipt book
@@ -1265,26 +1580,11 @@ function countUp() {
   io.observe(box);
 }
 
-// How many rows fit in the board right now. The card stretches to the draft panel
-// beside it, so the answer changes when a pick opens. Everything here is read from
-// live layout, and a zero means "not measurable yet" — the caller falls back.
+// How many rows a page holds. A counted page, not a measured one: the board
+// stretches to the draft panel beside it, and measuring its leftovers made the
+// page size a consequence of whether a pick was open.
 function rowsPerPage() {
-  const card = document.querySelector(".boardcard");
-  const wrap = card && card.querySelector(".tablewrap");
-  const pager = card && card.querySelector("#pager");
-  if (!card || !wrap || !pager) return PER_PAGE;
-  const head = card.querySelector("h2");
-  const table = wrap.querySelector("table");
-  const thead = table && table.querySelector("thead");
-  const cs = getComputedStyle(card);
-  const avail = card.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
-    - (head ? head.getBoundingClientRect().height + parseFloat(getComputedStyle(head).marginBottom) : 0)
-    - (thead ? thead.getBoundingClientRect().height : 0)
-    - pager.getBoundingClientRect().height
-    - parseFloat(getComputedStyle(pager).marginTop || 0);
-  const rowH = 35; // fixed by the table's own rhythm; a probe row would cost a reflow
-  if (!(avail > 0)) return PER_PAGE;
-  return Math.max(PER_PAGE, Math.min(25, Math.floor(avail / rowH)));
+  return perPageNow();
 }
 
 function render() {
@@ -1311,16 +1611,16 @@ function render() {
     ["gauge", "Avg Δ4h", fmt(avgAbs, 2), "rank places"],
     ["clock", "Slots tracked", slotWindows, slotWindows === 1 ? "distinct window" : "distinct windows"],
     ["star", "Star cap", CAP, "per tournament"],
-    ["receipt", "Book hit rate",
-      BOOK && BOOK.summary && BOOK.summary.hitRate != null ? Math.round(BOOK.summary.hitRate * 100) + "%"
-        : (BOOK && BOOK.summary && BOOK.summary.pending ? BOOK.summary.pending + " pending" : "no calls yet"),
-      BOOK && BOOK.summary && BOOK.summary.settled ? `${BOOK.summary.settled} settled · public` : "first receipt is open"],
   ];
   // A tally row: figure over a hairline, label under it. Each figure splits into
   // prefix / number / suffix so the number can count while the units stay put.
-  $("\#stats").innerHTML = stats.map(([ico, k, v, sub]) =>
+  // The same markup is a marquee on a phone: one .track (two copies of the group)
+  // instead of a grid, so the figures cost one line of height, not three.
+  const statHtml = stats.map(([ico, k, v, sub]) =>
     `<div class="tally"><div class="num">${tallyParts(v)}</div>
-      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span style="opacity:.55">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join("");
+      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span class="sub" style="opacity:.55">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join('<span class="sep" aria-hidden="true"></span>');
+  $("#stats").innerHTML = `<div class="track"><div class="stat-grp">${statHtml}</div>`
+    + `<div class="stat-grp" aria-hidden="true">${statHtml}</div></div>`;
   countUp();
 
   // ---- honest limits banner
@@ -1335,7 +1635,27 @@ function render() {
     }
   }
 
-  // ---- filters: the rail doubles as a read of the board, so each option carries
+  // A horizontal rail that does not fit gets a fade on the edge that hides content.
+// Reading scrollLeft on every scroll event keeps the left fade honest once the
+// user has moved: the fade is a signal, not decoration.
+function paintRail(rail) {
+  if (!rail) return;
+  const tick = () => {
+    const max = rail.scrollWidth - rail.clientWidth;
+    const cut = max > 2, atEnd = rail.scrollLeft <= 2, pre = cut && !atEnd;
+    rail.classList.toggle("atrail", cut);
+    rail.classList.toggle("atboth", pre);
+    rail.dataset.cut = cut ? "1" : "0";
+  };
+  tick();
+  if (!rail.dataset.railbound) {
+    rail.dataset.railbound = "1";
+    rail.addEventListener("scroll", () => requestAnimationFrame(tick), { passive: true });
+    window.addEventListener("resize", () => requestAnimationFrame(tick), { passive: true });
+  }
+}
+
+// ---- filters: the rail doubles as a read of the board, so each option carries
   // its colour dot (the same one the SIGNAL column uses) and its own count.
   const tags = ["all", "SURGING", "COILED", "SLEEPER", "FADE", "QUIET"];
   const tagged = cr.filter(c => (c.tags || []).length).length;
@@ -1345,7 +1665,11 @@ function render() {
     const b = el("button", "tab" + (FILTER === t ? " on" : ""));
     b.type = "button";
     b.setAttribute("aria-pressed", FILTER === t ? "true" : "false");
-    b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i style="background:${TAGC[t]}"></i>`}${t}`}</span><b>${n}</b>`;
+    // the colour travels as a custom property so the ring, the tint and the dot
+    // are all the same hue without three hard-coded values per option
+    b.style.setProperty("--hue", t === "all" ? "var(--faint)" : TAGC[t]);
+    if (n === 0) b.classList.add("zero");
+    b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i></i>`}${t}`}</span><b>${n}</b>`;
     // a creator can carry several signals, so these counts overlap and do not
     // add up to the board size - the title says it rather than implying a partition
     b.title = t === "all"
@@ -1354,6 +1678,9 @@ function render() {
     b.onclick = () => { FILTER = t; PAGE = 1; render(); };
     $("#filters").appendChild(b);
   });
+
+  // the rail can be wider than a phone, so it tells the eye when it is cut off
+  paintRail($("#filters"));
 
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
@@ -1381,7 +1708,11 @@ function render() {
       <td class="mono stars" title="estimated stars (1-8)">${c.estStars}<span>/${8}</span></td>
       <td>${badges(c.tags)}</td>
       <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? icon("check") : icon("plus")}</td>`;
-    tr.onclick = () => { SEL = c.name; render(); };
+    // On a phone the row is the target: a 26px face is not something a thumb can
+    // be asked to hit, and tapping a creator should open that creator, not just
+    // mark the row. On a desk the row still only selects — the card there is a
+    // hover surface and the draft panel beside the board does the picking.
+    tr.onclick = () => { SEL = c.name; render(); if (isPhone()) openCard(tr, c); };
     tb.appendChild(tr);
     // pointing at a name opens the profile card; the card itself stays usable so
     // its links and the pick button can be clicked. Bind after the row is in the
@@ -1415,16 +1746,31 @@ function render() {
   // with the rows: paging the board must not rebuild it or reset its position
   renderTimeline();
 
-  // The draft panel just changed height, and the board stretches to match it, so
-  // the number of rows that fit has changed too. One deferred re-render after the
-  // layout settles keeps the first paint from showing a page sized for the old
-  // panel. The guard stops render() calling itself forever.
-  if (!render._refit) {
-    render._refit = true;
+
+  // The marquee's speed comes from its own width, so the strip drifts at the same
+  // pace whatever the figures say (a fixed duration would sprint on a wide set).
+  // 6px a second reads as movement without being a ticker racing a headline.
+  // A reduced-motion reader is handled in CSS: the animation is dropped and the
+  // strip becomes something they can scroll by hand.
+  if (isPhone()) {
+    // scrollWidth is 0 inside this frame — the markup was just written. Measure on
+    // the next one, once the strip has a length to divide.
     requestAnimationFrame(() => {
-      render._refit = false;
-      if (rowsPerPage() !== perPage) render();
+      const tr = $("#stats .track");
+      const half = tr ? tr.scrollWidth / 2 : 0;
+      if (half > 0) tr.style.setProperty("--mdr", `${Math.round(half / 6)}s`);
     });
+  }
+  // while the strip is touched it holds still, so a finger can read the figure it
+  // landed on. The flag is on the band; CSS takes the animation off it.
+  const band = $("#stats");
+  if (band && !band._press) {
+    band._press = true;
+    const hold = v => () => { band.toggleAttribute("data-paused", v); };
+    band.addEventListener("pointerdown", hold(true));
+    band.addEventListener("pointerup", hold(false));
+    band.addEventListener("pointercancel", hold(false));
+    band.addEventListener("pointerleave", hold(false));
   }
 }
 
@@ -1696,6 +2042,7 @@ function tlGo(i, spring) {
   TL.i = Math.max(0, Math.min(n - 1, i));
   if (spring) tlSpringTo(TL.i);
   else { TL.x = tlTarget(TL.i); tlLayout(); }
+  if (TL.syncSteps) TL.syncSteps();
 }
 
 function tlBind() {
@@ -1773,6 +2120,9 @@ function tlBind() {
   stage.addEventListener("pointerup", onUp);
   stage.addEventListener("pointercancel", onUp);
 
+  // Walking the windows should not require a drag. A mouse user has no swipe,
+  // so arrows on the stage, a wheel/trackpad flick, and the two buttons beside
+  // the rail all do the same one-step move.
   stage.addEventListener("keydown", (e) => {
     let i = TL.i;
     if (e.key === "ArrowRight") i += 1;
@@ -1783,6 +2133,42 @@ function tlBind() {
     e.preventDefault();
     tlGo(i, true);
   });
+
+  let wheelAcc = 0, wheelT = 0, wheelLock = false;
+  stage.addEventListener("wheel", (e) => {
+    // only take over when the gesture is sideways or clearly a flick, so a
+    // vertical page scroll over the strip still scrolls the page
+    const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) && Math.abs(e.deltaY) < 18) return;
+    e.preventDefault();
+    const now = performance.now();
+    if (now - wheelT > 260) wheelAcc = 0;
+    wheelT = now;
+    if (wheelLock) return;
+    wheelAcc += dx;
+    if (Math.abs(wheelAcc) < 40) return;
+    wheelAcc = 0;
+    wheelLock = true;
+    setTimeout(() => { wheelLock = false; }, 230);
+    tlGo(TL.i + (dx > 0 ? 1 : -1), true);
+  }, { passive: false });
+
+  // Bound on the section rather than on the buttons themselves: the rail row is
+  // painted after the first render, so binding the nodes here would miss them.
+  const tline = $("#tline");
+  if (tline) tline.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".tlstep");
+    if (!b) return;
+    e.preventDefault();
+    tlGo(TL.i + (b.id === "tlNext" ? 1 : -1), true);
+  });
+  const syncSteps = () => {
+    const p = $("#tlPrev"), n = $("#tlNext"), last = TL.events.length - 1;
+    if (p) p.dataset.end = TL.i <= 0 ? "1" : "0";
+    if (n) n.dataset.end = TL.i >= last ? "1" : "0";
+  };
+  TL.syncSteps = syncSteps;
+  syncSteps();
 
   // a click on a veiled neighbour focuses it; the card itself is the button
   track.addEventListener("click", (e) => {
@@ -1807,7 +2193,9 @@ function renderTimeline() {
   if (root && !root.querySelector(".tlrailrow")) {
     const row = document.createElement("div");
     row.className = "tlrailrow";
-    row.innerHTML = '<div class="tlrail"><i></i></div><b></b>';
+    row.innerHTML = '<button class="tlstep" id="tlPrev" type="button" aria-label="Previous window"><svg class="ic"><use href="#i-chev-l"/></svg></button>'
+      + '<div class="tlrail"><i></i></div><b></b>'
+      + '<button class="tlstep" id="tlNext" type="button" aria-label="Next window"><svg class="ic"><use href="#i-chev-r"/></svg></button>';
     const hint = root.querySelector(".tlhint");
     root.insertBefore(row, hint);
   }
@@ -1817,21 +2205,111 @@ function renderTimeline() {
 function renderPager(pages, total, start, shown) {
   const box = $("#pager");
   if (!box) return;
-  if (pages <= 1) { box.innerHTML = `<span class="pinfo">${total} creators</span><span class="pnums"></span>`; return; }
+  // One row at every width, after Longroom's member pager: arrows at the ends,
+  // the current page filled, an ellipsis standing in for the stretch skipped.
+  // The count of rows on this page is kept as a quiet line above it rather than
+  // competing for the same row.
+  const arrow = (p, label, icon, off) =>
+    `<button class="pstep" data-p="${p}"${off ? " disabled" : ""} aria-label="${label}">`
+      + `<svg class="ic"><use href="#${icon}"/></svg><span>${label}</span></button>`;
+  const cur = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
+  // A fixed number of slots at every page and every width. The windowed version
+  // grew and shrank as you stepped (159 -> 187 -> 215px), which moved the arrow
+  // out from under the thumb that was about to tap it again. Page 1 and the last
+  // page always hold a slot; the rest of the row is a window around the current
+  // page, and a slot the window skipped is drawn as an ellipsis - a non-button,
+  // so the row never reflows mid-tap.
+  // A fixed row of SLOTS cells at every page and every width, ellipses included.
+  // Windowed pagers grow and shrink as you step - 8 cells here, 9 there - which
+  // slides the arrow sideways exactly as the thumb comes down on it. So the row
+  // is a plan of SLOTS cells first: the ends and a run around the current page
+  // take the number cells, and whatever is left over becomes an ellipsis. The
+  // run is widened page by page to swallow the leftovers, so the count never
+  // changes. On the pages that need only one ellipsis the row drops to SLOTS-1,
+  // on purpose: one ellipsis fewer than two, and never more than one cell of
+  // travel between steps.
+  const SLOTS = window.innerWidth <= 400 ? 6 : 8;
+  const plan = (() => {
+    if (pages <= SLOTS) return {nums: Array.from({length: pages}, (_, i) => i + 1), gaps: 0};
+    // start with the minimum a window can be: 1, PAGE, pages
+    let lo = PAGE, hi = PAGE;
+    const widthOf = () => {
+      const inside = hi - lo + 1;
+      const before = lo > 2 ? 1 : 0;     // ellipsis between 1 and lo
+      const after = hi < pages - 1 ? 1 : 0;
+      return inside + 2 + before + after; // + the two ends
+    };
+    // grow around the current page until the row is full
+    while (widthOf() < SLOTS && (lo > 2 || hi < pages - 1)) {
+      if (hi < pages - 1 && (PAGE - lo <= hi - PAGE || lo <= 2)) hi++;
+      else if (lo > 2) lo--;
+      else hi++;
+    }
+    if (widthOf() > SLOTS && (lo > 2 || hi < pages - 1)) {
+      // too wide: give back the furthest side
+      if (PAGE - lo > hi - PAGE) lo++; else hi--;
+    }
+    const nums = [1];
+    for (let i = lo; i <= hi; i++) nums.push(i);
+    nums.push(pages);
+    return {nums: [...new Set(nums)].sort((x, y) => x - y), gaps: null};
+  })();
   const nums = [];
-  const push = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
-  if (pages <= 7) { for (let i = 1; i <= pages; i++) nums.push(push(i)); }
-  else {
-    nums.push(push(1));
-    if (PAGE > 3) nums.push('<span class="gap">…</span>');
-    for (let i = Math.max(2, PAGE - 1); i <= Math.min(pages - 1, PAGE + 1); i++) nums.push(push(i));
-    if (PAGE < pages - 2) nums.push('<span class="gap">…</span>');
-    nums.push(push(pages));
+  plan.nums.forEach((n, i) => {
+    if (i && n - plan.nums[i - 1] > 1) nums.push('<span class="gap" aria-hidden="true">…</span>');
+    nums.push(cur(n));
+  });
+  // The first and last pages sit flush against one end, so they plan one cell
+  // short. Pad them with an invisible, inert cell rather than letting the row
+  // narrow: the digits stay on the same x for every page, and the arrow beside
+  // next is always in the same place.
+  while (nums.length < (pages <= SLOTS ? pages : SLOTS)) {
+    nums.splice(nums.length - 1, 0, '<span class="gap pad" aria-hidden="true"></span>');
   }
-  box.innerHTML = `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>
-    <span class="pnums"><button data-p="prev"${PAGE === 1 ? " disabled" : ""}>‹</button>
-    ${nums.join("")}<button data-p="next"${PAGE === pages ? " disabled" : ""}>›</button></span>`;
+  const info = pages > 1 ? `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>` : "";
+  box.innerHTML = info
+    + `<span class="pnums">${arrow("prev", "Previous page", "i-chev-l", PAGE === 1)}`
+    + `${nums.join("")}${arrow("next", "Next page", "i-chev-r", PAGE === pages)}</span>`;
+  bindPager(box, pages);
+}
+
+// a rotation or a window resize changes how many rows a page holds. Paging the
+// board back to one keeps the reader from landing on a page number that a
+// narrower layout no longer has.
+// the listener waits for the first paint: a media query can flip while the script
+// is still being parsed (mobile emulation, a rotation during load), and rendering
+// from inside that callback ran before the card and paging state existed
+// The breakpoint is enough for a rotation, but opening the page with no emulation
+// and only then switching to a phone view is just a resize across it, sometimes
+// without the query reporting a change. A debounced resize catches both, and the
+// first render afterwards lays the board out for the width it actually has.
+let BOOTED = false;
+let RESIZE_T = null;
+function refitSoon() {
+  if (!BOOTED) return;
+  clearTimeout(RESIZE_T);
+  RESIZE_T = setTimeout(() => { PAGE = 1; render(); }, 120);
+}
+if (PHONE_MQ.addEventListener) PHONE_MQ.addEventListener("change", refitSoon);
+window.addEventListener("resize", refitSoon);
+window.addEventListener("orientationchange", refitSoon);
+
+// Sixteen dots do not fit across a thumb's reach, so a phone shows a five-wide
+// window that walks with the page, and an ellipsis stands in for the stretch it
+// skipped. The ends are always reachable with a few taps of next.
+function pageWindow(pages) {
+  const span = 5;
+  if (pages <= span) return Array.from({ length: pages }, (_, k) => k + 1);
+  let from = Math.max(1, PAGE - 2), to = from + span - 1;
+  if (to > pages) { to = pages; from = to - span + 1; }
+  return Array.from({ length: to - from + 1 }, (_, k) => from + k);
+}
+
+// one handler for every control the pager can draw, so the phone and the desktop
+// halves cannot disagree about what "next" means
+function bindPager(box, pages) {
   box.querySelectorAll("button[data-p]").forEach(b => {
+    if (!b.getAttribute("aria-label") && /^\d+$/.test(b.dataset.p)) b.setAttribute("aria-label", "Page " + b.dataset.p);
     b.onclick = () => {
       const v = b.dataset.p;
       const next = v === "prev" ? PAGE - 1 : v === "next" ? PAGE + 1 : parseInt(v, 10);
@@ -1891,7 +2369,7 @@ function cardHtml(c) {
     </div>`;
 }
 
-let cardEl = null, cardTimer = null, cardFor = null, cardBack = null, sheetOpener = null;
+
 const isSheet = () => window.matchMedia("(max-width:760px)").matches;
 function ensureCard() {
   if (cardEl) return cardEl;
@@ -1950,11 +2428,13 @@ function ensureCard() {
 }
 function hideCardSoon() { if (isSheet()) return; clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 140); }
 function hideCard() {
+  // The body is unlocked even when no card was ever built: a load that fails
+  // before the first open still needs the page it left behind to scroll.
+  document.body.classList.remove("sheetopen");
   if (!cardEl) return;
   cardEl.classList.remove("on");
   cardEl.style.transform = "";
   if (cardBack) cardBack.classList.remove("on");
-  document.body.classList.remove("sheetopen");
   cardFor = null;
   if (sheetOpener && document.contains(sheetOpener)) { try { sheetOpener.focus({ preventScroll: true }); } catch (_) {} }
   sheetOpener = null;
@@ -1987,33 +2467,37 @@ function placeCard(anchor) {
   cardEl.style.top = Math.round(top) + "px";
 }
 
+// The card for one creator, built once and reusable: both the avatar's own
+// handlers and a tap anywhere on the row open the same thing.
+function openCard(anchor, c) {
+  clearTimeout(cardTimer);
+  ensureCard();
+  cardEl.innerHTML = cardHtml(c);
+  cardFor = c.name;
+  if (isSheet()) {
+    // sheet: no anchoring, no hover to keep it alive — it is a modal surface
+    sheetOpener = anchor;
+    cardEl.style.left = ""; cardEl.style.top = "";
+    cardEl.classList.add("on");
+    cardBack.classList.add("on");
+    document.body.classList.add("sheetopen");
+    const f = cardEl.querySelector("[data-close]");
+    if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (_) {} }, 60);
+    return;
+  }
+  cardEl.style.left = "-9999px"; cardEl.style.top = "0px";
+  cardEl.classList.add("on");
+  // measure and place right away, then again on the next frame so the card
+  // lands correctly once fonts and the banner have settled. A background tab
+  // can starve requestAnimationFrame, so the first pass must not depend on it.
+  placeCard(anchor);
+  requestAnimationFrame(() => { if (cardFor === c.name) placeCard(anchor); });
+}
+
 function bindCard(anchor, c) {
   anchor.setAttribute("role", "button");
   anchor.setAttribute("tabindex", "0");
-  const open = () => {
-    clearTimeout(cardTimer);
-    ensureCard();
-    cardEl.innerHTML = cardHtml(c);
-    cardFor = c.name;
-    if (isSheet()) {
-      // sheet: no anchoring, no hover to keep it alive — it is a modal surface
-      sheetOpener = anchor;
-      cardEl.style.left = ""; cardEl.style.top = "";
-      cardEl.classList.add("on");
-      cardBack.classList.add("on");
-      document.body.classList.add("sheetopen");
-      const f = cardEl.querySelector("[data-close]");
-      if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (_) {} }, 60);
-      return;
-    }
-    cardEl.style.left = "-9999px"; cardEl.style.top = "0px";
-    cardEl.classList.add("on");
-    // measure and place right away, then again on the next frame so the card
-    // lands correctly once fonts and the banner have settled. A background tab
-    // can starve requestAnimationFrame, so the first pass must not depend on it.
-    placeCard(anchor);
-    requestAnimationFrame(() => { if (cardFor === c.name) placeCard(anchor); });
-  };
+  const open = () => openCard(anchor, c);
   if (!isSheet()) {
     anchor.addEventListener("mouseenter", () => { clearTimeout(cardTimer); open(); });
     anchor.addEventListener("mouseleave", hideCardSoon);
@@ -2028,8 +2512,8 @@ function bindCard(anchor, c) {
       }, 0);
     });
   }
-  // a touch screen has no hover, so tapping the name opens the same card as a
-  // bottom sheet; the row's own click still selects the creator underneath
+  // a touch screen has no hover, so tapping the face opens the sheet directly;
+  // the row underneath opens the same thing for a tap that misses the face
   anchor.addEventListener("click", e => { e.stopPropagation(); clearTimeout(cardTimer); open(); });
   anchor.addEventListener("focus", () => { if (!isSheet()) { clearTimeout(cardTimer); open(); } });
   anchor.addEventListener("keydown", e => {
@@ -2208,12 +2692,15 @@ function syncClear() {
 }
 
 // ---------- public book rendering
+// The book card is gone from the page: receipts still file through /api/receipts
+// and still settle, but the dashboard no longer shows the ledger. Kept as a
+// guarded no-op so loadBook() and the post-lock refresh do not throw.
 function renderBook() {
   const box = $("#receipts"), meta = $("#bookMeta");
-  if (!box) return;
+  if (!box || !meta) return;
   if (!BOOK) {
     meta.textContent = "";
-    $("#hitRate").textContent = "—";
+    const hr0 = $("#hitRate"); if (hr0) hr0.textContent = "—";
     box.innerHTML = `<div class="empty">The public book is unreachable (${esc(BOOK_ERR || "no response")}). This browser cannot file or score receipts right now.</div>`;
     return;
   }
@@ -2222,11 +2709,13 @@ function renderBook() {
   // later snapshot: it must not count as a miss, so it is pulled out of the denominator.
   const ungraded = (BOOK.receipts || []).filter(r => r.status === "settled" && r.slotAtLock && r.settledAt === r.slotAtLock).length;
   const graded = Math.max(0, (s.settled || 0) - ungraded);
-  $("#hitRate").textContent = s.hitRate == null
+  const hr = $("#hitRate");
+  if (hr) hr.textContent = (s.hitRate == null
     ? (s.pending ? `${s.pending} pending` : "—")
     : graded
       ? `${Math.round((s.hitRate * (s.settled || 0) * 100) / graded)}% of ${graded}`
-      : "no window yet";
+      : "no window yet");
+  if (!hr) return;
   meta.textContent = `${s.count} receipt${s.count === 1 ? "" : "s"} · ${graded} graded` +
     (ungraded ? ` · ${ungraded} waiting for a window` : "") +
     ` · ${s.pending || 0} pending · net ${signed(s.netRank || 0)} rank` +
