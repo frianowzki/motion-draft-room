@@ -88,9 +88,7 @@
   :root[data-theme="dark"] button:hover:not(:disabled),
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
-  :root[data-theme="dark"] tr.row:hover td{background:rgba(255,255,255,.04)}
   :root[data-theme="dark"] tr.row.sel td:first-child{box-shadow:inset 2px 0 0 #f4f3f0}
-  :root[data-theme="dark"] tr.row.sel:hover td{background:rgba(255,255,255,.04)}
   :root[data-theme="dark"] input,
   :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] input::placeholder,
@@ -448,21 +446,27 @@
   td:nth-child(6){white-space:normal;line-height:1.5}
   tr.row:first-child td{border-top:0}
   tr.row{cursor:pointer;transition:background .13s ease}
-  tr.row:hover td{background:rgba(17,17,17,.035)}
   /* Selection is a rail, not a fill. Any background - white slab, warm grey tint,
      even 5% ink - reads as a coloured block punched through the table and fights
      the momentum bars and signal pills it sits next to. So the row keeps the
      card's own background and states its selection three quiet ways: an ink rail
      on the left edge, the name at 600, and the rank picking up ink instead of
      faint. Nothing is painted, so both themes and every status colour stay legible. */
-  tr.row.sel td{background:transparent}
+  /* The picked creator is filled with --card-2, one step off the card's own
+     --card. That step is deliberate: on light it is a shade deeper than the
+     paper, on dark a shade lighter than the card, so the row reads as a filled
+     band in both themes without ever becoming a bright slab. The rail, the 600
+     name and the ink rank ride on top so the state survives a screenshot at
+     phone size. Hover is a half-strength version of the same fill so the two
+     states stay related instead of being two unrelated tints. */
+  tr.row:hover td{background:color-mix(in srgb,var(--card-2) 55%,transparent)}
+  tr.row.sel td{background:var(--card-2)}
   tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
   tr.row.sel .name{font-weight:600}
   tr.row.sel .pos{color:var(--ink)}
   /* a hairline of card colour between ring and photo keeps the ring from
      touching the image on light themes where line and photo are both dark */
   tr.row.sel .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--ink)}
-  tr.row.sel:hover td{background:rgba(17,17,17,.03)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
