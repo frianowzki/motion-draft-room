@@ -1620,9 +1620,9 @@ fetch("/api/signals", { cache: "no-store" })
           '<span class="room-numv">--</span></li>';
         return;
       }
-      // every creator the board tagged, not a top-five slice: the room has to
-      // read the same board the app's table does, all 79 of them
-      list.innerHTML = rows.map(function (c, i) {
+      // the room is a preview, not the board: five names per signal, ordered by
+      // the same momentum the app ranks on. The full 79 live in the dashboard.
+      list.innerHTML = rows.slice(0, 5).map(function (c, i) {
         var m = typeof c.momentum === 'number' ? c.momentum : null;
         var cls = m === null ? '' : (m >= 0 ? ' up' : ' down');
         var num = m === null ? '--' : (m >= 0 ? '+' : '') + m.toFixed(1);
