@@ -36,10 +36,13 @@
     --line:rgba(17,17,17,.10);
     --line-soft:rgba(17,17,17,.07);
     --ink:#111111;
-    --dim:#4f4f4a;
-    --faint:#67675f;
-    --accent:#111111;
-    --accent-ink:#f8f7f4;
+    /* No grey text tier: both tiers resolve to the theme ink so nothing is a
+       washed-out label. Kept as names because the stylesheet reads them. */
+    --dim:var(--ink);
+    --faint:var(--ink);
+    --pink:#EB185D;
+    --accent:var(--pink);
+    --accent-ink:#ffffff;
     --up:#1d7a44;
     --down:#c0392b;
     --cool:#3a5e9e;
@@ -70,12 +73,11 @@
     --line:rgba(255,255,255,.13);
     --line-soft:rgba(255,255,255,.09);
     --ink:#f3f1ec;
-    --dim:#b4b2ab;
-    /* the faint tier carries 9-12px labels; #7e7c75 only reaches ~3.4:1 on the card,
-       which is under AA for text that small, so it is lifted until it clears it */
-    --faint:#95938b;
-    --accent:#f3f1ec;
-    --accent-ink:#0f0f0e;
+    --dim:var(--ink);
+    --faint:var(--ink);
+    --pink:#EB185D;
+    --accent:var(--pink);
+    --accent-ink:#ffffff;
     --up:#4ec27c;
     --down:#e5766a;
     --cool:#8fb0e6;
@@ -103,11 +105,11 @@
   :root[data-theme="dark"] input,
   :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] input::placeholder,
-  :root[data-theme="dark"] textarea::placeholder{color:var(--faint)}
-  :root[data-theme="dark"] .backhome{background:rgba(24,24,22,.6);color:var(--dim);
+  :root[data-theme="dark"] textarea::placeholder{color:var(--ink)}
+  :root[data-theme="dark"] .backhome{background:rgba(24,24,22,.6);color:var(--ink);
     -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8)}
   :root[data-theme="dark"] .backhome:hover{background:rgba(44,44,40,.75);color:var(--ink)}
-  :root[data-theme="dark"] .rar button.on i{color:rgba(15,15,14,.7)}
+  :root[data-theme="dark"] .rar button.on i{color:rgba(255,255,255,.7)}
   :root[data-theme="dark"] .slot .s.spent{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .tag.COILED{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
   :root[data-theme="dark"] .mbar{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
@@ -123,7 +125,7 @@
      belongs in the page flow, under the nav */
   .backhome{position:relative;display:inline-flex;
     align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.6);
+    text-transform:uppercase;color:var(--ink);background:rgba(244,243,240,.6);
     -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8);
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.08),0 8px 22px -16px rgba(17,17,17,.5);
     padding:8px 12px 8px 9px;border-radius:var(--r-pill)}
@@ -241,10 +243,10 @@
     line-height:1.05;letter-spacing:-.03em;color:var(--ink);
     font-variant-numeric:tabular-nums lining-nums;
     font-feature-settings:"tnum" 1,"lnum" 1;white-space:nowrap;max-width:100%}
-  .tally .num .sl{font-size:.78em;color:var(--faint);font-weight:400}
-  .tally .unit{font-size:.56em;letter-spacing:0;color:var(--dim);font-weight:400}
+  .tally .num .sl{font-size:.78em;color:var(--ink);font-weight:400}
+  .tally .unit{font-size:.56em;letter-spacing:0;color:var(--ink);font-weight:400}
   .tally .lab{margin-top:8px;font-family:var(--mono);font-size:8.5px;
-    text-transform:uppercase;letter-spacing:.09em;color:var(--faint);
+    text-transform:uppercase;letter-spacing:.09em;color:var(--ink);
     line-height:1.35;display:flex;align-items:flex-start;gap:5px}
   .tally .lab .ic{font-size:10px;opacity:.7;flex:none}
   /* the phone pager shows 3 / 16 on its face; the exact range still goes to a
@@ -319,7 +321,7 @@
   .tab{position:relative;display:inline-flex;align-items:center;gap:6px;
     font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
     padding:7px 11px;border:0;border-radius:var(--r-pill);background:none;
-    color:var(--dim);cursor:pointer;white-space:nowrap;
+    color:var(--ink);cursor:pointer;white-space:nowrap;
     --hue:var(--faint);
     transition:color .2s ease,background .2s ease,box-shadow .2s ease}
   .tab{border-radius:999px;box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
@@ -339,12 +341,12 @@
   /* the count: a hairline chip, tabular, quiet until its row is active */
   .tab .tl{display:inline-flex;align-items:center;gap:5px}
   .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
-    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.06);color:var(--faint);
+    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.06);color:var(--ink);
     font-variant-numeric:tabular-nums;transition:background .2s ease,color .2s ease}
-  .tab:hover b{background:rgba(17,17,17,.1);color:var(--dim)}
+  .tab:hover b{background:rgba(17,17,17,.1);color:var(--ink)}
   .tab.on b{background:color-mix(in srgb,var(--hue) 22%,#fff);color:var(--ink)}
-  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.08);color:var(--faint)}
-  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.12);color:var(--dim)}
+  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.08);color:var(--ink)}
+  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.12);color:var(--ink)}
   :root[data-theme="dark"] .tab.on b{background:color-mix(in srgb,var(--hue) 30%,#111);color:var(--ink)}
   /* the dot carries the signal's palette colour. An empty count fades the whole
      option rather than showing a zero with a live dot beside it. */
@@ -447,7 +449,7 @@
      height stays with the table wrap, under the rows, above the pager. */
   .boardcard > .tablewrap{flex:1 1 auto}
   .card h2{margin:0 0 10px;font-family:var(--mono);font-size:9px;text-transform:uppercase;
-    letter-spacing:.16em;color:var(--faint);font-weight:500;
+    letter-spacing:.16em;color:var(--ink);font-weight:500;
     display:flex;align-items:center;gap:7px}
   .card h2 .ic{font-size:12px;color:var(--ink)}
   .card.identity,.card.receipts{margin-top:14px}
@@ -471,7 +473,7 @@
   th:nth-child(5),td:nth-child(5){width:60px}
   th:nth-child(7),td:nth-child(7){width:32px}
   th{text-align:left;font-family:var(--mono);font-size:9px;text-transform:uppercase;
-    letter-spacing:.1em;color:var(--faint);padding:0 7px 8px;font-weight:500;
+    letter-spacing:.1em;color:var(--ink);padding:0 7px 8px;font-weight:500;
     border-bottom:1px solid var(--line);white-space:nowrap}
   th:last-child{text-align:right}
   td{padding:6px 7px;border-top:1px solid var(--line-soft);vertical-align:middle;
@@ -513,7 +515,7 @@
   :root[data-theme="dark"] tr.row.picked + tr.row > td{box-shadow:inset 0 1px 0 #fff}
   :root[data-theme="dark"] tr.row.picked .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px #fff}
   :root[data-theme="dark"] tr.row.picked .name .tag{box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
-  .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
+  .pos{font-family:var(--mono);color:var(--ink);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
   tr.row .ncell .avatar:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -527,26 +529,26 @@
   .mono{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
   td:nth-child(3),th:nth-child(3),td:nth-child(5),th:nth-child(5){text-align:right}
   .stars{text-align:right;font-variant-numeric:tabular-nums}
-  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--faint)}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--ink)}
   .stars{color:var(--ink);font-weight:600;white-space:nowrap}
-  .stars span{color:var(--faint);font-weight:400;font-size:10px}
+  .stars span{color:var(--ink);font-weight:400;font-size:10px}
   .pill{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:var(--r-pill);
-    background:var(--sunken);color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
+    background:var(--sunken);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);
     white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
   .tag{display:inline-block;font-family:var(--mono);font-size:8px;padding:2px 5px;
     border-radius:4px;margin:1px 3px 1px 0;letter-spacing:.06em;text-transform:uppercase;
-    box-shadow:inset 0 0 0 1px var(--line);color:var(--dim);white-space:nowrap;background:var(--sunken)}
+    box-shadow:inset 0 0 0 1px var(--line);color:var(--ink);white-space:nowrap;background:var(--sunken)}
   .tag.SURGING{color:var(--up);box-shadow:inset 0 0 0 1px rgba(29,122,68,.3);background:rgba(29,122,68,.07)}
   .tag.COILED{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(17,17,17,.24);background:rgba(17,17,17,.05)}
   .tag.SLEEPER{color:var(--cool);box-shadow:inset 0 0 0 1px rgba(58,94,158,.3);background:rgba(58,94,158,.07)}
   .tag.FADE{color:var(--down);box-shadow:inset 0 0 0 1px rgba(192,57,43,.3);background:rgba(192,57,43,.07)}
-  .tag.QUIET{color:var(--faint)}
+  .tag.QUIET{color:var(--ink)}
 
   /* ---- status badges: dot, label, tinted field. Six states, each with a hue,
      so the board reads at a glance instead of being scanned word by word. */
   .sb{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:8px;
     letter-spacing:.07em;text-transform:uppercase;padding:3px 7px 3px 6px;border-radius:var(--r-pill);
-    white-space:nowrap;color:var(--dim);background:rgba(17,17,17,.045);
+    white-space:nowrap;color:var(--ink);background:rgba(17,17,17,.045);
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.08)}
   .sb i{width:5px;height:5px;border-radius:50%;flex:none;background:currentColor;
     box-shadow:0 0 0 2.5px color-mix(in srgb,currentColor 16%,transparent)}
@@ -554,15 +556,15 @@
   .sb.COILED{color:#6b5b00;background:rgba(160,137,0,.11);box-shadow:inset 0 0 0 1px rgba(160,137,0,.24)}
   .sb.SLEEPER{color:#3a5e9e;background:rgba(58,94,158,.09);box-shadow:inset 0 0 0 1px rgba(58,94,158,.22)}
   .sb.FADE{color:#c0392b;background:rgba(192,57,43,.09);box-shadow:inset 0 0 0 1px rgba(192,57,43,.22)}
-  .sb.QUIET{color:var(--faint);background:rgba(17,17,17,.03);box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
+  .sb.QUIET{color:var(--ink);background:rgba(17,17,17,.03);box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
   .sb.STEADY{color:#4a5568;background:rgba(74,85,104,.08);box-shadow:inset 0 0 0 1px rgba(74,85,104,.2)}
   :root[data-theme="dark"] .sb{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
   :root[data-theme="dark"] .sb.SURGING{color:#5fd18b;background:rgba(60,190,120,.13);box-shadow:inset 0 0 0 1px rgba(95,209,139,.26)}
   :root[data-theme="dark"] .sb.COILED{color:#d8c86a;background:rgba(216,200,106,.13);box-shadow:inset 0 0 0 1px rgba(216,200,106,.26)}
   :root[data-theme="dark"] .sb.SLEEPER{color:#8ab0ec;background:rgba(90,140,220,.14);box-shadow:inset 0 0 0 1px rgba(138,176,236,.28)}
   :root[data-theme="dark"] .sb.FADE{color:#ef8878;background:rgba(230,90,70,.14);box-shadow:inset 0 0 0 1px rgba(239,136,120,.28)}
-  :root[data-theme="dark"] .sb.QUIET{color:#8f8d86;background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-  :root[data-theme="dark"] .sb.STEADY{color:#a9b2c3;background:rgba(160,175,200,.11);box-shadow:inset 0 0 0 1px rgba(169,178,195,.22)}
+  :root[data-theme="dark"] .sb.QUIET{color:var(--ink);background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .sb.STEADY{color:var(--ink);background:rgba(160,175,200,.11);box-shadow:inset 0 0 0 1px rgba(169,178,195,.22)}
 
   /* ---- bullet chart: momentum as a track, a fill and a target tick */
   .bc{position:relative;display:block;width:100%;min-width:60px;height:15px}
@@ -594,13 +596,13 @@
   /* margin-top:auto parks the pager on the bottom edge of the card, so any spare
      height lands between the rows and the pager instead of below it */
   .pager .pinfo{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--faint);white-space:nowrap}
+    text-transform:uppercase;color:var(--ink);white-space:nowrap}
   .pager .pnums{display:flex;align-items:center;justify-content:center;gap:4px}
   /* box-shadow:none is load-bearing: the global button rule draws a hairline ring,
      which turned every page number into a chip. The reference has no rings - only
      the current page is filled. */
   .pager button{font-family:var(--sans);font-size:12.5px;font-weight:600;width:30px;height:30px;
-    padding:0;border:0;border-radius:8px;background:transparent;color:var(--dim);
+    padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);
     box-shadow:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
     transition:background-color .25s cubic-bezier(.16,1,.3,1),color .25s cubic-bezier(.16,1,.3,1)}
   .pager button:hover:not(:disabled):not([aria-current]){background:var(--sunken);color:var(--ink);
@@ -615,14 +617,14 @@
   .pager button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   /* the arrows never take a background - not on hover either. They are marks on
      the card, not chips, so nothing lights up next to the digits mid-tap. */
-  .pager .pstep{width:26px;background:transparent;color:var(--dim)}
+  .pager .pstep{width:26px;background:transparent;color:var(--ink)}
   .pager .pstep:hover:not(:disabled){background:transparent;color:var(--ink)}
   .pager .pstep .ic{width:14px;height:14px;font-size:14px;opacity:.9}
   .pager .pstep span{display:none}
   /* the ellipsis is held to exactly one button's width, so a page that gains a
      second ellipsis does not widen the row and slide the arrows out from under
      the thumb that is about to tap next again */
-  .pager .gap{font-size:12px;font-weight:500;color:var(--faint);user-select:none;
+  .pager .gap{font-size:12px;font-weight:500;color:var(--ink);user-select:none;
     width:30px;display:inline-flex;align-items:center;justify-content:center}
   .pager .gap.pad{width:30px;font-size:12px}
   :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:rgba(255,255,255,.08)}
@@ -666,23 +668,23 @@
     position:relative;z-index:1;box-shadow:0 0 0 3px var(--card);background:var(--sunken)}
   .pcard .nm{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);
     margin-top:8px;line-height:1.2;letter-spacing:-.01em}
-  .pcard .hd{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:2px}
+  .pcard .hd{font-family:var(--mono);font-size:10.5px;color:var(--ink);margin-top:2px}
   .pcard .soc{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap}
   .pcard .soc a{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
-    border-radius:7px;color:var(--dim);box-shadow:inset 0 0 0 1px var(--line)}
+    border-radius:7px;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
   .pcard .soc a:hover{color:var(--ink);background:rgba(17,17,17,.05)}
   .pcard .soc svg{width:13px;height:13px;fill:currentColor}
   .pcard .stat{display:flex;align-items:baseline;gap:5px;margin-top:11px;
     padding-top:10px;border-top:1px solid var(--line-soft)}
   .pcard .stat b{font-family:var(--display);font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
   .pcard .stat span{font-family:var(--mono);font-size:8.5px;letter-spacing:.09em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
   .pcard .pick{width:100%;margin-top:11px;min-height:34px;border-radius:9px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;gap:6px;
     font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
     background:var(--ink);color:var(--accent-ink);font-weight:600;border:0}
   .pcard .pick:hover{opacity:.88}
-  .pcard .note{font-family:var(--mono);font-size:8px;color:var(--faint);margin-top:8px;line-height:1.5}
+  .pcard .note{font-family:var(--mono);font-size:8px;color:var(--ink);margin-top:8px;line-height:1.5}
   :root[data-theme="dark"] .pcard{box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 0 0 1px var(--line)}
   :root[data-theme="dark"] .pcard .soc a:hover{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .pcard .pick{background:#f4f3f0;color:#111}
@@ -724,7 +726,7 @@
   .mbar:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;
     background:rgba(17,17,17,.28)}
   .mbar i{position:absolute;top:0;bottom:0;border-radius:3px;min-width:3px}
-  tr.row .add{cursor:pointer;color:var(--faint);text-align:right;width:30px;user-select:none;font-size:12px;padding-right:2px}
+  tr.row .add{cursor:pointer;color:var(--ink);text-align:right;width:30px;user-select:none;font-size:12px;padding-right:2px}
   tr.row .add .ic{margin-left:auto}
   tr.row:hover .add,tr.row.picked .add{color:var(--ink)}
 
@@ -760,17 +762,17 @@
     0 12px 30px -18px rgba(0,0,0,.42)}
   .tlwhen{display:flex;align-items:center;justify-content:space-between;gap:8px;
     font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--faint)}
+    color:var(--ink)}
   .tlwhen .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;
-    border-radius:var(--r-pill);background:var(--sunken);color:var(--dim);
+    border-radius:var(--r-pill);background:var(--sunken);color:var(--ink);
     letter-spacing:.06em;text-transform:none;font-size:8px}
   .tlbig{display:flex;align-items:baseline;gap:7px;margin:9px 0 2px}
   .tlbig b{font-family:var(--display);font-weight:500;font-size:26px;line-height:1;
     letter-spacing:-.04em;font-variant-numeric:tabular-nums}
   .tlbig span{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
-    letter-spacing:.09em;color:var(--faint)}
+    letter-spacing:.09em;color:var(--ink)}
   .tlnames{margin-top:9px;display:flex;flex-direction:column;gap:5px}
-  .tlnames div{display:flex;align-items:baseline;gap:6px;font-size:11px;color:var(--dim);
+  .tlnames div{display:flex;align-items:baseline;gap:6px;font-size:11px;color:var(--ink);
     min-width:0}
   .tlnames em{font-style:normal;flex:none;font-family:var(--mono);font-size:9px;
     font-variant-numeric:tabular-nums;min-width:26px;text-align:right}
@@ -778,7 +780,7 @@
   .tlnames .up{color:var(--up)} .tlnames .down{color:var(--down)}
   /* a name must stay on one line and ellipsis; a sentence in the same slot must
      be allowed to wrap, or it loses its meaning to a truncation it does not need */
-  .tlnames .none{color:var(--faint);font-size:10.5px;white-space:normal;
+  .tlnames .none{color:var(--ink);font-size:10.5px;white-space:normal;
     overflow:visible;text-overflow:clip;line-height:1.4}
   /* ticks in the gaps: a rhythm marker so an empty gap still reads as time */
   .tlticks{position:absolute;left:0;right:0;bottom:8px;height:9px;pointer-events:none;
@@ -786,18 +788,18 @@
   .tlticks i{width:1px;height:5px;background:var(--ink);opacity:.35;border-radius:1px}
   .tlticks i:nth-child(2n){height:8px;opacity:.5}
   .tlhint{margin:9px 0 0;font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
   .tlrailrow{display:flex;align-items:center;gap:7px;margin-top:10px}
   .tlrailrow .tlrail{flex:1 1 auto;height:2px;border-radius:2px;background:var(--line);
     position:relative;overflow:hidden}
   .tlrailrow .tlrail i{position:absolute;top:0;bottom:0;left:0;width:0;
     background:var(--ink);opacity:.6;border-radius:2px;transition:width .3s ease}
   .tlrailrow b{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;
-    color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+    color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
   /* the step buttons are the mouse user's swipe: bare glyphs, no chrome, so
      they read as part of the rail rather than two more controls */
   .tlstep{flex:none;width:22px;height:22px;display:grid;place-items:center;padding:0;
-    border:0;border-radius:6px;background:none;color:var(--faint);cursor:pointer;
+    border:0;border-radius:6px;background:none;color:var(--ink);cursor:pointer;
     box-shadow:none;transition:color .15s ease,background .15s ease}
   .tlstep .ic{width:13px;height:13px}
   .tlstep:hover{color:var(--ink);background:var(--card-2)}
@@ -826,9 +828,9 @@
   .detail .dhero:before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:3px;
     border-radius:3px;background:var(--rail)}
   .detail h3{margin:0;font-family:var(--display);font-size:21px;font-weight:500;letter-spacing:-.03em}
-  .detail .meta{color:var(--faint);font-size:11px;margin:7px 0 0;font-family:var(--mono);
+  .detail .meta{color:var(--ink);font-size:11px;margin:7px 0 0;font-family:var(--mono);
     display:flex;flex-wrap:wrap;gap:7px;align-items:center}
-  .detail .meta .rank{color:var(--dim)}
+  .detail .meta .rank{color:var(--ink)}
   .detail .signalPill{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;
     border-radius:var(--r-pill);background:var(--rail);color:#fff}
   .detail .signalPill b{font-size:8.5px;font-weight:600;letter-spacing:.08em}
@@ -839,7 +841,7 @@
   .detail .bigmove b{font-family:var(--display);font-size:29px;line-height:.95;
     letter-spacing:-.045em;font-weight:500;font-variant-numeric:tabular-nums}
   .detail .bigmove span{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
-    letter-spacing:.1em;color:var(--faint)}
+    letter-spacing:.1em;color:var(--ink)}
 
   /* six small cells rather than a two-column list: the evidence reads as an
      instrument panel and takes half the height of the old key/value block */
@@ -848,20 +850,20 @@
     background:var(--line-soft)}
   .kv .cell{background:var(--sunken);padding:9px 10px 10px;min-width:0}
   .kv .k{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;
-    color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .kv .v{font-family:var(--mono);font-size:12.5px;margin-top:5px;color:var(--ink);
     font-variant-numeric:tabular-nums;
     display:flex;align-items:center;gap:4px;flex-wrap:wrap}
   .kv .v.sig{font-size:8.5px;letter-spacing:.04em;line-height:1.3}
   .kv .v.sig i{width:5px;height:5px;border-radius:2px;display:inline-block;flex:none}
   label{display:block;font-family:var(--mono);font-size:8.5px;text-transform:uppercase;
-    letter-spacing:.12em;color:var(--faint);margin:13px 0 6px}
+    letter-spacing:.12em;color:var(--ink);margin:13px 0 6px}
   input,textarea{width:100%;background:var(--sunken);border:0;border-radius:var(--r-sm);
     color:var(--ink);font-family:var(--sans);font-size:12.5px;padding:10px 12px;resize:vertical;
     box-shadow:inset 0 0 0 1px var(--line)}
-  input::placeholder,textarea::placeholder{color:#a5a29b}
+  input::placeholder,textarea::placeholder{color:var(--ink);opacity:.6}
   input:focus,textarea:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--ink)}
-  .hint{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.5}
+  .hint{font-size:10.5px;color:var(--ink);margin-top:6px;line-height:1.5}
 
   /* ---- no double-tap zoom: a phone reading a board does not need the page to
      jump when it taps a row twice. zooming out is still available through the
@@ -886,26 +888,29 @@
   .rar{display:flex;gap:6px;margin:6px 0 0}
   .rar button{flex:1;display:flex;flex-direction:column;gap:2px;align-items:center;
     padding:9px 4px;font-size:10.5px;border-radius:var(--r-sm);text-transform:none}
-  .rar button i{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--faint)}
-  .rar button.on{background:var(--ink);color:var(--accent-ink);font-weight:500;
-    box-shadow:inset 0 0 0 1px var(--ink)}
+  .rar button i{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--ink)}
+  .rar button.on{background:var(--accent);color:#fff;font-weight:500;
+    box-shadow:inset 0 0 0 1px var(--accent)}
   .rar button.on i{color:rgba(255,255,255,.65)}
-  .rar button[data-r="Rare"]:not(.on){color:#3a5e9e}
-  .rar button[data-r="Epic"]:not(.on){color:#6b4c9e}
-  .rar button[data-r="Legendary"]:not(.on){color:#a86a17}
+  /* rarity is not a second colour system: unselected options read in ink, the
+     selected one is the accent pill */
+  .rar button[data-r="Rare"]:not(.on),
+  .rar button[data-r="Epic"]:not(.on),
+  .rar button[data-r="Legendary"]:not(.on){color:var(--ink)}
+
 
   .slot{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
   .slot .s{font-family:var(--mono);font-size:9px;padding:6px 10px;border-radius:var(--r-pill);
-    color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-soft);
+    color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-soft);
     background:var(--sunken);white-space:nowrap}
   .slot .s.spent{color:var(--ink);background:var(--card-2);
     box-shadow:inset 0 0 0 1px var(--line);
     display:inline-flex;align-items:center;gap:5px}
   .slot .s.spent b{font-weight:500;color:var(--ink)}
   .avatar.av-fb{display:inline-flex;align-items:center;justify-content:center;
-    font-family:var(--mono);font-size:7.5px;font-weight:600;color:var(--dim);
+    font-family:var(--mono);font-size:7.5px;font-weight:600;color:var(--ink);
     background:#d8d5cf;box-shadow:inset 0 0 0 1px var(--line)}
-  .projline{font-family:var(--mono);font-size:10px;color:var(--dim);margin:3px 0 13px;line-height:1.6}
+  .projline{font-family:var(--mono);font-size:10px;color:var(--ink);margin:3px 0 13px;line-height:1.6}
   .projline b{color:var(--ink);font-weight:600}
 
 
@@ -915,7 +920,7 @@
   .idcard .who{min-width:0;flex:1}
   .idcard .h{font-family:var(--mono);font-size:12px;color:var(--ink);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .idcard .n{font-size:11px;color:var(--faint);margin-top:2px;
+  .idcard .n{font-size:11px;color:var(--ink);margin-top:2px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .idcard .state{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
     color:var(--accent-ink);padding:4px 9px;border-radius:var(--r-pill);flex:none;
@@ -928,7 +933,7 @@
   .rec .who .avatar.k.av-fb{font-size:6.5px}
 
   /* ---- receipts */
-  .bookmeta{font-family:var(--mono);font-size:9px;color:var(--faint);
+  .bookmeta{font-family:var(--mono);font-size:9px;color:var(--ink);
     margin:-5px 0 14px;line-height:1.65;text-transform:uppercase;letter-spacing:.04em}
   .rec{display:flex;justify-content:space-between;gap:12px;padding:13px 0;
     border-top:1px solid var(--line-soft)}
@@ -937,7 +942,7 @@
   .rec .who{font-family:var(--mono);font-size:11.5px;color:var(--ink);
     display:flex;align-items:center;gap:5px}
   .rec .who b{color:var(--ink);font-weight:600}
-  .rec .picks{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.6}
+  .rec .picks{font-size:11px;color:var(--ink);margin-top:5px;line-height:1.6}
   .rec .picks i.rr{font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.04em;
     color:var(--ink);box-shadow:inset 0 0 0 1px rgba(17,17,17,.2);
     border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:1px;
@@ -945,23 +950,23 @@
   .rec .score{font-family:var(--display);font-size:17px;font-weight:500;white-space:nowrap;
     text-align:right;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .rec .score small{display:block;font-family:var(--mono);font-size:8px;font-weight:400;
-    color:var(--faint);margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
+    color:var(--ink);margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
 
   /* ---- your receipts: the positions card */
   .mine .stand{display:flex;align-items:baseline;gap:7px;margin:2px 0 13px;
-    font-family:var(--mono);font-size:10px;color:var(--faint);
+    font-family:var(--mono);font-size:10px;color:var(--ink);
     text-transform:uppercase;letter-spacing:.05em;line-height:1.5}
   .mine .stand b{font-family:var(--display);font-size:22px;font-weight:500;
     color:var(--ink);letter-spacing:-.02em;text-transform:none}
-  .mine .stand .of{color:var(--faint)}
+  .mine .stand .of{color:var(--ink)}
   .mine .stand .sep{opacity:.4}
   .mx{border-top:1px solid var(--line-soft);padding:11px 0}
   .mx:first-of-type{border-top:0;padding-top:0}
   .mx-h{display:flex;align-items:center;gap:7px;justify-content:space-between}
-  .mx-h .slot{font-family:var(--mono);font-size:9px;color:var(--faint);
+  .mx-h .slot{font-family:var(--mono);font-size:9px;color:var(--ink);
     letter-spacing:.05em;text-transform:uppercase}
   .mx-h .st{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
-    font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
+    font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
     box-shadow:inset 0 0 0 1px var(--line-soft);border-radius:var(--r-pill);padding:2px 7px}
   .mx-h .st .dot{width:5px;height:5px;border-radius:50%;background:var(--faint)}
   .mx-h .st.live .dot{background:var(--warm);box-shadow:0 0 0 3px rgba(196,138,42,.16)}
@@ -979,15 +984,15 @@
   .mx-p .p b{font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;
     white-space:nowrap;min-width:0}
   .mx-p .p .rr{font-style:normal;font-family:var(--mono);font-size:7px;letter-spacing:.04em;
-    color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-soft);border-radius:3px;
+    color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-soft);border-radius:3px;
     padding:0 3px;text-transform:lowercase;margin-left:4px}
-  .mx-p .p .at{font-family:var(--mono);font-size:8.5px;color:var(--faint);
+  .mx-p .p .at{font-family:var(--mono);font-size:8.5px;color:var(--ink);
     font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
   .mx-p .p .at .arw{opacity:.55;margin:0 2px}
   .mx-p .p .mv{font-family:var(--mono);font-size:9.5px;font-variant-numeric:tabular-nums;
     min-width:24px;text-align:right;white-space:nowrap}
   .mx-p .p .mv.up{color:var(--up,#1f8a4c)} .mx-p .p .mv.down{color:var(--down,#b4453a)}
-  .mx-p .p .mv.flat{color:var(--faint)}
+  .mx-p .p .mv.flat{color:var(--ink)}
 
   /* ---- the card that replaces alert(): a filing deserves a receipt, not a popup */
   .sheet{position:fixed;inset:0;z-index:90;display:grid;place-items:center;
@@ -1001,27 +1006,27 @@
     transition:transform .26s cubic-bezier(.2,.8,.25,1)}
   .sheet.on .plate{transform:none}
   .sheet .kick{display:flex;align-items:center;gap:7px;font-family:var(--mono);
-    font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+    font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink)}
   .sheet .kick .tick{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
     background:rgba(31,138,76,.12);color:var(--up,#1f8a4c)}
   .sheet .kick .tick .ic{width:9px;height:9px;stroke-width:2.6}
   .sheet h3{font-family:var(--display);font-size:19px;font-weight:500;color:var(--ink);
     margin:9px 0 0;letter-spacing:-.02em;line-height:1.25}
   .sheet h3 b{font-weight:600}
-  .sheet .sub{font-size:11.5px;color:var(--dim);line-height:1.6;margin:7px 0 0}
+  .sheet .sub{font-size:11.5px;color:var(--ink);line-height:1.6;margin:7px 0 0}
   .sheet .ticks{margin:13px 0 0;border-radius:11px;overflow:hidden;
     box-shadow:inset 0 0 0 1px var(--line-soft)}
   .sheet .tickrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:8px 10px;font-size:11px;color:var(--ink)}
   .sheet .tickrow+.tickrow{border-top:1px solid var(--line-soft)}
   .sheet .tickrow .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
   .sheet .tickrow .v{font-family:var(--mono);font-size:10.5px;color:var(--ink);
     font-variant-numeric:tabular-nums;text-align:right}
   .sheet .picks{margin:14px 0 0;border-radius:11px;overflow:hidden;
     box-shadow:inset 0 0 0 1px var(--line-soft)}
   .sheet .plabel{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.07em;
-    text-transform:uppercase;color:var(--faint);padding:8px 10px 0}
+    text-transform:uppercase;color:var(--ink);padding:8px 10px 0}
   .sheet .pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
     background:var(--line-soft);margin-top:6px}
   /* the rank is the figure that matters, so it leads; the name wraps under it
@@ -1031,7 +1036,7 @@
   .sheet .pgrid .chip i{font-style:normal;font-family:var(--display);font-size:13px;
     font-weight:500;color:var(--ink);letter-spacing:-.02em;line-height:1;
     font-variant-numeric:tabular-nums}
-  .sheet .pgrid .chip b{font-weight:400;color:var(--dim);font-size:8.5px;line-height:1.2;
+  .sheet .pgrid .chip b{font-weight:400;color:var(--ink);font-size:8.5px;line-height:1.2;
     letter-spacing:.01em;overflow-wrap:anywhere;hyphens:auto;word-break:break-word}
   @media (max-width:400px){
     .sheet .pgrid .chip b{font-size:8px}
@@ -1054,11 +1059,11 @@
     .sheet,.sheet .plate{transition:none}
   }
 
-  .empty{color:var(--faint);font-size:12px;padding:20px 0;text-align:center;line-height:1.6}
+  .empty{color:var(--ink);font-size:12px;padding:20px 0;text-align:center;line-height:1.6}
 
   /* ---- steps in empty detail card */
   .steps{display:flex;flex-direction:column;gap:10px;text-align:left;width:fit-content;max-width:300px;margin:16px auto 0}
-  .steps div{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--dim)}
+  .steps div{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink)}
   .steps .n{font-family:var(--mono);font-size:9px;width:18px;height:18px;flex:none;
     border-radius:50%;display:grid;place-items:center;background:var(--ink);
     color:var(--accent-ink);margin-top:1px}
@@ -1071,12 +1076,12 @@
      the line shrinks, the circles keep their size, and the whole footer lands
      under 50px instead of the ~60 it took when it was allowed to wrap. */
   .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    flex-wrap:nowrap;padding:8px 0 6px;min-height:0}
-  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--faint);
+    flex-wrap:nowrap;padding:9px 0 7px;border-top:1px solid var(--line);min-height:0}
+  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--ink);
     min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .f1-social{display:flex;gap:9px}
   .f1-social a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
-    color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
+    color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);
     transition:color .16s ease,box-shadow .16s ease,transform .16s ease}
   .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
   .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -1085,8 +1090,8 @@
   .f1-social a[href*="x.com"] svg{width:15px;height:15px}
   .f1-social a[href*="github.com"] svg{width:18px;height:18px}
   .f1-social svg path[fill="currentColor"]{stroke:none}
-  :root[data-theme="dark"] .f1-bar p{color:#a5a29a}
-  :root[data-theme="dark"] .f1-social a{color:#cfccc5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+  :root[data-theme="dark"] .f1-bar p{color:var(--ink)}
+  :root[data-theme="dark"] .f1-social a{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
   :root[data-theme="dark"] .f1-social a:hover{color:#0f0f0e;background:#f4f3f0;box-shadow:none}
   @media(max-width:600px){
     .f1-bar{padding:7px 0 5px;gap:10px}
@@ -1166,7 +1171,7 @@
     transition:transform .26s cubic-bezier(.4,0,.2,1);pointer-events:none}
   .tgs[data-on="dark"] .tgs-knob{transform:translateX(30px)}
   .tgs-b{position:relative;z-index:1;width:30px;height:30px;padding:0;border:0;background:transparent;
-    display:grid;place-items:center;cursor:pointer;color:var(--faint);
+    display:grid;place-items:center;cursor:pointer;color:var(--ink);
     border-radius:50%;transition:color .2s ease}
   .tgs-b:hover{color:var(--ink)}
   .tgs-b[aria-pressed="true"]{color:var(--ink)}
@@ -1177,7 +1182,7 @@
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   :root[data-theme="dark"] .tgs-knob{background:#dedbd4;
     box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.5)}
-  :root[data-theme="dark"] .tgs-b{color:#8f8d86}
+  :root[data-theme="dark"] .tgs-b{color:var(--ink)}
   :root[data-theme="dark"] .tgs-b:hover{color:#fff}
   :root[data-theme="dark"] .tgs-b[aria-pressed="true"]{color:#111}
   :root[data-theme="dark"] .tgs-b:focus-visible{outline-color:#fff}
@@ -1196,32 +1201,33 @@
      label sits left and whose arrow rides inside a solid disc on the right;
      on hover the disc grows and the arrow leans ---- */
   .acta{display:inline-flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;
-    border-radius:var(--r-pill);background:transparent;color:var(--ink);
-    box-shadow:inset 0 0 0 1px rgba(17,17,17,.22);text-decoration:none;
+    border-radius:var(--r-pill);background:var(--accent);color:#fff;
+    box-shadow:inset 0 0 0 1px var(--accent);text-decoration:none;
     font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
     transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content}
   .acta-t{display:block;white-space:nowrap}
+  /* paper disc, accent arrow: the coin reads against any surface, so the arrow
+     never disappears the way it did when disc and arrow were both ink */
   .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
-    background:var(--ink);color:var(--bg);transition:transform .28s ease,background .22s ease}
+    background:#fff;color:var(--accent);transition:transform .28s ease,background .22s ease}
   .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
     stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
-  .acta:hover{background:rgba(17,17,17,.05);box-shadow:inset 0 0 0 1px rgba(17,17,17,.34)}
+  .acta:hover{background:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);filter:brightness(1.06)}
   .acta:hover .acta-ic{transform:scale(1.08)}
   .acta:hover .acta-ic svg{transform:translateX(2px)}
-  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .acta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
   .acta-sm .acta-ic{width:30px;height:30px}
   .acta-sm .acta-ic svg{width:13px;height:13px}
 
-  /* in the dark, the closing slab is paper: the button flips to ink-on-paper so
-     it still reads as the strongest thing on the card */
-  :root[data-theme="dark"] .acta{color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.22)}
-  :root[data-theme="dark"] .acta-ic{background:#111;color:#f4f3f0}
-  :root[data-theme="dark"] .acta:hover{background:rgba(17,17,17,.06);box-shadow:inset 0 0 0 1px rgba(17,17,17,.4)}
-  .closer .acta{color:#111;box-shadow:inset 0 0 0 1px rgba(17,17,17,.24)}
-  .closer .acta-ic{background:#111;color:#f4f3f0}
-  .closer .acta:hover{background:rgba(17,17,17,.06);box-shadow:inset 0 0 0 1px rgba(17,17,17,.42)}
-  .closer .acta:focus-visible{outline-color:#111}
+  /* the CTA is the accent in both themes */
+  :root[data-theme="dark"] .acta{background:var(--accent);color:#fff;box-shadow:inset 0 0 0 1px var(--accent)}
+  :root[data-theme="dark"] .acta-ic{background:#fff;color:var(--accent)}
+  :root[data-theme="dark"] .acta:hover{background:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);filter:brightness(1.06)}
+  .closer .acta{background:#fff;color:var(--accent);box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  .closer .acta-ic{background:var(--accent);color:#fff}
+  .closer .acta:hover{background:#fff;box-shadow:inset 0 0 0 1px var(--accent)}
+  .closer .acta:focus-visible{outline-color:var(--accent)}
 
   /* the reference CTA is set in the body face, not the mono caps of .btn */
   .slab .acta{margin-top:8px}
@@ -1255,14 +1261,16 @@
     transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content;
     cursor:pointer;border:0;appearance:none}
   .acta-t{display:block;white-space:nowrap}
+  /* paper disc, accent arrow: the coin reads against any surface, so the arrow
+     never disappears the way it did when disc and arrow were both ink */
   .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
-    background:var(--ink);color:var(--bg);transition:transform .28s ease,background .22s ease}
+    background:#fff;color:var(--accent);transition:transform .28s ease,background .22s ease}
   .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
     stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
   .acta:hover{background:var(--acta-hover);box-shadow:inset 0 0 0 1px var(--acta-line-hi)}
   .acta:hover .acta-ic{transform:scale(1.08)}
   .acta:hover .acta-ic svg{transform:translateX(2px)}
-  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .acta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
   .acta-sm .acta-ic{width:30px;height:30px}
   .acta-sm .acta-ic svg{width:13px;height:13px}
@@ -1273,16 +1281,22 @@
     transition:background .2s ease,box-shadow .2s ease}
   .ghosty:hover{background:var(--acta-hover);box-shadow:inset 0 0 0 1px var(--acta-line-hi)}
   .ghosty svg,.ghosty .ic{width:13px;height:13px}
-  .backhome.acta{margin:2px 0 14px;color:var(--dim);z-index:1}
-  .backhome.acta:hover{color:var(--ink)}
-  .backhome.acta .acta-ic{background:var(--ink);color:var(--bg)}
-  :root[data-theme="dark"] .backhome.acta{background:transparent;color:var(--dim)}
-  :root[data-theme="dark"] .backhome.acta:hover{background:var(--acta-hover);color:var(--ink)}
-  .acta.acta-solid{background:var(--ink);color:var(--bg);
-    box-shadow:inset 0 0 0 1px transparent}
-  .acta.acta-solid .acta-ic{background:var(--bg);color:var(--ink)}
-  .acta.acta-solid:hover{background:var(--ink);filter:brightness(1.14);
-    box-shadow:inset 0 0 0 1px transparent}
+  /* the way back is the same accent pill as every other CTA on the product.
+     html prefix because the old :root[data-theme] rules still set a backdrop
+     background on .backhome and would otherwise win. */
+  html .backhome.acta{margin:2px 0 14px;background:var(--accent);color:#fff;
+    box-shadow:inset 0 0 0 1px var(--accent);z-index:1;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  html .backhome.acta:hover{background:var(--accent);color:#fff;filter:brightness(1.06)}
+  html .backhome.acta .acta-ic{background:#fff;color:var(--accent)}
+  html[data-theme="dark"] .backhome.acta{background:var(--accent);color:#fff}
+  html[data-theme="dark"] .backhome.acta:hover{background:var(--accent);color:#fff;filter:brightness(1.06)}
+  /* one CTA family: the accent pill with a paper coin on it */
+  .acta.acta-solid{background:var(--accent);color:#fff;
+    box-shadow:inset 0 0 0 1px var(--accent)}
+  .acta.acta-solid .acta-ic{background:#fff;color:var(--accent)}
+  .acta.acta-solid:hover{background:var(--accent);filter:brightness(1.06);
+    box-shadow:inset 0 0 0 1px var(--accent)}
   @media (max-width:640px){
     .acta{font-size:13px;padding:6px 6px 6px 20px;gap:10px}
     .acta-ic{width:32px;height:32px}
@@ -1301,9 +1315,15 @@
     backdrop-filter:saturate(140%) blur(14px);
     border-top:1px solid var(--line);
     padding-bottom:env(safe-area-inset-bottom,0px)}
-  footer .f1-bar{padding:12px 0}
-  @media (max-width:640px){
-    footer .f1-bar{padding:9px 0}
+  /* One bar at every width, exactly the landing page's bar: the pinned wrapper
+     carries the hairline, so the bar itself must not add another one, and the
+     phone rules below only shrink type - never the height. */
+  footer .f1-bar{padding:9px 0 7px;border-top:0}
+  @media (max-width:600px){
+    footer .f1-bar{padding:9px 0 7px;gap:10px}
+    .f1-bar p{font-size:9.5px}
+    .f1-social{gap:6px}
+    .f1-social a{width:28px;height:28px}
   }
 
 </style>
@@ -2573,7 +2593,7 @@ function cardHtml(c) {
     // a confirmed X account carries the photo people recognise; otherwise fall
     // back to Motion's own avatar, then to initials
     ? `<img class="pf" src="${esc((prof && prof.avatar) || `https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg`)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`
-    : `<span class="pf" style="display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--faint)">${ini}</span>`;
+    : `<span class="pf" style="display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;color:var(--ink)">${ini}</span>`;
   const ban = prof && prof.banner
     ? ` style="background-image:url('${esc(prof.banner)}')"`
     : "";
@@ -2754,7 +2774,7 @@ function renderDetail() {
   const box = $("#detail");
   const c = DATA.creators.find(x => x.name === SEL);
   if (!c) { box.innerHTML = `<h2>${icon("target")}Draft a pick</h2><div class="empty">
-      <div style="margin-bottom:10px;color:var(--dim)">Pick from the board to open a draft card.</div>
+      <div style="margin-bottom:10px;color:var(--ink)">Pick from the board to open a draft card.</div>
       <div class="steps">
         <div><span class="n">1</span><span>click a row (or the <b>+</b>)</span></div>
         <div><span class="n">2</span><span>write a one-line thesis</span></div>
@@ -3072,7 +3092,7 @@ function renderBook() {
     return `<div class="rec"><div class="l">
         <div class="who">${r.avatar
           ? `<img class="avatar k" src="${esc(r.avatar)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${esc(String(r.player || "?").slice(0, 2).toUpperCase())}" data-extra="k" onerror="${AV_FB}">`
-          : icon("user", "font-size:11px;opacity:.7")}<b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks${r.name && r.name.toLowerCase() !== String(r.player || "").toLowerCase() ? ` <span style="color:var(--faint);font-size:10px">${esc(r.name)}</span>` : ""}</div>
+          : icon("user", "font-size:11px;opacity:.7")}<b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks${r.name && r.name.toLowerCase() !== String(r.player || "").toLowerCase() ? ` <span style="color:var(--ink);font-size:10px">${esc(r.name)}</span>` : ""}</div>
         <div class="picks">${picks}</div>
       </div>
       <div class="score ${done ? cls(r.score) : "flat"}">${done ? signed(r.score) : "pending"}<small>${done ? (r.settledAt && r.slotAtLock && r.settledAt === r.slotAtLock ? "no window yet" : "net rank") : "not graded"}</small></div>

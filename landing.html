@@ -36,8 +36,16 @@
     --line:rgba(17,17,17,.10);
     --line-soft:rgba(17,17,17,.07);
     --ink:#111111;
-    --dim:#4f4f4a;
-    --faint:#67675f;
+    /* No grey text tier. --dim and --faint are kept as names because a few
+       hundred rules read them, but they now resolve to the ink of the theme, so
+       every label is black on paper and white on the dark card. */
+    --dim:var(--ink);
+    --faint:var(--ink);
+    /* Motion pink. One accent for the whole page: room cards, FAQ, the bet
+       card, the CTA pills and every disc they carry. */
+    --pink:#EB185D;
+    --accent:var(--pink);
+    --accent-ink:#ffffff;
     --up:#1d7a44;
     --down:#c0392b;
     --lift:0 1px 0 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(17,17,17,.045);
@@ -60,7 +68,10 @@
     --line:rgba(255,255,255,.13);
     --line-soft:rgba(255,255,255,.09);
     --ink:#f3f1ec;
-    --dim:#a9a7a0;
+    --pink:#EB185D;
+    --accent:var(--pink);
+    --accent-ink:#ffffff;
+    --dim:var(--ink);
     --faint:#7e7c75;
     --up:#4ec27c;
     --down:#e5766a;
@@ -69,57 +80,61 @@
   :root[data-theme="dark"] ::selection{background:var(--ink);color:var(--bg)}
   :root[data-theme="dark"] .chip{background:rgba(255,255,255,.05)}
   /* an unset --accent-ink left the loud button white on white: pin it per theme */
-  :root{--accent-ink:#f8f7f4;
-    --slab:#111111;--slab-ink:#f8f7f4;--slab-dim:#b9b6b0;--slab-line:rgba(255,255,255,.20);
+  :root{--accent-ink:#ffffff;
+    /* the room cards carry the accent, not a black slab: the whole page reads
+       as one pink system, and white is the only ink on it */
+    --slab:var(--accent);--slab-ink:#ffffff;--slab-dim:#ffffff;--slab-line:rgba(255,255,255,.42);
     /* receipt card: the same ink slab as FAQ/room, plus its glow end and hairlines */
-    --card-glow-end:#191918;--hc-ink:#f8f7f4;--hc-dim:#b9b6b0;
-    --hc-line:rgba(255,255,255,.16);--hc-bg:#111111;
-    --faq-slab:#111111;--faq-ink:#f8f7f4;--faq-dim:#b9b6b0}
+    --card-glow-end:#191918;--hc-ink:#ffffff;--hc-dim:#ffffff;
+    --hc-line:rgba(255,255,255,.40);--hc-bg:var(--accent);
+    --faq-slab:var(--accent);--faq-ink:#ffffff;--faq-dim:#ffffff}
   /* dark: the slab cards read as black-on-black. The surface is a hair above the
      page (#131312 on #0f0f0e) so the edge is felt rather than seen, and the
      hairline carries the separation — no white slab floating on a dark page. */
-  :root[data-theme="dark"]{--slab:#131312;--slab-ink:#f3f1ec;--slab-dim:#8f8d86;
-    --slab-line:rgba(255,255,255,.14);
-    /* FAQ keeps the light-mode treatment in both themes: a paper card on the
-       page, so it stays the one section that reads bright in dark mode */
-    --faq-slab:#f4f3f0;--faq-ink:#111111;--faq-dim:#5c5c56}
-  :root[data-theme="dark"]{--card-glow-end:#131312;--hc-ink:#f3f1ec;--hc-dim:#8f8d86;
-    --hc-line:rgba(255,255,255,.13);--hc-bg:#131312}
+  :root[data-theme="dark"]{/* the same accent slab in the dark: the colour does not
+     change with the theme, only the ink on it does not need to */
+    --slab:var(--accent);--slab-ink:#ffffff;--slab-dim:#ffffff;
+    --slab-line:rgba(255,255,255,.42);
+    /* FAQ is the same accent slab in both themes too */
+    --faq-slab:var(--accent);--faq-ink:#ffffff;--faq-dim:#ffffff}
+  /* the hover receipt card is the accent slab too, dim ink lifted to white */
+  :root[data-theme="dark"]{--card-glow-end:#131312;--hc-ink:#ffffff;--hc-dim:#ffffff;
+    --hc-line:rgba(255,255,255,.42);--hc-bg:var(--accent)}
   :root[data-theme="dark"]{--accent-ink:#0f0f0e}
   :root[data-theme="dark"] .btn.primary{color:var(--bg)}
   :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.07);color:var(--ink)}
-  :root[data-theme="dark"] .chip{color:#c9c6bf;box-shadow:inset 0 0 0 1px var(--line)}
-  :root[data-theme="dark"] .hc-row{color:#c2bfb8}
-  :root[data-theme="dark"] .hc-foot{color:#a5a29a}
+  :root[data-theme="dark"] .chip{color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+  :root[data-theme="dark"] .hc-row{color:var(--ink)}
+  :root[data-theme="dark"] .hc-foot{color:var(--ink)}
   :root[data-theme="dark"] .themesw{background:rgba(255,255,255,.08)}
-  :root[data-theme="dark"] .themesw button{color:#b4b1aa}
+  :root[data-theme="dark"] .themesw button{color:var(--ink)}
   :root[data-theme="dark"] .themesw button:hover{color:#fff}
   :root[data-theme="dark"] .themesw button[aria-pressed="true"]{color:#fff;
     background:rgba(255,255,255,.2)}
-  :root[data-theme="dark"] .pillnav a{color:#9d9a93}
+  :root[data-theme="dark"] .pillnav a{color:var(--ink)}
   :root[data-theme="dark"] .pillnav a:hover{color:#fff}
   :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16)}
-  :root[data-theme="dark"] .faq-body{color:#bdbab3}
+  :root[data-theme="dark"] .faq-body{color:var(--ink)}
   :root[data-theme="dark"] .faq-item summary{color:var(--ink)}
-  :root[data-theme="dark"] .stat .k, :root[data-theme="dark"] .slab span{color:#b3b0a8}
-  :root[data-theme="dark"] .sec-head .tag, :root[data-theme="dark"] .tag{color:#b0ada5}
+  :root[data-theme="dark"] .stat .k, :root[data-theme="dark"] .slab span{color:var(--ink)}
+  :root[data-theme="dark"] .sec-head .tag, :root[data-theme="dark"] .tag{color:var(--ink)}
   :root[data-theme="dark"] .stat .v{color:var(--ink)}
   :root[data-theme="dark"] .hc-up, :root[data-theme="dark"] .hc-row b{color:#6cd793}
   :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] .btn.ghost:hover{background:rgba(255,255,255,.11)}
   /* dark mode: the slab stays paper-white with ink text, and its button goes
      black-on-white — it is the loudest thing on a dark page either way */
-  :root[data-theme="dark"] .closer{background:#f4f3f0;color:#111111;
+  :root[data-theme="dark"] .closer{background:var(--accent);color:#fff;
     box-shadow:none}
-  :root[data-theme="dark"] .closer h3{color:#111111}
-  :root[data-theme="dark"] .closer-sub{color:rgba(17,17,17,.62)}
-  :root[data-theme="dark"] .closer .btn.primary{background:#111111;color:#f4f3f0;
+  :root[data-theme="dark"] .closer h3{color:#fff}
+  :root[data-theme="dark"] .closer-sub{color:#fff}
+  :root[data-theme="dark"] .closer .btn.primary{background:#fff;color:var(--accent);
     box-shadow:none}
-  :root[data-theme="dark"] .closer .btn.primary:hover{background:#000}
+  :root[data-theme="dark"] .closer .btn.primary:hover{background:#fff;filter:brightness(.97)}
   :root[data-theme="dark"] .hc-state{color:var(--bg);background:var(--ink)}
   :root[data-theme="dark"] .pillnav{background:rgba(28,28,26,.48);
     box-shadow:0 10px 30px rgba(0,0,0,.42),inset 0 0 0 1px rgba(255,255,255,.14)}
-  :root[data-theme="dark"] .pillnav a{color:#9d9a93}
+  :root[data-theme="dark"] .pillnav a{color:var(--ink)}
   :root[data-theme="dark"] .pillnav a:hover{color:#fff;background:rgba(255,255,255,.09)}
   :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16);
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
@@ -130,7 +145,7 @@
     display:flex;align-items:center;gap:2px;padding:3px;border-radius:100px;
     background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.10)}
   .themesw button{width:30px;height:30px;border:0;border-radius:100px;background:transparent;
-    display:grid;place-items:center;cursor:pointer;color:#8a8a8a;
+    display:grid;place-items:center;cursor:pointer;color:var(--ink);
     transition:color .2s ease,background .2s ease}
   .themesw button:hover{color:#fff;background:rgba(255,255,255,.08)}
   .themesw button[aria-pressed="true"]{color:#fff;background:rgba(255,255,255,.14)}
@@ -158,7 +173,7 @@
 
   /* anything still in <brackets> is a placeholder and styled softly so it
      is obvious what needs real copy */
-  .ph{color:var(--faint);font-style:italic}
+  .ph{color:var(--ink);font-style:italic}
 
   /* ---- persistent pill nav (Framer "Top Nav" reference, logo dropped) ---- */
   .dock{position:sticky;top:0;z-index:60;pointer-events:none;height:0;margin-top:14px;
@@ -182,7 +197,7 @@
     -webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);
     box-shadow:0 8px 24px rgba(17,17,17,.08),inset 0 0 0 1px rgba(17,17,17,.10)}
   .pillnav a{width:38px;height:38px;border-radius:100px;display:grid;place-items:center;
-    color:var(--faint);transition:color .18s ease,background .18s ease}
+    color:var(--ink);transition:color .18s ease,background .18s ease}
   .pillnav a:hover{color:var(--ink);background:rgba(17,17,17,.06)}
   .pillnav a.is-active{color:var(--ink);background:rgba(17,17,17,.09);
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
@@ -207,12 +222,14 @@
     background:transparent;box-shadow:none;border-radius:0;overflow:visible;
     display:flex;flex-direction:column;justify-content:center;min-height:min(68vh,520px)}
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);
-    font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+    font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink)}
   .hero h2{margin:22px 0 24px;max-width:20ch;font-family:var(--display);font-weight:500;
     font-size:clamp(44px,7vw,104px);line-height:.9;letter-spacing:-.05em;
     text-wrap:balance}
-  .hero h2 em{font-style:normal;color:var(--faint)}
-  .lede{max-width:62ch;font-size:14.5px;color:var(--dim);line-height:1.65;margin:0}
+  /* the second half of the headline is the accent, not a grey: the page has one
+     highlight colour and the sentence the whole product is about wears it */
+  .hero h2 em{font-style:normal;color:var(--accent)}
+  .lede{max-width:62ch;font-size:14.5px;color:var(--ink);line-height:1.65;margin:0}
   .lede strong{color:var(--ink);font-weight:600}
   .hero-cta{display:flex;align-items:center;gap:12px;margin-top:26px;flex-wrap:wrap}
 
@@ -220,9 +237,9 @@
   .hero-visual{border-radius:var(--r-lg);background:var(--card-2);
     box-shadow:var(--lift);min-height:260px;display:grid;place-items:center;
     align-content:center;gap:10px;padding:24px;text-align:center}
-  .hero-visual .ic{font-size:26px;color:var(--faint)}
+  .hero-visual .ic{font-size:26px;color:var(--ink)}
   .hero-visual span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
 
   /* the example receipt, modelled on the Framer pricing card: one rounded panel
      with a radial glow in the top-left corner that falls off to the page colour,
@@ -231,17 +248,17 @@
   .receipt{position:relative;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);
     gap:40px;align-items:start;width:100%}
   .rc-side{padding-top:4px}
-  .rc-lede{margin:0;font-size:16px;line-height:1.55;color:var(--dim);
+  .rc-lede{margin:0;font-size:16px;line-height:1.55;color:var(--ink);
     letter-spacing:-.012em;max-width:44ch}
   .rc-list{list-style:none;margin:26px 0 0;padding:0;display:flex;
     flex-direction:column;gap:20px;max-width:46ch}
   .rc-list li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;
     align-items:start}
-  .rc-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--faint);
+  .rc-n{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink);
     padding-top:3px}
   .rc-list b{display:block;font-size:14px;font-weight:500;color:var(--ink);
     letter-spacing:-.015em;margin-bottom:4px}
-  .rc-list div{font-size:13px;line-height:1.6;color:var(--dim)}
+  .rc-list div{font-size:13px;line-height:1.6;color:var(--ink)}
   @media(max-width:940px){
     .receipt{grid-template-columns:minmax(0,1fr);gap:26px}
     .rc-list{margin-top:20px}
@@ -290,7 +307,7 @@
 
   .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
   .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;
-    letter-spacing:.06em;text-transform:uppercase;color:var(--dim);white-space:nowrap;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--ink);white-space:nowrap;
     background:rgba(255,255,255,.66);box-shadow:inset 0 0 0 1px var(--line);
     padding:6px 10px;border-radius:var(--r-pill)}
 
@@ -362,7 +379,7 @@
   .room-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;
     margin-top:14px;flex-wrap:wrap}
   .room-src{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
   /* phone: no accordion — one card fills the view and the row swipes sideways */
   @media(max-width:940px){
     .room{overflow:hidden}
@@ -391,7 +408,7 @@
   .sec-head h3{margin:0;font-family:var(--display);font-size:22px;font-weight:600;
     letter-spacing:-.02em}
   .sec-head .kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
   /* a window older than two publishes is said out loud, not smoothed over */
 
   /* ---- feature ribbon: one wide card, two narrow, hovered one opens up ---- */
@@ -407,11 +424,16 @@
   .rcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
     pointer-events:none;user-select:none;transform:scale(1.035);
     transition:transform .7s cubic-bezier(.2,.75,.2,1)}
+  /* The room cards are the accent now, so the photo sits *inside* a pink frame
+     instead of being the whole card: a wash of the accent over the image keeps the
+     card reading pink while the creator is still visible under it. */
+  .rcard{background:var(--accent)}
   .rcard::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-    background:linear-gradient(rgba(0,0,0,.27) 0%,rgba(0,0,0,.02) 36%,
-      rgba(0,0,0,.1) 55%,rgba(0,0,0,.74) 100%)}
+    background:linear-gradient(color-mix(in srgb,var(--accent) 62%,transparent) 0%,
+      color-mix(in srgb,var(--accent) 34%,transparent) 42%,
+      color-mix(in srgb,var(--accent) 82%,transparent) 100%)}
   .rcard .shade{position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:#05060b;opacity:.12}
+    background:var(--accent);opacity:.16}
   .rcard:focus-visible{outline:3px solid var(--ink);outline-offset:-5px}
   .rcard-body{position:absolute;inset:0;z-index:3;padding:26px;
     display:flex;flex-direction:column;min-width:0}
@@ -437,7 +459,7 @@
   .ribbon[data-hover] .rcard[data-open]:not(:hover) .rcard-more{max-height:0;
     opacity:0;margin-top:0}
   .rcard-more p{margin:13px 0 0;font-size:14px;line-height:1.5;max-width:440px;
-    color:rgba(255,255,255,.88)}
+    color:var(--ink)}
   /* closed narrow cards get a smaller headline; the open one gets the big one */
   .rcard:not([data-open]):not([data-wide]) .rcard-foot h4{font-size:21px;
     letter-spacing:-.012em;line-height:1.18}
@@ -446,9 +468,9 @@
   .slab{border-radius:var(--r-lg);background:var(--card-2);box-shadow:var(--lift);
     min-height:340px;display:grid;place-items:center;align-content:center;gap:10px;
     padding:24px;text-align:center}
-  .slab .ic{font-size:30px;color:var(--faint)}
+  .slab .ic{font-size:30px;color:var(--ink)}
   .slab span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
 
   /* ---- stats strip ---- */
   .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
@@ -456,7 +478,7 @@
   .stat{background:var(--card);border-radius:var(--r-md);box-shadow:var(--lift);
     padding:18px}
   .stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--ink)}
   .stat .v{font-family:var(--display);font-size:26px;font-weight:600;
     letter-spacing:-.03em;margin-top:8px}
 
@@ -527,7 +549,7 @@
        the exact inverse of the dark card, which is an ink surface with a paper
        hairline. Before, light mode inherited the dark surface, so the black
        border the brief asks for had nothing to sit against. */
-    --pc-ink:#111111;--pc-dim:#5c5c56;
+    --pc-ink:#111111;--pc-dim:var(--pc-ink);
     /* ink, not grey. A 24% wash reads as a shadow on paper; the dark card's
        paper hairline is near-solid, so this one is too. */
     --pc-line:rgba(12,12,11,.92);--pc-cell:rgba(127,127,127,.085);
@@ -540,7 +562,7 @@
     box-shadow:0 0 0 var(--pc-edge) var(--pc-line) inset,
       0 1px 2px rgba(0,0,0,.04),0 10px 28px -22px rgba(0,0,0,.45)}
   .herocard.pickcard{--pc-edge:1.5px}
-  :root[data-theme="dark"] .herocard.pickcard{--pc-ink:#f2f1ee;--pc-dim:#9a978f;
+  :root[data-theme="dark"] .herocard.pickcard{--pc-ink:#f2f1ee;--pc-dim:var(--pc-ink);
     --pc-line:rgba(255,255,255,.17);--pc-cell:rgba(255,255,255,.055);
     background:radial-gradient(150% 90% at -12% -30%,rgba(33,120,222,.34) 0%,rgba(33,120,222,.08) 36%,var(--card-glow-end) 64%);
     --pc-up:#7fd6a0;--pc-down:#e88c80;
@@ -563,7 +585,7 @@
   .pickcard .meta .stars{color:var(--pc-ink);letter-spacing:-1px;font-size:10px}
   .pickcard .meta .estn{font-variant-numeric:tabular-nums}
   .pickcard .signalPill{display:inline-flex;align-items:center;padding:2px 7px;
-    border-radius:999px;background:var(--pc-rail);color:#0f0f0e}
+    border-radius:999px;background:var(--pc-rail);color:var(--ink)}
   .pickcard .signalPill b{font-size:8px;font-weight:600;letter-spacing:.08em}
   .pickcard .bigmove{display:flex;align-items:baseline;gap:8px;margin-top:11px}
   .pickcard .bigmove b{font-family:var(--display);font-size:29px;line-height:.95;
@@ -598,8 +620,10 @@
     font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--pc-dim)}
   .pickcard .pc-foot b{color:var(--pc-ink);font-weight:500}
-  .pickcard .hc-act{margin:12px 0 0;background:var(--pc-ink);color:var(--card-glow-end)}
-  :root[data-theme="dark"] .pickcard .hc-act{color:#141413}
+  /* the pick card reader is the same CTA as the rest of the page: accent pill,
+     white disc, accent arrow — it just has to sit on a hover card, so it keeps
+     its own margin. */
+  .pickcard .hc-act{margin:12px 0 0}
   @media(max-width:600px){
     .pickcard .kv{grid-template-columns:repeat(2,minmax(0,1fr))}
     .pickcard .dhero h3{font-size:19px}
@@ -608,15 +632,15 @@
   /* one column now that the explainer is gone — cards stretch to the section */
   .sfaq{margin-top:44px;display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-items:start}
   .sfaq-tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
-    text-transform:uppercase;color:#6f6ce0}
-  :root[data-theme="dark"] .sfaq-tag{color:#a3a0ff}
+    text-transform:uppercase;color:var(--accent)}
+  :root[data-theme="dark"] .sfaq-tag{color:var(--accent)}
   .sfaq-h{margin:14px 0 0;font-family:var(--display);font-size:clamp(28px,3vw,40px);
     font-weight:500;letter-spacing:-.035em;line-height:1.04;color:var(--ink)}
-  .sfaq-p{margin:14px 0 0;max-width:40ch;font-size:13.5px;line-height:1.62;color:var(--dim)}
+  .sfaq-p{margin:14px 0 0;max-width:40ch;font-size:13.5px;line-height:1.62;color:var(--ink)}
   .sfaq-points{margin-top:26px;display:flex;flex-direction:column;gap:12px}
   .sfaq-points b{display:block;font-size:12.5px;font-weight:600;color:var(--ink);
     letter-spacing:-.01em}
-  .sfaq-points span{display:block;margin-top:2px;font-size:12.5px;color:var(--dim)}
+  .sfaq-points span{display:block;margin-top:2px;font-size:12.5px;color:var(--ink)}
 
   .sfaq-right{display:flex;flex-direction:column;gap:10px;margin:0 auto;width:100%}
   .sfaq-item{background:var(--faq-slab);border-radius:18px;overflow:hidden;
@@ -639,15 +663,15 @@
     background:rgba(127,127,127,.16);padding:1px 5px;border-radius:5px}
 
   /* ---- closing call to action ---- */
-  .closer{margin-top:64px;border-radius:var(--r-lg);background:var(--ink);
-    color:#f8f7f4;padding:44px 38px;display:flex;align-items:center;
+  .closer{margin-top:64px;border-radius:var(--r-lg);background:var(--accent);
+    color:#fff;padding:44px 38px;display:flex;align-items:center;
     justify-content:space-between;gap:24px;flex-wrap:wrap}
   .closer h3{margin:0;font-family:var(--display);font-size:clamp(26px,3.4vw,42px);
     font-weight:500;letter-spacing:-.035em;line-height:1.02}
   .closer-sub{margin:10px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:rgba(248,247,244,.6)}
-  .closer .btn.primary{background:#f8f7f4;color:var(--ink)}
-  .closer .btn.primary:hover{background:#fff}
+    text-transform:uppercase;color:#fff}
+  .closer .btn.primary{background:#fff;color:var(--accent)}
+  .closer .btn.primary:hover{background:#fff;filter:brightness(.97)}
 
   /* ---- footer: one quiet bar — copyright left, links right ---- */
   /* no double-tap zoom on phones - one tap should read as one tap */
@@ -659,11 +683,11 @@
      four circles stay put, and the sign-off costs under 50px instead of ~60 */
   .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
     flex-wrap:nowrap;padding:9px 0 7px;border-top:1px solid var(--line);min-height:0}
-  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--faint);
+  .f1-bar p{margin:0;font-size:11px;letter-spacing:-.005em;color:var(--ink);
     min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .f1-social{display:flex;gap:9px}
   .f1-social a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
-    color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);background:transparent;
+    color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);background:transparent;
     transition:color .2s ease,box-shadow .2s ease,background .2s ease,transform .2s ease}
   .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
   .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -672,9 +696,9 @@
   .f1-social a[href*="x.com"] svg{width:15px;height:15px}
   .f1-social a[href*="github.com"] svg{width:18px;height:18px}
   .f1-social svg path[fill="currentColor"]{stroke:none}
-  :root[data-theme="dark"] .f1-bar p{color:#a5a29a}
-  :root[data-theme="dark"] .f1-social a{color:#cfccc5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
-  :root[data-theme="dark"] .f1-social a:hover{color:#0f0f0e;background:#f4f3f0;box-shadow:none}
+  :root[data-theme="dark"] .f1-bar p{color:var(--ink)}
+  :root[data-theme="dark"] .f1-social a{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+  :root[data-theme="dark"] .f1-social a:hover{color:var(--ink);background:#f4f3f0;box-shadow:none}
 
   /* ---- responsive: two breakpoints, same as the app ---- */
   @media(max-width:940px){
@@ -742,7 +766,7 @@
     transition:transform .26s cubic-bezier(.4,0,.2,1);pointer-events:none}
   .tgs[data-on="dark"] .tgs-knob{transform:translateX(30px)}
   .tgs-b{position:relative;z-index:1;width:30px;height:30px;padding:0;border:0;background:transparent;
-    display:grid;place-items:center;cursor:pointer;color:var(--faint);
+    display:grid;place-items:center;cursor:pointer;color:var(--ink);
     border-radius:50%;transition:color .2s ease}
   .tgs-b:hover{color:var(--ink)}
   .tgs-b[aria-pressed="true"]{color:var(--ink)}
@@ -753,7 +777,7 @@
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   :root[data-theme="dark"] .tgs-knob{background:#dedbd4;
     box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.5)}
-  :root[data-theme="dark"] .tgs-b{color:#8f8d86}
+  :root[data-theme="dark"] .tgs-b{color:var(--ink)}
   :root[data-theme="dark"] .tgs-b:hover{color:#fff}
   :root[data-theme="dark"] .tgs-b[aria-pressed="true"]{color:#111}
   :root[data-theme="dark"] .tgs-b:focus-visible{outline-color:#fff}
@@ -763,27 +787,29 @@
      label sits left and whose arrow rides inside a solid disc on the right;
      on hover the disc grows and the arrow leans ---- */
   .acta{display:inline-flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;
-    border-radius:var(--r-pill);background:transparent;color:var(--ink);
-    box-shadow:inset 0 0 0 1px rgba(17,17,17,.22);text-decoration:none;
+    border-radius:var(--r-pill);background:var(--accent);color:#fff;
+    box-shadow:inset 0 0 0 1px var(--accent);text-decoration:none;
     font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
     transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content}
   .acta-t{display:block;white-space:nowrap}
+  /* the disc is paper and the arrow is the accent, so the arrow always reads
+     against its own coin no matter what it is sitting on */
   .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
-    background:var(--ink);color:var(--bg);transition:transform .28s ease,background .22s ease}
+    background:#fff;color:var(--accent);transition:transform .28s ease,background .22s ease}
   .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
     stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
-  .acta:hover{background:rgba(17,17,17,.05);box-shadow:inset 0 0 0 1px rgba(17,17,17,.34)}
+  .acta:hover{background:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);filter:brightness(1.06)}
   .acta:hover .acta-ic{transform:scale(1.08)}
   .acta:hover .acta-ic svg{transform:translateX(2px)}
-  .acta:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .acta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
   .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
   .acta-sm .acta-ic{width:30px;height:30px}
   .acta-sm .acta-ic svg{width:13px;height:13px}
 
   /* in the dark, the closing slab is paper: the button flips to ink-on-paper so
      it still reads as the strongest thing on the card */
-  :root[data-theme="dark"] .acta{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
-  :root[data-theme="dark"] .acta-ic{background:var(--ink);color:var(--bg)}
+  :root[data-theme="dark"] .acta{background:var(--accent);color:#fff;box-shadow:inset 0 0 0 1px var(--accent)}
+  :root[data-theme="dark"] .acta-ic{background:#fff;color:var(--accent)}
   /* On the closing slab the button takes the colour the slab is NOT, so it keeps
      the highest contrast on the panel in both themes: in light the slab is ink,
      so the button is paper with an ink arrow; in dark the slab is paper, so the
@@ -792,18 +818,23 @@
   /* The pill and the disc stay opposite colours in both themes, so the arrow
      rides on a coin that reads against the pill: paper pill + ink disc + paper
      arrow in light, ink pill + paper disc + ink arrow in dark. */
-  .closer .acta{background:#f4f3f0;color:#111;
-    box-shadow:inset 0 0 0 1px rgba(244,243,240,.34)}
-  .closer .acta-ic{background:#111;color:#f4f3f0}
-  .closer .acta:hover{background:#fff;box-shadow:inset 0 0 0 1px rgba(244,243,240,.7)}
-  .closer .acta:focus-visible{outline-color:#f4f3f0}
-  :root[data-theme="dark"] .closer .acta{background:#111;color:#f4f3f0;
-    box-shadow:inset 0 0 0 1px rgba(17,17,17,.34)}
-  :root[data-theme="dark"] .closer .acta-ic{background:#f4f3f0;color:#111;
+  /* On the closing slab the surface is the paper card, so the pill is paper with
+     the accent as its label and an accent disc carrying a white arrow. It is the
+     same family as every other CTA, just inverted against the paper card. */
+  /* on the accent slab the pill is the card's own colour with a white edge, so the
+     reader sees one pink block and the arrow coin is the only solid white */
+  .closer .acta{background:transparent;color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  .closer .acta-ic{background:#fff;color:var(--accent)}
+  .closer .acta:hover{background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px #fff}
+  .closer .acta:focus-visible{outline-color:var(--accent)}
+  :root[data-theme="dark"] .closer .acta{background:transparent;color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  :root[data-theme="dark"] .closer .acta-ic{background:#fff;color:var(--accent);
     box-shadow:none}
-  :root[data-theme="dark"] .closer .acta:hover{background:#000;
-    box-shadow:inset 0 0 0 1px rgba(17,17,17,.7)}
-  :root[data-theme="dark"] .closer .acta:focus-visible{outline-color:#111}
+  :root[data-theme="dark"] .closer .acta:hover{background:rgba(255,255,255,.14);
+    box-shadow:inset 0 0 0 1px #fff}
+  :root[data-theme="dark"] .closer .acta:focus-visible{outline-color:var(--accent)}
 
   /* the reference CTA is set in the body face, not the mono caps of .btn */
   .slab .acta{margin-top:8px}
