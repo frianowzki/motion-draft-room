@@ -279,7 +279,7 @@
     .stat-grp .tally .lab{margin:0;font-size:8.5px;letter-spacing:.08em;white-space:nowrap;
       display:inline-flex;align-items:baseline;gap:4px}
     .stat-grp .tally .lab .ic{font-size:9px;opacity:.5}
-    .stat-grp .tally .lab .sub{opacity:.4}
+    .stat-grp .tally .lab .sub{opacity:1}
     /* the hatch between figures: a short 45° rule, not a bullet */
     .stat-grp .sep{flex:none;width:1px;height:11px;margin-left:15px;
       background:linear-gradient(180deg,transparent,var(--line),transparent)}
@@ -353,8 +353,8 @@
   .tab i{width:5px;height:5px;border-radius:50%;display:block;flex:none;
     background:var(--hue);opacity:.9}
   .tab.on i{opacity:1;box-shadow:0 0 0 2.5px color-mix(in srgb,var(--hue) 22%,transparent)}
-  .tab.zero{opacity:.45}
-  .tab.zero:hover{opacity:.7}
+  .tab.zero{opacity:1}
+  .tab.zero:hover{opacity:1}
   .tab:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   @media(max-width:640px){
     .tabs{display:flex;width:100%;margin:10px 0 9px;gap:6px}
@@ -804,7 +804,7 @@
   .tlstep .ic{width:13px;height:13px}
   .tlstep:hover{color:var(--ink);background:var(--card-2)}
   .tlstep:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
-  .tlstep[data-end="1"]{opacity:.32;pointer-events:none}
+  .tlstep[data-end="1"]{opacity:1;pointer-events:none}
   @media(max-width:640px){
     .tlstage{height:186px}
     .tlev{padding:0 5px}
@@ -959,7 +959,7 @@
   .mine .stand b{font-family:var(--display);font-size:22px;font-weight:500;
     color:var(--ink);letter-spacing:-.02em;text-transform:none}
   .mine .stand .of{color:var(--ink)}
-  .mine .stand .sep{opacity:.4}
+  .mine .stand .sep{opacity:1}
   .mx{border-top:1px solid var(--line-soft);padding:11px 0}
   .mx:first-of-type{border-top:0;padding-top:0}
   .mx-h{display:flex;align-items:center;gap:7px;justify-content:space-between}
@@ -988,7 +988,7 @@
     padding:0 3px;text-transform:lowercase;margin-left:4px}
   .mx-p .p .at{font-family:var(--mono);font-size:8.5px;color:var(--ink);
     font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
-  .mx-p .p .at .arw{opacity:.55;margin:0 2px}
+  .mx-p .p .at .arw{opacity:1;margin:0 2px}
   .mx-p .p .mv{font-family:var(--mono);font-size:9.5px;font-variant-numeric:tabular-nums;
     min-width:24px;text-align:right;white-space:nowrap}
   .mx-p .p .mv.up{color:var(--up,#1f8a4c)} .mx-p .p .mv.down{color:var(--down,#b4453a)}
@@ -1854,7 +1854,7 @@ function render() {
   // instead of a grid, so the figures cost one line of height, not three.
   const statHtml = stats.map(([ico, k, v, sub]) =>
     `<div class="tally"><div class="num">${tallyParts(v)}</div>
-      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span class="sub" style="opacity:.55">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join('<span class="sep" aria-hidden="true"></span>');
+      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span class="sub">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join('<span class="sep" aria-hidden="true"></span>');
   $("#stats").innerHTML = `<div class="track"><div class="stat-grp">${statHtml}</div>`
     + `<div class="stat-grp" aria-hidden="true">${statHtml}</div></div>`;
   countUp();
