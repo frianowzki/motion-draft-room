@@ -175,6 +175,11 @@
      only structure it needs. */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
     column-gap:22px;row-gap:16px;margin:14px 0 2px;width:100%}
+  /* the marquee lane is a phone device only: on a wide screen .track dissolves so
+     the tallies are the grid's own children. Wrapped, the track was one grid item
+     and the six figures stacked in a single column. */
+  .stats .track,.stats .stat-grp{display:contents}
+  .stats .sep{display:none}
   .tally{min-width:0;border-top:1px solid var(--line);padding-top:14px}
   :root[data-theme="dark"] .tally{border-top-width:2px;border-top-color:rgba(255,255,255,.18)}
   /* a figure is one line: flex, not grid. A grid put the ratio's second figure and
@@ -192,12 +197,46 @@
     text-transform:uppercase;letter-spacing:.09em;color:var(--faint);
     line-height:1.35;display:flex;align-items:flex-start;gap:5px}
   .tally .lab .ic{font-size:10px;opacity:.7;flex:none}
+  /* the phone pager shows 3 / 16 on its face; the exact range still goes to a
+     screen reader rather than being dropped */
+  .sronly{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  /* ---- on a phone the tally row would cost three rows of height, so it becomes
+     one line that drifts: the same six figures set inline, hatched apart, in a
+     band that pauses under a finger and follows one by scrolling by hand. Two
+     identical tracks sit side by side and slide by exactly half the strip, so the
+     seam never shows and the loop has no jump cut. */
   @media(max-width:640px){
-    .stats{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:14px}
-    .tally .num{font-size:clamp(20px,5.4vw,24px)}
-    .tally .lab{font-size:8px;letter-spacing:.06em}
+    /* on a phone the lane and its two groups stop being "contents" so the track
+       can be one long flex row again */
+    .stats .track{display:flex}
+    .stats .stat-grp{display:flex}
+    .stats{display:block;position:relative;overflow:hidden;margin:12px 0 2px;
+      border-radius:13px;background:var(--card);
+      box-shadow:inset 0 0 0 1px var(--line-soft);
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+    .stats .track{display:flex;width:max-content;padding:9px 0;
+      animation:statscroll var(--mdr,42s) linear infinite;will-change:transform}
+    .stats:hover .track,.stats:active .track,.stats[data-paused] .track{animation-play-state:paused}
+    .stat-grp{display:flex;align-items:center;flex:none}
+    .stat-grp .tally{display:flex;align-items:baseline;gap:7px;border:0;padding:0 0 0 15px;
+      white-space:nowrap}
+    .stat-grp .tally .num{font-size:14px;letter-spacing:-.02em}
+    .stat-grp .tally .lab{margin:0;font-size:8.5px;letter-spacing:.08em;white-space:nowrap;
+      display:inline-flex;align-items:baseline;gap:4px}
+    .stat-grp .tally .lab .ic{font-size:9px;opacity:.5}
+    .stat-grp .tally .lab .sub{opacity:.4}
+    /* the hatch between figures: a short 45° rule, not a bullet */
+    .stat-grp .sep{flex:none;width:1px;height:11px;margin-left:15px;
+      background:linear-gradient(180deg,transparent,var(--line),transparent)}
+    @keyframes statscroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+    @media(prefers-reduced-motion:reduce){
+      .stats .track{animation:none}
+      .stats{overflow-x:auto;scrollbar-width:none}
+      .stats .track[aria-hidden]{display:none}
+    }
   }
-  @media(max-width:280px){.stats{grid-template-columns:minmax(0,1fr)}}
 
   /* ---- honest limits */
   .warn{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;
@@ -409,6 +448,43 @@
   .pager button:disabled{opacity:.35;cursor:default}
   .pager .gap{font-size:10px;color:var(--faint);padding:0 1px}
   :root[data-theme="dark"] .pager button:hover:not(:disabled){background:rgba(255,255,255,.06)}
+  /* a phone gets five per page and a pager that reads as one control: a wide
+     previous / next pair with the position between them, and a row of dots under
+     it. Numbered buttons need a row of their own at 390px and say less. */
+  .pager .pstep{display:none}
+  .pager .pdots{display:none}
+  @media(max-width:640px){
+    /* the three controls sit together as one pill row instead of pinned to the
+       edges: at 390px the stretch between them read as three unrelated things */
+    .pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;
+      padding-top:14px}
+    .pager .ppos,.pager .pstep{order:0}
+    .pager .pnums,.pager .pinfo{display:none}
+    .pager .pstep{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+      min-width:0;height:34px;padding:0 11px;border-radius:999px;border:0;
+      font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink);background:transparent;cursor:pointer;
+      box-shadow:inset 0 0 0 1px var(--line-strong,var(--line))}
+    .pager .pstep[data-p="prev"],.pager .pstep[data-p="next"]{flex:none}
+    .pager .pstep .ic{font-size:12px;opacity:.8}
+    .pager .pstep:disabled{opacity:.45;cursor:default}
+    .pager .ppos{flex:none;text-align:center;font-family:var(--mono);
+      font-size:10px;letter-spacing:.12em;color:var(--ink);white-space:nowrap}
+    .pager .ppos b{font-weight:600}
+    .pager .ppos span{color:var(--faint)}
+    .pager .pdots{flex:0 0 100%;display:flex;align-items:center;justify-content:center;
+      gap:0;padding:8px 0 0}
+    .pager .pdots-more{display:inline-flex;align-items:center;justify-content:center;
+      width:14px;font-size:9px;letter-spacing:0;color:var(--faint);opacity:.7;user-select:none}
+    .pager .pdots button{min-width:0;width:18px;height:18px;padding:0;border-radius:999px;
+      border:0;background:transparent;box-shadow:none;cursor:pointer;position:relative}
+    /* the dot is drawn, the button stays 18px so a thumb can find it */
+    .pager .pdots button::after{content:"";position:absolute;inset:0;margin:auto;
+      width:6px;height:6px;border-radius:999px;background:var(--faint);opacity:.75;
+      transition:width .32s cubic-bezier(.2,.75,.2,1),opacity .2s,background .2s}
+    .pager .pdots button[aria-current="page"]::after{width:18px;background:var(--ink);opacity:1}
+    .pager .pdots button:hover::after{opacity:.9}
+  }
 
   /* ---- creator profile card on hover */
   .pcard .cardx{display:none;position:absolute;top:8px;right:8px;z-index:3;
@@ -904,7 +980,9 @@
 <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 20V9C12 6.79086 13.79086 5 16 5H17C19.20914 5 21 6.79086 21 9V14C21 15.65685 19.65685 17 18 17H17C15.71942 17 14.64029 17.35971 14 18L12 20ZM12 20V9C12 6.79086 10.20914 5 8 5H7C4.79086 5 3 6.79086 3 9V14C3 15.65685 4.34315 17 6 17H7C8.28058 17 9.35971 17.35971 10 18L12 20Z"/></symbol>
 <symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 16L6 13C7.10457 11.89543 8.89543 11.89543 10 13C11.10457 14.10457 12.89543 14.10457 14 13L21 6M3 4V16C3 18.20914 4.79086 20 7 20H21"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M6 12L10 16L18 8"/></symbol>
-<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M8 10L12 14L16 10"/></symbol>
+<symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M8 10L12 14L16 10"/></symbol>
 <symbol id="i-circle-dot" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM11 12C11 12.55228 11.44772 13 12 13C12.55228 13 13 12.55228 13 12C13 11.44772 12.55228 11 12 11C11.44772 11 11 11.44772 11 12Z"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><path d="M3 12C3 16.97056 7.02944 21 12 21C16.97056 21 21 16.97056 21 12C21 7.02944 16.97056 3 12 3C7.02944 3 3 7.02944 3 12ZM12 7V12H17"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><path d="M3 11C3 8.79086 4.79086 7 7 7H13C15.20914 7 17 8.79086 17 11V17C17 19.20914 15.20914 21 13 21H7C4.79086 21 3 19.20914 3 17ZM7 3H17C19.20914 3 21 4.79086 21 7V17"/></symbol>
@@ -1055,6 +1133,21 @@ let PAGE = 1;
 const TAGC = { SURGING: "var(--up)", COILED: "var(--warm)", SLEEPER: "var(--cool)",
   FADE: "var(--down)", QUIET: "var(--faint)" };
 const PER_PAGE = 10;
+// A phone shows five: a page you scroll is not a page, and five rows plus the
+// pager still leaves the draft panel and the timeline within a thumb's reach.
+const PER_PAGE_PHONE = 5;
+// The breakpoint these two rules are written against, read live. .matches is
+// checked at call time on purpose: a page that loads before mobile emulation is
+// applied captured "desktop" once and paged ten rows for the whole session.
+const PHONE_MQ = window.matchMedia("(max-width:640px)");
+const isPhone = () => PHONE_MQ.matches;
+// The one place that answers "how many rows is a page": render, the pager and the
+// fit check all read it, so a 5-row page can never claim 10 of 79 underneath.
+const perPageNow = () => (isPhone() ? PER_PAGE_PHONE : PER_PAGE);
+// Declared here, above render(): render() closes any open card, and a `let` that
+// appears later in the file is still in its temporal dead zone on the first paint
+// — the whole dashboard then failed with "Cannot access 'cardEl' before init".
+let cardEl = null, cardTimer = null, cardFor = null, cardBack = null, sheetOpener = null;
 
 // ---------- utils
 const $ = s => document.querySelector(s);
@@ -1172,6 +1265,7 @@ async function load() {
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   if (PROF) DATA.profiles = PROF;
   render();
+  BOOTED = true;
   loadBook();
   // the identity card used to be drawn only from load()'s render path, so whichever of
   // the two finished last could leave it empty; draw it with the session it is waiting on
@@ -1269,6 +1363,10 @@ function countUp() {
 // beside it, so the answer changes when a pick opens. Everything here is read from
 // live layout, and a zero means "not measurable yet" — the caller falls back.
 function rowsPerPage() {
+  // the phone layout stacks the board instead of stretching it, so there is
+  // nothing to fill and the page is fixed — measuring there only shrank it to
+  // four rows on a short screen and made the pager disagree with its own dots
+  if (isPhone()) return perPageNow();
   const card = document.querySelector(".boardcard");
   const wrap = card && card.querySelector(".tablewrap");
   const pager = card && card.querySelector("#pager");
@@ -1280,6 +1378,8 @@ function rowsPerPage() {
   const avail = card.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
     - (head ? head.getBoundingClientRect().height + parseFloat(getComputedStyle(head).marginBottom) : 0)
     - (thead ? thead.getBoundingClientRect().height : 0)
+    // the pager's own top padding and border sit between the rows and its face,
+    // so leaving them out let the last row slide under it once the pager grew
     - pager.getBoundingClientRect().height
     - parseFloat(getComputedStyle(pager).marginTop || 0);
   const rowH = 35; // fixed by the table's own rhythm; a probe row would cost a reflow
@@ -1318,9 +1418,13 @@ function render() {
   ];
   // A tally row: figure over a hairline, label under it. Each figure splits into
   // prefix / number / suffix so the number can count while the units stay put.
-  $("\#stats").innerHTML = stats.map(([ico, k, v, sub]) =>
+  // The same markup is a marquee on a phone: one .track (two copies of the group)
+  // instead of a grid, so the figures cost one line of height, not three.
+  const statHtml = stats.map(([ico, k, v, sub]) =>
     `<div class="tally"><div class="num">${tallyParts(v)}</div>
-      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span style="opacity:.55">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join("");
+      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span class="sub" style="opacity:.55">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join('<span class="sep" aria-hidden="true"></span>');
+  $("#stats").innerHTML = `<div class="track"><div class="stat-grp">${statHtml}</div>`
+    + `<div class="stat-grp" aria-hidden="true">${statHtml}</div></div>`;
   countUp();
 
   // ---- honest limits banner
@@ -1425,6 +1529,32 @@ function render() {
       render._refit = false;
       if (rowsPerPage() !== perPage) render();
     });
+  }
+
+  // The marquee's speed comes from its own width, so the strip drifts at the same
+  // pace whatever the figures say (a fixed duration would sprint on a wide set).
+  // 6px a second reads as movement without being a ticker racing a headline.
+  // A reduced-motion reader is handled in CSS: the animation is dropped and the
+  // strip becomes something they can scroll by hand.
+  if (isPhone()) {
+    // scrollWidth is 0 inside this frame — the markup was just written. Measure on
+    // the next one, once the strip has a length to divide.
+    requestAnimationFrame(() => {
+      const tr = $("#stats .track");
+      const half = tr ? tr.scrollWidth / 2 : 0;
+      if (half > 0) tr.style.setProperty("--mdr", `${Math.round(half / 6)}s`);
+    });
+  }
+  // while the strip is touched it holds still, so a finger can read the figure it
+  // landed on. The flag is on the band; CSS takes the animation off it.
+  const band = $("#stats");
+  if (band && !band._press) {
+    band._press = true;
+    const hold = v => () => { band.toggleAttribute("data-paused", v); };
+    band.addEventListener("pointerdown", hold(true));
+    band.addEventListener("pointerup", hold(false));
+    band.addEventListener("pointercancel", hold(false));
+    band.addEventListener("pointerleave", hold(false));
   }
 }
 
@@ -1817,7 +1947,24 @@ function renderTimeline() {
 function renderPager(pages, total, start, shown) {
   const box = $("#pager");
   if (!box) return;
-  if (pages <= 1) { box.innerHTML = `<span class="pinfo">${total} creators</span><span class="pnums"></span>`; return; }
+  // On a phone the same state is drawn as a step pair plus dots; the desktop
+  // markup is still built underneath so a resize or a theme flip needs no
+  // re-render, it just hides the half it does not use. No dots for a single page:
+  // a lone dot is a control that cannot do anything.
+  const steps = `<button class="pstep" data-p="prev"${PAGE === 1 ? " disabled" : ""} aria-label="Previous page">`
+      + `<svg class="ic"><use href="#i-chev-l"/></svg><span>Prev</span></button>`
+    + `<span class="ppos"><b>${PAGE}</b> <span>/ ${pages}</span>`
+      + `<span class="sronly"> &middot; ${start + 1}–${start + shown} of ${total}</span></span>`
+    + `<button class="pstep" data-p="next"${PAGE === pages ? " disabled" : ""} aria-label="Next page">`
+      + `<span>Next</span><svg class="ic"><use href="#i-chev-r"/></svg></button>`;
+  const dots = pages > 1
+    ? `<span class="pdots" role="group" aria-label="Page">` + pageWindow(pages).map(n =>
+        n === "..."
+          ? `<span class="pdots-more" aria-hidden="true">···</span>`
+          : `<button data-p="${n}" aria-label="Page ${n}"${n === PAGE ? ' aria-current="page"' : ""}></button>`).join("")
+      + `</span>`
+    : "";
+  if (pages <= 1) { box.innerHTML = `<span class="pinfo">${total} creators</span><span class="pnums"></span>${steps}${dots}`; bindPager(box, pages); return; }
   const nums = [];
   const push = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
   if (pages <= 7) { for (let i = 1; i <= pages; i++) nums.push(push(i)); }
@@ -1830,7 +1977,45 @@ function renderPager(pages, total, start, shown) {
   }
   box.innerHTML = `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>
     <span class="pnums"><button data-p="prev"${PAGE === 1 ? " disabled" : ""}>‹</button>
-    ${nums.join("")}<button data-p="next"${PAGE === pages ? " disabled" : ""}>›</button></span>`;
+    ${nums.join("")}<button data-p="next"${PAGE === pages ? " disabled" : ""}>›</button></span>${steps}${dots}`;
+  bindPager(box, pages);
+}
+
+// a rotation or a window resize changes how many rows a page holds. Paging the
+// board back to one keeps the reader from landing on a page number that a
+// narrower layout no longer has.
+// the listener waits for the first paint: a media query can flip while the script
+// is still being parsed (mobile emulation, a rotation during load), and rendering
+// from inside that callback ran before the card and paging state existed
+// The breakpoint is enough for a rotation, but opening the page with no emulation
+// and only then switching to a phone view is just a resize across it, sometimes
+// without the query reporting a change. A debounced resize catches both, and the
+// first render afterwards lays the board out for the width it actually has.
+let BOOTED = false;
+let RESIZE_T = null;
+function refitSoon() {
+  if (!BOOTED) return;
+  clearTimeout(RESIZE_T);
+  RESIZE_T = setTimeout(() => { PAGE = 1; render(); }, 120);
+}
+if (PHONE_MQ.addEventListener) PHONE_MQ.addEventListener("change", refitSoon);
+window.addEventListener("resize", refitSoon);
+window.addEventListener("orientationchange", refitSoon);
+
+// Sixteen dots do not fit across a thumb's reach, so a phone shows a five-wide
+// window that walks with the page, and an ellipsis stands in for the stretch it
+// skipped. The ends are always reachable with a few taps of next.
+function pageWindow(pages) {
+  const span = 5;
+  if (pages <= span) return Array.from({ length: pages }, (_, k) => k + 1);
+  let from = Math.max(1, PAGE - 2), to = from + span - 1;
+  if (to > pages) { to = pages; from = to - span + 1; }
+  return Array.from({ length: to - from + 1 }, (_, k) => from + k);
+}
+
+// one handler for every control the pager can draw, so the phone and the desktop
+// halves cannot disagree about what "next" means
+function bindPager(box, pages) {
   box.querySelectorAll("button[data-p]").forEach(b => {
     b.onclick = () => {
       const v = b.dataset.p;
@@ -1891,7 +2076,7 @@ function cardHtml(c) {
     </div>`;
 }
 
-let cardEl = null, cardTimer = null, cardFor = null, cardBack = null, sheetOpener = null;
+
 const isSheet = () => window.matchMedia("(max-width:760px)").matches;
 function ensureCard() {
   if (cardEl) return cardEl;
