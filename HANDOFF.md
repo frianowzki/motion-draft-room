@@ -43,10 +43,25 @@ identik, 13/13 sampel sama, dua arah, di landing dan dashboard, desktop 1600 dan
 yang sama. **Kalau nanti ada elemen latar baru di `<body>`, pastikan `html` tetap
 di-paint** — kalau tidak, flash-nya balik.
 
-**Alat ukur yang terbukti:** klik `.tgs-b` (tombol di dalam `.tgs`) sambil
-`setInterval` 25ms mencatat `getComputedStyle(html).backgroundColor ===
-getComputedStyle(body).backgroundColor` per frame. Toggle di landing = `.tgs`, di
-dashboard juga `.tgs` (bukan `.themesw` seperti yang sempat dikira).
+**c-bis. Border balik lagi di iterasi berikutnya, dan sebabnya beda.** Fix (c) benar
+untuk `html` transparan, tapi cross-fade selektif di banyak layer tetap meninggalkan
+seam: tiap lapisan opaque yang punya warna hard-code dan tidak kena rule transisi
+ganti satu frame lebih awal, jadi kelihatan sebagai tepi rata. Kandidat yang terukur:
+`.dockrow::before` (band `var(--bg)` setinggi ~46px, `transitionDuration: 0s`), plus
+`.shade`/`.rc-stage` di area receipt.
+
+**Fix definitif (18 Nov):** jangan transisikan layer satu per satu sama sekali.
+Pakai View Transitions API — halaman di-snapshot, dua snapshot di-cross-fade / di-reveal
+sebagai satu gambar. `::view-transition-old(root)`/`new(root)` di-drive oleh
+`html.theming`, `document.startViewTransition(paint)` di JS, `prefers-reduced-motion`
+-> `animation:none`. Dengan begitu tidak mungkin ada layer yang tertinggal, karena
+tidak ada layer yang dianimasikan sendiri.
+
+**Catatan penting:** toggle tema sekarang **tombol tunggal** `.tt` (koin sun/moon dari
+beui theme-toggle), bukan `.themesw`/`.tgs` lagi. Reveal-nya lingkaran dari koin
+(`--tt-x/--tt-y/--tt-r` dihitung dari `getBoundingClientRect` + jarak ke sudut terjauh).
+Kalau menambah lapisan latar baru, **tidak perlu** daftarkan ke rule transisi — justru
+jangan. Elemen `html{background:var(--bg)}` tetap wajib.
 
 **Status submission hari ini.** Semua yang bisa dikerjakan agent untuk Mogathon sudah
 selesai: produk live, docs-parity, OAuth X tersambung (`widyakrnwn`), Supabase menulis
