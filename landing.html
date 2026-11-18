@@ -176,7 +176,7 @@
   /* the page column fills the display instead of leaving a lake of empty margin:
      laptops upgrade 1180 -> a viewport-relative width, very wide screens get a
      ceiling so the type does not become a headline on a billboard */
-  .wrap{max-width:clamp(1180px,94vw,1680px);margin:0 auto;padding:0 24px 80px}
+  .wrap{max-width:none;margin:0 auto;padding:0 24px 80px}
   .ic{width:1em;height:1em;display:inline-block;vertical-align:-.125em;
     fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 
@@ -185,8 +185,10 @@
   .ph{color:var(--ink);font-style:italic}
 
   /* ---- persistent pill nav (Framer "Top Nav" reference, logo dropped) ---- */
+  /* the nav is the one thing that reaches both edges: the page column fills the
+     display, so the pill sits at the far left and the switch at the far right */
   .dock{position:sticky;top:0;z-index:60;pointer-events:none;height:0;margin-top:14px;
-    max-width:clamp(1180px,94vw,1680px);margin-left:auto;margin-right:auto;padding:0 24px}
+    max-width:none;margin-left:auto;margin-right:auto;padding:0 24px}
   /* one ruler: the pill and the switch share a header row, so the switch sits
      on the pill's line at the far right of the page column, and on phones the
      pill slides left to make room instead of colliding */
