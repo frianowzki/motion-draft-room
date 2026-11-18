@@ -1,8 +1,53 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 11:15 UTC (`main` `bfdae61`, live `dpl_At7vqE6yimSY5ASb415MmknyhWpU`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 12:40 UTC (`main` `0d5162b`, live `dpl_G9gLtPM1G5g1oD3a2JMTf7E3BVau`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+## 2026-11-18 — board: 15 per halaman di desktop, tap baris di HP buka creator (main 0d5162b)
+
+Tiga keluhan frian: (a) tap creator di mobile jadi "broken", harusnya popup creator;
+(b) desktop default 10/halaman tapi begitu pick dibuka jadi 14/halaman; (c) minta
+desktop 15/halaman dengan tinggi board yang tetap walau halaman terakhir cuma 4–5 baris.
+
+**Akar masalah (a).** Sheet cuma di-bind ke `.avatar` (26px), sedangkan `<tr>` punya
+`onclick` yang hanya `SEL = c.name; render();`. Jadi tap di nama/score/bar → baris
+ter-highlight tapi sheet tak pernah dibuka. Ditambah highlight terpilih memakai
+`background:#fff` — di atas halaman gelap itu blok putih tepat di bawahnya sheet,
+kelihatan seperti baris rusak.
+
+**Akar masalah (b).** `rowsPerPage()` mengukur sisa tinggi `.boardcard` dibagi 35px.
+`.boardcard` stretch mengikuti tinggi draft panel di sebelahnya; buka pick → panel
+lebih tinggi → board lebih tinggi → hasil bagi naik dari 10 ke 14. Ukuran halaman
+jadi konsekuensi dari apakah pick terbuka.
+
+**Perbaikan.**
+- `PER_PAGE = 15` (desktop), `PER_PAGE_PHONE = 5`. `rowsPerPage()` sekarang `return
+  perPageNow()` — dihitung, bukan diukur. Blok `render._refit` (re-render sengaja
+  untuk reaksi ke tinggi panel) dihapus karena penyebabnya sudah hilang.
+- `.boardcard` dikasih `--board-rows:16` + `.tablewrap{min-height:...}` di
+  `@media(min-width:761px)` → halaman terakhir (4 baris) setinggi halaman penuh,
+  pager tidak naik. `min-height`, bukan `height`, supaya nama panjang yang wrap tak
+  terpotong.
+- `openCard(anchor, c)` diekstrak keluar dari closure `bindCard()`; `tr.onclick`
+  sekarang `SEL = c.name; render(); if (isPhone()) openCard(tr, c);`. Desktop tetap
+  select-only (compress card di sana surface hover, panel draft yang memilih).
+- `tr.row.sel td{background:#fff}` → `var(--sunken)` + rail 2px kiri; dark theme
+  `rgba(255,255,255,.055)` + rail putih. Hover juga `rgba(17,17,17,.035)` (bukan
+  `.55` putih).
+- `hideCard()` membersihkan `body.sheetopen` sebelum guard `if (!cardEl) return;`.
+
+**Terverifikasi (lokal :8791 + produksi).** Desktop 1400: 15 baris, `1–15 OF 79`,
+cardH 755 dan pagerY 1017 **identik** untuk page 1, saat pick terbuka, dan page 6
+(`76–79 OF 79`, 4 baris). Tablet 800: 15 baris, tanpa overflow. HP 390×844 touch
+emulation: tap di `td.stars` / `td.name` → `sheetopen` + `.pcard .nm` = IShowSpeed;
+tint terpilih `rgb(247,246,243)` di light, tipis di dark. Hover desktop di avatar
+masih membuka card; Escape menutup. Produksi: md5 `public/app.html`
+`ddf81d8a727a44e6ca7039faa0e163fd` == live `/app`; `/`,`/app`,`/api/signals` 200.
+
+**Catatan.** Sheet dibuka dengan tap di mana saja pada baris HP, tapi menutupnya
+lewat backdrop/Escape; drag-down-to-dismiss belum bisa diuji via CDP (touch move
+timeout) — kode ada, threshold 90px.
 
 ---
 
