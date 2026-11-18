@@ -434,17 +434,15 @@
   .rcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
     pointer-events:none;user-select:none;transform:scale(1.035);
     transition:transform .7s cubic-bezier(.2,.75,.2,1)}
-  /* The room cards are the accent again, so the photo sits *inside* a pink frame
-     instead of being the whole card: a wash of the accent over the image keeps the
-     card reading pink while the creator is still visible under it. The accent is
-     the new hex; nothing else about this card changed. */
-  .rcard{background:var(--accent)}
+  /* the illustration *is* the card: no accent fill, no accent wash, no tint
+     layer. Three stacked accent veils used to sit over the art (a solid accent
+     card, a 62-82% gradient and a 16% shade) and left the picture unreadable.
+     Only a bottom scrim remains, and it is neutral black: it exists so the white
+     headline keeps its contrast on a bright sky, not to colour the art. */
+  .rcard{background:#0f0f0e}
   .rcard::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-    background:linear-gradient(color-mix(in srgb,var(--accent) 62%,transparent) 0%,
-      color-mix(in srgb,var(--accent) 34%,transparent) 42%,
-      color-mix(in srgb,var(--accent) 82%,transparent) 100%)}
-  .rcard .shade{position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:var(--accent);opacity:.16}
+    background:linear-gradient(to top,rgba(6,6,8,.82) 0%,
+      rgba(6,6,8,.42) 26%,rgba(6,6,8,.06) 52%,rgba(6,6,8,0) 70%)}
   .rcard:focus-visible{outline:3px solid var(--ink);outline-offset:-5px}
   .rcard-body{position:absolute;inset:0;z-index:3;padding:26px;
     display:flex;flex-direction:column;min-width:0}
@@ -1007,7 +1005,6 @@
     <div class="ribbon">
       <div class="rcard" role="button" tabindex="0" aria-expanded="true" data-wide data-open>
         <img src="img/how-01-board.jpg" alt="Vivid blue sky with white four-point stars, diagonal light rays and soft clouds along the bottom, the board" loading="lazy" decoding="async" width="2080" height="1168">
-        <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">01 &middot; the board</span>
@@ -1022,7 +1019,6 @@
       </div>
       <div class="rcard" role="button" tabindex="0" aria-expanded="false">
         <img src="img/how-02-draft.jpg" alt="A huge orange sun setting behind a purple city silhouette, the draft" loading="lazy" decoding="async" width="2080" height="1168">
-        <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">02 &middot; the draft</span>
@@ -1037,7 +1033,6 @@
       </div>
       <div class="rcard" role="button" tabindex="0" aria-expanded="false">
         <img src="img/how-03-book.jpg" alt="Dark sky streaked with deep red, gold and teal light over scattered four-point stars, the book" loading="lazy" decoding="async" width="2112" height="1168">
-        <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
             <span class="rcard-idx">03 &middot; the book</span>
