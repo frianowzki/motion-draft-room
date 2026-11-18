@@ -1,10 +1,101 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 (`main` `ae93140`, live `dpl_EWzFHL5AXPHZfZP6NrwgokPyXgw4`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 (`main` `1c91134`, live `dpl_9mYYeRUfDxYGdTuE1spQYqVzKmax`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
-## 2026-11-18 (paling baru) — background dibuang, halaman penuh, border tema hilang (`6a28bea`)
+## 2026-11-18 (paling baru) — 20/5 per halaman, rail dibereskan, Motion Market, ikon library (`1c91134`)
+
+Sesi ini mengubah dashboard (`app.html`) lebih banyak daripada landing. Lima commit
+berurutan, semua sudah live dan terukur di produksi, bukan cuma di lokal:
+`b15209c` → `eab9886` → `67121b9` → `1c91134`.
+
+**a. Page size: 20 di desktop, 5 di HP (`eab9886`).** frian mulanya minta "creators
+dan draft a pick fit dalam satu page", lalu mengoreksi sendiri: "Terlalu panjang untuk
+marketnya. Mungkin 20 creators per page aja? Kalo untuk mobile UI tetap bikin max 5."
+Jadi **flat 20 / flat 5**, bukan lagi diukur dari viewport.
+
+Supaya 20 baris tetap muat satu layar, `.grid` di `#v-market` dipaku tinggi viewport
+(`height:calc(100dvh - 168px)`, `min-height:0`) dan `.boardcard`/`.side` diberi
+`min-height:0` + scroll internal masing-masing. Lineup tetap di bawah fold.
+
+**Jebakan yang makan berjam-jam — jangan diulang.** Iterasi pertama mengukur page size
+dari tabel yang sudah ter-render. Itu menyusut sendiri: masing-masing render memangkas
+hasil render sebelumnya (16 → 15 → 14), karena tinggi tabel yang diukur sudah termasuk
+baris yang mau dibuang. Percobaan tambal: pitch dari `tr.row` (gagal, baris belum ada
+saat fungsi dipanggil), `thead`+padding (malah lebih buruk), retry pre-paint (`sizingPass`
+/`PER_PAGE_ADJUST`, tidak pernah menyala), retry pasca-append cek `tr.row:last-child`
+(itu baris padding `tr.row.pad`, bukan baris data), retry cek tinggi `table` vs
+`wrap.clientHeight` (retry-nya **jalan**, tapi tetap menyusut 2×).
+
+Yang akhirnya benar: **pembagian murni dari kotak yang tingginya tetap** —
+`floor((wrap.clientHeight - ceil(headH)) / ROW_H)`, clamp 6..`PER_PAGE`. Pakai
+`Math.ceil(headH)`, bukan `+1` atau `floor`: `clientHeight` itu integer dan barisnya
+persis `ROW_H`, jadi kotak yang pas 20 baris kehilangan satu baris cuma karena
+pembulatan header. Terukur 1600×900 & 1440×900 = 20 baris tanpa scroll; 1366×768 turun
+otomatis ke 15 dan tetap tanpa scroll internal.
+
+Satu sisa penting: paint pertama kadang jalan **sebelum** rantai flex memberi kartu
+tinggi final, jadi halaman dibangun untuk kotak yang belum ada. Solusinya satu `rAF`
+kemudian bandingkan `wrap.clientHeight` dengan `builtForH` dan rebuild kalau beda
+>2px. Guard `repaintQueued` wajib ada atau ini jadi loop.
+
+Catatan debugging: `let` top-level di `<script>` **bukan** properti `window`, jadi
+probe `window.sizingRetry` selalu kosong meski kodenya ada di halaman. Jangan simpulkan
+"kode tidak terkirim" dari itu.
+
+**b. Rail: hover itu wash, bukan ring (`67121b9`).** frian kirim screenshot: semua tab
+punya garis tepi. Penyebabnya aturan `button` global (font mono, `background:var(--sunken)`,
+`box-shadow:inset 0 0 0 1px var(--line)`) yang berlaku ke **semua** `<button>` termasuk
+`.rail-item`; `.rail-item` cuma menimpa `background`, tidak `box-shadow`. Jadi keempat
+tab selalu memakai ring 1px. Fix: `box-shadow:none` di `.rail-item` (dengan komentar
+alasannya), plus hover wash `::before` hanya untuk tab yang **tidak** terpilih
+(`:not([aria-selected="true"])`).
+
+Soal `@media (hover:hover)`: di sesi browser otomatis di sini query itu **tidak cocok**,
+jadi hover tidak pernah menyala dan sempat terlihat seperti bug. Aturan hover sekarang
+tidak dibungkus, dan media query dipakai terbalik (`@media (hover:none)`) untuk
+mematikan wash di perangkat sentuh — di sana `:hover` nyangkut setelah tap.
+
+**c. Pill "gerak sedikit" itu bukan pill-nya (`1c91134`).** frian minta transisi
+history/profile/leaderboard → market dibuat konsisten. Diukur per frame (44 frame,
+`getBoundingClientRect` + `document.getAnimations`): pill **tidak pernah** menyimpang —
+tinggi tetap 36.8, lebar 192, 0 pembalikan arah. Yang goyang itu **warna label**: tab
+yang kehilangan seleksi jatuh ke `.2s ease` tanpa delay, sementara tab yang dapat
+seleksi pakai delay `.1s`. Arah masuk dan keluar beda gestur, dan balik ke Market
+labelnya melintasi belasan abu (`17→148→227→244`, 260ms). Fix: kedua state pakai satu
+durasi/`.26s`, satu kurva `cubic-bezier(.4,0,.2,1)`, dan delay simetris. Terukur
+sesudahnya: masuk `17→244` 16 langkah, keluar `244→17` 15 langkah, identik berulang.
+
+**Pelajaran umum:** kalau ada yang "gerak sedikit" saat pindah tab, ukur **pill dan
+label terpisah**. Pill-nya hampir selalu tidak bersalah.
+
+**d. Brand jadi "Motion Market", rata kiri (`1c91134`).** Rail, kedua `<title>`
+(`app.html` dan `landing.html`), dan copy leaderboard. `.rail-brand` dapat
+`text-align:left;white-space:nowrap;display:block` dengan padding kiri 10px — sama
+dengan inset teks tab — supaya tepi kirinya satu garis dengan label tab.
+
+**e. Ikon dari library Framer (`1c91134`).** frian kasih empat URL `framer.com/m/*.js`.
+URL itu cuma **stub** (300 byte) yang `export` modul di `framerusercontent.com`; yang
+berisi SVG asli ada di modul kedua. Ikonnya bukan fill — path-nya pakai
+`transform="translate(...)"` + `stroke`, jadi menyalin `d` saja menghasilkan gambar
+kosong. Yang dipakai: `i-arrow-right` (CTA "Back to the board"), `i-alert-circle`,
+`i-circle-exclamation` (tombol Clear), dan `fi-behance` di footer.
+
+Soal tombol X: yang salah bukan logo X di footer (`fi-x` itu memang path brand X yang
+benar), tapi ikon silang buatan tangan `i-x` (`M4 20L10 12M14 12L20 4...`) yang dipakai
+untuk **Clear** dan **tutup kartu** — bentuknya menyerong dan terbaca seperti logo
+tiruan. Sekarang Clear pakai `i-circle-exclamation`, tutup kartu pakai silang lurus
+`M6 6L18 18M18 6L6 18`.
+
+**Catatan terbuka:** link Behance di footer mengarah ke `behance.net` umum karena
+handle frian belum diketahui. Kalau mau dipaku, ganti `href`-nya.
+
+**f. Pill jadi kotak (`1c91134`).** `--r-pill` diturunkan `100px` → `6px`. Satu token
+itu diwarisi chip filter market, slot lineup, search field, `.tab`, dan `button` global,
+jadi semuanya ikut kotak tanpa disentuh satu per satu. `.rail-item` sengaja tetap 12px.
+
+## 2026-11-18 — background dibuang, halaman penuh, border tema hilang (`6a28bea`)
 
 Tiga hal, berurutan sesuai permintaan frian. Semuanya live dan terukur di produksi.
 
