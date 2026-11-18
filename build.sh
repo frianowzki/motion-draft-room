@@ -24,9 +24,8 @@ if [ -d fonts ]; then
   cp -R fonts public/fonts
 fi
 
-# pre-bundled Framer code components (pagebg.js = NightSkyBackground for dark mode +
-# ShaderBackgroundLite for light, wrapped with react + framer-motion by esbuild;
-# rebuild with scripts/build-nightsky.sh)
+# pre-bundled Framer code component (nightsky.js = the linked NightSkyBackground
+# wrapped with react + framer-motion by esbuild; rebuild with npm run sky)
 if [ -d vendor ]; then
   cp -R vendor public/vendor
 fi

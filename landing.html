@@ -225,20 +225,14 @@
      runtime: a seeded star field that twinkles, plus occasional comets that
      streak across and fade. Painted only in dark mode - light mode keeps the page
      as it is - and the canvas is inert under prefers-reduced-motion. */
-  /* The page background is two linked Framer components (vendor/pagebg.js), chosen by
-     the theme: NightSkyBackground in dark, ShaderBackgroundLite (Aurora, recoloured to
-     soft cloud) in light. Fixed to the viewport so it keeps moving behind the hero
-     while the page scrolls, masked so it dissolves instead of ending on a seam. */
-  .pagebg{position:fixed;left:0;right:0;top:0;height:min(100vh,900px);
+  /* the plate is the linked Framer component (vendor/nightsky.js) painting into this
+     layer: fixed to the viewport so the sky keeps moving behind the hero while the
+     page scrolls, masked so it dissolves into the page instead of ending on a seam */
+  .nightsky{position:fixed;left:0;right:0;top:0;height:min(100vh,900px);
     z-index:-1;pointer-events:none;display:none;opacity:0;
     -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 62%,transparent 100%);
     mask-image:linear-gradient(to bottom,#000 0,#000 62%,transparent 100%);
     transition:opacity .6s ease}
-  .pagebg-layer{position:absolute;inset:0}
-  /* the shader is a lit sky, not a picture: hold it back so black type keeps its
-     contrast, and let the page's own background through at the edges */
-  .pagebg-layer.is-shader{opacity:.55}
-  :root[data-theme="light"] .pagebg{height:min(100vh,820px)}
   :root[data-theme="dark"] .nightsky{display:block;opacity:1}
   @media(prefers-reduced-motion:reduce){.nightsky{display:none !important}}
   /* no card: the hero is type on the page, not a box on the page */
@@ -966,7 +960,7 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero">
-    <div class="pagebg" aria-hidden="true"></div>
+    <div class="nightsky" aria-hidden="true"></div>
     <div class="hero-main">
       <div>
         <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
@@ -1852,6 +1846,6 @@ fetch("/api/signals", { cache: "no-store" })
 })();
 
 </script>
-<script defer src="vendor/pagebg.js"></script>
+<script defer src="vendor/nightsky.js"></script>
 </body>
 </html>

@@ -1,24 +1,15 @@
-// Minimal stand-in for Framer's runtime: code components only need to register their
-// property controls, know whether they are being statically rendered (no, in a live
-// page), and occasionally read the render target. Everything here is a constant.
+// Minimal stand-in for Framer's runtime: the module only needs to register its
+// property controls and to answer "am I being statically rendered?" (no).
 export const ControlType = {
   Number: 'number', Color: 'color', Boolean: 'boolean', String: 'string',
-  Enum: 'enum', Array: 'array', Object: 'object', File: 'file', Image: 'image',
-  ComponentInstance: 'componentInstance', SegmentedEnum: 'segmentedEnum'
-};
-// Framer exposes this as an object whose current() call answers where we are drawing.
-// Code components call RenderTarget.current() to detect the editor canvas, so it has
-// to be a function or the component throws on mount.
-export const RenderTarget = {
-  canvas: 'canvas', thumbnail: 'thumbnail', export: 'export',
-  current: () => 'current'
+  Enum: 'enum', Array: 'array', Object: 'object', File: 'file', Image: 'image'
 };
 export function addPropertyControls(component, controls) {
   component.propertyControls = controls;
   return component;
 }
 export function useIsStaticRenderer() { return false; }
-export function useIsOnFramerCanvas() { return false; }
+export const RenderTarget = { canvas: 'canvas', current: 'current', thumbnail: 'thumbnail', export: 'export' };
 export const PropertyControls = {};
-export const framer = {};
-export default { ControlType, RenderTarget, addPropertyControls, useIsStaticRenderer };
+export const useIsOnFramerCanvas = () => false;
+export default { ControlType, addPropertyControls, useIsStaticRenderer };
