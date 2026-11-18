@@ -828,28 +828,31 @@
     .tgs-b svg{width:15px;height:15px}
   }
 
-  /* In light the card is paper, so the pill is ink and its disc is paper carrying an
-     ink arrow. The old rule painted pill and disc both with --pc-ink, so the arrow
-     was ink on ink and vanished. In dark the card is ink and the button is its exact
-     inverse: paper pill, ink disc, paper arrow. */
   .pickcard .hc-act{margin:16px 0 0;align-self:flex-start;
-    font-family:var(--sans);font-size:12.5px;font-weight:600;letter-spacing:-.01em;
-    background:var(--pc-ink);color:#f4f3f0;
+    font-family:var(--sans);font-size:12.5px;font-weight:600;letter-spacing:-.01em}
+  /* In light the card is paper, so the pill is ink: the disc must then be paper with
+     an ink arrow, or the arrow is ink on ink. In dark the card is ink, so the pill is
+     paper and the disc stays ink with a paper arrow — the exact inverse. The disc needs
+     a heavier selector than the component rule `.acta-ic{background:var(--ink)}`;
+     :root adds no specificity, so the selector names the card class and the tag. */
+  .pickcard .hc-act{background:var(--pc-ink);color:#f4f3f0;
     box-shadow:inset 0 0 0 1px var(--pc-ink)}
-  /* the pill is ink, so the disc has to be paper — an ink disc swallowed the arrow.
-     The colour is set on :root too, because the theme-level `.acta-ic{color:var(--bg)}`
-     outranks a plain descendant selector and would keep painting the arrow in ink. */
-  :root .pickcard .hc-act .acta-ic{background:#f4f3f0;color:#111}
   .pickcard .hc-act:hover{background:#000;box-shadow:inset 0 0 0 1px #000}
-  .pickcard .hc-act:hover .acta-ic{background:#fff}
   .pickcard .hc-act:focus-visible{outline-color:var(--pc-ink)}
   :root[data-theme="dark"] .pickcard .hc-act{background:#f4f3f0;color:#111;
     box-shadow:inset 0 0 0 1px #f4f3f0}
-  :root[data-theme="dark"] .pickcard .hc-act .acta-ic{background:#111;color:#f4f3f0}
   :root[data-theme="dark"] .pickcard .hc-act:hover{background:#fff;
     box-shadow:inset 0 0 0 1px #fff}
-  :root[data-theme="dark"] .pickcard .hc-act:hover .acta-ic{background:#000}
   :root[data-theme="dark"] .pickcard .hc-act:focus-visible{outline-color:#f4f3f0}
+
+  /* The disc has to fight `.acta-ic{background:var(--ink);color:var(--bg)}` and the
+     theme rule `html[data-theme] .acta-ic`, which are attribute selectors. `:root`
+     contributes nothing, and a class repeated twice is not a match, so the winning
+     form names the document element by tag and repeats the card class. */
+  html .pickcard .hc-act .acta-ic{background:#f4f3f0;color:#111}
+  .pickcard .hc-act:hover .acta-ic{background:#fff}
+  html[data-theme="dark"] .pickcard .hc-act .acta-ic{background:#111;color:#f4f3f0}
+  html[data-theme="dark"] .pickcard .hc-act:hover .acta-ic{background:#000}
 
 </style>
 </head>
