@@ -931,6 +931,113 @@
   .rec .score small{display:block;font-family:var(--mono);font-size:8px;font-weight:400;
     color:var(--faint);margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
 
+  /* ---- your receipts: the positions card */
+  .mine .stand{display:flex;align-items:baseline;gap:7px;margin:2px 0 13px;
+    font-family:var(--mono);font-size:10px;color:var(--faint);
+    text-transform:uppercase;letter-spacing:.05em;line-height:1.5}
+  .mine .stand b{font-family:var(--display);font-size:22px;font-weight:500;
+    color:var(--ink);letter-spacing:-.02em;text-transform:none}
+  .mine .stand .of{color:var(--faint)}
+  .mine .stand .sep{opacity:.4}
+  .mx{border-top:1px solid var(--line-soft);padding:11px 0}
+  .mx:first-of-type{border-top:0;padding-top:0}
+  .mx-h{display:flex;align-items:center;gap:7px;justify-content:space-between}
+  .mx-h .slot{font-family:var(--mono);font-size:9px;color:var(--faint);
+    letter-spacing:.05em;text-transform:uppercase}
+  .mx-h .st{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
+    font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
+    box-shadow:inset 0 0 0 1px var(--line-soft);border-radius:var(--r-pill);padding:2px 7px}
+  .mx-h .st .dot{width:5px;height:5px;border-radius:50%;background:var(--faint)}
+  .mx-h .st.live .dot{background:var(--warm);box-shadow:0 0 0 3px rgba(196,138,42,.16)}
+  .mx-h .st.done .dot{background:var(--up,#1f8a4c)}
+  .mx-h .vt{font-family:var(--display);font-size:15px;font-weight:500;
+    font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--ink)}
+  .mx-h .vt.up{color:var(--up,#1f8a4c)} .mx-h .vt.down{color:var(--down,#b4453a)}
+  /* one pick per line: name on the left, then the rank it was filed at, where it
+     sits now, and what that moved. Inline chips ran together and the figures lost
+     their column, so nothing could be compared down the list. */
+  .mx-p{display:grid;gap:1px;margin-top:8px;background:var(--line-soft);
+    border-radius:9px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .mx-p .p{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;
+    background:var(--card);padding:5px 8px;font-size:10.5px;line-height:1.3}
+  .mx-p .p b{font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;
+    white-space:nowrap;min-width:0}
+  .mx-p .p .rr{font-style:normal;font-family:var(--mono);font-size:7px;letter-spacing:.04em;
+    color:var(--faint);box-shadow:inset 0 0 0 1px var(--line-soft);border-radius:3px;
+    padding:0 3px;text-transform:lowercase;margin-left:4px}
+  .mx-p .p .at{font-family:var(--mono);font-size:8.5px;color:var(--faint);
+    font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+  .mx-p .p .at .arw{opacity:.55;margin:0 2px}
+  .mx-p .p .mv{font-family:var(--mono);font-size:9.5px;font-variant-numeric:tabular-nums;
+    min-width:24px;text-align:right;white-space:nowrap}
+  .mx-p .p .mv.up{color:var(--up,#1f8a4c)} .mx-p .p .mv.down{color:var(--down,#b4453a)}
+  .mx-p .p .mv.flat{color:var(--faint)}
+
+  /* ---- the card that replaces alert(): a filing deserves a receipt, not a popup */
+  .sheet{position:fixed;inset:0;z-index:90;display:grid;place-items:center;
+    padding:18px;background:rgba(10,10,9,.44);backdrop-filter:blur(3px);
+    opacity:0;pointer-events:none;transition:opacity .22s ease}
+  .sheet.on{opacity:1;pointer-events:auto}
+  .sheet .plate{width:100%;max-width:352px;background:var(--card);
+    border-radius:var(--r-card,16px);box-shadow:var(--shadow-lg,0 24px 60px rgba(0,0,0,.28)),
+      inset 0 0 0 1px var(--line-soft);
+    padding:19px 19px 17px;transform:translateY(10px) scale(.985);
+    transition:transform .26s cubic-bezier(.2,.8,.25,1)}
+  .sheet.on .plate{transform:none}
+  .sheet .kick{display:flex;align-items:center;gap:7px;font-family:var(--mono);
+    font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+  .sheet .kick .tick{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(31,138,76,.12);color:var(--up,#1f8a4c)}
+  .sheet .kick .tick .ic{width:9px;height:9px;stroke-width:2.6}
+  .sheet h3{font-family:var(--display);font-size:19px;font-weight:500;color:var(--ink);
+    margin:9px 0 0;letter-spacing:-.02em;line-height:1.25}
+  .sheet h3 b{font-weight:600}
+  .sheet .sub{font-size:11.5px;color:var(--dim);line-height:1.6;margin:7px 0 0}
+  .sheet .ticks{margin:13px 0 0;border-radius:11px;overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .sheet .tickrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:8px 10px;font-size:11px;color:var(--ink)}
+  .sheet .tickrow+.tickrow{border-top:1px solid var(--line-soft)}
+  .sheet .tickrow .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--faint)}
+  .sheet .tickrow .v{font-family:var(--mono);font-size:10.5px;color:var(--ink);
+    font-variant-numeric:tabular-nums;text-align:right}
+  .sheet .picks{margin:14px 0 0;border-radius:11px;overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .sheet .plabel{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.07em;
+    text-transform:uppercase;color:var(--faint);padding:8px 10px 0}
+  .sheet .pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+    background:var(--line-soft);margin-top:6px}
+  /* the rank is the figure that matters, so it leads; the name wraps under it
+     instead of being cut to an ellipsis, which told the reader nothing */
+  .sheet .pgrid .chip{display:flex;flex-direction:column;gap:3px;padding:8px 5px 9px;
+    background:var(--card);min-width:0;text-align:center}
+  .sheet .pgrid .chip i{font-style:normal;font-family:var(--display);font-size:13px;
+    font-weight:500;color:var(--ink);letter-spacing:-.02em;line-height:1;
+    font-variant-numeric:tabular-nums}
+  .sheet .pgrid .chip b{font-weight:400;color:var(--dim);font-size:8.5px;line-height:1.2;
+    letter-spacing:.01em;overflow-wrap:anywhere;hyphens:auto;word-break:break-word}
+  @media (max-width:400px){
+    .sheet .pgrid .chip b{font-size:8px}
+    .sheet .pgrid .chip i{font-size:12px}
+  }
+  .sheet .foot{display:flex;gap:8px;margin:16px 0 0}
+  .sheet .foot button{flex:1;font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+    text-transform:uppercase;padding:9px 10px;border-radius:var(--r-pill);
+    box-shadow:inset 0 0 0 1px var(--line);color:var(--ink);background:none;cursor:pointer}
+  .sheet .foot button.primary{background:var(--ink);color:var(--accent-ink);box-shadow:none;
+    border:0;font-weight:500}
+  .sheet .foot button:hover{opacity:.82}
+  @media (max-width:640px){
+    .sheet{align-items:flex-end;padding:0}
+    .sheet .plate{max-width:none;border-radius:16px 16px 0 0;
+      padding:20px 18px calc(18px + env(safe-area-inset-bottom))}
+    .sheet .plate{transform:translateY(18px)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .sheet,.sheet .plate{transition:none}
+  }
+
   .empty{color:var(--faint);font-size:12px;padding:20px 0;text-align:center;line-height:1.6}
 
   /* ---- steps in empty detail card */
@@ -939,36 +1046,6 @@
   .steps .n{font-family:var(--mono);font-size:9px;width:18px;height:18px;flex:none;
     border-radius:50%;display:grid;place-items:center;background:var(--ink);
     color:var(--accent-ink);margin-top:1px}
-
-  /* ---- closing bento: four tiles, the wide one carries a huge ghost icon */
-  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0 0}
-  .tile{position:relative;display:flex;flex-direction:column;justify-content:space-between;
-    min-height:168px;padding:18px 18px 16px;border-radius:var(--r-lg);overflow:hidden;
-    background:var(--card);box-shadow:var(--lift);transition:transform .2s ease,box-shadow .2s ease}
-  a.tile{cursor:pointer}
-  a.tile:hover{transform:translateY(-2px);box-shadow:var(--lift),0 12px 26px -18px rgba(17,17,17,.4)}
-  .tile .tag-top{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--faint);display:block;margin-bottom:auto;position:relative;z-index:1}
-  .tile b{display:block;font-family:var(--display);font-size:clamp(19px,1.6vw,24px);
-    font-weight:500;letter-spacing:-.035em;line-height:1.14;margin:14px 0 6px;
-    max-width:17ch;position:relative;z-index:1}
-  .tile .tag-bot{font-size:11px;color:var(--dim);position:relative;z-index:1;max-width:20ch}
-  .tile-ic{position:absolute;right:-10px;bottom:-14px;font-size:96px;color:rgba(17,17,17,.055);
-    pointer-events:none;z-index:0}
-  .tile-ic .ic{width:1em;height:1em;stroke-width:1.3}
-  .t4{background:var(--ink);color:#f8f7f4}
-  .t4 .tag-top{color:rgba(248,247,244,.5)}
-  .t4 .tag-bot{color:rgba(248,247,244,.68)}
-  .t4 b{color:#f8f7f4}
-  .t4 .tile-ic{color:rgba(255,255,255,.09)}
-  .t1{background:linear-gradient(160deg,#e7e5e0,#dedbd4)}
-  .t3{background:linear-gradient(160deg,#eceae6,#e2ded6)}
-  @media(max-width:600px){
-    .gallery{grid-template-columns:1fr;gap:10px}
-    .tile{min-height:132px;border-radius:22px}
-    .tile b{font-size:20px}
-    .tile-ic{font-size:76px;right:-6px;bottom:-10px}
-  }
 
   /* ---- footer: the landing's sign-off, not a card - the same bar, the same
      icons, so the two pages end the same way. Nothing here explains the page. */
@@ -1280,14 +1357,16 @@
       <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
       <div id="whoBody"></div>
     </div>
+    <!-- Your own record. The full book stays public at /api/receipts, but a player
+         reads their own positions here first: what is pending, what it settled at,
+         and where that puts them in the standings. -->
+    <div class="card mine" style="margin-top:14px" id="mineCard">
+      <h2><svg class="ic"><use href="#i-layers"/></svg>Your receipts <span class="pill" id="mineState"></span></h2>
+      <div id="mineBody"></div>
+    </div>
   </div>
 
-  <section class="gallery" aria-label="What is on this page">
-    <a class="tile t1" href="#rows"><span class="tag-top">01 &middot; the board</span><b>79 creators, one number each</b><span class="tag-bot">live from the official API</span><span class="tile-ic"><svg class="ic"><use href="#i-users"/></svg></span></a>
-    <a class="tile t2" href="#detail"><span class="tag-top">02 &middot; the draft</span><b>Thesis and pre-mortem, or nothing</b><span class="tag-bot">reasoning is the submission</span><span class="tile-ic"><svg class="ic"><use href="#i-target"/></svg></span></a>
 
-    <div class="tile t4"><span class="tag-top">04 &middot; the limits</span><b>No invented motion scores</b><span class="tag-bot">stars gate entry, they add no points</span><span class="tile-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span></div>
-  </section>
 
     <!-- Board history closes the page. It answers the question the board cannot -
        what actually moved between windows - and reading it last keeps the order
@@ -1451,25 +1530,14 @@ async function load() {
   }
   // history is a separate read: the board must paint even if it fails, so it is
   // fetched after DATA and the Timeline simply says so when there is nothing yet
-  try {
-    const hr = await fetch("/api/history", { headers: { accept: "application/json" } });
-    if (hr.ok) {
-      const hj = await hr.json();
-      // /api/history names the field "windows"; keep the page's own shape so the
-      // Timeline reads the same object whether it came from the API or a bundle
-      DATA.history = (hj.windows || []).map(w => ({
-        slot: w.slot || w.asOf || w.collectedAt,
-        asOf: w.asOf,
-        collectedAt: w.collectedAt,
-        rows: w.rows || [],
-      }));
-    }
-  } catch (e) {}
+  await refreshHistory();
   if (DATA.rarity && DATA.rarity.assumedBoost) BOOST = DATA.rarity.assumedBoost;
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   if (PROF) DATA.profiles = PROF;
   render();
   BOOTED = true;
+  SIG_FP = JSON.stringify(DATA);
+  HIST_LAST = TL.events ? TL.events.length - 1 : 0;
   bindBar();
   loadBook();
   // the identity card used to be drawn only from load()'s render path, so whichever of
@@ -1480,6 +1548,36 @@ async function load() {
 // The bar goes solid only once there is something under it. A scroll listener on
 // a passive event, read from the layout rather than a magic offset, so it works
 // whatever the board's height turns out to be.
+// ---------- board history: read live, not once
+// The collector writes a new window every four hours, so a page left open on a
+// desk would keep showing the windows it booted with. This pulls /api/history on
+// the same beat the board does, and redraws only when the newest slot or the
+// window count actually changed - a refetch that re-renders every minute would
+// yank the rail back to the newest card while someone is reading an old one.
+let HIST_FP = null;
+async function refreshHistory() {
+  try {
+    const hr = await fetch("/api/history", { headers: { accept: "application/json" }, cache: "no-store" });
+    if (!hr.ok) return false;
+    const hj = await hr.json();
+    // /api/history names the field "windows"; keep the page's own shape so the
+    // Timeline reads the same object whether it came from the API or a bundle
+    const wins = (hj.windows || []).map(w => ({
+      slot: w.slot || w.asOf || w.collectedAt,
+      asOf: w.asOf,
+      collectedAt: w.collectedAt,
+      rows: w.rows || [],
+    }));
+    const fp = wins.length + "|" + (wins.length ? (wins[wins.length - 1].slot || "") : "");
+    const changed = fp !== HIST_FP;
+    HIST_FP = fp;
+    DATA.history = wins;
+    return changed;
+  } catch (e) {
+    return false;
+  }
+}
+
 function bindBar() {
   const bar = document.querySelector(".appbar");
   if (!bar) return;
@@ -1696,7 +1794,12 @@ function paintRail(rail) {
   const start = (PAGE - 1) * perPage;
   const slice = list.slice(start, start + perPage);
 
-  const tb = $("#rows"); tb.innerHTML = "";
+  const tb = $("#rows");
+  // build the page in a detached tbody and swap it in once. Setting tb.innerHTML=""
+  // on the live element emptied the table before the loop had written anything,
+  // so a re-render that threw halfway left a blank board; building off-document
+  // means the old rows survive until the new ones are complete.
+  const batch = document.createDocumentFragment();
   slice.forEach(c => {
     const picked = PICKS.some(p => p.name === c.name);
     const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
@@ -1713,7 +1816,7 @@ function paintRail(rail) {
     // mark the row. On a desk the row still only selects — the card there is a
     // hover surface and the draft panel beside the board does the picking.
     tr.onclick = () => { SEL = c.name; render(); if (isPhone()) openCard(tr, c); };
-    tb.appendChild(tr);
+    batch.appendChild(tr);
     // pointing at a name opens the profile card; the card itself stays usable so
     // its links and the pick button can be clicked. Bind after the row is in the
     // document, otherwise the .ncell lookup finds nothing.
@@ -1733,9 +1836,11 @@ function paintRail(rail) {
     // a table row with no cells has zero height, so the spacer carries one empty
     // cell per column to hold the same vertical rhythm as a real row
     ph.innerHTML = "<td></td>".repeat(7);
-    tb.appendChild(ph);
+    batch.appendChild(ph);
   }
 
+  tb.innerHTML = "";
+  tb.appendChild(batch);
   renderPager(pages, list.length, start, slice.length);
 
 
@@ -2647,6 +2752,12 @@ function renderLineup() {
 }
 
 function renderWho() {
+  whoCard();
+  // the identity card decides which receipts are "yours", so redraw both together
+  renderMine();
+}
+
+function whoCard() {
   const box = $("#whoBody"), pill = $("#whoState");
   if (!box) return;
   const u = ME && ME.user, h = handle();
@@ -2695,6 +2806,83 @@ function syncClear() {
 // The book card is gone from the page: receipts still file through /api/receipts
 // and still settle, but the dashboard no longer shows the ledger. Kept as a
 // guarded no-op so loadBook() and the post-lock refresh do not throw.
+// ---------- your own record
+// The book is public; this is the same data read from one player's side. The
+// standings are computed over every receipt in the book, not just the ones on
+// screen, so a rank means something even with a book of hundreds.
+function renderMine() {
+  const box = $("#mineBody"), state = $("#mineState");
+  if (!box || !state) return;
+  const me = ME && ME.connected ? String(ME.user && ME.user.handle || "").toLowerCase() : "";
+  if (!me) {
+    state.textContent = "";
+    box.innerHTML = `<div class="empty">Connect X to keep your receipts in one place: your positions, what they settled at, and where you stand.</div>`;
+    return;
+  }
+  if (!BOOK) {
+    state.textContent = "";
+    box.innerHTML = `<div class="empty">The book is unreachable (${esc(BOOK_ERR || "no response")}), so your positions cannot be read right now.</div>`;
+    return;
+  }
+  const all = BOOK.receipts || [];
+  const mine = all.filter(r => String(r.player || "").toLowerCase() === me);
+  state.textContent = mine.length ? `${mine.length}` : "";
+
+  if (!mine.length) {
+    box.innerHTML = `<div class="empty">No receipts yet. Lock a lineup and it lands here, graded once a later snapshot arrives.</div>`;
+    return;
+  }
+
+  // standings: net rank over graded receipts, one line per player
+  const net = new Map();
+  for (const r of all) {
+    if (r.status !== "settled" || r.score == null) continue;
+    const k = String(r.player || "").toLowerCase();
+    net.set(k, (net.get(k) || 0) + r.score);
+  }
+  const ranked = [...net.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const at = ranked.findIndex(([k]) => k === me);
+  const myNet = mine.reduce((n, r) => n + (r.status === "settled" && r.score != null ? r.score : 0), 0);
+  const gradedMine = mine.filter(r => r.status === "settled").length;
+
+  const lead = at >= 0
+    ? `<div class="stand"><b>${ord(at + 1)}</b><span class="of">of ${ranked.length}</span>
+         <span class="sep">·</span><span>net ${signed(myNet)} rank</span>
+         <span class="sep">·</span><span>${gradedMine} graded</span></div>`
+    : `<div class="stand"><b>${mine.length}</b><span class="of">filed</span>
+         <span class="sep">·</span><span>no grade yet — waiting on the next snapshot</span></div>`;
+
+  box.innerHTML = lead + mine.map(r => {
+    const done = r.status === "settled" && r.score != null;
+    const when = String(r.slotAtLock || "").slice(0, 16).replace("T", " ");
+    const picks = (r.picks || []).map(p => {
+      const mv = p.move == null ? `<span class="mv flat"></span>` :
+        `<span class="mv ${cls(p.move)}">${signed(p.move)}</span>`;
+      const now = p.positionNow == null ? "" :
+        `<span class="arw">→</span>${esc(String(p.positionNow))}`;
+      const rr = p.rarity && p.rarity !== "Common" ? `<i class="rr">${esc(p.rarity)}</i>` : "";
+      return `<span class="p" title="${esc(p.name)} — filed at ${esc(String(p.positionAtLock))}${p.positionNow != null ? ", now " + esc(String(p.positionNow)) : ""}">` +
+        `<b>${esc(p.name)}${rr}</b>` +
+        `<span class="at">#${esc(String(p.positionAtLock))}${now}</span>` +
+        `${mv}</span>`;
+    }).join("");
+    return `<div class="mx">
+        <div class="mx-h">
+          <span class="slot">${esc(when)}Z</span>
+          <span class="st ${done ? "done" : "live"}"><span class="dot"></span>${done ? "settled" : "pending"}</span>
+          <span class="vt ${done ? cls(r.score) : ""}">${done ? signed(r.score) : "—"}</span>
+        </div>
+        <div class="mx-p">${picks}</div>
+      </div>`;
+  }).join("");
+}
+
+// 1 -> 1st, 2 -> 2nd, 11 -> 11th: a rank reads as a place, not an index
+function ord(n) {
+  const s = ["th", "st", "nd", "rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
 function renderBook() {
   const box = $("#receipts"), meta = $("#bookMeta");
   if (!box || !meta) return;
@@ -2743,6 +2931,67 @@ function renderBook() {
   }).join("");
 }
 
+// ---------- the filing receipt
+// A lineup is the one thing a visitor gives the room, so the answer is a small card
+// that reads like the thing itself: what was filed, under which handle, into which
+// window, and when it starts earning. alert() could not say any of that.
+function showSheet(html) {
+  const sh = $("#sheet"), plate = $("#sheetPlate");
+  if (!sh || !plate) return;
+  plate.innerHTML = html;
+  sh.hidden = false;
+  // one frame between display and the class, or the transition never runs
+  requestAnimationFrame(() => sh.classList.add("on"));
+  const close = () => {
+    sh.classList.remove("on");
+    setTimeout(() => { if (!sh.classList.contains("on")) sh.hidden = true; }, 240);
+  };
+  sh._close = close;
+  plate.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", close));
+  // a click on the dim area closes it; a click on the plate must not
+  sh.addEventListener("click", e => { if (e.target === sh) close(); });
+  document.addEventListener("keydown", function esc(e) {
+    if (e.key !== "Escape") return;
+    document.removeEventListener("keydown", esc);
+    close();
+  });
+  const p = plate.querySelector("button.primary");
+  if (p) setTimeout(() => p.focus({ preventScroll: true }), 60);
+  else setTimeout(() => close && null, 0);
+  return close;
+}
+
+function showFiled(h, rec) {
+  const settled = rec && rec.status === "settled" && rec.score != null;
+  const slot = rec && rec.slotAtLock ? String(rec.slotAtLock).slice(0, 16).replace("T", " ") + "Z" : "this window";
+  const picks = (rec && rec.picks || PICKS || []).map(p => {
+    const at = p.positionAtLock != null ? p.positionAtLock : p.position;
+    return `<span class="chip" title="${esc(p.name)} at ${esc(String(at))}"><i>${esc(String(at))}</i><b>${esc(p.name)}</b></span>`;
+  }).join("");
+  const n = (rec && rec.picks ? rec.picks.length : PICKS.length) || 0;
+  showSheet(`
+    <div class="kick"><span class="tick">${icon("check")}</span>Filed</div>
+    <h3 id="sheetTitle">In the book,<br>under <b>@${esc(h)}</b></h3>
+    <p class="sub">${settled
+      ? "It graded against the snapshot already on the desk."
+      : "Nothing to score it against yet: the next snapshot with a later <em>asOf</em> grades it, and the grade is permanent."}</p>
+    <div class="ticks">
+      <div class="tickrow"><span class="k">Slot</span><span class="v">${esc(slot)}</span></div>
+      <div class="tickrow"><span class="k">Picks</span><span class="v">${n} of ${n}</span></div>
+      <div class="tickrow"><span class="k">${settled ? "Net rank" : "Status"}</span><span class="v">${settled ? signed(rec.score) : "pending"}</span></div>
+    </div>
+    <div class="picks"><span class="plabel">Filed at rank</span><div class="pgrid">${picks}</div></div>
+    <div class="foot">
+      <button data-close>Stay here</button>
+      <button class="primary" data-close id="sheetSeen">See my receipts</button>
+    </div>`);
+  const seen = $("#sheetSeen");
+  if (seen) seen.addEventListener("click", () => {
+    const card = $("#mineCard");
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+
 // ---------- lock + settle
 function lockLineup() {
   if (PICKS.length !== SIZE) return;
@@ -2766,11 +3015,14 @@ function lockLineup() {
       PICKS = []; savePicks(); SEL = null;
       render();
       loadBook();
-      alert(`Filed under @${h}. ${out.receipt && out.receipt.status === "settled" ? "It graded immediately against the current snapshot: " + signed(out.receipt.score) + " net rank." : "It settles when a snapshot with a later asOf arrives."}`);
+      showFiled(h, out.receipt);
     })
     .catch(e => {
       btn.disabled = false;
-      alert("Could not file the receipt: " + e.message);
+      showSheet(`<div class="kick"><span class="tick" style="background:rgba(180,69,58,.12);color:var(--down,#b4453a)">${icon("x")}</span>Not filed</div>
+        <h3 id="sheetTitle">The book refused the receipt</h3>
+        <p class="sub">${esc(e.message || "no reason given")}</p>
+        <div class="foot"><button class="primary" data-close>Back to the desk</button></div>`);
       render();
     });
 }
@@ -2778,6 +3030,39 @@ function lockLineup() {
 // ---------- go
 load();
 loadSession();
+
+// A desk keeps this page open for hours, and the board publishes every four. So
+// the page pulls again on a minute beat, the same beat the landing room uses, and
+// skips the work while the tab is hidden. History rides along: refreshHistory()
+// reports whether anything new arrived, and only then is the timeline redrawn in
+// place - the reader keeps whatever card they were on unless the rail itself
+// grew a new one, in which case it slides to it.
+let SIG_FP = null, HIST_LAST = 0;
+const POLL_MS = 60000;
+async function poll() {
+  if (document.hidden || !DATA) return;
+  try {
+    const r = await fetch("/api/signals", { headers: { accept: "application/json" }, cache: "no-store" });
+    if (r.ok) {
+      const next = await r.json();
+      const sig = JSON.stringify(next);
+      if (sig !== SIG_FP) {
+        SIG_FP = sig;
+        DATA = next;
+        render();
+      }
+    }
+  } catch (e) {}
+  const grew = await refreshHistory();
+  if (grew) {
+    renderTimeline();
+    const last = TL.events.length - 1;
+    if (last > HIST_LAST) tlGo(last, true);
+    HIST_LAST = last;
+  }
+}
+setInterval(poll, POLL_MS);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
 // the CTA under the switch is a shortcut into the board, not a second flow
 document.addEventListener("click", e => {
   const cta = e.target && e.target.closest && e.target.closest("#ctaDraft");
@@ -2833,5 +3118,8 @@ document.addEventListener("click", e => {
 })();
 </script>
 
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="plate" id="sheetPlate"></div>
+</div>
 </body>
 </html>
