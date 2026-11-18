@@ -95,8 +95,9 @@
   :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] input::placeholder,
   :root[data-theme="dark"] textarea::placeholder{color:var(--faint)}
-  :root[data-theme="dark"] .backhome{background:rgba(20,20,19,.92);color:var(--dim)}
-  :root[data-theme="dark"] .backhome:hover{background:rgba(40,40,38,.95);color:var(--ink)}
+  :root[data-theme="dark"] .backhome{background:rgba(24,24,22,.6);color:var(--dim);
+    -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8)}
+  :root[data-theme="dark"] .backhome:hover{background:rgba(44,44,40,.75);color:var(--ink)}
   :root[data-theme="dark"] .rar button.on i{color:rgba(15,15,14,.7)}
   :root[data-theme="dark"] .slot .s.spent{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .tag.COILED{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
@@ -111,10 +112,11 @@
   *{box-sizing:border-box}
   .backhome{position:fixed;left:14px;bottom:14px;z-index:50;display:inline-flex;
     align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.92);
-    backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px var(--line);
+    text-transform:uppercase;color:var(--dim);background:rgba(244,243,240,.6);
+    -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.08),0 8px 22px -16px rgba(17,17,17,.5);
     padding:8px 12px 8px 9px;border-radius:var(--r-pill)}
-  .backhome:hover{color:var(--ink);background:#fff}
+  .backhome:hover{color:var(--ink);background:rgba(255,255,255,.8)}
   .backhome .ic{font-size:11px;stroke-width:2}
   ::-webkit-scrollbar{width:9px;height:9px}
   ::-webkit-scrollbar-track{background:#eceae6}
@@ -166,7 +168,37 @@
   /* the dashboard opens on one navbar: the CTA on the left, the theme switch on
      the right, so the numbers start one line below it instead of two */
   .appbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-    padding-top:10px}
+    padding-top:10px;
+    /* the navbar floats on frosted glass: it sticks to the top of the viewport,
+       blurs whatever slides under it and keeps a hairline of light along its top
+       edge, the way a translucent iOS bar separates itself from content. */
+    position:sticky;top:0;z-index:40;
+    margin:0 -16px;padding:10px 16px;
+    background:rgba(244,243,240,.62);
+    -webkit-backdrop-filter:blur(22px) saturate(1.9);backdrop-filter:blur(22px) saturate(1.9);
+    transition:background .25s ease,box-shadow .25s ease,backdrop-filter .25s ease}
+  /* once content is behind it the bar firms up: glass over a still page is
+     invisible, glass over moving content needs a little more body */
+  .appbar.stuck{background:rgba(244,243,240,.78);
+    box-shadow:0 1px 0 rgba(17,17,17,.07),0 8px 24px -18px rgba(17,17,17,.5)}
+  :root[data-theme="dark"] .appbar{background:rgba(18,18,17,.55)}
+  :root[data-theme="dark"] .appbar.stuck{background:rgba(18,18,17,.74);
+    box-shadow:0 1px 0 rgba(255,255,255,.08),0 8px 24px -18px #000}
+  /* the pills inside the bar are glass too, one step brighter than the bar */
+  .appbar .primary{box-shadow:0 6px 18px -10px rgba(17,17,17,.55)}
+  .appbar .tgs{background:rgba(255,255,255,.5);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.08),0 1px 2px rgba(17,17,17,.05),
+      0 8px 20px -14px rgba(17,17,17,.4)}
+  :root[data-theme="dark"] .appbar .tgs{background:rgba(255,255,255,.08);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.13),0 8px 20px -14px #000}
+  @media(prefers-reduced-transparency:reduce){
+    .appbar,.appbar.stuck{background:var(--card);-webkit-backdrop-filter:none;
+      backdrop-filter:none;box-shadow:0 1px 0 var(--line)}
+  }
+  @media(max-width:640px){
+    .appbar{margin:0 -14px;padding:9px 14px}
+    .appbar .primary{min-height:38px;padding:0 14px;font-size:10px}
+  }
   .appcta{display:flex;margin:0}
   .appcta .primary{min-height:42px;padding:0 18px}
 
@@ -180,6 +212,12 @@
      the tallies are the grid's own children. Wrapped, the track was one grid item
      and the six figures stacked in a single column. */
   .stats .track,.stats .stat-grp{display:contents}
+  /* the second group exists only to make the phone loop seamless. On a wide
+     screen .track dissolves into the grid, so both copies became grid items and
+     every figure appeared twice — at 1400px the six tallies wrapped into nine
+     columns and two rows. The copy is off on a desk; the phone block below turns
+     it back on. */
+  .stats .stat-grp[aria-hidden]{display:none}
   .stats .sep{display:none}
   .tally{min-width:0;border-top:1px solid var(--line);padding-top:14px}
   :root[data-theme="dark"] .tally{border-top-width:2px;border-top-color:rgba(255,255,255,.18)}
@@ -212,6 +250,7 @@
        can be one long flex row again */
     .stats .track{display:flex}
     .stats .stat-grp{display:flex}
+    .stats .stat-grp[aria-hidden]{display:flex}
     .stats{display:block;position:relative;overflow:hidden;margin:12px 0 2px;
       border-radius:13px;background:var(--card);
       box-shadow:inset 0 0 0 1px var(--line-soft);
@@ -246,44 +285,74 @@
     color:#6b4a15;font-size:12px;padding:13px 15px;line-height:1.55}
   .warn .ic{font-size:14px;color:var(--warm);margin-top:2.5px;flex:none}
 
-  /* ---- filters: one rail, one thumb. The active filter is a solid pill that
-     slides inside the track, and every option carries its own count so the rail
-     doubles as a read of the board. The legend that used to sit under it is gone:
-     the signals explain themselves in the SIGNAL column. */
+  /* ---- filters. A quiet glass rail, not a solid one: the options are text with
+     their signal dot and their count, the active one lifts on a frosted thumb and
+     takes its own hue as a ring and a tint. Colour does the telling, so the rail
+     reads at a glance in either theme without a legend. */
   .tabs{display:inline-flex;align-items:center;gap:2px;margin:12px 0 10px;padding:3px;
-    border-radius:var(--r-pill);background:var(--sunken);max-width:100%;
-    box-shadow:inset 0 0 0 1px var(--line);overflow-x:auto;scrollbar-width:none}
+    border-radius:var(--r-pill);
+    background:rgba(255,255,255,.5);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.07),0 1px 2px rgba(17,17,17,.04);
+    -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+    max-width:100%;overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{position:relative;display:inline-flex;align-items:center;gap:7px;
-    font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
+  /* on a phone six options cannot fit, so the rail fades at its right edge: that
+     edge is the affordance for "there is more", and it scrolls without a scrollbar */
+  .tabs{--mask:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%)}
+  .tabs.atrail{-webkit-mask-image:var(--mask);mask-image:var(--mask)}
+  .tabs.atboth{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 26px),transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 22px,#000 calc(100% - 26px),transparent 100%)}
+  :root[data-theme="dark"] .tabs{background:rgba(255,255,255,.055);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 1px 2px rgba(0,0,0,.25)}
+  .tab{position:relative;display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
     padding:7px 11px;border:0;border-radius:var(--r-pill);background:none;
     color:var(--dim);cursor:pointer;white-space:nowrap;
-    transition:color .18s ease,background .18s ease}
-  :root[data-theme="dark"] .tab{color:var(--ink);opacity:.82}
-  :root[data-theme="dark"] .tab:hover{opacity:1}
-  :root[data-theme="dark"] .tab.on{opacity:1}
-  .tab:hover{color:var(--ink)}
-  .tab.on{background:var(--ink);color:var(--accent-ink);font-weight:600}
-  /* the count: a small tabular chip that inverts with the pill */
-  .tab .tl{display:inline-flex;align-items:center}
+    --hue:var(--faint);
+    transition:color .2s ease,background .2s ease,box-shadow .2s ease}
+  .tab:hover{color:var(--ink);background:rgba(17,17,17,.045)}
+  :root[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06)}
+  /* the active filter: a raised thumb tinted with its own signal colour, ringed in
+     the same hue. In light mode the tint is 12% of the hue so the label stays ink;
+     in dark mode 22% because the page under it is nearly black. */
+  .tab.on{color:var(--ink);font-weight:600;
+    background:color-mix(in srgb,var(--hue) 12%,#fff);
+    box-shadow:0 1px 2px rgba(17,17,17,.1),inset 0 0 0 1px color-mix(in srgb,var(--hue) 40%,transparent)}
+  :root[data-theme="dark"] .tab.on{background:color-mix(in srgb,var(--hue) 22%,#111);
+    box-shadow:0 1px 2px rgba(0,0,0,.4),inset 0 0 0 1px color-mix(in srgb,var(--hue) 48%,transparent)}
+  .tab.on:hover{background:color-mix(in srgb,var(--hue) 16%,#fff)}
+  :root[data-theme="dark"] .tab.on:hover{background:color-mix(in srgb,var(--hue) 26%,#111)}
+  /* the count: a hairline chip, tabular, quiet until its row is active */
+  .tab .tl{display:inline-flex;align-items:center;gap:5px}
   .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
-    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.07);color:var(--faint);
-    font-variant-numeric:tabular-nums;transition:background .18s ease,color .18s ease}
-  .tab:hover b{background:rgba(17,17,17,.11);color:var(--dim)}
-  .tab.on b{background:rgba(255,255,255,.22);color:var(--accent-ink)}
-  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.09);color:var(--faint)}
-  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.14);color:var(--dim)}
-  :root[data-theme="dark"] .tab.on b{background:rgba(0,0,0,.22);color:var(--accent-ink)}
-  /* the dot in front of a signal name carries its palette colour, so the filter
-     reads at a glance without a legend to spell it out */
-  .tab i{width:5px;height:5px;border-radius:2px;display:block;flex:none;opacity:.9}
-  .tab.on i{opacity:1}
+    padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.06);color:var(--faint);
+    font-variant-numeric:tabular-nums;transition:background .2s ease,color .2s ease}
+  .tab:hover b{background:rgba(17,17,17,.1);color:var(--dim)}
+  .tab.on b{background:color-mix(in srgb,var(--hue) 22%,#fff);color:var(--ink)}
+  :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.08);color:var(--faint)}
+  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.12);color:var(--dim)}
+  :root[data-theme="dark"] .tab.on b{background:color-mix(in srgb,var(--hue) 30%,#111);color:var(--ink)}
+  /* the dot carries the signal's palette colour. An empty count fades the whole
+     option rather than showing a zero with a live dot beside it. */
+  .tab i{width:5px;height:5px;border-radius:50%;display:block;flex:none;
+    background:var(--hue);opacity:.9}
+  .tab.on i{opacity:1;box-shadow:0 0 0 2.5px color-mix(in srgb,var(--hue) 22%,transparent)}
+  .tab.zero{opacity:.45}
+  .tab.zero:hover{opacity:.7}
+  .tab:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   @media(max-width:640px){
     .tabs{display:flex;width:100%;margin:10px 0 9px}
-    .tab{padding:7px 9px;font-size:9px}
+    .tab{padding:7px 8px;font-size:8.5px;letter-spacing:.03em;gap:4px}
+    .tab b{font-size:8px;padding:1px 4px}
+  }
+  @media(max-width:400px){
+    .tab{padding:7px 6px;font-size:8px;letter-spacing:0;gap:3px}
+  }
+  @media(prefers-reduced-transparency:reduce){
+    .tabs{background:var(--sunken);-webkit-backdrop-filter:none;backdrop-filter:none}
   }
 
-  /* ---- layout: board is the big tile, the column beside it stacks */
+/* ---- layout: board is the big tile, the column beside it stacks */
   /* stretch, not start: the draft column has to be exactly as tall as the board
      beside it, otherwise the two tiles end at different heights */
   .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:12px;align-items:stretch}
@@ -1115,17 +1184,12 @@
       <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
       <div id="whoBody"></div>
     </div>
-    <div class="card receipts" style="margin-top:14px">
-      <h2><svg class="ic"><use href="#i-book-open"/></svg>The book <span class="pill" id="hitRate">—</span></h2>
-      <div class="bookmeta" id="bookMeta"></div>
-      <div id="receipts"><div class="empty">No locked lineups yet.</div></div>
-    </div>
   </div>
 
   <section class="gallery" aria-label="What is on this page">
     <a class="tile t1" href="#rows"><span class="tag-top">01 &middot; the board</span><b>79 creators, one number each</b><span class="tag-bot">live from the official API</span><span class="tile-ic"><svg class="ic"><use href="#i-users"/></svg></span></a>
     <a class="tile t2" href="#detail"><span class="tag-top">02 &middot; the draft</span><b>Thesis and pre-mortem, or nothing</b><span class="tag-bot">reasoning is the submission</span><span class="tile-ic"><svg class="ic"><use href="#i-target"/></svg></span></a>
-    <a class="tile t3" href="#receipts"><span class="tag-top">03 &middot; the book</span><b>Every call, signed and kept</b><span class="tag-bot">graded against the next window</span><span class="tile-ic"><svg class="ic"><use href="#i-receipt"/></svg></span></a>
+
     <div class="tile t4"><span class="tag-top">04 &middot; the limits</span><b>No invented motion scores</b><span class="tag-bot">stars gate entry, they add no points</span><span class="tile-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span></div>
   </section>
 
@@ -1290,10 +1354,27 @@ async function load() {
   if (PROF) DATA.profiles = PROF;
   render();
   BOOTED = true;
+  bindBar();
   loadBook();
   // the identity card used to be drawn only from load()'s render path, so whichever of
   // the two finished last could leave it empty; draw it with the session it is waiting on
   renderWho();
+}
+
+// The bar goes solid only once there is something under it. A scroll listener on
+// a passive event, read from the layout rather than a magic offset, so it works
+// whatever the board's height turns out to be.
+function bindBar() {
+  const bar = document.querySelector(".appbar");
+  if (!bar) return;
+  let queued = false;
+  const read = () => { queued = false; bar.classList.toggle("stuck", window.scrollY > 8); };
+  window.addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(read);
+  }, { passive: true });
+  read();
 }
 
 // ---------- public receipt book
@@ -1414,10 +1495,6 @@ function render() {
     ["gauge", "Avg Δ4h", fmt(avgAbs, 2), "rank places"],
     ["clock", "Slots tracked", slotWindows, slotWindows === 1 ? "distinct window" : "distinct windows"],
     ["star", "Star cap", CAP, "per tournament"],
-    ["receipt", "Book hit rate",
-      BOOK && BOOK.summary && BOOK.summary.hitRate != null ? Math.round(BOOK.summary.hitRate * 100) + "%"
-        : (BOOK && BOOK.summary && BOOK.summary.pending ? BOOK.summary.pending + " pending" : "no calls yet"),
-      BOOK && BOOK.summary && BOOK.summary.settled ? `${BOOK.summary.settled} settled · public` : "first receipt is open"],
   ];
   // A tally row: figure over a hairline, label under it. Each figure splits into
   // prefix / number / suffix so the number can count while the units stay put.
@@ -1442,7 +1519,27 @@ function render() {
     }
   }
 
-  // ---- filters: the rail doubles as a read of the board, so each option carries
+  // A horizontal rail that does not fit gets a fade on the edge that hides content.
+// Reading scrollLeft on every scroll event keeps the left fade honest once the
+// user has moved: the fade is a signal, not decoration.
+function paintRail(rail) {
+  if (!rail) return;
+  const tick = () => {
+    const max = rail.scrollWidth - rail.clientWidth;
+    const cut = max > 2, atEnd = rail.scrollLeft <= 2, pre = cut && !atEnd;
+    rail.classList.toggle("atrail", cut);
+    rail.classList.toggle("atboth", pre);
+    rail.dataset.cut = cut ? "1" : "0";
+  };
+  tick();
+  if (!rail.dataset.railbound) {
+    rail.dataset.railbound = "1";
+    rail.addEventListener("scroll", () => requestAnimationFrame(tick), { passive: true });
+    window.addEventListener("resize", () => requestAnimationFrame(tick), { passive: true });
+  }
+}
+
+// ---- filters: the rail doubles as a read of the board, so each option carries
   // its colour dot (the same one the SIGNAL column uses) and its own count.
   const tags = ["all", "SURGING", "COILED", "SLEEPER", "FADE", "QUIET"];
   const tagged = cr.filter(c => (c.tags || []).length).length;
@@ -1452,7 +1549,11 @@ function render() {
     const b = el("button", "tab" + (FILTER === t ? " on" : ""));
     b.type = "button";
     b.setAttribute("aria-pressed", FILTER === t ? "true" : "false");
-    b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i style="background:${TAGC[t]}"></i>`}${t}`}</span><b>${n}</b>`;
+    // the colour travels as a custom property so the ring, the tint and the dot
+    // are all the same hue without three hard-coded values per option
+    b.style.setProperty("--hue", t === "all" ? "var(--faint)" : TAGC[t]);
+    if (n === 0) b.classList.add("zero");
+    b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i></i>`}${t}`}</span><b>${n}</b>`;
     // a creator can carry several signals, so these counts overlap and do not
     // add up to the board size - the title says it rather than implying a partition
     b.title = t === "all"
@@ -1461,6 +1562,9 @@ function render() {
     b.onclick = () => { FILTER = t; PAGE = 1; render(); };
     $("#filters").appendChild(b);
   });
+
+  // the rail can be wider than a phone, so it tells the eye when it is cut off
+  paintRail($("#filters"));
 
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
@@ -2395,12 +2499,15 @@ function syncClear() {
 }
 
 // ---------- public book rendering
+// The book card is gone from the page: receipts still file through /api/receipts
+// and still settle, but the dashboard no longer shows the ledger. Kept as a
+// guarded no-op so loadBook() and the post-lock refresh do not throw.
 function renderBook() {
   const box = $("#receipts"), meta = $("#bookMeta");
-  if (!box) return;
+  if (!box || !meta) return;
   if (!BOOK) {
     meta.textContent = "";
-    $("#hitRate").textContent = "—";
+    const hr0 = $("#hitRate"); if (hr0) hr0.textContent = "—";
     box.innerHTML = `<div class="empty">The public book is unreachable (${esc(BOOK_ERR || "no response")}). This browser cannot file or score receipts right now.</div>`;
     return;
   }
@@ -2409,11 +2516,13 @@ function renderBook() {
   // later snapshot: it must not count as a miss, so it is pulled out of the denominator.
   const ungraded = (BOOK.receipts || []).filter(r => r.status === "settled" && r.slotAtLock && r.settledAt === r.slotAtLock).length;
   const graded = Math.max(0, (s.settled || 0) - ungraded);
-  $("#hitRate").textContent = s.hitRate == null
+  const hr = $("#hitRate");
+  if (hr) hr.textContent = (s.hitRate == null
     ? (s.pending ? `${s.pending} pending` : "—")
     : graded
       ? `${Math.round((s.hitRate * (s.settled || 0) * 100) / graded)}% of ${graded}`
-      : "no window yet";
+      : "no window yet");
+  if (!hr) return;
   meta.textContent = `${s.count} receipt${s.count === 1 ? "" : "s"} · ${graded} graded` +
     (ungraded ? ` · ${ungraded} waiting for a window` : "") +
     ` · ${s.pending || 0} pending · net ${signed(s.netRank || 0)} rank` +
