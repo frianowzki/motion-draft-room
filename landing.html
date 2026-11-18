@@ -209,8 +209,8 @@
   .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
     font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:13px 20px;
     border-radius:var(--r-pill);border:0;cursor:pointer;white-space:nowrap}
-  .btn.primary{background:var(--ink);color:var(--accent-ink,#f8f7f4)}
-  .btn.primary:hover{opacity:.88}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:hover{filter:brightness(1.06)}
   .btn.ghost{background:rgba(255,255,255,.7);color:var(--ink);
     box-shadow:inset 0 0 0 1px var(--line)}
   .btn.ghost:hover{background:#fff}
@@ -823,16 +823,18 @@
      same family as every other CTA, just inverted against the paper card. */
   /* on the accent slab the pill is the card's own colour with a white edge, so the
      reader sees one pink block and the arrow coin is the only solid white */
-  .closer .acta{background:transparent;color:#fff;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
-  .closer .acta-ic{background:#fff;color:var(--accent)}
-  .closer .acta:hover{background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px #fff}
+  /* on the accent slab the CTA is paper, the inverse of the page: a pink pill on a
+     pink slab is invisible, and the disc keeps the accent so the pair still reads */
+  .closer .acta{background:#fff;color:var(--accent);
+    box-shadow:inset 0 0 0 1px #fff}
+  .closer .acta-ic{background:var(--accent);color:#fff;box-shadow:none}
+  .closer .acta:hover{background:#fff;filter:brightness(.97);box-shadow:inset 0 0 0 1px #fff}
   .closer .acta:focus-visible{outline-color:var(--accent)}
-  :root[data-theme="dark"] .closer .acta{background:transparent;color:#fff;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
-  :root[data-theme="dark"] .closer .acta-ic{background:#fff;color:var(--accent);
+  :root[data-theme="dark"] .closer .acta{background:#fff;color:var(--accent);
+    box-shadow:inset 0 0 0 1px #fff}
+  :root[data-theme="dark"] .closer .acta-ic{background:var(--accent);color:#fff;
     box-shadow:none}
-  :root[data-theme="dark"] .closer .acta:hover{background:rgba(255,255,255,.14);
+  :root[data-theme="dark"] .closer .acta:hover{background:#fff;filter:brightness(.97);
     box-shadow:inset 0 0 0 1px #fff}
   :root[data-theme="dark"] .closer .acta:focus-visible{outline-color:var(--accent)}
 
@@ -866,24 +868,9 @@
      paper and the disc stays ink with a paper arrow — the exact inverse. The disc needs
      a heavier selector than the component rule `.acta-ic{background:var(--ink)}`;
      :root adds no specificity, so the selector names the card class and the tag. */
-  .pickcard .hc-act{background:var(--pc-ink);color:#f4f3f0;
-    box-shadow:inset 0 0 0 1px var(--pc-ink)}
-  .pickcard .hc-act:hover{background:#000;box-shadow:inset 0 0 0 1px #000}
-  .pickcard .hc-act:focus-visible{outline-color:var(--pc-ink)}
-  :root[data-theme="dark"] .pickcard .hc-act{background:#f4f3f0;color:#111;
-    box-shadow:inset 0 0 0 1px #f4f3f0}
-  :root[data-theme="dark"] .pickcard .hc-act:hover{background:#fff;
-    box-shadow:inset 0 0 0 1px #fff}
-  :root[data-theme="dark"] .pickcard .hc-act:focus-visible{outline-color:#f4f3f0}
-
-  /* The disc has to fight `.acta-ic{background:var(--ink);color:var(--bg)}` and the
-     theme rule `html[data-theme] .acta-ic`, which are attribute selectors. `:root`
-     contributes nothing, and a class repeated twice is not a match, so the winning
-     form names the document element by tag and repeats the card class. */
-  html .pickcard .hc-act .acta-ic{background:#f4f3f0;color:#111}
-  .pickcard .hc-act:hover .acta-ic{background:#fff}
-  html[data-theme="dark"] .pickcard .hc-act .acta-ic{background:#111;color:#f4f3f0}
-  html[data-theme="dark"] .pickcard .hc-act:hover .acta-ic{background:#000}
+  /* The hover card's CTA is the same accent pill as every other CTA on the page:
+     one button family, so the arrow coin, the label and the hover all come from
+     `.acta` and its `.acta-ic`, and the card-specific ink/paper pair is gone. */
 
 </style>
 </head>
