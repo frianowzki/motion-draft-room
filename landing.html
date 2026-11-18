@@ -748,6 +748,7 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.14648 9.07361C9.31728 8.54732 9.63015 8.07896 10.0508 7.71948C10.4714 7.36001 10.9838 7.12378 11.5303 7.03708C12.0768 6.95038 12.6362 7.0164 13.1475 7.22803C13.6587 7.43966 14.1014 7.78875 14.4268 8.23633C14.7521 8.68391 14.9469 9.21256 14.9904 9.76416C15.0339 10.3158 14.9238 10.8688 14.6727 11.3618C14.4215 11.8548 14.0394 12.2685 13.5676 12.5576C13.0958 12.8467 12.5533 12.9998 12 12.9998V14.0002M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 17V17.1L11.9502 17.1002V17H12.0498Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.6"/><path d="M5 6v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6V6"/><path d="M5 12v6c0 1.4 3.1 2.6 7 2.6s7-1.2 7-2.6v-6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.2"/><circle cx="12" cy="12" r="2.6"/><line x1="12" y1="1.8" x2="12" y2="4.8"/><line x1="12" y1="19.2" x2="12" y2="22.2"/><line x1="1.8" y1="12" x2="4.8" y2="12"/><line x1="19.2" y1="12" x2="22.2" y2="12"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V8a3.6 3.6 0 0 1 7.2 0v2.5"/><circle cx="12" cy="15.2" r="1.1"/></symbol>
   <symbol id="fi-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162L22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299l-.929-1.329L3.076 1.56h3.182l5.965 8.532l.929 1.329l7.754 11.09h-3.182z"/></symbol>
   <symbol id="fi-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
@@ -1070,7 +1071,8 @@
         <b>Scores</b> &mdash; update every 4 hours, Mon&ndash;Fri.<br>
         <b>Lineup</b> &mdash; 5 different creators, star total at or under the cap.<br>
         <b>Formula</b> &mdash; Lineup Score = &Sigma; (Creator Motion Score &times; card Score Boost).<br>
-        <b>Stars</b> &mdash; 1&ndash;8, from 14-day relative performance; they gate entry and add no points.</div>
+        <b>Stars</b> &mdash; 1&ndash;8, from 14-day relative performance; they gate entry and add no points.<br>
+        <b>Rarity</b> &mdash; Common / Rare / Epic / Legendary &mdash; sets the Score Boost multiplier.</div>
         </div>
       </div>
 
@@ -1081,7 +1083,7 @@
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
         <div class="sfaq-a" id="sfq1" role="region" hidden>
-          <div class="sfaq-a-in">One source: <code>leaderboard.motion.game/api/leaderboard</code> (official, unauthenticated). A cron snapshots all 79 creators every 4 hours; this page reads those snapshots. When a window has too few slots the field shows &mdash;, never a made-up number.</div>
+          <div class="sfaq-a-in">One source: <code>leaderboard.motion.game/api/leaderboard</code> (official, unauthenticated) &mdash; the fields <code>position</code>, <code>delta</code> (4-hour rank change), <code>isNew</code>, plus <code>asOf</code>. A GitHub Actions cron snapshots all 79 creators every 4 hours onto the <code>data</code> branch, and this page reads those snapshots. History starts the day the collector started; when a window has too few slots the field shows &mdash;, never a made-up number.</div>
         </div>
       </div>
 
@@ -1092,7 +1094,7 @@
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
         <div class="sfaq-a" id="sfq2" role="region" hidden>
-          <div class="sfaq-a-in">It is not public &mdash; it is built from X, Instagram, TikTok and YouTube engagement during the tournament. Stars here are estimated from rank and labelled as estimates.</div>
+          <div class="sfaq-a-in">A creator's Motion Score is not public &mdash; it is built from X, Instagram, TikTok and YouTube engagement during the tournament &mdash; so nothing here claims to know it. Stars in the real game come from 14-day relative performance on a 1&ndash;8 scale; ours are estimated from rank and labelled as such.</div>
         </div>
       </div>
 
@@ -1103,7 +1105,29 @@
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
         <div class="sfaq-a" id="sfq3" role="region" hidden>
-          <div class="sfaq-a-in">The book is public. Locking files your X account, picks, thesis and pre-mortem, and the server grades it against the snapshot on record &mdash; a visitor cannot submit their own score.</div>
+          <div class="sfaq-a-in">The book is public. Locking files it &mdash; your X account, picks, thesis, pre-mortem &mdash; to <code>data/receipts.json</code> on the <code>data</code> branch through <code>/api/receipts</code>, and the server grades it against the snapshot on record, so a visitor cannot submit their own score. One receipt per handle per slot, so nobody can keep re-rolling a lineup until one hits.</div>
+        </div>
+      </div>
+
+      <div class="sfaq-item" data-faq="4">
+        <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq4">
+          <svg class="ic sfq-ic"><use href="#i-trending-up"/></svg>
+          <span class="sfq-t">Is the 32-star cap real?</span>
+          <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="sfaq-a" id="sfq4" role="region" hidden>
+          <div class="sfaq-a-in">It is the one Motion's own docs use as an example. The real cap is set per tournament, and tournaments also limit the rarity and boost mix, which this room does not model yet. Receipts grade rank movement, not score.</div>
+        </div>
+      </div>
+
+      <div class="sfaq-item" data-faq="5">
+        <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq5">
+          <svg class="ic sfq-ic"><use href="#i-info"/></svg>
+          <span class="sfq-t">Are the rarity boosts the real ones?</span>
+          <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
+        </button>
+        <div class="sfaq-a" id="sfq5" role="region" hidden>
+          <div class="sfaq-a-in">No, and the page says so where it uses them. Motion publishes the formula and the tier order (Legendary above Epic above Rare above Common) but not the multipliers, so the boost shown on each pick is a labelled assumption &mdash; one constant, in one place, changed the day Motion publishes the real numbers.</div>
         </div>
       </div>
     </div>
