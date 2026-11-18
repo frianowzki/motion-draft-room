@@ -906,15 +906,30 @@
     .tile-ic{font-size:76px;right:-6px;bottom:-10px}
   }
 
-  /* ---- footer */
-  footer{margin-top:18px;padding:26px 26px 24px;border-radius:var(--r-lg);
-    background:var(--card);box-shadow:var(--lift);
-    color:var(--faint);font-size:11px;line-height:1.75}
-  footer strong{color:var(--ink);font-weight:600}
-  footer code{font-family:var(--mono);color:var(--dim);font-size:10.5px;
-    background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px var(--line);
-    padding:1px 5px;border-radius:4px}
-  footer br{line-height:2}
+  /* ---- footer: the landing's sign-off, not a card - the same bar, the same
+     icons, so the two pages end the same way. Nothing here explains the page. */
+  footer{margin-top:64px;padding-top:0}
+  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .f1-bar p{margin:0;font-size:12px;letter-spacing:-.005em;color:var(--faint)}
+  .f1-social{display:flex;gap:9px}
+  .f1-social a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+    color:var(--dim);box-shadow:inset 0 0 0 1px var(--line);
+    transition:color .16s ease,box-shadow .16s ease,transform .16s ease}
+  .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
+  .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .f1-social svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .f1-social a[href*="x.com"] svg{width:15px;height:15px}
+  .f1-social a[href*="github.com"] svg{width:18px;height:18px}
+  .f1-social svg path[fill="currentColor"]{stroke:none}
+  :root[data-theme="dark"] .f1-bar p{color:#a5a29a}
+  :root[data-theme="dark"] .f1-social a{color:#cfccc5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+  :root[data-theme="dark"] .f1-social a:hover{color:#0f0f0e;background:#f4f3f0;box-shadow:none}
+  @media(max-width:600px){
+    .f1-bar{padding-bottom:26px;gap:14px}
+    .f1-social{gap:7px}
+    .f1-social a{width:34px;height:34px}
+  }
 
   /* ---- mobile: the promise is "one tap, no signup" - so make targets tappable */
   @media(max-width:600px){
@@ -970,7 +985,6 @@
     .avatar{width:26px;height:26px}
     .tag{font-size:9px;padding:2px 5px}
     .slot .s{min-height:34px;align-items:center}
-    footer{border-radius:24px;padding:20px 18px}
   }
 
   /* ============================================================
@@ -1078,6 +1092,10 @@
 
 <!-- coolicons by Kryston Schwarze — MIT — via Framer Marketplace -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="fi-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162L22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299l-.929-1.329L3.076 1.56h3.182l5.965 8.532l.929 1.329l7.754 11.09h-3.182z"/></symbol>
+<symbol id="fi-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+<symbol id="fi-docs" viewBox="0 0 24 24"><path d="M6.5 3.5h7.2L18.5 8v12.5h-12a1.5 1.5 0 0 1-1.5-1.5V5a1.5 1.5 0 0 1 1.5-1.5Z"/><path d="M13.4 3.7V8h4.6"/><path d="M8.6 12.2h6.2"/><path d="M8.6 15.6h6.2"/><path d="M8.6 18.4h3.6"/></symbol>
+<symbol id="fi-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 12h16.8"/><path d="M12 3.4c2.2 2.35 3.4 5.3 3.4 8.6S14.2 18.25 12 20.6c-2.2-2.35-3.4-5.3-3.4-8.6S9.8 5.75 12 3.4Z"/></symbol>
 <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12C4.79157 12 6.40281 10.79157 7 9L9 3L15 21L17 15C17.59719 13.20843 19.20843 12 21 12"/></symbol>
 <symbol id="i-api" viewBox="0 0 24 24"><path d="M7 8L3 12L7 16M17 8L21 12L17 16M10 12H14"/></symbol>
 <symbol id="i-arrow-down-right" viewBox="0 0 24 24"><path d="M10 17H17V10M17 17L7 7"/></symbol>
@@ -1212,7 +1230,15 @@
   </section>
 
   <footer>
-    <strong>Motion Draft Room</strong> &mdash; a place to call the Motion creator leaderboard.
+    <div class="f1-bar">
+      <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
+      <div class="f1-social">
+        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
+        <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
+        <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
+        <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
+      </div>
+    </div>
   </footer>
 
 </div>
