@@ -1,8 +1,52 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 (`main` `3c2ce6e`, live `dpl_9VY7UmVtRGcoDDcLKQnbnSG2iDJs`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 (`main` `6a28bea`, live `dpl_EWzFHL5AXPHZfZP6NrwgokPyXgw4`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+## 2026-11-18 (paling baru) — background dibuang, halaman penuh, border tema hilang (`6a28bea`)
+
+Tiga hal, berurutan sesuai permintaan frian. Semuanya live dan terukur di produksi.
+
+**a. Dynamic background dibatalkan total.** Framer bundle (NightSkyBackground +
+ShaderBackgroundLite lewat esbuild) sudah dibuang oleh revert `dbc79c1` dan `311bc25`.
+Yang ada sekarang: nol `<canvas>`, nol `.pagebg`/`.nightsky`, `vendor/` + `src/` +
+`scripts/build-nightsky.sh` dihapus, blok copy `vendor` di `build.sh` dicabut. Halaman
+kembali ke permukaan `--bg` polos. **Jangan pasang background dinamis lagi tanpa
+diminta eksplisit.**
+
+Satu pelajaran dari revert itu: `git revert` bentrok di `landing.html`, dan skrip
+penyelesai konflik buatan sendiri **meninggalkan 3 baris marker `>>>>>>>`** yang
+terbawa ke build dan tampil sebagai teks di halaman. Setelah setiap resolve konflik,
+`grep -c '<<<<<<<\|>>>>>>>' landing.html app.html` harus 0, dan lihat screenshot —
+teks liar di dekat hero itu tanda marker, bukan bug layout.
+
+**b. Lebar: halaman mengisi layar, navbar mentok dua tepi (`6a28bea`).** `clamp()` ceiling
+dibuang dari `.wrap` di kedua halaman (`max-width:none`). `.dock` di landing juga
+`max-width:none` dengan `padding:0 24px`, jadi pillnav di kiri jauh dan switch tema di
+kanan jauh. `.appbar` dashboard memang sudah selebar kolom, tidak diubah.
+Terukur 1600px: `wrap` 0..1591, pill kiri mulai 48, switch selesai 1537, `scrollWidth`
+1591 (tanpa scroll horizontal). Mobile 390 tidak berubah bentuk. **Jangan kembalikan
+`clamp()` ke `.wrap`** — frian minta full, dan itu sudah dua kali dia minta.
+
+**c. Border waktu ganti tema — akarnya `html` tanpa background (`10b4a18`).** Waktu toggle
+dark→light dan sebaliknya, muncul frame terang di tepi dan navbar terlihat tidak full.
+Bukan border/outline/shadow (diukur: nol). Penyebabnya `html` tidak punya background
+sama sekali (`rgba(0,0,0,0)`), cuma `body` yang di-paint `var(--bg)`. Cross-fade
+`html.theming` 320ms membuat `body` berjalan dari satu kertas ke kertas lain sementara
+`html` tetap transparan, jadi kanvas putih bawaan browser muncul di sela itu.
+
+Bukti sebelum fix (14 sampel per 25ms, satu klik `.tgs`): `html` tetap `rgba(0,0,0,0)`
+sementara `body` naik 23→38→87→114→159→203→244. Sesudah fix: `html` dan `body` bergerak
+identik, 13/13 sampel sama, dua arah, di landing dan dashboard, desktop 1600 dan mobile
+390. Perbaikan: `html{background:var(--bg)}` di kedua halaman + `html` ikut transisi
+yang sama. **Kalau nanti ada elemen latar baru di `<body>`, pastikan `html` tetap
+di-paint** — kalau tidak, flash-nya balik.
+
+**Alat ukur yang terbukti:** klik `.tgs-b` (tombol di dalam `.tgs`) sambil
+`setInterval` 25ms mencatat `getComputedStyle(html).backgroundColor ===
+getComputedStyle(body).backgroundColor` per frame. Toggle di landing = `.tgs`, di
+dashboard juga `.tgs` (bukan `.themesw` seperti yang sempat dikira).
 
 ## 2026-11-18 — receipt book pindah ke Postgres / Supabase (`02b2471`)
 
