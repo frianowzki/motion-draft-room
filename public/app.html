@@ -140,6 +140,19 @@
      for 320ms, and an unpainted html showed as a light frame around a page that
      had not finished changing */
   html{background:var(--bg)}
+  /* the theme cross-fade. The dashboard used to add .theming to the root with no
+     rule behind it, so the page snapped: the glass bar and the switch swapped
+     colour in one frame while the rest of the page followed, and the mismatch
+     read as a border around the edges. Fade the canvas, the body and the glass
+     chrome together, over the same 320ms the landing page uses. */
+  html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
+  html.theming .appbar,html.theming .appbar.stuck,html.theming .tgs,
+  html.theming .themesw,html.theming .pillnav{
+    transition:background-color .32s ease,box-shadow .32s ease,border-color .32s ease}
+  @media (prefers-reduced-motion:reduce){
+    html.theming,html.theming body,html.theming .appbar,html.theming .appbar.stuck,
+    html.theming .tgs,html.theming .themesw,html.theming .pillnav{transition:none}
+  }
   body{
     margin:0;background:var(--bg);color:var(--ink);
     font-family:var(--sans);font-size:14px;line-height:1.5;
@@ -168,7 +181,9 @@
 
   /* the dashboard fills the display the same way the landing page does: the old
      fixed 1380px ceiling left a lake of empty margin on wide monitors */
-  .wrap{position:relative;z-index:2;max-width:none;margin:0 auto;padding:0 16px 72px}
+  /* the dashboard shares the landing's 1380px ruler: one page width across the
+     product, centred, with phones still full-bleed */
+  .wrap{position:relative;z-index:2;max-width:1380px;margin:0 auto;padding:0 16px 72px}
 
   /* ---- icons */
   .ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;
@@ -225,6 +240,74 @@
      hairline with the label underneath, and the number counts up once when the
      row comes into view. No cards, no shadows — the rule above each figure is the
      only structure it needs. */
+  /* ---- the room's sidebar: five destinations, one at a time ----------------
+     The dashboard used to be one long scroll. It now has a rail on the left
+     with Home, Market, Leaderboard, Profile and History, and only the
+     destination's own cards are shown. The rail is a sticky column on desktop
+     and a horizontal strip above the content on phones and tablets, so the
+     markup stays a single list. */
+  .shell{display:grid;grid-template-columns:212px minmax(0,1fr);gap:20px;align-items:start;
+    margin-top:14px}
+  .rail{position:sticky;top:14px;display:flex;flex-direction:column;gap:2px;
+    padding:10px;border-radius:20px;background:var(--card);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:inset 0 0 0 1px var(--line),0 10px 30px -24px rgba(17,17,17,.5)}
+  .rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);padding:4px 10px 8px}
+  .rail-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:12px;
+    background:transparent;color:var(--ink);font:inherit;font-size:12.5px;font-weight:600;
+    letter-spacing:-.01em;cursor:pointer;text-align:left;width:100%;
+    transition:background .18s ease,color .18s ease}
+  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.8}
+  .rail-item:hover{background:var(--sunken)}
+  .rail-item[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+  .rail-item[aria-selected="true"] .ic{opacity:1}
+  .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;
+    padding:1px 6px;border-radius:100px;background:rgba(17,17,17,.06);color:inherit}
+  .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.16)}
+  .rail-sep{height:1px;margin:6px 6px;background:var(--line)}
+  .rail-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 2px}
+  .rail-foot .tgs{transform:scale(.92);transform-origin:left center}
+  .viewpane{min-width:0}
+  .view{display:none}
+  .view.is-on{display:block}
+  /* panels that exist but have no data yet: a card that says what will live
+     here, never an empty page that looks broken */
+  .empty-view{padding:26px 24px 24px;margin-top:0}
+  .empty-view h2{margin:0 0 10px}
+  .empty-view p{margin:0 0 16px;max-width:560px;font-size:12.5px;line-height:1.6;color:var(--ink)}
+  .empty-view code{font-family:var(--mono);font-size:11px;background:var(--sunken);
+    padding:1px 5px;border-radius:5px;box-shadow:inset 0 0 0 1px var(--line)}
+  .lb-skel{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .lb-row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;
+    padding:10px 12px;border-radius:12px;background:var(--sunken);
+    box-shadow:inset 0 0 0 1px var(--line-soft);font-size:12px;color:var(--faint)}
+  .lb-rank{font-family:var(--mono);font-size:10px;text-align:center}
+  .lb-name{color:var(--faint)}
+  .lb-pts{font-family:var(--mono);font-size:10px}
+  /* the tab each card belongs to, so the markup carries the map in one place */
+  @media(max-width:940px){
+    .shell{grid-template-columns:minmax(0,1fr);gap:12px}
+    /* the rail becomes a strip above the content: five destinations on one
+       wrapping row, the theme switch pushed to the far edge. Nothing scrolls
+       sideways, so no destination can hide past the right edge on a phone. */
+    .rail{position:relative;top:0;flex-direction:row;flex-wrap:wrap;overflow:visible;
+      padding:6px;border-radius:16px;align-items:center;row-gap:4px}
+    .rail-brand,.rail-sep,.rail-foot{display:none}
+    .rail-item{width:auto;flex:none;padding:8px 10px;font-size:11.5px;gap:7px}
+    .rail-item .rail-count{display:none}
+    .rail .tgs{margin-left:auto;transform:scale(.9);transform-origin:right center}
+  }
+  @media(max-width:520px){
+    /* the switch gets its own row under the strip, aligned to the end: the five
+       destinations keep one row and nothing has to shrink to unreadable */
+    .rail{position:relative;padding:5px}
+    .rail .tgs{position:absolute;right:5px;bottom:-30px;transform:scale(.82);transform-origin:right center}
+    .shell{gap:26px}
+    .rail-item{padding:7px 6px;font-size:10.5px;gap:4px;letter-spacing:-.02em}
+    .rail-item .ic{width:12px;height:12px}
+  }
+
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
     column-gap:22px;row-gap:16px;margin:14px 0 2px;width:100%}
   /* the marquee lane is a phone device only: on a wide screen .track dissolves so
@@ -1384,21 +1467,54 @@
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
-<div class="appbar">
-<div class="apphead">
-<!-- theme switch (ThemeChanger "Switch button") -->
-<div class="tgs" id="themesw" role="group" aria-label="Theme">
-  <span class="tgs-knob" aria-hidden="true"></span>
-  <button type="button" class="tgs-b" data-theme-set="light" aria-pressed="true" aria-label="Light">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
-  </button>
-  <button type="button" class="tgs-b" data-theme-set="dark" aria-pressed="false" aria-label="Dark">
-    <svg viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
-  </button>
-</div>
-</div>
-</div>
+  <!-- the theme switch moved into the rail, where the rest of the navigation
+       lives; the bar itself is gone so the room opens on the numbers -->
 
+  <!-- the room's rail. One list, two shapes: a sticky column on desktop, a
+       horizontal strip above the content on phones. aria-selected is the truth,
+       the CSS just follows it. -->
+  <div class="shell">
+  <nav class="rail" id="rail" role="tablist" aria-label="Sections" aria-orientation="vertical">
+    <div class="rail-brand">Motion Draft Room</div>
+    <button type="button" class="rail-item" role="tab" data-view="home" aria-selected="true" aria-controls="v-home">
+      <svg class="ic"><use href="#i-activity"/></svg>Home
+    </button>
+    <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="false" aria-controls="v-market">
+      <svg class="ic"><use href="#i-users"/></svg>Market
+      <span class="rail-count" id="railMarket">79</span>
+    </button>
+    <button type="button" class="rail-item" role="tab" data-view="leaderboard" aria-selected="false" aria-controls="v-leaderboard">
+      <svg class="ic"><use href="#i-trophy"/></svg>Leaderboard
+    </button>
+    <button type="button" class="rail-item" role="tab" data-view="profile" aria-selected="false" aria-controls="v-profile">
+      <svg class="ic"><use href="#i-user"/></svg>Profile
+    </button>
+    <button type="button" class="rail-item" role="tab" data-view="history" aria-selected="false" aria-controls="v-history">
+      <svg class="ic"><use href="#i-clock"/></svg>History
+      <span class="rail-count" id="railHistory">0</span>
+    </button>
+    <div class="rail-sep" aria-hidden="true"></div>
+    <div class="rail-foot">
+      <a class="acta acta-sm" href="/" aria-label="Back to the landing page">
+        <span class="acta-t">Back home</span>
+        <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+      </a>
+    </div>
+    <div class="tgs" id="themesw" role="group" aria-label="Theme">
+      <span class="tgs-knob" aria-hidden="true"></span>
+      <button type="button" class="tgs-b" data-theme-set="light" aria-pressed="true" aria-label="Light">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
+      </button>
+      <button type="button" class="tgs-b" data-theme-set="dark" aria-pressed="false" aria-label="Dark">
+        <svg viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="viewpane">
+
+  <!-- ===== HOME: what the board is doing right now ===== -->
+  <div class="view is-on" id="v-home" role="tabpanel" aria-label="Home">
   <div class="stats" id="stats"></div>
 
     <div class="tabs" id="filters" role="group" aria-label="Filter by signal"></div>
@@ -1456,13 +1572,53 @@
       <div id="mineBody"></div>
     </div>
   </div>
+  </div>
 
+  <!-- ===== MARKET: sit down and make the pick ===== -->
+  <div class="view" id="v-market" role="tabpanel" aria-label="Market" hidden>
+    <div class="card empty-view">
+      <h2><svg class="ic"><use href="#i-users"/></svg>Market</h2>
+      <p>The board you pick from lives on Home, beside the draft panel: filter it by
+         signal, open a creator, and say why each pick wins or fails.</p>
+      <button type="button" class="acta acta-solid" data-goto="home">
+        <span class="acta-t">Open the board</span>
+        <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+      </button>
+    </div>
+  </div>
 
+  <!-- ===== LEADERBOARD: players, not creators ===== -->
+  <div class="view" id="v-leaderboard" role="tabpanel" aria-label="Leaderboard" hidden>
+    <div class="card empty-view">
+      <h2><svg class="ic"><use href="#i-trophy"/></svg>Leaderboard</h2>
+      <p>Ranked players, not ranked creators — who is ahead this window and what
+         their book says. The server does not publish a player table yet
+         (<code>/api/leaderboard</code>), so this panel is the shape it will fill.</p>
+      <div class="lb-skel" aria-hidden="true">
+        <div class="lb-row"><span class="lb-rank">1</span><span class="lb-name">—</span><span class="lb-pts">—</span></div>
+        <div class="lb-row"><span class="lb-rank">2</span><span class="lb-name">—</span><span class="lb-pts">—</span></div>
+        <div class="lb-row"><span class="lb-rank">3</span><span class="lb-name">—</span><span class="lb-pts">—</span></div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Board history closes the page. It answers the question the board cannot -
-       what actually moved between windows - and reading it last keeps the order
-       of work intact: board, draft, lineup, identity, then the record. It sits
-       directly above the footer with nothing between them. -->
+  <!-- ===== PROFILE: who you are and what you have on record ===== -->
+  <div class="view" id="v-profile" role="tabpanel" aria-label="Profile" hidden>
+    <div class="card empty-view">
+      <h2><svg class="ic"><use href="#i-user"/></svg>Profile</h2>
+      <p>Who is calling and every receipt in your name. Both cards stay on Home so
+         the room works in one glance; this panel is where they will live once a
+         player handle replaces the shared identity.</p>
+      <div class="lb-skel" aria-hidden="true">
+        <div class="lb-row"><span class="lb-rank">@</span><span class="lb-name">Not connected</span><span class="lb-pts">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HISTORY: the board, window by window ===== -->
+  <div class="view" id="v-history" role="tabpanel" aria-label="History" hidden>
+    <!-- Board history. It answers the question the board cannot - what actually
+       moved between windows. -->
   <section class="card tline" id="tline" style="margin-top:0" aria-label="Board history">
     <h2><svg class="ic"><use href="#i-clock"/></svg>Board history <span class="pill" id="tlCount"></span></h2>
     <div class="tlstage" id="tlStage" role="group" aria-label="Snapshots, newest last"
@@ -1471,6 +1627,10 @@
     </div>
     <p class="tlhint" id="tlHint">Use &larr; &rarr; to walk the windows, or scroll and drag.</p>
   </section>
+  </div>
+
+  </div><!-- /viewpane -->
+  </div><!-- /shell -->
 
 <footer>
     <div class="f1-bar">
@@ -3281,6 +3441,81 @@ document.addEventListener("click", e => {
       if (!stored) paint(e.matches ? 'dark' : 'light');
     });
   } catch (e) {}
+})();
+</script>
+
+<script>
+/* the room's rail — one destination at a time. The view id lives in the hash so
+   a refresh (or a link from elsewhere) lands on the same tab, and the rail is a
+   real tablist: arrow keys move, Home/End jump, and only the active panel is
+   rendered into the layout. */
+(function () {
+  var rail = document.getElementById('rail');
+  if (!rail) return;
+  var tabs = [].slice.call(rail.querySelectorAll('.rail-item'));
+  var views = [].slice.call(document.querySelectorAll('.viewpane .view'));
+  var NAMES = { home: 'Home', market: 'Market', leaderboard: 'Leaderboard', profile: 'Profile', history: 'History' };
+
+  function show(name, push) {
+    if (!NAMES[name]) name = 'home';
+    views.forEach(function (v) { v.classList.toggle('is-on', v.id === 'v-' + name); v.hidden = v.id !== 'v-' + name; });
+    tabs.forEach(function (t) {
+      var on = t.getAttribute('data-view') === name;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    if (push !== false && location.hash.slice(1) !== name) {
+      try { history.replaceState(null, '', '#' + name); } catch (e) { location.hash = name; }
+    }
+    // the counters are filled by the render pass; re-run it for the pane that
+    // just became visible so charts and the timeline measure their real width
+    if (typeof window.__onView === 'function') window.__onView(name);
+    window.scrollTo(0, 0);
+  }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { show(t.getAttribute('data-view')); });
+    t.addEventListener('keydown', function (e) {
+      var k = e.key, next = null;
+      var vert = getComputedStyle(rail).flexDirection === 'column';
+      if (k === (vert ? 'ArrowDown' : 'ArrowRight')) next = tabs[(i + 1) % tabs.length];
+      if (k === (vert ? 'ArrowUp' : 'ArrowLeft')) next = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (k === 'Home') next = tabs[0];
+      if (k === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); next.focus(); show(next.getAttribute('data-view')); }
+    });
+  });
+
+  // an in-panel CTA can send the reader to another tab
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-goto]') : null;
+    if (b) show(b.getAttribute('data-goto'));
+  });
+
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), false); });
+  show(location.hash.slice(1) || 'home', false);
+})();
+</script>
+
+<script>
+/* the rail's counts: how many creators the board holds, how many windows the
+   history has. They are read off the DOM after a render pass, so the rail never
+   has a number the panel disagrees with. */
+(function () {
+  function pill() {
+    var mk = document.getElementById('railMarket');
+    var hi = document.getElementById('railHistory');
+    if (mk) { var n = document.querySelectorAll('#rows tr.row').length; if (n) mk.textContent = n; }
+    if (hi) {
+      var s = document.getElementById('tlCount');
+      var txt = s && s.textContent ? s.textContent : '';
+      var m = txt.match(/\d+/);
+      if (m) hi.textContent = m[0];
+    }
+  }
+  window.__onView = function () { pill(); };
+  var t0 = Date.now();
+  var iv = setInterval(function () { pill(); if (Date.now() - t0 > 6000) clearInterval(iv); }, 400);
 })();
 </script>
 

@@ -154,10 +154,20 @@
   .themesw svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;
     stroke-linecap:round;stroke-linejoin:round;display:block}
   html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
+  /* the glass pills carry a different fill per theme, so they have to fade with
+     the page: swapping instantly left a light (or dark) pill and its hairline
+     frozen on a background that was still half-way through the cross-fade —
+     that mismatch is the "border" that showed up when the theme changed */
+  html.theming .pillnav,html.theming .tgs,html.theming .themesw,
+  html.theming .appbar,html.theming .appbar.stuck{
+    transition:background-color .32s ease,box-shadow .32s ease,border-color .32s ease}
   /* the root starts from the same paper, so the fade has nothing to travel through */
   html{background-color:var(--bg)}
   @media (prefers-reduced-motion:reduce){
     html.theming,html.theming body{transition:none}
+    /* no fade at all when motion is reduced: swap the lot in one frame */
+    html.theming .pillnav,html.theming .tgs,html.theming .themesw,
+    html.theming .appbar,html.theming .appbar.stuck{transition:none}
     .themesw button{transition:none}
   }
 
@@ -173,10 +183,10 @@
   a{color:inherit;text-decoration:none}
   ::selection{background:var(--ink);color:var(--bg)}
 
-  /* the page column fills the display instead of leaving a lake of empty margin:
-     laptops upgrade 1180 -> a viewport-relative width, very wide screens get a
-     ceiling so the type does not become a headline on a billboard */
-  .wrap{max-width:none;margin:0 auto;padding:0 24px 80px}
+  /* the page column is a fixed 1380px ruler again, centred: frian asked for that
+     width back (it was clamp(1180px,94vw,1680px) before 6a28bea, which hugged the
+     display). Below 1380 the column is full-bleed, so phones are unchanged. */
+  .wrap{max-width:1380px;margin:0 auto;padding:0 24px 80px}
   .ic{width:1em;height:1em;display:inline-block;vertical-align:-.125em;
     fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 
@@ -187,8 +197,11 @@
   /* ---- persistent pill nav (Framer "Top Nav" reference, logo dropped) ---- */
   /* the nav is the one thing that reaches both edges: the page column fills the
      display, so the pill sits at the far left and the switch at the far right */
+  /* the dock follows the page column: it is the same 1380px ruler so the pill
+     sits on the page's left edge and the switch on its right edge, not out at
+     the display's edge where the nav no longer lines up with the content */
   .dock{position:sticky;top:0;z-index:60;pointer-events:none;height:0;margin-top:14px;
-    max-width:none;margin-left:auto;margin-right:auto;padding:0 24px}
+    max-width:1380px;margin-left:auto;margin-right:auto;padding:0 24px}
   /* one ruler: the pill and the switch share a header row, so the switch sits
      on the pill's line at the far right of the page column, and on phones the
      pill slides left to make room instead of colliding */
@@ -481,8 +494,11 @@
   .rcard:hover .rcard-foot h4{font-size:30px;line-height:1.1}
   .ribbon[data-hover] .rcard[data-open]:not(:hover) .rcard-more{max-height:0;
     opacity:0;margin-top:0}
+  /* the whole card is white ink in both themes: it sits on the accent slab, and
+     --ink in the light theme is near-black, which made the body copy disappear
+     into the pink. Every text node on the card is pinned to white here. */
   .rcard-more p{margin:13px 0 0;font-size:14px;line-height:1.5;max-width:440px;
-    color:var(--ink)}
+    color:#fff}
   /* closed narrow cards get a smaller headline; the open one gets the big one */
   .rcard:not([data-open]):not([data-wide]) .rcard-foot h4{font-size:21px;
     letter-spacing:-.012em;line-height:1.18}
@@ -697,7 +713,16 @@
   html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   body,button,a{touch-action:manipulation}
 
-  footer{margin-top:24px;padding-top:0}
+  /* the sign-off bar sits right under the last block: the 24px gap read as the
+     footer floating high above the end of the page, and the column's 80px bottom
+     padding added another band of empty paper below it. Pull both in: the bar
+     hugs the content, and the page ends just under it. */
+  footer{margin-top:8px;padding-top:0}
+  /* the column's 80px tail is right for the last section, but under the sign-off
+     bar it reads as a band of empty page after the footer. The bar closes the
+     page: 18px under it and the document ends. */
+  .wrap:has(> footer){padding-bottom:18px}
+  @supports not selector(:has(*)){ footer{padding-bottom:18px} }
   /* one row at every width, same as the dashboard: the copyright shrinks, the
      four circles stay put, and the sign-off costs under 50px instead of ~60 */
   .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -895,6 +920,41 @@
   /* The hover card's CTA is the same accent pill as every other CTA on the page:
      one button family, so the arrow coin, the label and the hover all come from
      `.acta` and its `.acta-ic`, and the card-specific ink/paper pair is gone. */
+
+  /* ---- the two CTAs frian pinned down, light and dark alike ----
+     "Read how a call is scored" (inside the example draft card): light mode wants
+     a paper pill with ink type, and the disc stays paper too - the arrow reads as
+     ink on white. The card behind it is the deep-space plate in both themes, so
+     the pill cannot take its colour from the page; the colours are literal.
+     The disc needs three classes to beat `.pickcard .hc-act`'s siblings and the
+     base `.acta-ic` rule, which are both (0,2,0). */
+  /* light: the pill is paper, the label is ink, and the disc is paper with an ink
+     ring so the arrow stays visible. It was only a 1px inset ring with a paper
+     fill, which read as a hollow outline instead of the white disc the brief
+     asked for — fill it with paper and keep the ring thin. */
+  :root:not([data-theme="dark"]) .pickcard .acta.hc-act{background:#fff;color:#111;
+    box-shadow:inset 0 0 0 1px #fff}
+  :root:not([data-theme="dark"]) .pickcard .acta.hc-act .acta-ic{background:#fff;
+    color:#111;box-shadow:inset 0 0 0 1.25px #111}
+  :root:not([data-theme="dark"]) .pickcard .acta.hc-act:hover{background:#fff;
+    color:#111;filter:brightness(.94)}
+
+  /* "Enter the room" on the closing slab: paper pill, ink label, ink arrow disc -
+     in BOTH themes. The slab is the accent colour in light and paper in dark, so
+     a paper pill needs an edge wherever it sits on paper; the ring is that edge.
+     Selector is (0,4,0) in light and (0,5,0) in dark so it beats `.closer .acta`
+     and every `:root[data-theme="dark"] .closer .acta` above it. */
+  :root .closer .acta.hc-cta{background:#fff;color:#111;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.22)}
+  :root .closer .acta.hc-cta .acta-ic{background:#111;color:#fff;box-shadow:none}
+  :root .closer .acta.hc-cta:hover{background:#fff;color:#111;filter:brightness(.94);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.22)}
+  :root[data-theme="dark"] .closer .acta.hc-cta{background:#fff;color:#111;
+    box-shadow:inset 0 0 0 1px #fff}
+  :root[data-theme="dark"] .closer .acta.hc-cta .acta-ic{background:#111;color:#fff;
+    box-shadow:none}
+  :root[data-theme="dark"] .closer .acta.hc-cta:hover{background:#fff;color:#111;
+    filter:brightness(.94);box-shadow:inset 0 0 0 1px #fff}
 
 </style>
 </head>
@@ -1304,7 +1364,7 @@
     <div>
       <h3>Where they go next is the bet.</h3>
     </div>
-    <a class="acta" href="/app" aria-label="Enter the room">
+    <a class="acta hc-cta" href="/app" aria-label="Enter the room">
       <span class="acta-t">Enter the room</span>
       <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
     </a>
