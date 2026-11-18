@@ -1,6 +1,6 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 (`main` `936781b`, live `dpl_EWzFHL5AXPHZfZP6NrwgokPyXgw4`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 (`main` `ae93140`, live `dpl_EWzFHL5AXPHZfZP6NrwgokPyXgw4`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
