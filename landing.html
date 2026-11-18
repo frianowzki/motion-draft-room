@@ -216,7 +216,21 @@
   .btn.ghost:hover{background:#fff}
 
   /* ---- hero: text block left, one visual slot right ---- */
-  .hero{display:block;margin-top:84px}
+  .hero{display:block;margin-top:84px;position:relative;isolation:isolate}
+  /* Night-sky plate behind the hero type. The Framer component is React +
+     framer-motion, so its behaviour is reproduced here instead of shipping the
+     runtime: a seeded star field that twinkles, plus occasional comets that
+     streak across and fade. Painted only in dark mode - light mode keeps the page
+     as it is - and the canvas is inert under prefers-reduced-motion. */
+  /* the plate runs past the type and fades out on a mask, so the sky ends without
+     drawing a seam across the page */
+  .nightsky{position:absolute;left:0;right:0;top:-84px;width:100%;height:calc(100% + 280px);
+    z-index:-1;pointer-events:none;display:none;opacity:0;
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 72%,transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0,#000 72%,transparent 100%);
+    transition:opacity .6s ease}
+  :root[data-theme="dark"] .nightsky{display:block;opacity:1}
+  @media(prefers-reduced-motion:reduce){.nightsky{display:none !important}}
   /* no card: the hero is type on the page, not a box on the page */
   .hero-main{position:relative;padding:46px 0 54px;
     background:transparent;box-shadow:none;border-radius:0;overflow:visible;
@@ -942,6 +956,7 @@
 
   <!-- ============ HERO ============ -->
   <section class="hero">
+    <canvas class="nightsky" aria-hidden="true"></canvas>
     <div class="hero-main">
       <div>
         <h2>Where they rank now is the setup. <em>Where they go next is the bet.</em></h2>
@@ -1824,6 +1839,128 @@ fetch("/api/signals", { cache: "no-store" })
   });
   wide.addEventListener('change', function () { paint(current()); });
   paint(current());
+})();
+
+// ---- night sky behind the hero: the Framer NightSkyBackground, without the runtime
+// Same idea as the component (seeded stars twinkling on a deep gradient, comets on a
+// timer), drawn on one canvas so the landing page stays dependency-free. It only
+// runs while dark mode is the theme and the hero is on screen.
+(function () {
+  var cv = document.querySelector('.nightsky');
+  if (!cv) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var ctx = cv.getContext('2d');
+  var stars = [], comets = [], w = 0, h = 0, dpr = 1, raf = 0, last = 0, nextComet = 0;
+  var STAR_COUNT = 110, COMET_EVERY = 5200;
+
+  function seed(now) {
+    // a fixed pseudo-random stream, so a resize does not reshuffle the sky
+    var s = 20261118;
+    function rnd() { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }
+    stars = [];
+    for (var i = 0; i < STAR_COUNT; i++) {
+      stars.push({
+        x: rnd(), y: rnd(),
+        r: 0.6 + rnd() * 1.1,
+        phase: rnd() * Math.PI * 2,
+        speed: 0.35 + rnd() * 0.9,      // radians per second: a slow twinkle
+        drift: (rnd() - 0.5) * 0.004
+      });
+    }
+    nextComet = now + COMET_EVERY * 0.6;
+  }
+
+  function size() {
+    var r = cv.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = Math.max(1, Math.round(r.width));
+    h = Math.max(1, Math.round(r.height));
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seed(performance.now());
+  }
+
+  function spawn(now) {
+    var sx = Math.random() * 12, sy = Math.random() * 90;
+    comets.push({
+      x: sx / 100 * w, y: sy / 100 * h,
+      vx: (0.9 + Math.random() * 0.5) * 900, vy: (0.34 + Math.random() * 0.22) * 900,
+      life: 0, max: 1.2
+    });
+    nextComet = now + COMET_EVERY * (0.7 + Math.random() * 0.9);
+  }
+
+  function frame(now) {
+    raf = requestAnimationFrame(frame);
+    var dt = Math.min(0.05, (now - last) / 1000 || 0.016);
+    last = now;
+
+    // the gradient the component paints underneath
+    var g = ctx.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, '#0a0e27');
+    g.addColorStop(0.62, '#050714');
+    g.addColorStop(1, '#0f0f0e');   // lands on --bg, so the fade ends on the page colour
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+
+    var t = now / 1000;
+    ctx.fillStyle = '#fff';
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      st.y += st.drift * dt;
+      if (st.y < 0) st.y += 1; else if (st.y > 1) st.y -= 1;
+      var a = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * st.speed + st.phase));
+      ctx.globalAlpha = a;
+      ctx.beginPath();
+      ctx.arc(st.x * w, st.y * h, st.r, 0, 6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (now > nextComet) spawn(now);
+    for (var k = comets.length - 1; k >= 0; k--) {
+      var c = comets[k];
+      c.life += dt;
+      if (c.life > c.max) { comets.splice(k, 1); continue; }
+      var p = c.life / c.max;
+      c.x += c.vx * dt; c.y += c.vy * dt;
+      var fade = p < 0.15 ? p / 0.15 : (1 - (p - 0.15) / 0.85);
+      var tail = 120, ang = Math.atan2(c.vy, c.vx);
+      var tx = c.x - Math.cos(ang) * tail, ty = c.y - Math.sin(ang) * tail;
+      var lg = ctx.createLinearGradient(c.x, c.y, tx, ty);
+      lg.addColorStop(0, 'rgba(255,255,255,' + (0.85 * fade).toFixed(3) + ')');
+      lg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.strokeStyle = lg;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(c.x, c.y); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.9 * fade).toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(c.x, c.y, 1.6, 0, 6.2832); ctx.fill();
+    }
+  }
+
+  function wanted() {
+    return document.documentElement.dataset.theme === 'dark' && !reduce.matches;
+  }
+
+  function sync() {
+    cancelAnimationFrame(raf);
+    raf = 0;
+    ctx.clearRect(0, 0, w, h);
+    if (!wanted()) return;
+    size();
+    last = performance.now();
+    comets = [];
+    raf = requestAnimationFrame(frame);
+  }
+
+  if ('ResizeObserver' in window) {
+    var ro = new ResizeObserver(function () { if (wanted()) size(); });
+    ro.observe(cv);
+  }
+  reduce.addEventListener('change', sync);
+  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  sync();
 })();
 </script>
 </body>
