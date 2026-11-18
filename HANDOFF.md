@@ -1,9 +1,45 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-17 09:28 UTC (`main` `d5c858f`, `data` `5f2fd3b`,
-live `dpl_7EaBw3myVH1vtA1yEzF6b28s8wL2`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 09:05 UTC (`main` `e0367eb`, live `dpl_4HFN2yusc17dh3T5Ldk8T2Ai6TRw`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+---
+
+## 2026-11-18 — FAQ app digabung ke landing, FAQ app dihapus (main e0367eb)
+
+App punya `<section class="faq">` lima baris ("Questions, answered") yang
+mengulang tiga pertanyaan landing dan menambah dua yang landing belum punya:
+**32-star cap** dan **rarity boost**. Landing sekarang **enam** item di `.sfaq`:
+
+1. The rules this room plays by — ditambah satu baris `Rarity` (Common/Rare/Epic/Legendary).
+2. Where do the numbers come from? — versi app yang lebih lengkap (nama field
+   `position`/`delta`/`isNew`/`asOf`, snapshot ke branch `data`).
+3. Why don't you just show Motion Score? — versi app (skala 1–8, "labelled as such").
+4. What happens when I lock a lineup? — versi app (ke `data/receipts.json` lewat
+   `/api/receipts`, satu receipt per handle per slot).
+5. **Is the 32-star cap real?** (baru, dari app)
+6. **Are the rarity boosts the real ones?** (baru, dari app)
+
+App berakhir di `<footer>`: section FAQ, 20 baris CSS `.faq`/`.rulesGrid`, dan
+empat override mobile-nya dihapus. Tidak ada sisa selector `faq` (kecuali
+`.sfaq*` milik landing yang cuma nama mirip).
+
+**Bug ikon yang ditemukan sambil mengerjakan ini:** landing memakai
+`#i-target` tapi symbol-nya tidak pernah ada, jadi item "Why don't you just show
+Motion Score?" tampil **tanpa ikon kiri** (lebar 0) sejak awal. Symbol
+`i-target` sekarang didefinisikan; cek lebar ikon tiap `.sfaq-item` = 18px di
+prod. **Kalau menambah FAQ item, pastikan `<use href>`-nya punya symbol —
+`<use>` ke id yang hilang gagal diam-diam.**
+
+**Deploy:** `./deploy.sh` mengunggah `git ls-files`, dan `public/` ada di
+`.gitignore`. Karena itu `public/index.html` yang dulu ter-*track* (terbawa dari
+commit lama yang memaksa `-f`) **tidak lagi diunggah** — hanya versi yang dihasilkan
+`build.sh` di mesin Vercel. Jangan `git add -f public/...`.
+
+**Verifikasi prod:** `/` punya 6 `.sfaq-item` dan keenam ikon 18px; `/app` tidak
+punya `Questions, answered` dan board tetap 10 baris; `md5sum` HTML live == `public/`.
+Draft/board/endpoint tidak berubah.
 
 ---
 
