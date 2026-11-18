@@ -89,7 +89,8 @@
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
   :root[data-theme="dark"] tr.row:hover td{background:rgba(255,255,255,.04)}
-  :root[data-theme="dark"] tr.row.sel td{background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] tr.row.sel td{background:rgba(255,255,255,.055)}
+  :root[data-theme="dark"] tr.row.sel td:first-child{box-shadow:inset 2px 0 0 #f4f3f0}
   :root[data-theme="dark"] input,
   :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] input::placeholder,
@@ -319,6 +320,21 @@
      the space the board occupies */
   .grid > .side > .card.detail > .empty{margin:auto 0}
   .boardcard{display:flex;flex-direction:column;min-width:0}
+  /* A page holds fifteen rows, so the board is fifteen rows tall whatever it is
+     showing. The last page carries four creators and used to shrink to a stub,
+     which pulled the pager up under the rows and made the page look like it had
+     failed to load. The height is the table's own rhythm — a header row, the
+     rows, and the pager's box — held as a minimum so a page that somehow grows
+     (a long name wrapping) still fits instead of clipping. Sixteen slots, not
+     fifteen: fifteen creators plus the spacer rows that pad the page out. */
+  @media(min-width:761px){
+    .boardcard{--board-rows:16}
+    .boardcard > .tablewrap{min-height:calc(
+      (var(--board-rows) * 35px)
+      + 32px   /* the header row */
+      + 62px   /* the pager and its breathing room */
+      + 2px)}
+  }
   /* the wrap takes whatever height the row has left over, and the table inside
      grows with it: otherwise the leftover space sits inside the card as a hole
      between the last row and the pager */
@@ -363,8 +379,11 @@
   td:nth-child(6){white-space:normal;line-height:1.5}
   tr.row:first-child td{border-top:0}
   tr.row{cursor:pointer;transition:background .13s ease}
-  tr.row:hover td{background:rgba(255,255,255,.55)}
-  tr.row.sel td{background:#fff}
+  tr.row:hover td{background:rgba(17,17,17,.035)}
+  /* the selected row used to be a white slab. On a phone that is a bright block
+     punched through a dark page — and it covers the very figures the tap was
+     aimed at. A tint and a rail read as selected without repainting the row. */
+  tr.row.sel td{background:var(--sunken)}
   tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
@@ -1132,7 +1151,12 @@ let PAGE = 1;
 // creator's colour means the same thing wherever it appears on the page.
 const TAGC = { SURGING: "var(--up)", COILED: "var(--warm)", SLEEPER: "var(--cool)",
   FADE: "var(--down)", QUIET: "var(--faint)" };
-const PER_PAGE = 10;
+// Fifteen on a desk, and not one row fewer when the draft panel opens beside
+// the board. The page used to be measured to the board's height, so picking a
+// creator grew the panel, the board grew with it, and the same board showed ten
+// rows before the pick and fourteen after — the pager said 1/8 and then 1/6 for
+// the same list. A fixed page keeps the board's height its own business.
+const PER_PAGE = 15;
 // A phone shows five: a page you scroll is not a page, and five rows plus the
 // pager still leaves the draft panel and the timeline within a thumb's reach.
 const PER_PAGE_PHONE = 5;
@@ -1359,32 +1383,11 @@ function countUp() {
   io.observe(box);
 }
 
-// How many rows fit in the board right now. The card stretches to the draft panel
-// beside it, so the answer changes when a pick opens. Everything here is read from
-// live layout, and a zero means "not measurable yet" — the caller falls back.
+// How many rows a page holds. A counted page, not a measured one: the board
+// stretches to the draft panel beside it, and measuring its leftovers made the
+// page size a consequence of whether a pick was open.
 function rowsPerPage() {
-  // the phone layout stacks the board instead of stretching it, so there is
-  // nothing to fill and the page is fixed — measuring there only shrank it to
-  // four rows on a short screen and made the pager disagree with its own dots
-  if (isPhone()) return perPageNow();
-  const card = document.querySelector(".boardcard");
-  const wrap = card && card.querySelector(".tablewrap");
-  const pager = card && card.querySelector("#pager");
-  if (!card || !wrap || !pager) return PER_PAGE;
-  const head = card.querySelector("h2");
-  const table = wrap.querySelector("table");
-  const thead = table && table.querySelector("thead");
-  const cs = getComputedStyle(card);
-  const avail = card.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
-    - (head ? head.getBoundingClientRect().height + parseFloat(getComputedStyle(head).marginBottom) : 0)
-    - (thead ? thead.getBoundingClientRect().height : 0)
-    // the pager's own top padding and border sit between the rows and its face,
-    // so leaving them out let the last row slide under it once the pager grew
-    - pager.getBoundingClientRect().height
-    - parseFloat(getComputedStyle(pager).marginTop || 0);
-  const rowH = 35; // fixed by the table's own rhythm; a probe row would cost a reflow
-  if (!(avail > 0)) return PER_PAGE;
-  return Math.max(PER_PAGE, Math.min(25, Math.floor(avail / rowH)));
+  return perPageNow();
 }
 
 function render() {
@@ -1485,7 +1488,11 @@ function render() {
       <td class="mono stars" title="estimated stars (1-8)">${c.estStars}<span>/${8}</span></td>
       <td>${badges(c.tags)}</td>
       <td class="add" title="${picked ? "In your lineup" : "Draft this creator"}">${picked ? icon("check") : icon("plus")}</td>`;
-    tr.onclick = () => { SEL = c.name; render(); };
+    // On a phone the row is the target: a 26px face is not something a thumb can
+    // be asked to hit, and tapping a creator should open that creator, not just
+    // mark the row. On a desk the row still only selects — the card there is a
+    // hover surface and the draft panel beside the board does the picking.
+    tr.onclick = () => { SEL = c.name; render(); if (isPhone()) openCard(tr, c); };
     tb.appendChild(tr);
     // pointing at a name opens the profile card; the card itself stays usable so
     // its links and the pick button can be clicked. Bind after the row is in the
@@ -1519,17 +1526,6 @@ function render() {
   // with the rows: paging the board must not rebuild it or reset its position
   renderTimeline();
 
-  // The draft panel just changed height, and the board stretches to match it, so
-  // the number of rows that fit has changed too. One deferred re-render after the
-  // layout settles keeps the first paint from showing a page sized for the old
-  // panel. The guard stops render() calling itself forever.
-  if (!render._refit) {
-    render._refit = true;
-    requestAnimationFrame(() => {
-      render._refit = false;
-      if (rowsPerPage() !== perPage) render();
-    });
-  }
 
   // The marquee's speed comes from its own width, so the strip drifts at the same
   // pace whatever the figures say (a fixed duration would sprint on a wide set).
@@ -2135,11 +2131,13 @@ function ensureCard() {
 }
 function hideCardSoon() { if (isSheet()) return; clearTimeout(cardTimer); cardTimer = setTimeout(hideCard, 140); }
 function hideCard() {
+  // The body is unlocked even when no card was ever built: a load that fails
+  // before the first open still needs the page it left behind to scroll.
+  document.body.classList.remove("sheetopen");
   if (!cardEl) return;
   cardEl.classList.remove("on");
   cardEl.style.transform = "";
   if (cardBack) cardBack.classList.remove("on");
-  document.body.classList.remove("sheetopen");
   cardFor = null;
   if (sheetOpener && document.contains(sheetOpener)) { try { sheetOpener.focus({ preventScroll: true }); } catch (_) {} }
   sheetOpener = null;
@@ -2172,33 +2170,37 @@ function placeCard(anchor) {
   cardEl.style.top = Math.round(top) + "px";
 }
 
+// The card for one creator, built once and reusable: both the avatar's own
+// handlers and a tap anywhere on the row open the same thing.
+function openCard(anchor, c) {
+  clearTimeout(cardTimer);
+  ensureCard();
+  cardEl.innerHTML = cardHtml(c);
+  cardFor = c.name;
+  if (isSheet()) {
+    // sheet: no anchoring, no hover to keep it alive — it is a modal surface
+    sheetOpener = anchor;
+    cardEl.style.left = ""; cardEl.style.top = "";
+    cardEl.classList.add("on");
+    cardBack.classList.add("on");
+    document.body.classList.add("sheetopen");
+    const f = cardEl.querySelector("[data-close]");
+    if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (_) {} }, 60);
+    return;
+  }
+  cardEl.style.left = "-9999px"; cardEl.style.top = "0px";
+  cardEl.classList.add("on");
+  // measure and place right away, then again on the next frame so the card
+  // lands correctly once fonts and the banner have settled. A background tab
+  // can starve requestAnimationFrame, so the first pass must not depend on it.
+  placeCard(anchor);
+  requestAnimationFrame(() => { if (cardFor === c.name) placeCard(anchor); });
+}
+
 function bindCard(anchor, c) {
   anchor.setAttribute("role", "button");
   anchor.setAttribute("tabindex", "0");
-  const open = () => {
-    clearTimeout(cardTimer);
-    ensureCard();
-    cardEl.innerHTML = cardHtml(c);
-    cardFor = c.name;
-    if (isSheet()) {
-      // sheet: no anchoring, no hover to keep it alive — it is a modal surface
-      sheetOpener = anchor;
-      cardEl.style.left = ""; cardEl.style.top = "";
-      cardEl.classList.add("on");
-      cardBack.classList.add("on");
-      document.body.classList.add("sheetopen");
-      const f = cardEl.querySelector("[data-close]");
-      if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch (_) {} }, 60);
-      return;
-    }
-    cardEl.style.left = "-9999px"; cardEl.style.top = "0px";
-    cardEl.classList.add("on");
-    // measure and place right away, then again on the next frame so the card
-    // lands correctly once fonts and the banner have settled. A background tab
-    // can starve requestAnimationFrame, so the first pass must not depend on it.
-    placeCard(anchor);
-    requestAnimationFrame(() => { if (cardFor === c.name) placeCard(anchor); });
-  };
+  const open = () => openCard(anchor, c);
   if (!isSheet()) {
     anchor.addEventListener("mouseenter", () => { clearTimeout(cardTimer); open(); });
     anchor.addEventListener("mouseleave", hideCardSoon);
@@ -2213,8 +2215,8 @@ function bindCard(anchor, c) {
       }, 0);
     });
   }
-  // a touch screen has no hover, so tapping the name opens the same card as a
-  // bottom sheet; the row's own click still selects the creator underneath
+  // a touch screen has no hover, so tapping the face opens the sheet directly;
+  // the row underneath opens the same thing for a tap that misses the face
   anchor.addEventListener("click", e => { e.stopPropagation(); clearTimeout(cardTimer); open(); });
   anchor.addEventListener("focus", () => { if (!isSheet()) { clearTimeout(cardTimer); open(); } });
   anchor.addEventListener("keydown", e => {
