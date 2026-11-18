@@ -393,13 +393,29 @@
      rows, and the pager's box — held as a minimum so a page that somehow grows
      (a long name wrapping) still fits instead of clipping. Sixteen slots, not
      fifteen: fifteen creators plus the spacer rows that pad the page out. */
+  /* One screen, not one scroll. On a desktop the whole board - navbar, the
+     tally row, the fifteen rows and the pager - has to land above the fold at
+     100vh, so the parts that carried slack give it up: a tighter bar, a tighter
+     tally, and rows at 31px instead of 35. Sixteen slots stays, and the spacer
+     rows keep the last page the same height as the first. */
   @media(min-width:761px){
     .boardcard{--board-rows:16}
     .boardcard > .tablewrap{min-height:calc(
-      (var(--board-rows) * 35px)
-      + 32px   /* the header row */
-      + 62px   /* the pager and its breathing room */
+      (var(--board-rows) * 31px)
+      + 26px   /* the header row */
+      + 56px   /* the pager and its breathing room */
       + 2px)}
+    .appbar{padding-top:6px;padding-bottom:6px}
+    .appbar .primary{min-height:36px}
+    .stats{margin:10px 0 0}
+    .stats .stat .v{font-size:20px}
+    .tabs{margin:10px 0 8px}
+    .card.boardcard{padding:16px 18px 14px}
+    .card.boardcard > h2{margin:0 0 6px}
+    tr.row{height:31px}
+    tr.row td{padding-top:0;padding-bottom:0}
+    #pager{padding-top:10px;gap:6px}
+    .pager .pinfo{display:none}
   }
   /* the wrap takes whatever height the row has left over, and the table inside
      grows with it: otherwise the leftover space sits inside the card as a hole
@@ -550,8 +566,8 @@
   /* box-shadow:none is load-bearing: the global button rule draws a hairline ring,
      which turned every page number into a chip. The reference has no rings - only
      the current page is filled. */
-  .pager button{font-family:var(--sans);font-size:12.5px;font-weight:600;min-width:30px;height:30px;
-    padding:0 6px;border:0;border-radius:8px;background:transparent;color:var(--dim);
+  .pager button{font-family:var(--sans);font-size:12.5px;font-weight:600;width:30px;height:30px;
+    padding:0;border:0;border-radius:8px;background:transparent;color:var(--dim);
     box-shadow:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
     transition:background-color .25s cubic-bezier(.16,1,.3,1),color .25s cubic-bezier(.16,1,.3,1)}
   .pager button:hover:not(:disabled):not([aria-current]){background:var(--sunken);color:var(--ink);
@@ -564,23 +580,34 @@
   :root[data-theme="dark"] .pager button[aria-current="page"]{background:#f4f3f0;color:#16181b}
   .pager button:disabled{opacity:.3;cursor:default}
   .pager button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .pager .pstep{min-width:30px;padding:0;color:var(--ink)}
+  /* the arrows never take a background - not on hover either. They are marks on
+     the card, not chips, so nothing lights up next to the digits mid-tap. */
+  .pager .pstep{width:26px;background:transparent;color:var(--dim)}
+  .pager .pstep:hover:not(:disabled){background:transparent;color:var(--ink)}
   .pager .pstep .ic{width:14px;height:14px;font-size:14px;opacity:.9}
   .pager .pstep span{display:none}
-  .pager .gap{font-size:12px;font-weight:500;color:var(--faint);padding:0 2px;user-select:none}
+  /* the ellipsis is held to exactly one button's width, so a page that gains a
+     second ellipsis does not widen the row and slide the arrows out from under
+     the thumb that is about to tap next again */
+  .pager .gap{font-size:12px;font-weight:500;color:var(--faint);user-select:none;
+    width:30px;display:inline-flex;align-items:center;justify-content:center}
+  .pager .gap.pad{width:30px;font-size:12px}
   :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:rgba(255,255,255,.08)}
   @media(max-width:640px){
     .pager{gap:8px;padding-top:13px}
     .pager .pnums{gap:3px}
-    .pager button{min-width:28px;height:28px;border-radius:7px;font-size:12px}
-    .pager .pstep{min-width:28px}
+    .pager button{width:28px;height:28px;border-radius:7px;font-size:12px}
+    .pager .pstep{width:26px}
+    .pager .gap,.pager .gap.pad{width:28px}
   }
   /* the reference keeps one row at every width; below 400px two digits either
      side of the current page would push the arrows off the card, so the pager
      trims to a single neighbour and lets the ellipsis carry the rest */
   @media(max-width:400px){
     .pager .pnums{gap:2px}
-    .pager button{min-width:26px;height:26px;font-size:11.5px;padding:0 4px}
+    .pager button{width:27px;height:27px;font-size:11.5px;padding:0}
+    .pager .pstep{width:24px}
+    .pager .gap,.pager .gap.pad{width:27px}
   }
 
   /* ---- creator profile card on hover */
@@ -787,6 +814,13 @@
   input:focus,textarea:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--ink)}
   .hint{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.5}
 
+  /* ---- no double-tap zoom: a phone reading a board does not need the page to
+     jump when it taps a row twice. zooming out is still available through the
+     browser itself, so the text stays resizable. */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body,button,a,input,select,textarea{touch-action:manipulation}
+  .tlstage{touch-action:none}
+
   button{font-family:var(--mono);font-size:11px;padding:9px 15px;border-radius:var(--r-pill);
     border:0;background:rgba(255,255,255,.85);color:var(--ink);cursor:pointer;
     box-shadow:inset 0 0 0 1px var(--line);
@@ -905,8 +939,9 @@
 
   /* ---- footer: the landing's sign-off, not a card - the same bar, the same
      icons, so the two pages end the same way. Nothing here explains the page. */
-  footer{margin-top:64px;padding-top:0}
-  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px}
+  footer{margin-top:34px;padding-top:0}
+  .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;
+    flex-wrap:wrap;padding:14px 0 10px}
   .f1-bar p{margin:0;font-size:12px;letter-spacing:-.005em;color:var(--faint)}
   .f1-social{display:flex;gap:9px}
   .f1-social a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
@@ -2095,18 +2130,58 @@ function renderPager(pages, total, start, shown) {
     `<button class="pstep" data-p="${p}"${off ? " disabled" : ""} aria-label="${label}">`
       + `<svg class="ic"><use href="#${icon}"/></svg><span>${label}</span></button>`;
   const cur = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
+  // A fixed number of slots at every page and every width. The windowed version
+  // grew and shrank as you stepped (159 -> 187 -> 215px), which moved the arrow
+  // out from under the thumb that was about to tap it again. Page 1 and the last
+  // page always hold a slot; the rest of the row is a window around the current
+  // page, and a slot the window skipped is drawn as an ellipsis - a non-button,
+  // so the row never reflows mid-tap.
+  // A fixed row of SLOTS cells at every page and every width, ellipses included.
+  // Windowed pagers grow and shrink as you step - 8 cells here, 9 there - which
+  // slides the arrow sideways exactly as the thumb comes down on it. So the row
+  // is a plan of SLOTS cells first: the ends and a run around the current page
+  // take the number cells, and whatever is left over becomes an ellipsis. The
+  // run is widened page by page to swallow the leftovers, so the count never
+  // changes. On the pages that need only one ellipsis the row drops to SLOTS-1,
+  // on purpose: one ellipsis fewer than two, and never more than one cell of
+  // travel between steps.
+  const SLOTS = window.innerWidth <= 400 ? 6 : 8;
+  const plan = (() => {
+    if (pages <= SLOTS) return {nums: Array.from({length: pages}, (_, i) => i + 1), gaps: 0};
+    // start with the minimum a window can be: 1, PAGE, pages
+    let lo = PAGE, hi = PAGE;
+    const widthOf = () => {
+      const inside = hi - lo + 1;
+      const before = lo > 2 ? 1 : 0;     // ellipsis between 1 and lo
+      const after = hi < pages - 1 ? 1 : 0;
+      return inside + 2 + before + after; // + the two ends
+    };
+    // grow around the current page until the row is full
+    while (widthOf() < SLOTS && (lo > 2 || hi < pages - 1)) {
+      if (hi < pages - 1 && (PAGE - lo <= hi - PAGE || lo <= 2)) hi++;
+      else if (lo > 2) lo--;
+      else hi++;
+    }
+    if (widthOf() > SLOTS && (lo > 2 || hi < pages - 1)) {
+      // too wide: give back the furthest side
+      if (PAGE - lo > hi - PAGE) lo++; else hi--;
+    }
+    const nums = [1];
+    for (let i = lo; i <= hi; i++) nums.push(i);
+    nums.push(pages);
+    return {nums: [...new Set(nums)].sort((x, y) => x - y), gaps: null};
+  })();
   const nums = [];
-  if (pages <= 7) {
-    for (let i = 1; i <= pages; i++) nums.push(cur(i));
-  } else {
-    // two neighbours when there is room, one on the narrowest phones
-    const side = window.innerWidth <= 400 ? 1 : 2;
-    const lo = Math.max(2, PAGE - side), hi = Math.min(pages - 1, PAGE + side);
-    nums.push(cur(1));
-    if (lo > 2) nums.push('<span class="gap">…</span>');
-    for (let i = lo; i <= hi; i++) nums.push(cur(i));
-    if (hi < pages - 1) nums.push('<span class="gap">…</span>');
-    nums.push(cur(pages));
+  plan.nums.forEach((n, i) => {
+    if (i && n - plan.nums[i - 1] > 1) nums.push('<span class="gap" aria-hidden="true">…</span>');
+    nums.push(cur(n));
+  });
+  // The first and last pages sit flush against one end, so they plan one cell
+  // short. Pad them with an invisible, inert cell rather than letting the row
+  // narrow: the digits stay on the same x for every page, and the arrow beside
+  // next is always in the same place.
+  while (nums.length < (pages <= SLOTS ? pages : SLOTS)) {
+    nums.splice(nums.length - 1, 0, '<span class="gap pad" aria-hidden="true"></span>');
   }
   const info = pages > 1 ? `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>` : "";
   box.innerHTML = info

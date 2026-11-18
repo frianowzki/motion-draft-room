@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Motion Draft Room — pick five creators, see if you were right</title>
 <meta name="description" content="Pick five creators off Motion's public leaderboard before the next window, say why each one wins or fails, and let the server grade you. Every call stays on record.">
 <meta name="theme-color" content="#0f0f0e">
@@ -393,7 +393,7 @@
   }
 
   /* ---- section furniture ---- */
-  section.block{margin-top:64px}
+  section.block{margin-top:40px}
   .sec-head{display:flex;align-items:baseline;justify-content:space-between;
     gap:16px;margin-bottom:18px;flex-wrap:wrap}
   .sec-head h3{margin:0;font-family:var(--display);font-size:22px;font-weight:600;
@@ -544,7 +544,6 @@
   .sfaq-q{width:100%;display:flex;align-items:center;gap:12px;padding:18px 20px;
     background:none;border:0;cursor:pointer;text-align:left;font:inherit;
     font-size:13.5px;font-weight:500;letter-spacing:-.01em;color:var(--faq-ink)}
-  .sfaq-q .sfq-ic{width:18px;height:18px;flex:none;color:var(--faq-dim)}
   .sfaq-q .sfq-t{flex:1;min-width:0}
   .sfaq-q .sfq-chev{width:16px;height:16px;flex:none;color:var(--faq-dim);
     transition:transform .3s cubic-bezier(.2,.85,.25,1)}
@@ -571,9 +570,13 @@
   .closer .btn.primary:hover{background:#fff}
 
   /* ---- footer: one quiet bar — copyright left, links right ---- */
-  footer{margin-top:64px;padding-top:0}
+  /* no double-tap zoom on phones - one tap should read as one tap */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body,button,a{touch-action:manipulation}
+
+  footer{margin-top:34px;padding-top:0}
   .f1-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;
-    flex-wrap:wrap;padding:22px 0 30px;border-top:1px solid var(--line)}
+    flex-wrap:wrap;padding:16px 0 14px;border-top:1px solid var(--line)}
   .f1-bar p{margin:0;font-size:12px;letter-spacing:-.005em;color:var(--faint)}
   .f1-social{display:flex;gap:9px}
   .f1-social a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
@@ -594,7 +597,7 @@
   @media(max-width:940px){
     .hero{grid-template-columns:minmax(0,1fr)}
     .stackghost{display:none}
-    .hero-main{min-height:0;padding:26px 0 30px}
+    .hero-main{min-height:0;padding:26px 0 18px}
     /* stacked on small screens: the accordion is a desktop affordance only, so
        every card sits open and nothing widens on hover or tap */
     .ribbon{flex-direction:column;height:auto}
@@ -620,19 +623,19 @@
     .pillnav a{width:36px;height:36px}
     .pillnav svg{width:20px;height:20px}
     .hero{margin-top:70px}
-    .hero-main{min-height:min(58vh,430px);justify-content:flex-start}
+    .hero-main{min-height:0;justify-content:flex-start}
     .receipt{max-width:none}
     .hero-main{padding:24px 0 26px;border-radius:0}
     .hero h2{font-size:clamp(36px,12vw,58px);margin:16px 0 16px}
     .lede{font-size:13px}
     .btn{justify-content:center}
-    .block,.stats,.faq,.closer{margin-top:40px}
+    .block,.stats,.faq,.closer{margin-top:24px}
     .closer{padding:28px 20px;border-radius:24px}
     .sfaq{grid-template-columns:minmax(0,1fr);gap:24px;margin-top:40px}
     .sfaq-points{display:none}
     .sfaq-q{font-size:12.5px;padding:15px 16px}
     .sfaq-a-in{padding-left:16px;padding-right:16px;font-size:12px}
-    .f1-bar{padding-bottom:26px;gap:14px}
+    .f1-bar{padding:14px 0 10px;gap:14px}
     .f1-social{gap:7px}
     .f1-social a{width:34px;height:34px}
   }
@@ -847,6 +850,21 @@
           </div>
         </div>
       </div>
+      <div class="rcard" role="button" tabindex="0" aria-expanded="false">
+        <img src="img/how-03-book.jpg" alt="Deep blue night sky with neon green and pink streaks and four-point stars, the book" loading="lazy" decoding="async" width="2026" height="1093">
+        <span class="shade" aria-hidden="true"></span>
+        <div class="rcard-body">
+          <div class="rcard-top">
+            <span class="rcard-idx">03 &middot; the book</span>
+          </div>
+          <div class="rcard-foot">
+            <h4>One receipt per handle</h4>
+            <div class="rcard-more">
+              <p>Locking files the lineup under your X account and the server grades it against the next window. One receipt per handle per slot, so nobody re-rolls until one hits.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -865,7 +883,6 @@
           <div class="room-open">
             <div class="room-top">
               <span class="room-num">01</span>
-              <div class="room-tags"><span class="room-tag">Surging</span></div>
             </div>
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Surging</h4>
@@ -885,7 +902,6 @@
           <div class="room-open">
             <div class="room-top">
               <span class="room-num">02</span>
-              <div class="room-tags"><span class="room-tag">Coiled</span></div>
             </div>
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Coiled</h4>
@@ -905,7 +921,6 @@
           <div class="room-open">
             <div class="room-top">
               <span class="room-num">03</span>
-              <div class="room-tags"><span class="room-tag">Sleeper</span></div>
             </div>
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Sleeper</h4>
@@ -925,7 +940,6 @@
           <div class="room-open">
             <div class="room-top">
               <span class="room-num">04</span>
-              <div class="room-tags"><span class="room-tag">Quiet</span></div>
             </div>
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Quiet</h4>
@@ -945,7 +959,6 @@
           <div class="room-open">
             <div class="room-top">
               <span class="room-num">05</span>
-              <div class="room-tags"><span class="room-tag">Fade</span></div>
             </div>
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
@@ -1047,7 +1060,6 @@
     <div class="sfaq-right">
     <div class="sfaq-item" data-faq="0">
         <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq0">
-          <svg class="ic sfq-ic"><use href="#i-help"/></svg>
           <span class="sfq-t">The rules this room plays by</span>
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
@@ -1063,7 +1075,6 @@
 
       <div class="sfaq-item" data-faq="1">
         <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq1">
-          <svg class="ic sfq-ic"><use href="#i-database"/></svg>
           <span class="sfq-t">Where do the numbers come from?</span>
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
@@ -1074,7 +1085,6 @@
 
       <div class="sfaq-item" data-faq="2">
         <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq2">
-          <svg class="ic sfq-ic"><use href="#i-target"/></svg>
           <span class="sfq-t">Why don't you just show Motion Score?</span>
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
@@ -1085,7 +1095,6 @@
 
       <div class="sfaq-item" data-faq="3">
         <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq3">
-          <svg class="ic sfq-ic"><use href="#i-lock"/></svg>
           <span class="sfq-t">What happens when I lock a lineup?</span>
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
@@ -1096,7 +1105,6 @@
 
       <div class="sfaq-item" data-faq="4">
         <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq4">
-          <svg class="ic sfq-ic"><use href="#i-trending-up"/></svg>
           <span class="sfq-t">Is the 32-star cap real?</span>
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
@@ -1107,7 +1115,6 @@
 
       <div class="sfaq-item" data-faq="5">
         <button class="sfaq-q" type="button" aria-expanded="false" aria-controls="sfq5">
-          <svg class="ic sfq-ic"><use href="#i-info"/></svg>
           <span class="sfq-t">Are the rarity boosts the real ones?</span>
           <svg class="ic sfq-chev"><use href="#i-chevron-down"/></svg>
         </button>
