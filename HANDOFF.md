@@ -1,8 +1,33 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 14:35 UTC (`main` `00a0843`, live `dpl_6qeXoMkp7LmZsBQnqyVrgUVtHRfi`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 (`main` `3c2ce6e`, live `dpl_9VY7UmVtRGcoDDcLKQnbnSG2iDJs`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+## 2026-11-18 — kartu pick jadi kertas di light mode (`3c2ce6e`)
+
+Border hitam yang diminta brief tidak pernah kelihatan karena akar masalahnya bukan
+tebal garis: di light mode kartu itu **masih memakai permukaan gelap** yang diwarisi
+dari `.herocard` (gradien berakhir di `--card-glow-end`, `#191918`). Garis hitam di atas
+permukaan hitam mustahil terbaca. Sekarang kartu adalah kebalikan persis dari versi dark:
+permukaan kertas, tipe `#111`, hairline tinta `rgba(12,12,11,.92)` setebal 1.5px di
+keempat sisi; dark tetap permukaan tinta dengan hairline kertas. Tiga jebakan yang
+ketemu di jalan, semuanya sudah diperbaiki:
+
+1. `:root[data-theme="dark"] .herocard` (0,3,0) mengalahkan `.herocard.pickcard` (0,2,0)
+   karena urutan stylesheet — diganti jadi `.herocard:not(.pickcard)`.
+2. `--pc-bg` sebagai token custom property yang menunjuk gradien ikut ter-inherit ke
+   anak-anaknya (`.kv` jadi hitam). Token dibuang; gradien ditulis langsung di
+   `background`.
+3. `.pickcard .kv` memakai `--pc-line` sebagai warna gap, jadi begitu border jadi
+   near-solid grid 3x2 berubah jadi slab hitam — sekarang `--pc-cell` + hairline inset.
+
+Dashboard juga dibenerin hari ini: `render()` dulu mengosongkan `#rows` sebelum
+membangun ulang, jadi poll 1 menit yang jatuh di tengah gambar meninggalkan tabel
+kosong. Sekarang baris + spacer masuk `DocumentFragment` dan ditukar sekali di akhir.
+Terbukti di production: stub `/api/signals` dengan nama rank #1 diganti → `poll()`
+menggambar ulang dan tabel tetap utuh.
+
 
 ## 2026-11-18 — satu baris stats, rail filter bertinta, navbar kaca, kartu book hilang (`00a0843`)
 
