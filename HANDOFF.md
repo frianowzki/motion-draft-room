@@ -1,11 +1,30 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 09:05 UTC (`main` `e0367eb`, live `dpl_4HFN2yusc17dh3T5Ldk8T2Ai6TRw`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 09:40 UTC (`main` `ecb9083`, live `dpl_5SFVTDJDcbXvfrweEaW7fGtSAHPn`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
 ---
 
+## 2026-11-18 — art baru di section How it works (main ecb9083)
+
+Tiga gambar dari frian menggantikan art lama, **berurutan** sesuai langkahnya:
+`img/how-01-board.jpg` (langit krimson + streak gold/teal) → kartu 01 the board,
+`img/how-02-draft.jpg` (langit gold terang) → 02 the draft, `img/how-03-book.jpg`
+(langit biru + neon hijau/pink) → 03 the book. Nama file sengaja `how-01..03`
+supaya urutannya kebaca di repo, bukan tiga hash buram. Art lama
+(`O8fokot…`, `Y03xam…`, `bJZSjH…`) masih ada di `img/` tapi **tidak dipakai**
+di HTML mana pun; hapus kalau sudah yakin tidak dipakai lagi.
+
+Gambar asli 2112×1168 dan sejenisnya (landscape), kartu desktop 568px tinggi
+`object-fit:cover` — jadi bagian pinggir terpotong otomatis, bukan di-stretch.
+Attribute `width`/`height` ditambahkan supaya tidak ada layout shift.
+
+**Catatan verifikasi:** `img loading="lazy"` berarti `naturalWidth` = 0 sampai
+kartu masuk viewport. Kalau mengecek di browser, scroll ke kartu dulu baru ukur —
+kalau tidak, akan terlihat seperti gambar gagal load padahal cuma belum diminta.
+
+---
 ## 2026-11-18 — FAQ app digabung ke landing, FAQ app dihapus (main e0367eb)
 
 App punya `<section class="faq">` lima baris ("Questions, answered") yang
