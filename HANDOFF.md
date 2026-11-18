@@ -4,6 +4,39 @@ Terakhir ditulis: 2026-11-18 (`main` `3c2ce6e`, live `dpl_9VY7UmVtRGcoDDcLKQnbnS
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
+## 2026-11-18 — receipt book pindah ke Postgres / Supabase (`02b2471`)
+
+Buku receipt dulu satu file `data/receipts.json` di branch `data`, dan tiap filing itu
+baca-ubah-tulis seluruh file lewat GitHub contents API. Dua orang filing di detik yang
+sama sama-sama lolos dan satu receipt hilang — git gak punya compare-and-swap, jadi
+tidak ada cara benerin itu di kode. Sekarang:
+
+- `api/receipt_store.py` — REST PostgREST lewat urllib (tanpa dependency baru; Vercel
+  cuma kasih satu direktori). Map row <-> JSON envelope yang lama, jadi `app.html`
+  tidak tahu apa-apa soal pindahnya.
+- `db/receipts.sql` — tabel `public.receipts`. Aturan yang dulu loop di endpoint
+  sekarang constraint: `unique (xid, slot_at_lock)` (kunci di id X, bukan handle —
+  handle bisa ganti nama dan dulu akun ganti nama bisa filing dua kali), check 1–5
+  picks, `status in (pending, settled)`, RLS nyala **tanpa policy** supaya anon key
+  (yang ikut di tiap client Supabase) tidak bisa apa-apa; cuma service role yang
+  nyentuh tabel.
+- Grading tidak berubah: tetap snapshot collector di branch `data`, tetap hanya window
+  yang *strictly later* dari lock, tetap dihitung server. Yang pindah cuma tempat nulis.
+- `/api/receipts` **502** kalau `SUPABASE_URL`/`SUPABASE_KEY` kosong. Sengaja: receipt
+  itu bukti, jadi lebih baik gagal kelihatan daripada pura-pura sukses.
+- `docs/supabase.md` = langkah setup untuk user; `.env.example` daftar env-nya.
+- `tests/receipt_store_check.py` + `tests/receipts_endpoint_check.py` jalan lawan
+  Postgres 17 lokal (fake PostgREST menerjemahkan REST ke SQL asli). Terbukti: round
+  trip camelCase picks, 409 dari constraint, regrade tidak menduplikasi, check
+  constraint gigit, RLS nyala, urutan newest-first, 401 tanpa sesi, 400 slot masa depan.
+- Terbukti di production: user Connect X (`widyakrnwn` / xid 980354498), filing 5 pick,
+  `GET /api/receipts` → count 1, status pending, picks + thesis + premortem utuh.
+  Pending itu benar: slot-nya masih window terbaru, jadi belum ada yang lebih baru
+  untuk menilai.
+
+Catatan: data lama di branch `data` **tidak** diimport (keputusan user); receipt tes
+`draftroom_test` hilang saat tabel baru dipakai.
+
 ## 2026-11-18 — kartu pick jadi kertas di light mode (`3c2ce6e`)
 
 Border hitam yang diminta brief tidak pernah kelihatan karena akar masalahnya bukan
