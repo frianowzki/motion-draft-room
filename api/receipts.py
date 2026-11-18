@@ -1,8 +1,8 @@
 """Public receipt book at /api/receipts.
 
-GET   -> every line-up receipt on the `data` branch, plus the settled/win rate
-         computed from them. Nothing is filtered by who is asking: a hit rate
-         nobody else can see proves nothing.
+GET   -> every line-up receipt, plus the settled/win rate computed from them.
+         Nothing is filtered by who is asking: a hit rate nobody else can see
+         proves nothing.
 
 POST  -> file a receipt. Body is JSON:
            {"slotAtLock": "...", "picks": [{name, positionAtLock, estStars}]}
@@ -13,11 +13,15 @@ POST  -> file a receipt. Body is JSON:
          client cannot submit a score of its own. One receipt per player per
          slot: re-posting the same player+slot is rejected instead of stacking.
 
-The file is data/receipts.json on the data branch. It is merged, not replaced,
-so two visitors filing at once cannot overwrite each other.
+Receipts live in Postgres (see receipt_store.py). It used to be one JSON file on a
+git branch, which meant every filing was a read-modify-write of the whole book: two
+visitors filing at the same moment lost one of the two writes, and uniqueness was a
+loop here rather than a rule the database could enforce. Now a filing is an INSERT
+and `unique (receipts.xid, receipts.slot_at_lock)` decides who was first.
 
-The write needs a GitHub token. Without GITHUB_TOKEN the endpoint still reads
-(and says so on POST) instead of pretending the receipt was saved.
+Writes need SUPABASE_URL + SUPABASE_KEY. Without them the endpoint fails loudly
+rather than reporting a receipt it did not save. The snapshot the grading reads is
+still the collector's artefact on the data branch, so GITHUB_TOKEN is still needed.
 """
 
 from __future__ import annotations
@@ -28,7 +32,6 @@ import re
 import sys
 import urllib.error
 import urllib.request
-from base64 import b64decode, b64encode
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 
@@ -37,15 +40,14 @@ from http.server import BaseHTTPRequestHandler
 # repository root is not reliably importable from a nested function.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import receipt_store as store
 import xauth_lib as xl
 
 REPO = "frianowzki/motion-draft-room"
 BRANCH = "data"
-PATH = "data/receipts.json"
 SNAPSHOT_PATH = "data/signals.json"
 SNAPSHOT_URL = f"https://api.github.com/repos/{REPO}/contents/{SNAPSHOT_PATH}?ref={BRANCH}"
 MAX_BODY = 8_000
-MAX_RECEIPTS = 500
 
 # A handle that survives a public page: letters, digits, underscore, 1-15 chars,
 # optional leading @. Anything else is rejected rather than sanitised, so a
@@ -90,22 +92,20 @@ def _gh(path, method="GET", payload=None):
         return json.loads(r.read() or b"{}")
 
 
-def _read_receipts():
-    """Return (list, sha). A missing file is an empty book, not an error."""
-    try:
-        data = _gh(f"/repos/{REPO}/contents/{PATH}?ref={BRANCH}")
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return [], None
-        raise
-    raw = b64decode(data["content"]).decode()
-    try:
-        parsed = json.loads(raw)
-    except Exception:
-        parsed = []
-    if isinstance(parsed, dict):
-        parsed = parsed.get("receipts", [])
-    return (parsed if isinstance(parsed, list) else []), data.get("sha")
+def _settle_one(receipt, snap):
+    """Grade a receipt in place-ish, and report whether it changed.
+
+    Pending receipts are graded on read; already-graded ones are not touched, so a
+    GET is a write only when it actually moved a receipt forward. That distinction
+    matters now that writing is an HTTP call to Postgres rather than a local edit.
+    """
+    if not (snap.get("rows") or snap.get("creators")):
+        return receipt, False
+    graded = _settle(receipt, snap)
+    if not graded:
+        return receipt, False
+    return graded, graded.get("score") != receipt.get("score") or \
+        graded.get("status") != receipt.get("status")
 
 
 def _summary(receipts):
@@ -197,7 +197,7 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
 
     def do_GET(self):
         try:
-            receipts, _ = _read_receipts()
+            receipts = store.read(store.PAGE)
         except Exception as e:
             _json(self, 502, {"error": f"could not read the book: {e}"})
             return
@@ -206,16 +206,23 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
         except Exception:
             snap = {"dataAsOf": None}
 
-        # settle anything still pending, using this snapshot
-        if snap.get("rows") or snap.get("creators"):
-            settled_now = []
-            for r in receipts:
-                settled_now.append(_settle(r, snap) or r)
-            receipts = settled_now
+        # regrade anything still pending against this snapshot; receipts that a later
+        # window has already graded keep the score they earned then
+        changed = []
+        for r in receipts:
+            graded, moved = _settle_one(r, snap)
+            if moved:
+                changed.append(graded)
+        try:
+            store.regrade(changed)
+        except Exception:
+            # A failed regrade must not cost the reader their page: the grades are
+            # still correct for this response and will be written on the next one.
+            pass
 
         receipts.sort(key=lambda r: (r.get("lockedAt") or ""), reverse=True)
         _json(self, 200, {
-            "source": f"github:{REPO}@{BRANCH}:{PATH}",
+            "source": "supabase:receipts",
             "asOf": snap.get("dataAsOf"),
             "summary": _summary(receipts),
             "receipts": receipts[:60],
@@ -299,57 +306,32 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
         }
         receipt = _settle(receipt, snap) or receipt
 
+        # Uniqueness is the database's now: `unique (xid, slot_at_lock)` on the table.
+        # This endpoint used to scan the whole book in Python, which raced - two
+        # filings at the same instant both passed the scan and one overwrote the other.
         try:
-            receipts, sha = _read_receipts()
-        except Exception as e:
-            _json(self, 502, {"error": f"cannot read the book: {e}"})
+            saved = store.insert(receipt)
+        except store.Duplicate:
+            _json(self, 409, {"error": f"@{receipt['player']} already filed a lineup for that slot"})
             return
-
-        # A receipt is graded once, against the first window after its lock. If an
-        # older pending receipt can be graded by the snapshot on record now, grade
-        # it here so the book catches up on a write instead of only on a GET.
-        regraded = []
-        for r in receipts:
-            if r.get("status") == "settled":
-                regraded.append(r)
-                continue
-            graded = _settle(r, snap)
-            if graded:
-                regraded.append(graded)
-            else:
-                regraded.append(r)
-        receipts = regraded
-
-        # X ids are the stable identity; handles get renamed and, before this check,
-        # a renamed account could file twice for one slot. Older entries predate xid,
-        # so fall back to the handle only for those.
-        for r in receipts:
-            same_slot = r.get("slotAtLock") == receipt["slotAtLock"]
-            if not same_slot:
-                continue
-            same_person = (r.get("xid") and r["xid"] == receipt["xid"]) or (
-                not r.get("xid") and str(r.get("player", "")).lower() == receipt["player"].lower()
-            )
-            if same_person:
-                _json(self, 409, {"error": f"@{receipt['player']} already filed a lineup for that slot"})
-                return
-
-        receipts.insert(0, receipt)
-        receipts = receipts[:MAX_RECEIPTS]
-
-        try:
-            _gh(
-                f"/repos/{REPO}/contents/{PATH}",
-                method="PUT",
-                payload={
-                    "message": f"receipt: {receipt['player']} @ {receipt['slotAtLock']}",
-                    "content": b64encode((json.dumps(receipts, indent=1) + "\n").encode()).decode(),
-                    "branch": BRANCH,
-                    **({"sha": sha} if sha else {}),
-                },
-            )
         except Exception as e:
             _json(self, 502, {"error": f"could not save the receipt: {e}"})
             return
 
-        _json(self, 201, {"ok": True, "receipt": receipt, "summary": _summary(receipts)})
+        # Catch the rest of the book up on a write as well as on a read, so a page
+        # that is never reloaded does not leave graded receipts ungraded in storage.
+        try:
+            changed = []
+            for r in store.read(store.PAGE):
+                graded, moved = _settle_one(r, snap)
+                if moved:
+                    changed.append(graded)
+            store.regrade(changed)
+        except Exception:
+            pass
+
+        try:
+            receipts = store.read(store.PAGE)
+        except Exception:
+            receipts = [saved]
+        _json(self, 201, {"ok": True, "receipt": saved, "summary": _summary(receipts)})

@@ -4,3 +4,5 @@ __pycache__/
 public/
 .vercel/
 sig_sample.json
+app.html.bak-*
+landing.html.bak-*
