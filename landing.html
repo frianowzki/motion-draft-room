@@ -341,6 +341,7 @@
   .room-card[data-tag="SLEEPER"] .room-dot{background:#5b73c4;opacity:1}
   .room-card[data-tag="QUIET"] .room-dot{background:#8a8a84;opacity:1}
   .room-card[data-tag="FADE"] .room-dot{background:#b45a4f;opacity:1}
+  .room-card[data-tag="STEADY"] .room-dot{background:#5f7fae;opacity:1}
   .room-desc{margin:0;font-size:12.5px;line-height:1.5;color:var(--slab-dim);
     max-width:34ch}
   .room-body{display:grid;grid-template-rows:1fr;opacity:1}
@@ -1036,6 +1037,28 @@
             <div class="room-content">
               <h4 class="room-title"><span class="room-dot"></span>Fade</h4>
               <p class="room-desc">momentum leaving faster than the rank shows</p>
+              <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
+                <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
+              </ol></div></div>
+              <div class="room-dots" data-room-dots></div>
+            </div>
+          </div>
+        </article>
+        <!-- the board tags most of its names STEADY; without a card of their own
+             a quarter of the board never appeared on this page and the room
+             disagreed with the app's table -->
+        <article class="room-card" data-tag="STEADY">
+          <div class="room-strip" aria-hidden="true">
+            <span class="room-num">06</span>
+            <span class="room-vt">Steady</span>
+          </div>
+          <div class="room-open">
+            <div class="room-top">
+              <span class="room-num">06</span>
+            </div>
+            <div class="room-content">
+              <h4 class="room-title"><span class="room-dot"></span>Steady</h4>
+              <p class="room-desc">holding rank — no move either way</p>
               <div class="room-body"><div class="room-scroller"><ol class="room-list" data-room-list>
                 <li class="room-row ph"><span class="room-av fb">--</span><span class="room-name">—</span><span class="room-numv">—</span></li>
               </ol></div></div>
