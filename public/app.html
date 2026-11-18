@@ -140,18 +140,41 @@
      for 320ms, and an unpainted html showed as a light frame around a page that
      had not finished changing */
   html{background:var(--bg)}
-  /* the theme cross-fade. The dashboard used to add .theming to the root with no
-     rule behind it, so the page snapped: the glass bar and the switch swapped
-     colour in one frame while the rest of the page followed, and the mismatch
-     read as a border around the edges. Fade the canvas, the body and the glass
-     chrome together, over the same 320ms the landing page uses. */
-  html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
-  html.theming .appbar,html.theming .appbar.stuck,html.theming .tgs,
-  html.theming .themesw,html.theming .pillnav{
-    transition:background-color .32s ease,box-shadow .32s ease,border-color .32s ease}
+  /* Theme toggle, ported from beui's theme-toggle: one coin that morphs between a
+     sun and a moon, the icon swap blurred rather than cut, and the new paper
+     revealed as a circle opening from the coin. The reveal is what kills the old
+     seam: the page is snapshotted and flooded in as one image, so no hard-coded
+     layer can swap a frame early and flash an edge. */
+  .tt{position:relative;display:grid;place-items:center;width:32px;height:32px;padding:0;
+    border:0;border-radius:100px;cursor:pointer;background:rgba(0,0,0,.04);color:var(--ink);
+    transition:background .2s ease,transform .2s ease}
+  .tt:hover{background:rgba(0,0,0,.09)}
+  .tt:active{transform:scale(.94)}
+  .tt:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+  :root[data-theme="dark"] .tt{background:rgba(255,255,255,.09);color:#fff}
+  :root[data-theme="dark"] .tt:hover{background:rgba(255,255,255,.16)}
+  .tt-face{position:relative;display:block;width:17px;height:17px}
+  .tt-face svg{position:absolute;inset:0;width:17px;height:17px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+    transition:opacity .34s ease,filter .34s ease,transform .44s cubic-bezier(.22,1,.36,1)}
+  .tt[data-on="light"] .tt-sun{opacity:1;filter:blur(0);transform:rotate(0deg) scale(1)}
+  .tt[data-on="light"] .tt-moon{opacity:0;filter:blur(6px);transform:rotate(-35deg) scale(.55)}
+  .tt[data-on="dark"] .tt-sun{opacity:0;filter:blur(6px);transform:rotate(35deg) scale(.55)}
+  .tt[data-on="dark"] .tt-moon{opacity:1;filter:blur(0);transform:rotate(0deg) scale(1)}
+  ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+  html.theming::view-transition-new(root){
+    animation:tt-reveal .52s cubic-bezier(.4,0,.2,1) both;
+    clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
+  @keyframes tt-reveal{
+    from{clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
+    to{clip-path:circle(var(--tt-r,150vmax) at var(--tt-x,50%) var(--tt-y,50%))}}
   @media (prefers-reduced-motion:reduce){
-    html.theming,html.theming body,html.theming .appbar,html.theming .appbar.stuck,
-    html.theming .tgs,html.theming .themesw,html.theming .pillnav{transition:none}
+    ::view-transition-old(root),::view-transition-new(root){animation:none !important}
+    .tt-face svg{transition:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html.theming::view-transition-old(root),
+    html.theming::view-transition-new(root){animation-duration:0s !important}
   }
   body{
     margin:0;background:var(--bg);color:var(--ink);
@@ -220,11 +243,6 @@
     box-shadow:0 1px 0 rgba(255,255,255,.08),0 8px 24px -18px #000}
   /* the pills inside the bar are glass too, one step brighter than the bar */
   .appbar .primary{box-shadow:0 6px 18px -10px rgba(17,17,17,.55)}
-  .appbar .tgs{background:rgba(255,255,255,.5);
-    box-shadow:inset 0 0 0 1px rgba(17,17,17,.08),0 1px 2px rgba(17,17,17,.05),
-      0 8px 20px -14px rgba(17,17,17,.4)}
-  :root[data-theme="dark"] .appbar .tgs{background:rgba(255,255,255,.08);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.13),0 8px 20px -14px #000}
   @media(prefers-reduced-transparency:reduce){
     .appbar,.appbar.stuck{background:var(--card);-webkit-backdrop-filter:none;
       backdrop-filter:none;box-shadow:0 1px 0 var(--line)}
@@ -254,20 +272,70 @@
     box-shadow:inset 0 0 0 1px var(--line),0 10px 30px -24px rgba(17,17,17,.5)}
   .rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--faint);padding:4px 10px 8px}
-  .rail-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:12px;
-    background:transparent;color:var(--ink);font:inherit;font-size:12.5px;font-weight:600;
-    letter-spacing:-.01em;cursor:pointer;text-align:left;width:100%;
-    transition:background .18s ease,color .18s ease}
-  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.8}
-  .rail-item:hover{background:var(--sunken)}
-  .rail-item[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+  /* Ported from beui's animated-sidebar: the selected state is not painted on
+     each item — one pill is positioned behind the rail and springs to whichever
+     item is active, so the highlight travels instead of blinking. The items keep
+     a transparent background; hover uses a separate soft layer so it never
+     fights the travelling pill. */
+  .rail{position:relative}
+  .rail-pill{position:absolute;left:0;top:0;width:0;height:0;border-radius:12px;
+    background:var(--ink);pointer-events:none;opacity:0;
+    transition:transform .42s cubic-bezier(.32,.72,0,1),
+               width .42s cubic-bezier(.32,.72,0,1),
+               height .42s cubic-bezier(.32,.72,0,1),
+               opacity .18s ease}
+  .rail-pill.on{opacity:1}
+  /* Toast stack, ported from beui's animated-toast-stack: cards arrive from
+     below with a slight scale, stack with a small vertical offset and overlap,
+     and the ones behind sit pushed back and dimmed. Only the newest is fully
+     printed, so a burst never covers the board. */
+  .toasts{position:fixed;z-index:90;right:18px;bottom:18px;width:320px;max-width:calc(100vw - 36px);
+    display:flex;flex-direction:column;align-items:stretch;pointer-events:none}
+  .toast{pointer-events:auto;display:flex;gap:10px;align-items:flex-start;width:100%;
+    padding:12px 13px;border-radius:16px;background:var(--card);color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--line),0 18px 40px -24px rgba(17,17,17,.55);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    transform-origin:bottom right;will-change:transform,opacity}
+  .toast .t-ic{width:22px;height:22px;flex:none;border-radius:100px;display:grid;place-items:center;
+    background:var(--sunken);color:var(--ink)}
+  .toast .t-ic svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round}
+  .toast[data-kind="ok"] .t-ic{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+  .toast[data-kind="err"] .t-ic{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+  .toast .t-body{min-width:0;flex:1}
+  .toast .t-title{font-size:12.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
+  .toast .t-desc{font-size:11.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+  .toast .t-x{flex:none;border:0;background:transparent;color:var(--faint);cursor:pointer;
+    padding:2px;line-height:0;border-radius:6px}
+  .toast .t-x:hover{color:var(--ink);background:var(--sunken)}
+  .toast .t-x svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;
+    stroke-linecap:round}
+  /* the arrival curve: in from 18px below and 96% scale, out the same way */
+  @keyframes toast-in{from{opacity:0;transform:translateY(18px) scale(.96)}
+    to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes toast-out{from{opacity:1;transform:translateY(0) scale(1)}
+    to{opacity:0;transform:translateY(10px) scale(.97)}}
+  .toast[data-state="in"]{animation:toast-in .38s cubic-bezier(.22,1,.36,1) both}
+  .toast[data-state="out"]{animation:toast-out .24s cubic-bezier(.4,0,1,1) both}
+  @media (prefers-reduced-motion:reduce){
+    .toast[data-state="in"],.toast[data-state="out"]{animation-duration:.01s}
+  }
+  .rail-item{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:9px 10px;
+    border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;
+    font-size:12.5px;font-weight:600;letter-spacing:-.01em;cursor:pointer;text-align:left;
+    width:100%;transition:color .28s ease}
+  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.72;transition:opacity .28s ease}
+  .rail-item::before{content:"";position:absolute;inset:0;border-radius:12px;
+    background:var(--sunken);opacity:0;transition:opacity .18s ease;z-index:-1}
+  @media (hover:hover){.rail-item:hover::before{opacity:1}}
+  .rail-item[aria-selected="true"]{color:var(--bg)}
   .rail-item[aria-selected="true"] .ic{opacity:1}
   .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;
     padding:1px 6px;border-radius:100px;background:rgba(17,17,17,.06);color:inherit}
   .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.16)}
+  @media (prefers-reduced-motion:reduce){.rail-pill{transition:opacity .12s ease}}
   .rail-sep{height:1px;margin:6px 6px;background:var(--line)}
   .rail-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 2px}
-  .rail-foot .tgs{transform:scale(.92);transform-origin:left center}
   .viewpane{min-width:0}
   .view{display:none}
   .view.is-on{display:block}
@@ -296,13 +364,11 @@
     .rail-brand,.rail-sep,.rail-foot{display:none}
     .rail-item{width:auto;flex:none;padding:8px 10px;font-size:11.5px;gap:7px}
     .rail-item .rail-count{display:none}
-    .rail .tgs{margin-left:auto;transform:scale(.9);transform-origin:right center}
   }
   @media(max-width:520px){
     /* the switch gets its own row under the strip, aligned to the end: the five
        destinations keep one row and nothing has to shrink to unreadable */
     .rail{position:relative;padding:5px}
-    .rail .tgs{position:absolute;right:5px;bottom:-30px;transform:scale(.82);transform-origin:right center}
     .shell{gap:26px}
     .rail-item{padding:7px 6px;font-size:10.5px;gap:4px;letter-spacing:-.02em}
     .rail-item .ic{width:12px;height:12px}
@@ -1202,9 +1268,9 @@
     .tab{padding:9px 12px;min-height:38px;display:inline-flex;align-items:center}
     input,textarea{padding:12px 13px;min-height:46px;font-size:13px;border-radius:12px}
     button{min-height:44px}
-    /* the theme switch is two 28px icon targets inside a 34px pill; the blanket
-       44px tap rule above would stretch them and push the icons into the knob */
-    #themesw .tgs-b{min-height:0}
+    /* the theme coin is a 32px icon target; the blanket 44px tap rule above
+       would stretch it into a bar */
+    #themesw{min-height:0}
     .rar button{min-height:48px}
     /* A side-scrolling table hides the signal column behind a gesture nobody
        makes, so each row becomes a two-line block that fits the screen instead:
@@ -1254,31 +1320,6 @@
 
   /* ---- theme switch ("Switch button" from ThemeChanger): one track, one
      knob that slides, each end a pressable target ---- */
-  .tgs{position:relative;display:inline-flex;align-items:center;gap:0;padding:3px;
-    border-radius:var(--r-pill);background:rgba(17,17,17,.07);
-    box-shadow:inset 0 0 0 1px var(--line);flex:none;
-    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-  .tgs-knob{position:absolute;top:3px;left:3px;width:30px;height:30px;border-radius:50%;
-    background:var(--sunken);box-shadow:0 1px 2px rgba(17,17,17,.18),inset 0 0 0 1px var(--line);
-    transition:transform .26s cubic-bezier(.4,0,.2,1);pointer-events:none}
-  .tgs[data-on="dark"] .tgs-knob{transform:translateX(30px)}
-  .tgs-b{position:relative;z-index:1;width:30px;height:30px;padding:0;border:0;background:transparent;
-    display:grid;place-items:center;cursor:pointer;color:var(--ink);
-    border-radius:50%;transition:color .2s ease}
-  .tgs-b:hover{color:var(--ink)}
-  .tgs-b[aria-pressed="true"]{color:var(--ink)}
-  .tgs-b:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .tgs-b svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;
-    stroke-linecap:round;stroke-linejoin:round;display:block}
-  :root[data-theme="dark"] .tgs{background:rgba(255,255,255,.09);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
-  :root[data-theme="dark"] .tgs-knob{background:#dedbd4;
-    box-shadow:0 1px 3px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.5)}
-  :root[data-theme="dark"] .tgs-b{color:var(--ink)}
-  :root[data-theme="dark"] .tgs-b:hover{color:#fff}
-  :root[data-theme="dark"] .tgs-b[aria-pressed="true"]{color:#111}
-  :root[data-theme="dark"] .tgs-b:focus-visible{outline-color:#fff}
-  @media (prefers-reduced-motion:reduce){.tgs-knob{transition:none}}
 
   /* dashboard placement: the switch lives in a header strip at the top of the
      content column — right-aligned on desktop, its own row on a phone, so it can
@@ -1330,15 +1371,11 @@
   body,.lede,.sfaq-a-in,.rcard-more p{font-family:var(--sans)}
   .lede,.sfaq-a-in{font-weight:400;letter-spacing:-.003em}
   .sfaq-t{font-family:var(--display);font-weight:500;letter-spacing:-.01em}
-  .tgs+.pillnav,.pillnav{margin-top:0}
+  .pillnav{margin-top:0}
 
   @media(max-width:600px){
     .acta{font-size:13px;padding:6px 6px 6px 20px;gap:10px}
     .acta-ic{width:32px;height:32px}
-    .tgs-knob{width:28px;height:28px}
-    .tgs[data-on="dark"] .tgs-knob{transform:translateX(28px)}
-    .tgs-b{width:28px;height:28px}
-    .tgs-b svg{width:15px;height:15px}
   }
 
   /* ---- CTA (same shape as the landing page's arrow button) ----
@@ -1407,6 +1444,7 @@
 </style>
 </head>
 <body>
+<div class="toasts" id="toasts" role="region" aria-label="Notifications" aria-live="polite"></div>
 <div class="aura" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
@@ -1475,11 +1513,9 @@
        the CSS just follows it. -->
   <div class="shell">
   <nav class="rail" id="rail" role="tablist" aria-label="Sections" aria-orientation="vertical">
+    <span class="rail-pill" id="railPill" aria-hidden="true"></span>
     <div class="rail-brand">Motion Draft Room</div>
-    <button type="button" class="rail-item" role="tab" data-view="home" aria-selected="true" aria-controls="v-home">
-      <svg class="ic"><use href="#i-activity"/></svg>Home
-    </button>
-    <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="false" aria-controls="v-market">
+    <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market">
       <svg class="ic"><use href="#i-users"/></svg>Market
       <span class="rail-count" id="railMarket">79</span>
     </button>
@@ -1494,34 +1530,25 @@
       <span class="rail-count" id="railHistory">0</span>
     </button>
     <div class="rail-sep" aria-hidden="true"></div>
-    <div class="rail-foot">
-      <a class="acta acta-sm" href="/" aria-label="Back to the landing page">
-        <span class="acta-t">Back home</span>
-        <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
-      </a>
-    </div>
-    <div class="tgs" id="themesw" role="group" aria-label="Theme">
-      <span class="tgs-knob" aria-hidden="true"></span>
-      <button type="button" class="tgs-b" data-theme-set="light" aria-pressed="true" aria-label="Light">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
-      </button>
-      <button type="button" class="tgs-b" data-theme-set="dark" aria-pressed="false" aria-label="Dark">
-        <svg viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
-      </button>
-    </div>
+    <button type="button" class="tt" id="themesw" data-on="light" aria-label="Switch to dark theme" aria-pressed="false">
+      <span class="tt-face" aria-hidden="true">
+        <svg class="tt-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
+        <svg class="tt-moon" viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
+      </span>
+    </button>
   </nav>
 
   <div class="viewpane">
 
-  <!-- ===== HOME: what the board is doing right now ===== -->
-  <div class="view is-on" id="v-home" role="tabpanel" aria-label="Home">
+  <!-- ===== MARKET: the board you pick from ===== -->
+  <div class="view is-on" id="v-market" role="tabpanel" aria-label="Market">
   <div class="stats" id="stats"></div>
 
     <div class="tabs" id="filters" role="group" aria-label="Filter by signal"></div>
 
   <!-- one screen on a desktop: navbar, then the numbers, then the board and the
-       draft beside it. Your lineup, who is calling and the book sit under both
-       columns, so nothing important is pushed below the fold. -->
+       draft beside it. Your lineup sits under both columns, so nothing important
+       is pushed below the fold. -->
   <div class="grid">
     <div class="card boardcard">
       <h2><svg class="ic"><use href="#i-users"/></svg>Creators</h2>
@@ -1548,10 +1575,6 @@
 
 
   <div class="under">
-    <div class="card identity" style="margin-top:14px">
-      <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
-      <div id="whoBody"></div>
-    </div>
     <div class="card" style="margin-top:14px">
       <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
       <div class="slot" id="slot"></div>
@@ -1564,27 +1587,7 @@
         </button>
       </div>
     </div>
-    <!-- Your own record. The full book stays public at /api/receipts, but a player
-         reads their own positions here first: what is pending, what it settled at,
-         and where that puts them in the standings. -->
-    <div class="card mine" style="margin-top:14px" id="mineCard">
-      <h2><svg class="ic"><use href="#i-layers"/></svg>Your receipts <span class="pill" id="mineState"></span></h2>
-      <div id="mineBody"></div>
-    </div>
   </div>
-  </div>
-
-  <!-- ===== MARKET: sit down and make the pick ===== -->
-  <div class="view" id="v-market" role="tabpanel" aria-label="Market" hidden>
-    <div class="card empty-view">
-      <h2><svg class="ic"><use href="#i-users"/></svg>Market</h2>
-      <p>The board you pick from lives on Home, beside the draft panel: filter it by
-         signal, open a creator, and say why each pick wins or fails.</p>
-      <button type="button" class="acta acta-solid" data-goto="home">
-        <span class="acta-t">Open the board</span>
-        <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
-      </button>
-    </div>
   </div>
 
   <!-- ===== LEADERBOARD: players, not creators ===== -->
@@ -1604,15 +1607,20 @@
 
   <!-- ===== PROFILE: who you are and what you have on record ===== -->
   <div class="view" id="v-profile" role="tabpanel" aria-label="Profile" hidden>
-    <div class="card empty-view">
-      <h2><svg class="ic"><use href="#i-user"/></svg>Profile</h2>
-      <p>Who is calling and every receipt in your name. Both cards stay on Home so
-         the room works in one glance; this panel is where they will live once a
-         player handle replaces the shared identity.</p>
-      <div class="lb-skel" aria-hidden="true">
-        <div class="lb-row"><span class="lb-rank">@</span><span class="lb-name">Not connected</span><span class="lb-pts">—</span></div>
-      </div>
+
+  <div class="under">
+    <div class="card identity" style="margin-top:0">
+      <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
+      <div id="whoBody"></div>
     </div>
+    <!-- Your own record. The full book stays public at /api/receipts, but a player
+         reads their own positions here first: what is pending, what it settled at,
+         and where that puts them in the standings. -->
+    <div class="card mine" style="margin-top:14px" id="mineCard">
+      <h2><svg class="ic"><use href="#i-layers"/></svg>Your receipts <span class="pill" id="mineState"></span></h2>
+      <div id="mineBody"></div>
+    </div>
+  </div>
   </div>
 
   <!-- ===== HISTORY: the board, window by window ===== -->
@@ -2984,18 +2992,20 @@ function renderDetail() {
   $("#addBtn").onclick = () => {
     const th = $("#thesis").value.trim(), pm = $("#premortem").value.trim();
     const rarity = (rarBtns.find(b => b.classList.contains("on")) || {}).dataset?.r || "Common";
-    if (th.length < 8 || pm.length < 8) { alert("Thesis and pre-mortem both need at least 8 characters."); return; }
+    if (th.length < 8 || pm.length < 8) { say("Not filed yet", "Thesis and pre-mortem both need at least 8 characters.", "err"); return; }
     const prev = PICKS.find(p => p.name === c.name);
     const others = PICKS.filter(p => p.name !== c.name);
-    if (others.length >= SIZE) { alert(`Lineup is full (${SIZE} picks).`); return; }
+    if (others.length >= SIZE) { say("Lineup is full", `You already hold ${SIZE} picks. Clear one to swap it out.`, "err"); return; }
     const spent = others.reduce((a, p) => a + p.estStars, 0);
-    if (spent + c.estStars > CAP) { alert(`That would exceed the ${CAP}-star cap (${spent} + ${c.estStars}).`); return; }
-    if (prev && prev.rarity !== rarity) { alert("A creator keeps the rarity you filed for them. Clear the pick first to change it."); return; }
+    if (spent + c.estStars > CAP) { say("Over the star cap", `That would spend ${spent + c.estStars} of ${CAP} stars.`, "err"); return; }
+    if (prev && prev.rarity !== rarity) { say("Rarity is locked", "A creator keeps the rarity you filed them at. Clear the pick first.", "err"); return; }
     PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum, rarity: prev ? prev.rarity : rarity }];
     savePicks(); render();
+    say(prev ? "Pick updated" : "Added to the lineup", `${c.name} \u00b7 ${prev ? prev.rarity : rarity} \u00b7 ${c.estStars}${STAR}`, "ok");
   };
   const rm = $("#rmBtn");
-  if (rm) rm.onclick = () => { PICKS = PICKS.filter(p => p.name !== c.name); savePicks(); render(); };
+  if (rm) rm.onclick = () => { PICKS = PICKS.filter(p => p.name !== c.name); savePicks(); render();
+    say("Pick cleared", `${c.name} is out of the lineup.`, "info"); };
 }
 
 function savePicks() { localStorage.setItem("mdr_picks", JSON.stringify(PICKS)); }
@@ -3402,44 +3412,116 @@ document.addEventListener("click", e => {
 // session is fetched once at load and again when the OAuth popup reports back
 </script>
 <script>
-/* theme switch — one knob group per page, one stored value, both pages agree */
+/* ---------- toast stack (ported from beui's animated-toast-stack)
+   Newest at the bottom, older cards pushed up and back. Each card lives 5s, is
+   dismissible, and a change of the stack is animated by re-measuring after the
+   DOM pass so the shift reads as motion rather than a jump. */
+(function () {
+  var host = document.getElementById('toasts');
+  if (!host) return;
+  var MAX = 3, LIFE = 5000;
+  var ICONS = {
+    ok: '<path d="M4.5 12.5 9 17l10.5-10"/>',
+    err: '<path d="M6 6l12 12M18 6 6 18"/>',
+    info: '<path d="M12 8.2v.2M12 11.5v5"/>'
+  };
+
+  function dismiss(card) {
+    if (!card || card.dataset.state === 'out') return;
+    card.dataset.state = 'out';
+    card.addEventListener('animationend', function () { card.remove(); }, { once: true });
+    // a reduced-motion or backgrounded tab may never fire animationend
+    setTimeout(function () { if (card.isConnected) card.remove(); }, 400);
+  }
+
+  function push(opts) {
+    var o = typeof opts === 'string' ? { title: opts } : (opts || {});
+    var card = document.createElement('div');
+    card.className = 'toast';
+    card.dataset.kind = o.kind || 'info';
+    card.dataset.state = 'in';
+    card.innerHTML =
+      '<span class="t-ic" aria-hidden="true"><svg viewBox="0 0 24 24">' + (ICONS[o.kind] || ICONS.info) + '</svg></span>' +
+      '<div class="t-body"><div class="t-title"></div>' + (o.desc ? '<div class="t-desc"></div>' : '') + '</div>' +
+      '<button type="button" class="t-x" aria-label="Dismiss"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
+    card.querySelector('.t-title').textContent = o.title || '';
+    if (o.desc) card.querySelector('.t-desc').textContent = o.desc;
+    card.querySelector('.t-x').addEventListener('click', function () { dismiss(card); });
+    host.appendChild(card);
+
+    // keep at most MAX: the oldest leaves so the burst never covers the board
+    var cards = [].slice.call(host.children);
+    while (cards.length > MAX) { dismiss(cards.shift()); }
+    // the cards behind step up and shrink a touch, newest fully forward
+    [].slice.call(host.children).reverse().forEach(function (c, i) {
+      if (c.dataset.state === 'out') return;
+      c.style.zIndex = String(100 - i);
+      c.style.transform = i === 0 ? '' : 'translateY(' + (-i * 6) + 'px) scale(' + (1 - i * 0.03) + ')';
+      c.style.opacity = i === 0 ? '' : String(Math.max(0.55, 1 - i * 0.18));
+    });
+    setTimeout(function () { dismiss(card); }, LIFE);
+    return card;
+  }
+
+  window.toast = push;
+  window.say = function (title, desc, kind) { return push({ title: title, desc: desc, kind: kind }); };
+})();
+
+/* theme toggle — ported from beui's theme-toggle. One coin, one stored value,
+   and the new theme is revealed as a circle opening from the coin itself. */
 (function () {
   var root = document.documentElement;
-  var mem = document.getElementById('themesw');
-  var btns = mem ? mem.querySelectorAll('[data-theme-set]') : [];
+  var btn = document.getElementById('themesw');
   var meta = document.querySelector('meta[name="theme-color"]');
   var paper = { light: '#f4f3f0', dark: '#0f0f0e' };
 
   function paint(t) {
     root.setAttribute('data-theme', t);
     if (meta) meta.setAttribute('content', paper[t] || paper.light);
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-theme-set') === t));
+    if (btn) {
+      btn.setAttribute('data-on', t);
+      btn.setAttribute('aria-pressed', String(t === 'dark'));
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
     }
-    if (mem) mem.setAttribute('data-on', t);
+  }
+  // radius that reaches the farthest corner from the coin, so the flood covers it
+  function geometry() {
+    if (!btn) return;
+    var r = btn.getBoundingClientRect();
+    var x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var far = Math.max(
+      Math.hypot(x, y), Math.hypot(window.innerWidth - x, y),
+      Math.hypot(x, window.innerHeight - y), Math.hypot(window.innerWidth - x, window.innerHeight - y));
+    root.style.setProperty('--tt-x', x + 'px');
+    root.style.setProperty('--tt-y', y + 'px');
+    root.style.setProperty('--tt-r', Math.ceil(far) + 'px');
   }
   function set(t) {
     if (t !== 'dark' && t !== 'light') return;
-    // cross-fade only when someone asked: a system-preference flip or the first
-    // paint must land in one frame, or the page shows a frame around itself
-    root.classList.add('theming');
-    window.setTimeout(function () { root.classList.remove('theming'); }, 400);
-    paint(t);
+    var still = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
     try { localStorage.setItem('mdr-theme', t); } catch (e) {}
+    if (still || !document.startViewTransition) { paint(t); return; }
+    geometry();
+    root.classList.add('theming');
+    var vt = document.startViewTransition(function () { paint(t); });
+    vt.finished.then(function () { root.classList.remove('theming'); },
+                     function () { root.classList.remove('theming'); });
   }
 
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener('click', function () { set(this.getAttribute('data-theme-set')); });
-  }
+  if (btn) btn.addEventListener('click', function () {
+    set(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
   paint(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
 
   // with no stored choice, the page keeps following the system
   try {
-    window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function (e) {
-      var stored = null;
-      try { stored = localStorage.getItem('mdr-theme'); } catch (err) {}
-      if (!stored) paint(e.matches ? 'dark' : 'light');
-    });
+    if (window.matchMedia('(prefers-color-scheme:dark)').addEventListener) {
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function (e) {
+        var stored = null;
+        try { stored = localStorage.getItem('mdr-theme'); } catch (err) {}
+        if (!stored) paint(e.matches ? 'dark' : 'light');
+      });
+    }
   } catch (e) {}
 })();
 </script>
@@ -3454,16 +3536,32 @@ document.addEventListener("click", e => {
   if (!rail) return;
   var tabs = [].slice.call(rail.querySelectorAll('.rail-item'));
   var views = [].slice.call(document.querySelectorAll('.viewpane .view'));
-  var NAMES = { home: 'Home', market: 'Market', leaderboard: 'Leaderboard', profile: 'Profile', history: 'History' };
+  var NAMES = { market: 'Market', leaderboard: 'Leaderboard', profile: 'Profile', history: 'History' };
+
+  var pill = document.getElementById('railPill');
+  // move the travelling highlight to the active item; measured against the rail
+  // because the rail scrolls horizontally on phones
+  function movePill(btn) {
+    if (!pill || !btn) return;
+    var r = rail.getBoundingClientRect(), b = btn.getBoundingClientRect();
+    pill.style.width = b.width + 'px';
+    pill.style.height = b.height + 'px';
+    pill.style.transform = 'translate(' + (b.left - r.left + rail.scrollLeft) + 'px,' +
+      (b.top - r.top + rail.scrollTop) + 'px)';
+    pill.classList.add('on');
+  }
 
   function show(name, push) {
-    if (!NAMES[name]) name = 'home';
+    if (!NAMES[name]) name = 'market';
     views.forEach(function (v) { v.classList.toggle('is-on', v.id === 'v-' + name); v.hidden = v.id !== 'v-' + name; });
+    var active = null;
     tabs.forEach(function (t) {
       var on = t.getAttribute('data-view') === name;
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
+      if (on) active = t;
     });
+    movePill(active);
     if (push !== false && location.hash.slice(1) !== name) {
       try { history.replaceState(null, '', '#' + name); } catch (e) { location.hash = name; }
     }
@@ -3492,8 +3590,21 @@ document.addEventListener("click", e => {
     if (b) show(b.getAttribute('data-goto'));
   });
 
+  // the pill is measured, so it has to be re-placed whenever the rail reflows
+  var rt = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      movePill(rail.querySelector('.rail-item[aria-selected="true"]'));
+    }, 120);
+  });
+  if (window.ResizeObserver && rail) {
+    new ResizeObserver(function () {
+      movePill(rail.querySelector('.rail-item[aria-selected="true"]'));
+    }).observe(rail);
+  }
   window.addEventListener('hashchange', function () { show(location.hash.slice(1), false); });
-  show(location.hash.slice(1) || 'home', false);
+  show(location.hash.slice(1) || 'market', false);
 })();
 </script>
 

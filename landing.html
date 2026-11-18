@@ -106,69 +106,44 @@
   :root[data-theme="dark"] .chip{color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
   :root[data-theme="dark"] .hc-row{color:var(--ink)}
   :root[data-theme="dark"] .hc-foot{color:var(--ink)}
-  :root[data-theme="dark"] .themesw{background:rgba(255,255,255,.08)}
-  :root[data-theme="dark"] .themesw button{color:var(--ink)}
-  :root[data-theme="dark"] .themesw button:hover{color:#fff}
-  :root[data-theme="dark"] .themesw button[aria-pressed="true"]{color:#fff;
-    background:rgba(255,255,255,.2)}
-  :root[data-theme="dark"] .pillnav a{color:var(--ink)}
-  :root[data-theme="dark"] .pillnav a:hover{color:#fff}
-  :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16)}
-  :root[data-theme="dark"] .faq-body{color:var(--ink)}
-  :root[data-theme="dark"] .faq-item summary{color:var(--ink)}
-  :root[data-theme="dark"] .stat .k, :root[data-theme="dark"] .slab span{color:var(--ink)}
-  :root[data-theme="dark"] .sec-head .tag, :root[data-theme="dark"] .tag{color:var(--ink)}
-  :root[data-theme="dark"] .stat .v{color:var(--ink)}
-  :root[data-theme="dark"] .hc-up, :root[data-theme="dark"] .hc-row b{color:#6cd793}
-  :root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.06);color:var(--ink)}
-  :root[data-theme="dark"] .btn.ghost:hover{background:rgba(255,255,255,.11)}
-  /* dark mode: the slab stays paper-white with ink text, and its button goes
-     black-on-white — it is the loudest thing on a dark page either way */
-  :root[data-theme="dark"] .closer{background:var(--accent);color:#fff;
-    box-shadow:none}
-  :root[data-theme="dark"] .closer h3{color:#fff}
-  :root[data-theme="dark"] .closer-sub{color:#fff}
-  :root[data-theme="dark"] .closer .btn.primary{background:#fff;color:var(--accent);
-    box-shadow:none}
-  :root[data-theme="dark"] .closer .btn.primary:hover{background:#fff;filter:brightness(.97)}
-  :root[data-theme="dark"] .hc-state{color:var(--bg);background:var(--ink)}
-  :root[data-theme="dark"] .pillnav{background:rgba(28,28,26,.48);
-    box-shadow:0 10px 30px rgba(0,0,0,.42),inset 0 0 0 1px rgba(255,255,255,.14)}
-  :root[data-theme="dark"] .pillnav a{color:var(--ink)}
-  :root[data-theme="dark"] .pillnav a:hover{color:#fff;background:rgba(255,255,255,.09)}
-  :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  /* Theme toggle, ported from beui's theme-toggle: one coin that morphs between a
+     sun and a moon, the icon swap blurred and scaled rather than cut, and the new
+     paper revealed as a circle growing out of the coin (View Transitions). */
+  .tt{position:absolute;right:0;top:0;pointer-events:auto;display:grid;place-items:center;
+    width:32px;height:32px;padding:0;border:0;border-radius:100px;cursor:pointer;
+    background:rgba(0,0,0,.04);color:var(--ink);
+    transition:background .2s ease,transform .2s ease}
+  .tt:hover{background:rgba(0,0,0,.09)}
+  .tt:active{transform:scale(.94)}
+  .tt:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+  :root[data-theme="dark"] .tt{background:rgba(255,255,255,.09);color:#fff}
+  :root[data-theme="dark"] .tt:hover{background:rgba(255,255,255,.16)}
+  .tt-face{position:relative;display:block;width:17px;height:17px}
+  .tt-face svg{position:absolute;inset:0;width:17px;height:17px;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+    transition:opacity .34s ease,filter .34s ease,transform .44s cubic-bezier(.22,1,.36,1)}
+  /* the icon that is leaving blurs out while the one arriving blurs in, so the
+     two never read as a hard cut */
+  .tt[data-on="light"] .tt-sun{opacity:1;filter:blur(0);transform:rotate(0deg) scale(1)}
+  .tt[data-on="light"] .tt-moon{opacity:0;filter:blur(6px);transform:rotate(-35deg) scale(.55)}
+  .tt[data-on="dark"] .tt-sun{opacity:0;filter:blur(6px);transform:rotate(35deg) scale(.55)}
+  .tt[data-on="dark"] .tt-moon{opacity:1;filter:blur(0);transform:rotate(0deg) scale(1)}
+  /* the reveal: the snapshot of the old page is clipped to a circle that grows
+     from the button, so the change spreads from where the finger was */
+  ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+  html.theming::view-transition-new(root){
+    animation:tt-reveal .52s cubic-bezier(.4,0,.2,1) both;
+    clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
+  @keyframes tt-reveal{
+    from{clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
+    to{clip-path:circle(var(--tt-r,150vmax) at var(--tt-x,50%) var(--tt-y,50%))}}
 
-  /* ---- theme switch (Framer "CoolThemeSwitch" port): two icon knobs in a
-     sunken track, and the page cross-fades between two inks ---- */
-  .themesw{position:absolute;right:0;pointer-events:auto;
-    display:flex;align-items:center;gap:2px;padding:3px;border-radius:100px;
-    background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.10)}
-  .themesw button{width:30px;height:30px;border:0;border-radius:100px;background:transparent;
-    display:grid;place-items:center;cursor:pointer;color:var(--ink);
-    transition:color .2s ease,background .2s ease}
-  .themesw button:hover{color:#fff;background:rgba(255,255,255,.08)}
-  .themesw button[aria-pressed="true"]{color:#fff;background:rgba(255,255,255,.14)}
-  .themesw button:focus-visible{outline:2px solid #fff;outline-offset:2px}
-  .themesw button{transition:color .16s,background .16s}
-  .themesw svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;
-    stroke-linecap:round;stroke-linejoin:round;display:block}
-  html.theming,html.theming body{transition:background-color .32s ease,color .32s ease}
-  /* the glass pills carry a different fill per theme, so they have to fade with
-     the page: swapping instantly left a light (or dark) pill and its hairline
-     frozen on a background that was still half-way through the cross-fade —
-     that mismatch is the "border" that showed up when the theme changed */
-  html.theming .pillnav,html.theming .tgs,html.theming .themesw,
-  html.theming .appbar,html.theming .appbar.stuck{
-    transition:background-color .32s ease,box-shadow .32s ease,border-color .32s ease}
   /* the root starts from the same paper, so the fade has nothing to travel through */
   html{background-color:var(--bg)}
   @media (prefers-reduced-motion:reduce){
-    html.theming,html.theming body{transition:none}
-    /* no fade at all when motion is reduced: swap the lot in one frame */
-    html.theming .pillnav,html.theming .tgs,html.theming .themesw,
-    html.theming .appbar,html.theming .appbar.stuck{transition:none}
-    .themesw button{transition:none}
+    /* no reveal at all when motion is reduced: the swap lands in one frame */
+    ::view-transition-old(root),::view-transition-new(root){animation:none !important}
+    .tt-face svg{transition:none}
   }
 
   *,*::before,*::after{box-sizing:border-box}
@@ -212,7 +187,7 @@
   .dockrow::before{content:"";position:absolute;left:-24px;right:-24px;top:0;bottom:-10px;
     background:linear-gradient(var(--bg) 72%,transparent);z-index:-1;pointer-events:none}
   .dockrow .pillnav{margin-top:0;flex:none}
-  .themesw{position:static;flex:none}
+  .tt{position:static;flex:none}
   /* light mode: a softly translucent paper pill — the ink stays legible over the
      hero without the heavy dark slab the first pass used */
   .pillnav{pointer-events:auto;margin-top:14px;display:flex;align-items:center;gap:6px;
@@ -768,8 +743,8 @@
     .wrap{padding:0 12px 64px}
     .dock{margin-top:10px;padding:0 12px}
     .dockrow{padding-top:10px;gap:6px}
-    .themesw button{width:28px;height:28px}
-    .themesw svg{width:14px;height:14px}
+    .tt{width:30px;height:30px}
+    .tt-face,.tt-face svg{width:16px;height:16px}
     .pillnav{gap:2px;padding:6px 8px}
     .pillnav a{width:36px;height:36px}
     .pillnav svg{width:20px;height:20px}
@@ -839,10 +814,10 @@
     font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:-.01em;
     transition:background .22s ease,box-shadow .22s ease,color .22s ease;width:max-content}
   .acta-t{display:block;white-space:nowrap}
-  /* the disc is paper and the arrow is the accent, so the arrow always reads
-     against its own coin no matter what it is sitting on */
+  /* the disc is ink and the arrow is paper in light mode (black coin, white
+     arrow); dark mode flips it back, so it always reads against its own coin */
   .acta-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;
-    background:var(--card);color:var(--ink);transition:transform .28s ease,background .22s ease}
+    background:#111;color:#fff;transition:transform .28s ease,background .22s ease}
   .acta-ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
     stroke-linecap:round;stroke-linejoin:round;transition:transform .28s ease}
   .acta:hover{background:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);filter:brightness(1.06)}
@@ -928,14 +903,14 @@
      the pill cannot take its colour from the page; the colours are literal.
      The disc needs three classes to beat `.pickcard .hc-act`'s siblings and the
      base `.acta-ic` rule, which are both (0,2,0). */
-  /* light: the pill is paper, the label is ink, and the disc is paper with an ink
-     ring so the arrow stays visible. It was only a 1px inset ring with a paper
-     fill, which read as a hollow outline instead of the white disc the brief
-     asked for — fill it with paper and keep the ring thin. */
+  /* light: the pill is paper and the label is ink, and the arrow sits on a solid
+     ink coin with a paper arrow. Contact is guaranteed either way — the coin is
+     dark against a light pill, and the arrow is light against the coin — so it
+     needs no ring and never reads as a hollow outline. */
   :root:not([data-theme="dark"]) .pickcard .acta.hc-act{background:#fff;color:#111;
     box-shadow:inset 0 0 0 1px #fff}
-  :root:not([data-theme="dark"]) .pickcard .acta.hc-act .acta-ic{background:#fff;
-    color:#111;box-shadow:inset 0 0 0 1.25px #111}
+  :root:not([data-theme="dark"]) .pickcard .acta.hc-act .acta-ic{background:#111;
+    color:#fff;box-shadow:none}
   :root:not([data-theme="dark"]) .pickcard .acta.hc-act:hover{background:#fff;
     color:#111;filter:brightness(.94)}
 
@@ -999,15 +974,13 @@
         <svg viewBox="0 0 24 24"><path d="M9.14648 9.07361C9.31728 8.54732 9.63015 8.07896 10.0508 7.71948C10.4714 7.36001 10.9838 7.12378 11.5303 7.03708C12.0768 6.95038 12.6362 7.0164 13.1475 7.22803C13.6587 7.43966 14.1014 7.78875 14.4268 8.23633C14.7521 8.68391 14.9469 9.21256 14.9904 9.76416C15.0339 10.3158 14.9238 10.8688 14.6727 11.3618C14.4215 11.8548 14.0394 12.2685 13.5676 12.5576C13.0958 12.8467 12.5533 12.9998 12 12.9998V14.0002M12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21ZM12.0498 17V17.1L11.9502 17.1002V17H12.0498Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </nav>
-    <div class="tgs" id="themesw" role="group" aria-label="Theme">
-      <span class="tgs-knob" aria-hidden="true"></span>
-      <button type="button" class="tgs-b" data-theme-set="light" aria-pressed="true" aria-label="Light">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
-      </button>
-      <button type="button" class="tgs-b" data-theme-set="dark" aria-pressed="false" aria-label="Dark">
-        <svg viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
-      </button>
-    </div>
+    <button type="button" class="tt" id="themesw" data-on="light" aria-label="Switch to dark theme" aria-pressed="false">
+      <span class="tt-face" aria-hidden="true">
+        <svg class="tt-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
+        <svg class="tt-moon" viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
+      </span>
+    </button>
+
     </div>
   </div>
 
@@ -1033,7 +1006,7 @@
     </div>
     <div class="ribbon">
       <div class="rcard" role="button" tabindex="0" aria-expanded="true" data-wide data-open>
-        <img src="img/how-01-board.jpg" alt="Crimson night sky with gold and teal streaks over dark clouds, the board" loading="lazy" decoding="async" width="2112" height="1168">
+        <img src="img/how-01-board.jpg" alt="Vivid blue sky with white four-point stars, diagonal light rays and soft clouds along the bottom, the board" loading="lazy" decoding="async" width="2080" height="1168">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
@@ -1048,7 +1021,7 @@
         </div>
       </div>
       <div class="rcard" role="button" tabindex="0" aria-expanded="false">
-        <img src="img/how-02-draft.jpg" alt="Golden sky with cream light rays, white stars and rounded clouds, the draft" loading="lazy" decoding="async" width="2080" height="1168">
+        <img src="img/how-02-draft.jpg" alt="A huge orange sun setting behind a purple city silhouette, the draft" loading="lazy" decoding="async" width="2080" height="1168">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
@@ -1063,7 +1036,7 @@
         </div>
       </div>
       <div class="rcard" role="button" tabindex="0" aria-expanded="false">
-        <img src="img/how-03-book.jpg" alt="Deep blue night sky with neon green and pink streaks and four-point stars, the book" loading="lazy" decoding="async" width="2026" height="1093">
+        <img src="img/how-03-book.jpg" alt="Dark sky streaked with deep red, gold and teal light over scattered four-point stars, the book" loading="lazy" decoding="async" width="2112" height="1168">
         <span class="shade" aria-hidden="true"></span>
         <div class="rcard-body">
           <div class="rcard-top">
@@ -1636,38 +1609,60 @@ fetch("/api/signals", { cache: "no-store" })
 </script>
 
 <script>
-/* theme switch — one knob group, one stored value, both pages agree */
+/* theme toggle — ported from beui's theme-toggle. One coin, one stored value,
+   and the new theme is revealed as a circle opening from the coin itself. */
 (function () {
   var root = document.documentElement;
-  var mem = document.getElementById('themesw');
-  var btns = mem ? mem.querySelectorAll('[data-theme-set]') : [];
+  var btn = document.getElementById('themesw');
   var meta = document.querySelector('meta[name="theme-color"]');
   var ink = { light: '#f4f3f0', dark: '#0f0f0e' };
 
   function paint(t) {
     root.setAttribute('data-theme', t);
     if (meta) meta.setAttribute('content', ink[t] || ink.light);
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].setAttribute('aria-pressed', String(btns[i].getAttribute('data-theme-set') === t));
+    if (btn) {
+      btn.setAttribute('data-on', t);
+      btn.setAttribute('aria-pressed', String(t === 'dark'));
+      btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
     }
-    if (mem) mem.setAttribute('data-on', t);
   }
-  function set(t, animate) {
+  // radius that reaches the farthest corner from the coin, so the flood covers it
+  function geometry() {
+    if (!btn) return;
+    var r = btn.getBoundingClientRect();
+    var x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var far = Math.max(
+      Math.hypot(x, y), Math.hypot(window.innerWidth - x, y),
+      Math.hypot(x, window.innerHeight - y), Math.hypot(window.innerWidth - x, window.innerHeight - y));
+    root.style.setProperty('--tt-x', x + 'px');
+    root.style.setProperty('--tt-y', y + 'px');
+    root.style.setProperty('--tt-r', Math.ceil(far) + 'px');
+  }
+  function set(t) {
     if (t !== 'dark' && t !== 'light') return;
-    if (animate) { root.classList.add('theming'); window.setTimeout(function () { root.classList.remove('theming'); }, 400); }
-    paint(t);
+    var still = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
     try { localStorage.setItem('mdr-theme', t); } catch (e) {}
+    if (still || !document.startViewTransition) { paint(t); return; }
+    geometry();
+    root.classList.add('theming');
+    var vt = document.startViewTransition(function () { paint(t); });
+    vt.finished.then(function () { root.classList.remove('theming'); },
+                     function () { root.classList.remove('theming'); });
   }
 
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener('click', function () { set(this.getAttribute('data-theme-set'), true); });
-  }
+  if (btn) btn.addEventListener('click', function () {
+    set(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
   paint(root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
   // a reader with no stored choice follows the system when it changes
   try {
-    matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function (e) {
-      if (!localStorage.getItem('mdr-theme')) set(e.matches ? 'dark' : 'light', true);
-    });
+    if (window.matchMedia('(prefers-color-scheme:dark)').addEventListener) {
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function (e) {
+        var stored = null;
+        try { stored = localStorage.getItem('mdr-theme'); } catch (err) {}
+        if (!stored) paint(e.matches ? 'dark' : 'light');
+      });
+    }
   } catch (e) {}
 })();
 </script>
