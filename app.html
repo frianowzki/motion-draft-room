@@ -532,58 +532,55 @@
   :root[data-theme="dark"] .bc.up .fill{background:var(--up)}
   :root[data-theme="dark"] .bc.down .fill{background:var(--down)}
 
-  /* ---- paging under the board */
-  .pager{display:flex;align-items:center;justify-content:space-between;gap:10px;
-    margin-top:auto;padding-top:8px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+  /* ---- paging under the board: Longroom's pager
+     Vermilion-on-slate in the reference; here the accent is the page's own ink,
+     because the board already spends its colour on signals and a third accent
+     would fight them. What is borrowed is the shape: a quiet rule, then a centred
+     row of small soft-cornered squares, the current one filled dark, an ellipsis
+     for the stretch it skipped, and round-arrow prev/next at the ends. The same
+     row serves both widths - at 390px it holds one digit fewer on either side of
+     the current page, which lands on a row that still fits a thumb. */
+  .pager{display:flex;flex-direction:column;align-items:center;gap:9px;
+    margin-top:auto;padding-top:14px;border-top:1px solid var(--line-soft)}
   /* margin-top:auto parks the pager on the bottom edge of the card, so any spare
      height lands between the rows and the pager instead of below it */
   .pager .pinfo{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
     text-transform:uppercase;color:var(--faint);white-space:nowrap}
-  .pager .pnums{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-  .pager button{font-family:var(--mono);font-size:9.5px;min-width:26px;height:26px;padding:0 7px;
-    border-radius:7px;background:transparent;color:var(--dim);cursor:pointer;
-    box-shadow:inset 0 0 0 1px var(--line)}
-  .pager button:hover:not(:disabled){color:var(--ink);background:rgba(17,17,17,.04)}
-  .pager button[aria-current="page"]{background:var(--ink);color:var(--accent-ink);box-shadow:none;font-weight:600}
-  .pager button:disabled{opacity:.35;cursor:default}
-  .pager .gap{font-size:10px;color:var(--faint);padding:0 1px}
-  :root[data-theme="dark"] .pager button:hover:not(:disabled){background:rgba(255,255,255,.06)}
-  /* a phone gets five per page and a pager that reads as one control: a wide
-     previous / next pair with the position between them, and a row of dots under
-     it. Numbered buttons need a row of their own at 390px and say less. */
-  .pager .pstep{display:none}
-  .pager .pdots{display:none}
+  .pager .pnums{display:flex;align-items:center;justify-content:center;gap:4px}
+  /* box-shadow:none is load-bearing: the global button rule draws a hairline ring,
+     which turned every page number into a chip. The reference has no rings - only
+     the current page is filled. */
+  .pager button{font-family:var(--sans);font-size:12.5px;font-weight:600;min-width:30px;height:30px;
+    padding:0 6px;border:0;border-radius:8px;background:transparent;color:var(--dim);
+    box-shadow:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    transition:background-color .25s cubic-bezier(.16,1,.3,1),color .25s cubic-bezier(.16,1,.3,1)}
+  .pager button:hover:not(:disabled):not([aria-current]){background:var(--sunken);color:var(--ink);
+    box-shadow:none}
+  /* the reference's current page is a solid dark chip with light digits, not an
+     ink-coloured one - in dark mode --ink is near-white and would turn the chip
+     into a glaring white square. Near-black keeps the shape in both themes. */
+  .pager button[aria-current="page"]{background:#16181b;color:#fafbfd;font-weight:600;
+    box-shadow:none}
+  :root[data-theme="dark"] .pager button[aria-current="page"]{background:#f4f3f0;color:#16181b}
+  .pager button:disabled{opacity:.3;cursor:default}
+  .pager button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .pager .pstep{min-width:30px;padding:0;color:var(--ink)}
+  .pager .pstep .ic{width:14px;height:14px;font-size:14px;opacity:.9}
+  .pager .pstep span{display:none}
+  .pager .gap{font-size:12px;font-weight:500;color:var(--faint);padding:0 2px;user-select:none}
+  :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:rgba(255,255,255,.08)}
   @media(max-width:640px){
-    /* the three controls sit together as one pill row instead of pinned to the
-       edges: at 390px the stretch between them read as three unrelated things */
-    .pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;
-      padding-top:14px}
-    .pager .ppos,.pager .pstep{order:0}
-    .pager .pnums,.pager .pinfo{display:none}
-    .pager .pstep{display:inline-flex;align-items:center;justify-content:center;gap:7px;
-      min-width:0;height:34px;padding:0 11px;border-radius:999px;border:0;
-      font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-      color:var(--ink);background:transparent;cursor:pointer;
-      box-shadow:inset 0 0 0 1px var(--line-strong,var(--line))}
-    .pager .pstep[data-p="prev"],.pager .pstep[data-p="next"]{flex:none}
-    .pager .pstep .ic{font-size:12px;opacity:.8}
-    .pager .pstep:disabled{opacity:.45;cursor:default}
-    .pager .ppos{flex:none;text-align:center;font-family:var(--mono);
-      font-size:10px;letter-spacing:.12em;color:var(--ink);white-space:nowrap}
-    .pager .ppos b{font-weight:600}
-    .pager .ppos span{color:var(--faint)}
-    .pager .pdots{flex:0 0 100%;display:flex;align-items:center;justify-content:center;
-      gap:0;padding:8px 0 0}
-    .pager .pdots-more{display:inline-flex;align-items:center;justify-content:center;
-      width:14px;font-size:9px;letter-spacing:0;color:var(--faint);opacity:.7;user-select:none}
-    .pager .pdots button{min-width:0;width:18px;height:18px;padding:0;border-radius:999px;
-      border:0;background:transparent;box-shadow:none;cursor:pointer;position:relative}
-    /* the dot is drawn, the button stays 18px so a thumb can find it */
-    .pager .pdots button::after{content:"";position:absolute;inset:0;margin:auto;
-      width:6px;height:6px;border-radius:999px;background:var(--faint);opacity:.75;
-      transition:width .32s cubic-bezier(.2,.75,.2,1),opacity .2s,background .2s}
-    .pager .pdots button[aria-current="page"]::after{width:18px;background:var(--ink);opacity:1}
-    .pager .pdots button:hover::after{opacity:.9}
+    .pager{gap:8px;padding-top:13px}
+    .pager .pnums{gap:3px}
+    .pager button{min-width:28px;height:28px;border-radius:7px;font-size:12px}
+    .pager .pstep{min-width:28px}
+  }
+  /* the reference keeps one row at every width; below 400px two digits either
+     side of the current page would push the arrows off the card, so the pager
+     trims to a single neighbour and lets the ellipsis carry the rest */
+  @media(max-width:400px){
+    .pager .pnums{gap:2px}
+    .pager button{min-width:26px;height:26px;font-size:11.5px;padding:0 4px}
   }
 
   /* ---- creator profile card on hover */
@@ -2090,37 +2087,31 @@ function renderTimeline() {
 function renderPager(pages, total, start, shown) {
   const box = $("#pager");
   if (!box) return;
-  // On a phone the same state is drawn as a step pair plus dots; the desktop
-  // markup is still built underneath so a resize or a theme flip needs no
-  // re-render, it just hides the half it does not use. No dots for a single page:
-  // a lone dot is a control that cannot do anything.
-  const steps = `<button class="pstep" data-p="prev"${PAGE === 1 ? " disabled" : ""} aria-label="Previous page">`
-      + `<svg class="ic"><use href="#i-chev-l"/></svg><span>Prev</span></button>`
-    + `<span class="ppos"><b>${PAGE}</b> <span>/ ${pages}</span>`
-      + `<span class="sronly"> &middot; ${start + 1}–${start + shown} of ${total}</span></span>`
-    + `<button class="pstep" data-p="next"${PAGE === pages ? " disabled" : ""} aria-label="Next page">`
-      + `<span>Next</span><svg class="ic"><use href="#i-chev-r"/></svg></button>`;
-  const dots = pages > 1
-    ? `<span class="pdots" role="group" aria-label="Page">` + pageWindow(pages).map(n =>
-        n === "..."
-          ? `<span class="pdots-more" aria-hidden="true">···</span>`
-          : `<button data-p="${n}" aria-label="Page ${n}"${n === PAGE ? ' aria-current="page"' : ""}></button>`).join("")
-      + `</span>`
-    : "";
-  if (pages <= 1) { box.innerHTML = `<span class="pinfo">${total} creators</span><span class="pnums"></span>${steps}${dots}`; bindPager(box, pages); return; }
+  // One row at every width, after Longroom's member pager: arrows at the ends,
+  // the current page filled, an ellipsis standing in for the stretch skipped.
+  // The count of rows on this page is kept as a quiet line above it rather than
+  // competing for the same row.
+  const arrow = (p, label, icon, off) =>
+    `<button class="pstep" data-p="${p}"${off ? " disabled" : ""} aria-label="${label}">`
+      + `<svg class="ic"><use href="#${icon}"/></svg><span>${label}</span></button>`;
+  const cur = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
   const nums = [];
-  const push = n => `<button data-p="${n}"${n === PAGE ? ' aria-current="page"' : ""}>${n}</button>`;
-  if (pages <= 7) { for (let i = 1; i <= pages; i++) nums.push(push(i)); }
-  else {
-    nums.push(push(1));
-    if (PAGE > 3) nums.push('<span class="gap">…</span>');
-    for (let i = Math.max(2, PAGE - 1); i <= Math.min(pages - 1, PAGE + 1); i++) nums.push(push(i));
-    if (PAGE < pages - 2) nums.push('<span class="gap">…</span>');
-    nums.push(push(pages));
+  if (pages <= 7) {
+    for (let i = 1; i <= pages; i++) nums.push(cur(i));
+  } else {
+    // two neighbours when there is room, one on the narrowest phones
+    const side = window.innerWidth <= 400 ? 1 : 2;
+    const lo = Math.max(2, PAGE - side), hi = Math.min(pages - 1, PAGE + side);
+    nums.push(cur(1));
+    if (lo > 2) nums.push('<span class="gap">…</span>');
+    for (let i = lo; i <= hi; i++) nums.push(cur(i));
+    if (hi < pages - 1) nums.push('<span class="gap">…</span>');
+    nums.push(cur(pages));
   }
-  box.innerHTML = `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>
-    <span class="pnums"><button data-p="prev"${PAGE === 1 ? " disabled" : ""}>‹</button>
-    ${nums.join("")}<button data-p="next"${PAGE === pages ? " disabled" : ""}>›</button></span>${steps}${dots}`;
+  const info = pages > 1 ? `<span class="pinfo">${start + 1}–${start + shown} of ${total}</span>` : "";
+  box.innerHTML = info
+    + `<span class="pnums">${arrow("prev", "Previous page", "i-chev-l", PAGE === 1)}`
+    + `${nums.join("")}${arrow("next", "Next page", "i-chev-r", PAGE === pages)}</span>`;
   bindPager(box, pages);
 }
 
@@ -2160,6 +2151,7 @@ function pageWindow(pages) {
 // halves cannot disagree about what "next" means
 function bindPager(box, pages) {
   box.querySelectorAll("button[data-p]").forEach(b => {
+    if (!b.getAttribute("aria-label") && /^\d+$/.test(b.dataset.p)) b.setAttribute("aria-label", "Page " + b.dataset.p);
     b.onclick = () => {
       const v = b.dataset.p;
       const next = v === "prev" ? PAGE - 1 : v === "next" ? PAGE + 1 : parseInt(v, 10);
