@@ -1680,7 +1680,12 @@ function paintRail(rail) {
   const start = (PAGE - 1) * perPage;
   const slice = list.slice(start, start + perPage);
 
-  const tb = $("#rows"); tb.innerHTML = "";
+  const tb = $("#rows");
+  // build the page in a detached tbody and swap it in once. Setting tb.innerHTML=""
+  // on the live element emptied the table before the loop had written anything,
+  // so a re-render that threw halfway left a blank board; building off-document
+  // means the old rows survive until the new ones are complete.
+  const batch = document.createDocumentFragment();
   slice.forEach(c => {
     const picked = PICKS.some(p => p.name === c.name);
     const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
@@ -1697,7 +1702,7 @@ function paintRail(rail) {
     // mark the row. On a desk the row still only selects — the card there is a
     // hover surface and the draft panel beside the board does the picking.
     tr.onclick = () => { SEL = c.name; render(); if (isPhone()) openCard(tr, c); };
-    tb.appendChild(tr);
+    batch.appendChild(tr);
     // pointing at a name opens the profile card; the card itself stays usable so
     // its links and the pick button can be clicked. Bind after the row is in the
     // document, otherwise the .ncell lookup finds nothing.
@@ -1717,9 +1722,11 @@ function paintRail(rail) {
     // a table row with no cells has zero height, so the spacer carries one empty
     // cell per column to hold the same vertical rhythm as a real row
     ph.innerHTML = "<td></td>".repeat(7);
-    tb.appendChild(ph);
+    batch.appendChild(ph);
   }
 
+  tb.innerHTML = "";
+  tb.appendChild(batch);
   renderPager(pages, list.length, start, slice.length);
 
 
