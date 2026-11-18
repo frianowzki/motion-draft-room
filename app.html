@@ -89,9 +89,8 @@
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
   :root[data-theme="dark"] tr.row:hover td{background:rgba(255,255,255,.04)}
-  :root[data-theme="dark"] tr.row.sel td{background:rgba(255,255,255,.055)}
-  :root[data-theme="dark"] tr.row.sel:hover td{background:rgba(255,255,255,.075)}
   :root[data-theme="dark"] tr.row.sel td:first-child{box-shadow:inset 2px 0 0 #f4f3f0}
+  :root[data-theme="dark"] tr.row.sel:hover td{background:rgba(255,255,255,.04)}
   :root[data-theme="dark"] input,
   :root[data-theme="dark"] textarea{background:rgba(255,255,255,.06);color:var(--ink)}
   :root[data-theme="dark"] input::placeholder,
@@ -450,16 +449,20 @@
   tr.row:first-child td{border-top:0}
   tr.row{cursor:pointer;transition:background .13s ease}
   tr.row:hover td{background:rgba(17,17,17,.035)}
-  /* the selected row used to be a white slab. On a phone that is a bright block
-     punched through a dark page — and it covers the very figures the tap was
-     aimed at. A tint and a rail read as selected without repainting the row. */
-  /* --sunken is the board's own recess: #f7f6f3 in light, which on a page that is
-     already that warm grey reads as a white slab. Ink at 5.5% is a tint of the
-     page's own colour in both themes, so the row darkens on paper and lifts on
-     charcoal, and the rail is the part that actually names the selection. */
-  tr.row.sel td{background:rgba(17,17,17,.055)}
-  tr.row.sel:hover td{background:rgba(17,17,17,.075)}
+  /* Selection is a rail, not a fill. Any background - white slab, warm grey tint,
+     even 5% ink - reads as a coloured block punched through the table and fights
+     the momentum bars and signal pills it sits next to. So the row keeps the
+     card's own background and states its selection three quiet ways: an ink rail
+     on the left edge, the name at 600, and the rank picking up ink instead of
+     faint. Nothing is painted, so both themes and every status colour stay legible. */
+  tr.row.sel td{background:transparent}
   tr.row.sel td:first-child{box-shadow:inset 2px 0 0 var(--ink)}
+  tr.row.sel .name{font-weight:600}
+  tr.row.sel .pos{color:var(--ink)}
+  /* a hairline of card colour between ring and photo keeps the ring from
+     touching the image on light themes where line and photo are both dark */
+  tr.row.sel .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--ink)}
+  tr.row.sel:hover td{background:rgba(17,17,17,.03)}
   .pos{font-family:var(--mono);color:var(--faint);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
