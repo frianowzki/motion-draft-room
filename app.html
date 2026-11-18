@@ -11,7 +11,7 @@
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f0f0e">
-<title>Motion Draft Room — draft five creators, get graded</title>
+<title>Side Door — five creators, five reasons, one grade</title>
 <meta name="description" content="Draft five creators from Motion's public leaderboard, write your reasoning, and get scored when the window closes. Every receipt stays public.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -161,9 +161,21 @@
   .tt[data-on="light"] .tt-moon{opacity:0;filter:blur(6px);transform:rotate(-35deg) scale(.55)}
   .tt[data-on="dark"] .tt-sun{opacity:0;filter:blur(6px);transform:rotate(35deg) scale(.55)}
   .tt[data-on="dark"] .tt-moon{opacity:1;filter:blur(0);transform:rotate(0deg) scale(1)}
+  /* While the theme changes, nothing in the page is allowed to animate its own
+     colours. Every one of the ~80 transitions in this file (buttons .16s, pills
+     .2s, table rows .13s, the moon icon .44s) would otherwise start chasing the
+     new palette at the same moment the reveal is sweeping across, so a single
+     switch drove dozens of half-finished colour tweens on top of each other —
+     that pile-up is what read as "laggy", not the reveal itself. The reveal is the
+     only thing that moves; everything underneath is already the new theme. */
+  html.theming *,html.theming *::before,html.theming *::after{
+    transition-duration:0s!important;transition-delay:0s!important}
   ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+  /* the sweep is spent where the eye is: a fast easy-out so it is visibly moving
+     within the first frames, then a long, decelerating tail that never quite
+     snaps. 720ms total, half of it effectively over by ~230ms. */
   html.theming::view-transition-new(root){
-    animation:tt-reveal .52s cubic-bezier(.4,0,.2,1) both;
+    animation:tt-reveal .72s cubic-bezier(.16,1,.3,1) both;
     clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
   @keyframes tt-reveal{
     from{clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
@@ -280,10 +292,10 @@
   .rail{position:relative}
   .rail-pill{position:absolute;left:0;top:0;width:0;height:0;border-radius:12px;
     background:var(--ink);pointer-events:none;opacity:0;
-    transition:transform .42s cubic-bezier(.32,.72,0,1),
-               width .42s cubic-bezier(.32,.72,0,1),
-               height .42s cubic-bezier(.32,.72,0,1),
-               opacity .18s ease}
+    transition:transform .26s cubic-bezier(.4,0,.2,1),
+               width .26s cubic-bezier(.4,0,.2,1),
+               height .26s cubic-bezier(.4,0,.2,1),
+               opacity .14s ease}
   .rail-pill.on{opacity:1}
   /* Toast stack, ported from beui's animated-toast-stack: cards arrive from
      below with a slight scale, stack with a small vertical offset and overlap,
@@ -320,10 +332,15 @@
   @media (prefers-reduced-motion:reduce){
     .toast[data-state="in"],.toast[data-state="out"]{animation-duration:.01s}
   }
+  /* The label colour rides the same curve and duration as the pill, but it starts
+     only after the pill has arrived (`transition-delay`). Before, the text turned
+     paper-on-paper the instant it was selected while the pill was still travelling,
+     so the chosen tab read as blank until something else forced a repaint. */
   .rail-item{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:9px 10px;
     border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;
     font-size:12.5px;font-weight:600;letter-spacing:-.01em;cursor:pointer;text-align:left;
-    width:100%;transition:color .28s ease}
+    width:100%;transition:color .2s ease}
+  .rail-item[aria-selected="true"]{transition-delay:.1s}
   .rail-item .ic{width:15px;height:15px;flex:none;opacity:.72;transition:opacity .28s ease}
   .rail-item::before{content:"";position:absolute;inset:0;border-radius:12px;
     background:var(--sunken);opacity:0;transition:opacity .18s ease;z-index:-1}
@@ -335,6 +352,27 @@
   .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.16)}
   @media (prefers-reduced-motion:reduce){.rail-pill{transition:opacity .12s ease}}
   .rail-sep{height:1px;margin:6px 6px;background:var(--line)}
+
+  /* The leaderboard is a placeholder, and it reads as one on purpose: a plain
+     statement of what will live here, why it is not here yet, and a way back to
+     the part that does work. It deliberately does not fake rows — three dashes in
+     a ranking table look like a bug, not a promise. */
+  .lb-soon{max-width:620px}
+  .lb-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .lb-head h2{margin:0}
+  .lb-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;
+    padding:3px 8px;border-radius:100px;background:var(--sunken);color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .lb-lead{font-size:15px;line-height:1.55;color:var(--ink);margin:0 0 12px;font-weight:500}
+  .lb-note{font-size:12.5px;line-height:1.65;color:var(--ink);opacity:.66;margin:0 0 12px}
+  .lb-note:last-of-type{margin-bottom:20px}
+  .lb-cta{display:inline-flex;align-items:center;gap:10px;padding:9px 9px 9px 16px;
+    border:0;border-radius:100px;background:var(--ink);color:var(--bg);font:inherit;
+    font-size:11.5px;font-weight:600;cursor:pointer}
+  .lb-cta .acta-ic{width:22px;height:22px;display:grid;place-items:center;border-radius:100px;
+    background:#fff;color:#111}
+  .lb-cta .acta-ic svg{width:11px;height:11px;fill:none;stroke:currentColor;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
   .rail-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 2px}
   .viewpane{min-width:0}
   .view{display:none}
@@ -526,8 +564,25 @@
 /* ---- layout: board is the big tile, the column beside it stacks */
   /* stretch, not start: the draft column has to be exactly as tall as the board
      beside it, otherwise the two tiles end at different heights */
-  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:12px;align-items:stretch}
+  /* Creators and the draft panel fill the first screen together and the lineup is
+     something you scroll to. The grid gets the leftover viewport height rather
+     than a row count, so the pair lands on one screen at any window size — the
+     board simply pages to fit whatever space is left over. */
+  .grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:12px;
+    align-items:start;min-height:0}
   .grid > .boardcard{align-self:stretch}
+  /* One screen: stats, filters, creators and the draft panel all resolve inside the
+     viewport, and the board is sized to exactly what is left over so it never
+     scrolls inside itself. The lineup below is deliberately past the fold — you
+     scroll to your own picks once you have made one. */
+  @media(min-width:941px){
+    /* the first screen is exactly one viewport tall: stats + filters + the board
+       and draft pair. The lineup card is pushed below it by the min-height, so it
+       is one scroll away and the pair above never has to share room with it. */
+    #v-market > .grid{min-height:calc(100dvh - 168px)}
+    #v-market > .grid > .boardcard > .tablewrap{overflow-y:auto}
+    #v-market > .grid > .side > .card.detail{overflow-y:auto}
+  }
   @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
 
   /* your lineup, who is calling and the book run the full width under the
@@ -1514,7 +1569,7 @@
   <div class="shell">
   <nav class="rail" id="rail" role="tablist" aria-label="Sections" aria-orientation="vertical">
     <span class="rail-pill" id="railPill" aria-hidden="true"></span>
-    <div class="rail-brand">Motion Draft Room</div>
+    <div class="rail-brand">Side Door</div>
     <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market">
       <svg class="ic"><use href="#i-users"/></svg>Market
       <span class="rail-count" id="railMarket">79</span>
@@ -1592,16 +1647,24 @@
 
   <!-- ===== LEADERBOARD: players, not creators ===== -->
   <div class="view" id="v-leaderboard" role="tabpanel" aria-label="Leaderboard" hidden>
-    <div class="card empty-view">
-      <h2><svg class="ic"><use href="#i-trophy"/></svg>Leaderboard</h2>
-      <p>Ranked players, not ranked creators — who is ahead this window and what
-         their book says. The server does not publish a player table yet
-         (<code>/api/leaderboard</code>), so this panel is the shape it will fill.</p>
-      <div class="lb-skel" aria-hidden="true">
-        <div class="lb-row"><span class="lb-rank">1</span><span class="lb-name">—</span><span class="lb-pts">—</span></div>
-        <div class="lb-row"><span class="lb-rank">2</span><span class="lb-name">—</span><span class="lb-pts">—</span></div>
-        <div class="lb-row"><span class="lb-rank">3</span><span class="lb-name">—</span><span class="lb-pts">—</span></div>
+    <div class="card lb-soon">
+      <div class="lb-head">
+        <h2><svg class="ic"><use href="#i-trophy"/></svg>Leaderboard</h2>
+        <span class="lb-tag">Coming soon</span>
       </div>
+      <p class="lb-lead">This is where the players go, not the creators. You will see who
+         is out in front this window, how their lineup is built, and what it has already
+         paid out.</p>
+      <p class="lb-note">It is not switched on yet. Side Door grades every receipt
+         it holds, but the standings need a player table the server does not publish
+         today — and a scoreboard stitched together by hand would just be a guess wearing
+         a rank badge. So the panel stays quiet until the numbers are real.</p>
+      <p class="lb-note">The creators are already live, ranked and scored on the Market
+         tab. That board moves every four hours, so it is worth a look while you wait.</p>
+      <button class="lb-cta" data-goto="market">
+        <span>Back to the board</span>
+        <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+      </button>
     </div>
   </div>
 
@@ -1691,6 +1754,9 @@ const PER_PAGE = 15;
 // A phone shows five: a page you scroll is not a page, and five rows plus the
 // pager still leaves the draft panel and the timeline within a thumb's reach.
 const PER_PAGE_PHONE = 5;
+// A board row is a fixed 31px (see .row in the stylesheet); the fit check needs
+// that as a number, not as a computed style read on every render.
+const ROW_H = 31;
 // The breakpoint these two rules are written against, read live. .matches is
 // checked at call time on purpose: a page that loads before mobile emulation is
 // applied captured "desktop" once and paged ten rows for the whole session.
@@ -1976,11 +2042,18 @@ function countUp() {
   io.observe(box);
 }
 
-// How many rows a page holds. A counted page, not a measured one: the board
-// stretches to the draft panel beside it, and measuring its leftovers made the
-// page size a consequence of whether a pick was open.
+// How many rows a page holds. On a desk the board is handed the leftover viewport
+// height so that creators and the draft panel share one screen, which means the
+// page size has to be derived from that height — a fixed fifteen would either
+// scroll inside the card or leave a hole, depending on the window. Measured from
+// the table wrap's own box, never from the row count, so the answer cannot depend
+// on whether a pick is open. Falls back to the counted page if nothing is laid out.
 function rowsPerPage() {
-  return perPageNow();
+  if (isPhone()) return PER_PAGE_PHONE;
+  const wrap = document.querySelector(".boardcard > .tablewrap");
+  if (!wrap) return PER_PAGE;
+  const fit = Math.floor((wrap.clientHeight - 6) / ROW_H);
+  return Math.max(6, Math.min(25, fit || PER_PAGE));
 }
 
 function render() {
@@ -3590,13 +3663,17 @@ document.addEventListener("click", e => {
     if (b) show(b.getAttribute('data-goto'));
   });
 
-  // the pill is measured, so it has to be re-placed whenever the rail reflows
+  // the pill is measured, so it has to be re-placed whenever the rail reflows.
+  // The board's page size is measured from the viewport too (see rowsPerPage), so
+  // a resize re-renders the list as well — otherwise the first paint's row count
+  // survives a window that got taller and the board scrolls inside itself.
   var rt = null;
   window.addEventListener('resize', function () {
     clearTimeout(rt);
     rt = setTimeout(function () {
       movePill(rail.querySelector('.rail-item[aria-selected="true"]'));
-    }, 120);
+      if (typeof render === 'function') render();
+    }, 140);
   });
   if (window.ResizeObserver && rail) {
     new ResizeObserver(function () {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Motion Draft Room — pick five creators, see if you were right</title>
+<title>Side Door — pick five creators, see if you were right</title>
 <meta name="description" content="Pick five creators off Motion's public leaderboard before the next window, say why each one wins or fails, and let the server grade you. Every call stays on record.">
 <meta name="theme-color" content="#0f0f0e">
 <script>
@@ -130,9 +130,16 @@
   .tt[data-on="dark"] .tt-moon{opacity:1;filter:blur(0);transform:rotate(0deg) scale(1)}
   /* the reveal: the snapshot of the old page is clipped to a circle that grows
      from the button, so the change spreads from where the finger was */
+  /* While the theme changes, nothing in the page animates its own colours. This
+     page carries dozens of short colour transitions (buttons, pills, the shield
+     tiles); letting them all chase the new palette at the same instant the reveal
+     sweeps produced a visible pile-up that read as lag. Only the reveal moves. */
+  html.theming *,html.theming *::before,html.theming *::after{
+    transition-duration:0s!important;transition-delay:0s!important}
   ::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+  /* fast off the mark, long decelerating tail: 720ms, effectively half done by ~230ms */
   html.theming::view-transition-new(root){
-    animation:tt-reveal .52s cubic-bezier(.4,0,.2,1) both;
+    animation:tt-reveal .72s cubic-bezier(.16,1,.3,1) both;
     clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
   @keyframes tt-reveal{
     from{clip-path:circle(0 at var(--tt-x,50%) var(--tt-y,50%))}
