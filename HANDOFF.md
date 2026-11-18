@@ -1,8 +1,49 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 12:40 UTC (`main` `0d5162b`, live `dpl_G9gLtPM1G5g1oD3a2JMTf7E3BVau`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-18 14:35 UTC (`main` `00a0843`, live `dpl_6qeXoMkp7LmZsBQnqyVrgUVtHRfi`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+
+## 2026-11-18 — satu baris stats, rail filter bertinta, navbar kaca, kartu book hilang (`00a0843`)
+
+Lima permintaan dari screenshot HP, semuanya terkirim ke production.
+
+1. **Blok putih di baris HP.** Bukan `#fff` lagi — kali ini `var(--sunken)`, yang di
+   light mode bernilai `#f7f6f3`: itu warna *recess* kartu, jadi "terpilih" justru
+   mengecat baris lebih terang daripada kartunya. Sekarang satu aturan untuk dua tema:
+   `tr.row.sel td{background:rgba(17,17,17,.055)}` (hover `,.075`), dark override
+   `rgba(255,255,255,.055)` + rail `#f4f3f0`. Di paper baris menggelap, di charcoal
+   ia terangkat; rail 2px yang menamai seleksi.
+2. **Stats dobel di desktop.** Marquee HP menaruh dua salinan `.stat-grp` di dalam
+   `.track`; di desktop `.track` jadi `display:contents`, jadi kedua salinan menjadi
+   grid item dan setiap angka tercetak dua kali (6 tally → 9 kolom 2 baris). Perbaikan:
+   `.stats .stat-grp[aria-hidden]{display:none}` di luar breakpoint HP, dihidupkan
+   kembali di blok `max-width:640px`.
+3. **Kartu "The book"** dihapus dari dashboard (termasuk tile `t3 · the book`) dan
+   kartu ketiga "How it works" (`03 · the book`, `img/how-03-book.jpg`) dihapus dari
+   landing. `renderBook()` tetap ada sebagai no-op ber-guard supaya lock lineup masih
+   mengirim receipt ke `/api/receipts` tanpa throw. Stat "Book hit rate" juga dicabut
+   karena angkanya jadi menggantung tanpa kartu.
+4. **Rail filter baru.** Kaca tipis (`rgba(255,255,255,.5)` / dark `.055`), thumb aktif
+   bertinta warna sinyalnya lewat `--hue` per tombol + ring hue yang sama, tiap opsi
+   bawa dot sinyal dan count chip. Opsi ber-count 0 pakai `.zero` (redup). Di HP enam
+   opsi tidak muat: ukuran turun di `max-width:400px` dan rail yang terpotong diberi
+   fade di tepi yang menyembunyikan konten (`paintRail()`, class `atrail` / `atboth`,
+   di-recompute saat scroll/resize). Fallback `prefers-reduced-transparency`.
+5. **Navbar kaca (iOS-ish).** `.appbar` jadi `position:sticky` dengan
+   `backdrop-filter:blur(22px) saturate(1.9)`, tint `rgba(244,243,240,.62)` (light) /
+   `rgba(18,18,17,.55)` (dark), dan menguat jadi `.stuck` setelah konten lewat di
+   bawahnya (`bindBar()`, scroll pasif + rAF, ambang `scrollY > 8`). `.backhome` dan
+   `.tgs` ikut kaca, termasuk override dark yang sebelumnya slab 92%.
+
+Diuji lokal + production: desktop 1400 stats 1 baris 5 angka, 15 baris, kartu 755px,
+tabs 6, tidak ada `#receipts`; HP 390 dark & light tap baris membuka sheet nama yang
+benar dengan seleksi tint tipis; `?v=` cache-buster dipakai tiap tes.
+
+Catatan alat: `public/api/*` + `public/signals.json` + `public/profiles.json` tidak
+ikut git dan **hilang setiap `build.sh`** — untuk tes lokal, salin ulang dari
+`https://motion-draft-room.vercel.app/api/<endpoint>` sebelum membuka halaman, kalau
+tidak app menampilkan "Could not load signals (/signals.json 404)".
 
 ## 2026-11-18 — board: 15 per halaman di desktop, tap baris di HP buka creator (main 0d5162b)
 
