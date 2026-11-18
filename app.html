@@ -1406,7 +1406,7 @@
       <div class="tablewrap" id="board">
         <table>
           <thead><tr>
-            <th>#</th><th>Creator</th><th>&Delta;4h</th><th title="momentum, 0-100: rank-weighted move">Momentum</th>
+            <th>#</th><th>Creator</th><th>&Delta;4h</th><th title="momentum, 0-100: our rank-weighted read of the move — not the game's Motion Score">Momentum</th>
             <th title="estimated stars, 1-8 scale, like the real game">&#9733; est</th>
             <th>Signal</th><th aria-label="draft"></th>
           </tr></thead>
@@ -1493,11 +1493,13 @@ addEventListener("orientationchange", () => setTimeout(measureFooter, 120));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureFooter);
 
 const CAP = 32, SIZE = 5;
-// Rarity drives the Score Boost in the real formula. Motion publishes the formula
-// and the tier order, not the multipliers - so the UI shows the boost it is using
-// and says the values are an assumption.
+// Rarity drives the Score Boost in the real formula. Motion's docs print the
+// published multipliers (Common 1x, Rare 1.5x, Epic 2x, Legendary 2.5x), so these
+// are the game's numbers, not ours - only the Motion Score they multiply is a
+// stand-in (rank).
 const RARITY = ["Common", "Rare", "Epic", "Legendary"];
-let BOOST = { Common: 1, Rare: 1.1, Epic: 1.25, Legendary: 1.5 };
+const PUBLISHED_BOOST = { Common: 1, Rare: 1.5, Epic: 2, Legendary: 2.5 };
+let BOOST = { ...PUBLISHED_BOOST };
 const STAR = "★";
 let PROF = null;
 let DATA = null, FILTER = "all", SEL = null, PICKS = [];
@@ -1627,7 +1629,9 @@ async function load() {
   // history is a separate read: the board must paint even if it fails, so it is
   // fetched after DATA and the Timeline simply says so when there is nothing yet
   await refreshHistory();
-  if (DATA.rarity && DATA.rarity.assumedBoost) BOOST = DATA.rarity.assumedBoost;
+  // the published table wins: a stale signals payload must not reintroduce the
+  // old guessed multipliers
+  BOOST = { ...PUBLISHED_BOOST };
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
   if (PROF) DATA.profiles = PROF;
   render();
@@ -2794,11 +2798,11 @@ function renderDetail() {
       <div class="cell"><div class="k">Momentum</div><div class="v">${fmt(c.momentum)}</div></div>
       <div class="cell"><div class="k">Signal</div><div class="v sig">${c.tags.map(t => `<i style="background:${TAGC[t] || "var(--faint)"}"></i>${esc(t)}`).join(" ")}</div></div>
     </div>
-    <label>Card rarity — sets the Score Boost in the real formula</label>
+    <label>Card rarity — sets the published Score Boost</label>
     <div class="rar" id="rar" role="group" aria-label="card rarity">
       ${RARITY.map(r => `<button data-r="${r}" class="${(already ? already.rarity : "Common") === r ? "on" : ""}" type="button">${r}<i>×${BOOST[r].toFixed(2)}</i></button>`).join("")}
     </div>
-    <div class="hint" style="margin:7px 0 4px">Boost multipliers are not published by Motion — these are an assumption, so a projected score here is not the game's Lineup Score.</div>
+    <div class="hint" style="margin:7px 0 4px">Boost multipliers are Motion's published table: Common ×1, Rare ×1.5, Epic ×2, Legendary ×2.5. What is ours is the Motion Score they multiply — a rank-based stand-in — so a projected score here is not the game's Lineup Score.</div>
     <label for="thesis">Thesis — why this pick, in one line</label>
     <input id="thesis" maxlength="120" placeholder="e.g. three straight positive slots, calm board above" value="${already ? esc(already.thesis) : ""}">
     <label for="premortem">Pre-mortem — what would make this wrong</label>

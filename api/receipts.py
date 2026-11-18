@@ -273,8 +273,9 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel looks for this nam
                 return
             thesis = str(p.get("thesis") or "")[:120]
             premortem = str(p.get("premortem") or "")[:120]
-            # The rarity a player claimed. Recorded, not scored: the boost table
-            # is not public, so grading on it would be grading on our assumption.
+            # The rarity a player claimed. Recorded, not scored: receipts grade rank
+            # movement against a snapshot, and the Motion Score a boost multiplies
+            # is not public - so scoring on it would be scoring on our stand-in.
             rarity = str(p.get("rarity") or "Common").strip().capitalize()
             if rarity not in ("Common", "Rare", "Epic", "Legendary"):
                 rarity = "Common"

@@ -253,16 +253,17 @@ def build() -> dict:
         "starsCap": STAR_CAP,
         "starsCapNote": "modelling choice for the draft challenge; real caps are tournament-specific (docs example: 32)",
         "lineupSize": LINEUP_SIZE,
-        # Rarity/boost: the docs give the formula and the ordering but not the
-        # multipliers. This block states exactly what is assumed so neither the
-        # UI nor a judge has to guess.
+        # Rarity/boost: the multipliers are published (Common 1, Rare 1.5, Epic 2,
+        # Legendary 2.5). The Motion Score they multiply is not, which is the only
+        # assumption left - so the block says which half is whose.
         "rarity": {
             "tiers": list(rarity.TIERS),
-            "assumedBoost": dict(rarity.DEFAULT_BOOST),
+            "publishedBoost": dict(rarity.DEFAULT_BOOST),
             "assumed": rarity.ASSUMED,
-            "note": ("Score Boost multipliers are not published (the docs only guarantee "
-                     "Legendary > Epic > Rare > Common). These values are an assumption; "
-                     "a projected score here is not the game's Lineup Score."),
+            "note": ("Score Boost multipliers are Motion's published table (Common 1, "
+                     "Rare 1.5, Epic 2, Legendary 2.5). The Motion Score they multiply "
+                     "is not public and is stood in for by rank, so a projected score "
+                     "here is not the game's Lineup Score."),
             "boostLimit": None,
             "boostLimitNote": "tournaments limit the boost mix; the docs give no number, so this is unverified.",
         },
