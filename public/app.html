@@ -162,7 +162,9 @@
   .scan{display:none}
   @media (prefers-reduced-motion:reduce){.aura{animation:none}.rec:after,.live-dot{animation:none}}
 
-  .wrap{position:relative;z-index:2;max-width:1380px;margin:0 auto;padding:0 16px 72px}
+  /* the dashboard fills the display the same way the landing page does: the old
+     fixed 1380px ceiling left a lake of empty margin on wide monitors */
+  .wrap{position:relative;z-index:2;max-width:clamp(1380px,94vw,1680px);margin:0 auto;padding:0 16px 72px}
 
   /* ---- icons */
   .ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;
