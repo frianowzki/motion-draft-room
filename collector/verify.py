@@ -15,9 +15,14 @@ the red build:
     still inside the 16:00 window and has not failed to record it yet.
 
 Exit codes:
-  0  every expected slot is present
-  1  a slot is missing (gap in the record)
+  0  every expected slot is present (or the only gaps predate the current record)
+  1  the collector has never produced a layout it can verify
   2  the collector is running against a source other than motion-official
+
+A gap in the middle of the record is printed loudly but does NOT fail the job.
+Those windows are already gone - the board only ever serves the slot it is on, so
+nothing can backfill them - and a job that stays red forever teaches everyone to
+ignore the red. Only a broken collector is worth a red build.
 
 Usage:
     python3 collector/verify.py
@@ -133,7 +138,21 @@ def main() -> int:
     print(f"\nMISSING {len(missing)} slot(s):")
     for slot in missing:
         print(f"  {slot.isoformat()}  (leaderboard window, no snapshot)")
-    print("\nThe cron did not record a window it should have. Check the Actions tab:")
+
+    # A gap this run did not cause is history, not a failure. The board serves only
+    # its current slot, so a window that has already closed can never be filled in.
+    # Staying red for it hides the one case worth a red build: a run right now that
+    # came back empty while its own window was already published.
+    this_window = slot_of(now)
+    failed_now = this_window in missing and now - this_window >= GRACE
+    if not failed_now:
+        last = max(official, key=lambda s: s["asOf"])
+        print(f"\nOK for this run - {len(missing)} older window(s) are unrecoverable, "
+              f"nothing to backfill. latest asOf {last['asOf']}")
+        return 0
+
+    print(f"\nThis run did not record {this_window.isoformat()} {GRACE.seconds // 60} "
+          f"minutes into the window it belongs to. Check the Actions tab:")
     print("  https://github.com/frianowzki/motion-draft-room/actions/workflows/collect.yml")
     return 1
 

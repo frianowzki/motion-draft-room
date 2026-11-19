@@ -11,7 +11,12 @@ name: collect
 
 on:
   schedule:
-    - cron: "7 */4 * * *"
+    # Every hour, not every four. GitHub's scheduler on a quiet repository drifts by
+    # one to two hours, and a missed window cannot be recovered afterwards: the
+    # snapshot records whatever slot the board is serving at run time, so arriving
+    # late means that slot is simply never recorded. Hourly runs give each 4-hour
+    # window several chances, and a run that finds nothing new is a no-op.
+    - cron: "7 * * * *"
   workflow_dispatch:
 
 permissions:

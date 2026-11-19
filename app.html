@@ -3931,15 +3931,19 @@ function histAva(name, size) {
   return c ? avatar(c, size) : `<span class="avatar${size ? " " + size : ""} av-fb">${esc((name || "?").trim().slice(0, 2).toUpperCase())}</span>`;
 }
 
+// Windows are labelled by how old they are, not by a clock reading. "19 Nov, 12:00
+// UTC" asks the reader to know the current UTC time before they can tell whether a
+// window is fresh, and when the collector has not caught up it reads as a frozen
+// clock rather than as a gap. "4h ago" answers the only question the list is asked.
 function histWhen(slot) {
   if (!slot) return "—";
   const d = new Date(slot.length > 10 ? slot : slot + ":00:00Z");
   if (isNaN(d)) return slot;
-  // the board publishes on UTC slots, so the label says UTC rather than trailing a
-  // bare Z: "20:00Z" reads as a typo to everyone outside a terminal
-  const date = d.toLocaleDateString("en-GB", { month: "short", day: "numeric", timeZone: "UTC" });
-  const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" });
-  return `${date}, ${time} UTC`;
+  const hours = Math.max(0, Math.round((Date.now() - d.getTime()) / 3600000));
+  if (hours < 1) return "just now";
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  return days === 1 ? "1 day ago" : `${days} days ago`;
 }
 
 // what changed between window i-1 and window i. A creator that did not exist in
@@ -4949,7 +4953,7 @@ function renderBook() {
   meta.textContent = `${s.count} receipt${s.count === 1 ? "" : "s"} · ${graded} graded` +
     (ungraded ? ` · ${ungraded} waiting for a window` : "") +
     ` · ${s.pending || 0} pending · net ${signed(s.netRank || 0)} rank` +
-    (BOOK.asOf ? ` · graded to ${String(BOOK.asOf).slice(0, 16).replace("T", " ")}Z` : "");
+    (BOOK.asOf ? ` · graded ${histWhen(String(BOOK.asOf))}` : "");
   const list = BOOK.receipts || [];
   if (!list.length) {
     box.innerHTML = `<div class="empty">No receipts yet. Lock a lineup and it becomes the first line in this book.</div>`;
