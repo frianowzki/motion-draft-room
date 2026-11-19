@@ -10,9 +10,6 @@ fills.
 ---
 
 
-> Sesudah `/new` atau context reset: baca **[HANDOFF.md](HANDOFF.md)** dulu. File itu
-> memuat tujuan, keputusan, status file, dan next steps; README ini tidak.
-
 ## What it does
 
 1. **Remembers.** Motion publishes a 4-hour rank delta and forgets it. A scheduled
