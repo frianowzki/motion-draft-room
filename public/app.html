@@ -495,11 +495,13 @@
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
   /* the theme coin sits on the rail's bottom-left, beside the lock rather than
      under it: the lock owns the width, the coin is a small square on its left */
-  .rail-foot{display:flex;align-items:center;justify-content:flex-start;gap:7px;
-    padding:6px 6px 2px}
-  .rail-foot .rail-tools{flex:none}
-  .rail-foot #themesw{flex:none}
-  .rail-foot .rail-act{flex:1;min-width:0}
+  /* the element is .rc-foot; the earlier .rail-foot selectors matched nothing,
+     which let the coin wrap under the lock instead of sitting beside it */
+  .rc-foot{display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;
+    gap:7px;padding:6px 6px 2px}
+  .rc-foot .rail-tools{flex:none;margin:0}
+  .rc-foot #themesw{flex:none}
+  .rc-foot .rail-act{flex:1;min-width:0}
   .viewpane{min-width:0}
   .view{display:none}
   .view.is-on{display:block}
