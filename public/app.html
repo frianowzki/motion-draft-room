@@ -115,7 +115,7 @@
   :root[data-theme="dark"] .tab:hover,
   /* the three solid pills below paint themselves and must not pick up the
      generic dark hover wash; they are excluded here, at the source of it */
-  :root[data-theme="dark"] button:hover:not(:disabled):not(.mstep-next):not(.rail-act):not(.acta-solid),
+  :root[data-theme="dark"] button:hover:not(:disabled):not(.mstep-next):not(.rail-act):not(.acta-solid):not(.rail-item[aria-selected="true"]),
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
   :root[data-theme="dark"] input,
@@ -352,8 +352,25 @@
     transition:opacity .16s ease}
   .rail-item .lab{min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rail-item:hover{background:var(--sunken)}
-  .rail-item[aria-selected="true"]{background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line)}
-  .rail-item[aria-selected="true"] .ic{opacity:1}
+  /* the open tab wears the app's own accent, not a grey well: the same pink the
+     Market board uses for a pick, so "where I am" and "what I hold" share one
+     colour. Paper type on the fill, and the pointer leaves it alone entirely —
+     the generic button:hover rules are excluded below so no wash, dim or lift
+     lands on the tab you are already on. */
+  .rail-item[aria-selected="true"]{background:var(--accent);color:#fff;
+    box-shadow:none}
+  .rail-item[aria-selected="true"] .ic{opacity:1;stroke:#fff}
+  .rail-item[aria-selected="true"] .lab{color:#fff}
+  .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.22);
+    color:#fff;opacity:1}
+  html .rail-item[aria-selected="true"]:hover,
+  .rail-item[aria-selected="true"]:hover,
+  html .rail-item[aria-selected="true"]:active,
+  .rail-item[aria-selected="true"]:focus-visible{
+    background:var(--accent);color:#fff;box-shadow:none;filter:none;
+    transform:none;opacity:1}
+  html .rail-item[aria-selected="true"]:hover .ic,
+  .rail-item[aria-selected="true"]:hover .rail-count{stroke:#fff;background:rgba(255,255,255,.22)}
   .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;opacity:.55;
     padding:1px 5px;border-radius:100px;background:var(--card-2)}
   .rail-act{background:var(--ink);color:var(--bg);font-weight:600}
@@ -375,8 +392,11 @@
   .rail[data-open="false"] .rail-sub,
   .rail[data-open="false"] .rail-h,
   .rail[data-open="false"] .rail-item .rail-count,
-  .rail[data-open="false"] .rail-x span,
-  .rail[data-open="false"] .rail-tools{display:none}
+  .rail[data-open="false"] .rail-x span{display:none}
+  /* collapsed, the foot is still two things: the lock shrinks to its face and the
+     coin stays under it, so the theme is one click away at any width */
+  .rail[data-open="false"] .rail-tools{display:flex;justify-content:center;margin:0}
+  .rail[data-open="false"] .rc-foot{flex-direction:column;gap:6px}
   .rail[data-open="false"] .rc{padding:9px;border-radius:16px}
   .rail[data-open="false"] .rc-top{justify-content:center}
   .rail[data-open="false"] .rail-who,.rail[data-open="false"] .rail-x,
@@ -384,6 +404,17 @@
      nav. The card it sat in keeps just the face, so the strip is not boxed twice. */
   .rail[data-open="false"] .rail-items,.rail[data-open="false"] .rail-navcard{display:none}
   .rail[data-open="false"] .rail-item{justify-content:center;padding:9px 0}
+  /* the lock keeps its 34px face inside the 52px rail instead of filling it */
+  .rail[data-open="false"] .rail-act{width:34px;flex:none;align-self:center;
+    padding:8px 0;border-radius:11px}
+  /* the strip is 34px of face inside a 52px rail; the accent pill wraps the icon
+     rather than touching the rail's edges */
+  .rail[data-open="false"] .rail-item[aria-selected="true"]{
+    background:transparent;box-shadow:none}
+  .rail[data-open="false"] .rail-item[aria-selected="true"] .ic{
+    background:var(--accent);color:#fff}
+  .rail[data-open="false"] .rail-item .ic{border-radius:9px;padding:5px;width:25px;
+    height:25px;box-sizing:content-box}
   /* collapsed, the label still names the destination for screen readers and
      for the title tooltip, and the strip of icons carries the rest. Hiding the
      whole .rail-items list was what made the phone header a column of dots. */
@@ -462,7 +493,13 @@
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
   .lb-cta .acta-ic svg{width:11px;height:11px;fill:none;stroke:currentColor;
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-  .rail-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 2px}
+  /* the theme coin sits on the rail's bottom-left, beside the lock rather than
+     under it: the lock owns the width, the coin is a small square on its left */
+  .rail-foot{display:flex;align-items:center;justify-content:flex-start;gap:7px;
+    padding:6px 6px 2px}
+  .rail-foot .rail-tools{flex:none}
+  .rail-foot #themesw{flex:none}
+  .rail-foot .rail-act{flex:1;min-width:0}
   .viewpane{min-width:0}
   .view{display:none}
   .view.is-on{display:block}
@@ -2425,6 +2462,42 @@
      pink pill that read as broken rather than as not-yet */
   .acta.acta-solid:disabled{opacity:.42;filter:none}
 
+  /* ---- toast stack. This host was live in the markup but had no rules, so it
+     sat in normal flow at the top of the body and pushed the whole shell down
+     whenever a message fired — which read as text floating above the navbar.
+     It is lifted out of flow and pinned bottom-right, where a notification
+     belongs and where nothing on the board has to move for it. ---- */
+  .toasts{position:fixed;right:16px;bottom:16px;z-index:900;display:flex;flex-direction:column;
+    align-items:flex-end;gap:8px;width:min(340px,calc(100vw - 32px));pointer-events:none}
+  .toasts:empty{display:none}
+  .toast{pointer-events:auto;width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+    align-items:start;gap:9px;padding:11px 11px 11px 13px;border-radius:14px;
+    background:var(--card);color:var(--ink);box-shadow:0 14px 40px rgba(0,0,0,.18),
+    inset 0 0 0 1px var(--line);font-size:12px;animation:toastIn .22s cubic-bezier(.2,.7,.2,1)}
+  .toast[data-state="out"]{animation:toastOut .18s ease forwards}
+  @keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.98)}
+    to{opacity:1;transform:none}}
+  @keyframes toastOut{to{opacity:0;transform:translateY(6px) scale(.98)}}
+  .toast .t-ic{width:18px;height:18px;flex:none;margin-top:1px;border-radius:100px;
+    display:grid;place-items:center;background:var(--sunken);color:var(--ink)}
+  .toast .t-ic svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.1;
+    stroke-linecap:round;stroke-linejoin:round}
+  .toast[data-kind="err"] .t-ic{background:var(--danger);color:#fff}
+  .toast[data-kind="ok"] .t-ic{background:var(--up);color:#fff}
+  .toast .t-body{min-width:0}
+  .toast .t-title{font-weight:600;letter-spacing:-.01em;line-height:1.35}
+  .toast .t-desc{margin-top:2px;font-size:11.5px;line-height:1.5;opacity:.72}
+  .toast .t-x{border:0;background:transparent;color:var(--ink);opacity:.42;
+    width:20px;height:20px;min-height:0;padding:0;border-radius:6px;box-shadow:none;
+    cursor:pointer;display:grid;place-items:center}
+  html .toast .t-x:hover{background:var(--sunken);color:var(--ink);opacity:.75;
+    transform:none;filter:none}
+  .toast .t-x svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2.2;
+    stroke-linecap:round}
+  @media (max-width:640px){
+    .toasts{right:10px;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));width:auto}
+  }
+
   /* the dashboard has no footer: the board is the page, and a pinned bar at the
      bottom edge only stole a strip of it. The landing page keeps its own. */
   body{padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -2550,11 +2623,6 @@
       </div>
 
       <div class="rc rc-foot">
-        <button type="button" class="rail-item rail-act" id="railLock">
-          <svg class="ic" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>
-          <span class="lab">Lock lineup</span>
-          <span class="rail-count" id="railLockN">0/5</span>
-        </button>
         <div class="rail-tools">
           <button type="button" class="tt" id="themesw" data-on="light" aria-label="Switch to dark theme" aria-pressed="false">
             <span class="tt-face" aria-hidden="true">
@@ -2563,6 +2631,11 @@
             </span>
           </button>
         </div>
+        <button type="button" class="rail-item rail-act" id="railLock">
+          <svg class="ic" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>
+          <span class="lab">Lock lineup</span>
+          <span class="rail-count" id="railLockN">0/5</span>
+        </button>
       </div>
     </div>
     <div class="rail-mini" id="railMini" role="tablist" aria-orientation="vertical" aria-label="Sections">
