@@ -304,6 +304,7 @@
                height .26s cubic-bezier(.4,0,.2,1),
                opacity .14s ease}
   .rail-pill.on{opacity:1}
+  :root[data-theme="dark"] .rail-pill{background:rgba(255,255,255,.09)}
   /* Toast stack, ported from beui's animated-toast-stack: cards arrive from
      below with a slight scale, stack with a small vertical offset and overlap,
      and the ones behind sit pushed back and dimmed. Only the newest is fully
@@ -376,11 +377,12 @@
   /* on a touch screen :hover sticks after a tap, so the wash is dropped there
      rather than left sitting under whichever tab was last touched */
   @media (hover:none){.rail-item:hover::before{opacity:0}}
-  .rail-item[aria-selected="true"]{color:var(--bg)}
+  .rail-item[aria-selected="true"]{color:var(--ink)}
   .rail-item[aria-selected="true"] .ic{opacity:1}
   .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;
     padding:1px 6px;border-radius:100px;background:rgba(17,17,17,.06);color:inherit}
-  .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.16)}
+  .rail-item[aria-selected="true"] .rail-count{background:rgba(17,17,17,.1)}
+  :root[data-theme="dark"] .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.14)}
   @media (prefers-reduced-motion:reduce){.rail-pill{transition:opacity .12s ease}}
   .rail-sep{height:1px;margin:6px 6px;background:var(--line)}
 

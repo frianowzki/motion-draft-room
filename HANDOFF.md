@@ -1,10 +1,96 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-18 (`main` `1c91134`, live `dpl_9mYYeRUfDxYGdTuE1spQYqVzKmax`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-19 (`main` `a9b152d` + 2 commit rail pill belum di-commit, live `dpl_EfDfq1oGypAhWsLur1hNXVKZX1ZV`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
-## 2026-11-18 (paling baru) — 20/5 per halaman, rail dibereskan, Motion Market, ikon library (`1c91134`)
+## 2026-11-19 (PALING BARU) — 5 bugfix + rail pill subtle beui-style (belum di-commit)
+
+frian kirim 5 bug, semua dibenerin + verified di produksi. Lalu 2 iterasi tambahan soal
+rail pill karena frian kirim screenshot referensi (dark mode = yang bener).
+
+**Commit `e55515d` — 5 UI fix dari frian:**
+1. **Sidebar beui** — `.rail` jadi floating panel: `border-radius:22px`, layered shadow
+   (`0 24px 48px -24px rgba(0,0,0,.35), 0 4px 16px -8px rgba(0,0,0,.2)`), `top:22px`,
+   lebar shell 224px. Sesuai karakter template beui.dev (`docs/beui/animated-sidebar.json`).
+2. **Tab rata kiri semua** — label di-wrap `<span>` 112px fixed + `text-align:left` +
+   `.rail-item` `justify-content:flex-start`. Market/Leaderboard/Profile/History semua
+   mulai di x yang sama.
+3. **Your lineup → profile** — card lineup dipindah dari bawah board market ke atas
+   profile (full-width `.card.lineup`, `grid-column:1/-1`). Market sekarang bersih.
+4. **Profile fit desktop** — `#v-profile > .under` `grid-template-rows:1fr 1fr` +
+   `min-height:calc(100vh - 120px)`. Text perbesar (13px lineup/identity, 12px
+   receipts), receipts jadi `.mx-p` 4-col ledger (name/filed/now/score).
+5. **History fit desktop** — timeline cards di-size ke stage width:
+   `cardW = Math.max(200, SW - 2*peek - gap)`, `peek=180` di desktop. `TL.cardW`
+   tracked terpisah dari `TL.w`. Resize handler di existing handler (bukan listener
+   baru). **Fixture `public/api/history`** (5 windows dari slotTimes) di-commit buat
+   local dev — di production timeline kosong sampai API live punya data.
+
+**Commit `a9b152d` — 5 bugfix:**
+1. **Profile card "no verified x account matched"** — root cause: `poll()` (60s)
+   replace `DATA` wholesale, nge-wipe `DATA.profiles`. Fix: re-apply `PROF` setelah
+   setiap poll (`if (PROF) DATA.profiles = PROF` di `poll()`), dan `load()` sekarang
+   set `SIG_FP` SETELAH `DATA.profiles = PROF` (sebelumnya fingerprint diambil sebelum
+   profiles di-apply, jadi poll pertama selalu detect "change" dan wipe). Card yang
+   udah kebuka juga di-re-render kalau profiles fetch resolve telat.
+2. **Rail pill color** — lihat iterasi di bawah.
+3. **Draft a pick ketinggian** — `.grid > .side > .card.detail` `flex:1 1 auto` dihapus
+   (jadi `display:flex;min-height:0`), dan di media query desktop `.side` dapat
+   `align-self:start;height:auto` (bukan lagi `height:100%`). Card sekarang match
+   tinggi natural, bukan stretch ke viewport.
+4. **Dark mode steps numbering** — `.steps .n` `color:var(--accent-ink)` (putih) di atas
+   `background:var(--ink)` (putih di dark) = putih-on-putih. Fix: `color:var(--bg)`
+   (hitam di dark, krem di light). Verified: dark bg `rgb(243,241,236)`, color
+   `rgb(15,15,14)`.
+5. **Footer** — Behance icon diganti X icon (`x.com/motiongame_`), persis landing.
+   CSS: `.f1-social a[href*="x.com"] svg{width:15px;height:15px}`.
+
+**Iterasi rail pill (BELUM DI-COMMIT — `app.html` + `public/app.html` dirty):**
+frian: "Transisi perpindahan sidebar error" (bug 2 di atas). Tiga iterasi:
+- v1: pill `var(--ink)` + text aktif `var(--bg)` → light mode: pill HITAM + teks PUTIH
+  (terlalu kontras, frian: "yang bener yang di dark mode")
+- v2: pill `var(--sunken)` → light mode: pill abu-abu muda + teks `var(--bg)` (krem)
+  = washed out (screenshot frian)
+- **v3 (AKTIF, live di `dpl_EfDfq1oGypAhWsLur1hNXVKZX1ZV`):** pill subtle + text
+  SAMA kayak tab lain:
+  - `.rail-pill` `background:var(--sunken)` (light: abu-abu muda di atas panel krem)
+  - `:root[data-theme="dark"] .rail-pill{background:rgba(255,255,255,.09)}`
+    (dark: highlight abu-abu samar di atas panel gelap — PERSIS referensi frian)
+  - `.rail-item[aria-selected="true"]{color:var(--ink)}` (bukan `var(--bg)`) —
+    teks aktif = teks non-aktif, active state cuma diindikasi background
+  - `.rail-count` aktif: light `rgba(17,17,17,.1)`, dark `rgba(255,255,255,.14)`
+  - Verified vision_analyze dark: "subtle gray highlight, same white text, textbook
+    beui active state". Light: "elevated white card, same black text, highly readable".
+
+**Sisa kerja:** commit 2 file dirty (app.html + public/app.html) — isi: iterasi v3
+rail pill. Setelah commit, deploy ulang via `./deploy.sh` (author dipaku
+friodrops-5778, `vercel --prod` diblokir).
+
+**Deploy history sesi ini:** `e55515d` → `dpl_CWnxAra3UE9AyZShrsDBAwjmkowb` →
+`a9b152d` → `dpl_9pXjwJmJBVrx9d6DDCAqTErwU4Xh` → pill v1 → `dpl_CFajMqBb6GoHCnKsheehHAqVDVtn`
+→ pill v3 → `dpl_EfDfq1oGypAhWsLur1hNXVKZX1ZV` (LIVE).
+
+## 2026-11-19 — mode 5 (SCOUT) dikonfirmasi tidak memotong jatah
+
+frian nanya apakah menu 5 benar-benar tidak memotong jatah ranked. Diverifikasi dari
+kode (belum diuji live — sandbox belum login X):
+
+- Menu 5 = `ranked --scout=<seed> --gens=120 --head` (cli.mjs). Jalur scout di
+  `cmdRanked()` jalan **sebelum** `fr_start` — dan `fr_start`-lah yang memotong
+  jatah di server. Tidak ada klik Play Ranked, tidak ada `fr_end`.
+- Rehearsal memakai seed milik user (`__wcm.newGame(seed)`), bukan run server;
+  `onOver` hanya di-capture ke `window.__captured`, tidak di-POST.
+- Satu-satunya kontak server: load halaman + GET `api.php?a=fr` (read-only).
+  Biaya nyata hanya rate limit (429, recovery ~100-130 s) kalau load terlalu sering.
+- **Sisa 5% keraguan:** `onOver` asli situs tetap dipanggil (`prev?.(res)`). Kalau
+  versi situs terbaru auto-submit untuk run apa pun, itu bisa memotong jatah —
+  tapi karena scout tidak pernah fr_start, `__wcmRun` kosong dan submit harusnya
+  no-op. **Cara membuktikan 100% di Windows frian:** mode 1 (catet runs left) →
+  mode 5 sampai selesai → mode 1 lagi (bandingkan). frian bilang "nanti aja" —
+  tawarkan lagi kalau dia nanya soal jatah.
+
+## 2026-11-19 (paling baru) — 20/5 per halaman, rail dibereskan, Motion Market, ikon library (`1c91134`)
 
 Sesi ini mengubah dashboard (`app.html`) lebih banyak daripada landing. Lima commit
 berurutan, semua sudah live dan terukur di produksi, bukan cuma di lokal:
