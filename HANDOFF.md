@@ -168,20 +168,18 @@ karena browser sandbox tidak punya sesi X frian.
 
 ## Status git (PENTING untuk agent baru)
 
-`main` `4591a81` ("chore: drop a stray screenshot"). Working tree **kotor**:
-```
-M  README.md
-A  api/draft.py          <- sudah staged, aman
-M  api/xauth/xauth_lib.py
-M  app.html
-A  db/drafts.sql         <- sudah staged, aman
-M  index.html            <- decoy, jangan dipakai
-M  landing.html
-MM public/app.html       <- public/ di-.gitignore, JANGAN git add (exit 1)
-?? .r1.png .r2.png .r3.png .tweet.txt SUBMISSION.md img/readme-*.png
-```
-`public/` di-ignore dan di-build di sisi Vercel — **selalu `git add app.html` saja**,
-jangan `git add public/app.html` (gagal exit 1).
+`main` `5adf54e` = HEAD, push ke origin, working tree **bersih**. Branch `data`
+`aed44c1` (data terbaru, asOf 16:00Z) — push-nya bisa ditolak kalau cron mendahului;
+`git pull --rebase origin data` dulu.
+
+Aturan yang masih berlaku:
+- `public/` di-ignore dan di-build di sisi Vercel — `git add app.html` saja, jangan
+  `git add public/` (file di dalamnya sudah tidak ter-track lagi).
+- `index.html` root = decoy (tidak dipakai build; `build.sh` menyalin
+  `landing.html` → `public/index.html`).
+- **Data baru harus di-push ke branch `data` SEBELUM build/deploy** — `build.sh`
+  menarik `data/signals.json` dari branch `data` di GitHub, bukan dari disk lokal.
+- `deploy.sh` hanya mengupload file yang ter-track git; file baru wajib `git add`.
 
 ## Deploy
 
