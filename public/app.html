@@ -45,6 +45,13 @@
     --accent-ink:#ffffff;
     --up:#1d7a44;
     --down:#c0392b;
+    /* rarity accents follow the in-game card tiers: common green, rare blue,
+       epic purple, legendary orange. Per theme so each stays readable on paper
+       and on ink, and the selected rarity pill fills with its own tier. */
+    --r-common:#2e7d32;
+    --r-rare:#0288d1;
+    --r-epic:#7b1fa2;
+    --r-legendary:#ef6c00;
     --cool:#3a5e9e;
     --warm:#a86a17;
     --ring:0 0 0 1px rgba(17,17,17,.12);
@@ -82,6 +89,10 @@
     --accent-ink:#ffffff;
     --up:#4ec27c;
     --down:#e5766a;
+    --r-common:#4caf50;
+    --r-rare:#29b6f6;
+    --r-epic:#ab47bc;
+    --r-legendary:#ffa726;
     --cool:#8fb0e6;
     --warm:#d9a24f;
     --ring:0 0 0 1px rgba(255,255,255,.16);
@@ -111,7 +122,6 @@
   :root[data-theme="dark"] .backhome{background:rgba(24,24,22,.6);color:var(--ink);
     -webkit-backdrop-filter:blur(18px) saturate(1.8);backdrop-filter:blur(18px) saturate(1.8)}
   :root[data-theme="dark"] .backhome:hover{background:rgba(44,44,40,.75);color:var(--ink)}
-  :root[data-theme="dark"] .rar button.on i{color:rgba(255,255,255,.7)}
   :root[data-theme="dark"] .slot .s.spent{background:rgba(255,255,255,.08)}
   :root[data-theme="dark"] .tag.COILED{background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)}
   :root[data-theme="dark"] .mbar{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
@@ -1699,8 +1709,10 @@
     #v-history > .hist > .card{height:100%;min-height:0;display:flex;flex-direction:column}
     #v-history > .hist > .card.hlistcard{padding:14px 10px 12px}
     .hlist{flex:1 1 auto}
-    .hpanel{display:flex}
-    .hpanel > .hboard{flex:1 1 auto;min-height:0;max-height:none}
+    /* the panel is a grid, so the leftover row has to come from grid-template-rows:
+       flex:1 on .hboard is ignored in a grid container. */
+    .hpanel{display:grid;grid-template-rows:auto auto minmax(0,1fr);align-content:start}
+    .hpanel > .hboard{min-height:0;max-height:none}
   }
   @media(max-width:940px){
     #v-history > .hist{grid-template-columns:minmax(0,1fr)}
@@ -1786,18 +1798,27 @@
   button:disabled{opacity:.35;cursor:not-allowed}
   .rowbtns{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
 
+  /* rarity is its own colour language, the same one the card packs use: common
+     green, rare blue, epic purple, legendary orange. An unpicked option keeps
+     the ink type and shows the tier as a small dot, so the row reads calm until
+     you choose; the chosen pill fills with that tier's colour, so the drafting
+     desk finally speaks the same colour as the pack art. */
   .rar{display:flex;gap:6px;margin:6px 0 0}
   .rar button{flex:1;display:flex;flex-direction:column;gap:2px;align-items:center;
-    padding:9px 4px;font-size:10.5px;border-radius:var(--r-sm);text-transform:none}
+    padding:9px 4px;font-size:10.5px;border-radius:var(--r-sm);text-transform:none;
+    position:relative}
   .rar button i{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--ink)}
-  .rar button.on{background:var(--accent);color:#fff;font-weight:500;
-    box-shadow:inset 0 0 0 1px var(--accent)}
-  .rar button.on i{color:rgba(255,255,255,.65)}
-  /* rarity is not a second colour system: unselected options read in ink, the
-     selected one is the accent pill */
-  .rar button[data-r="Rare"]:not(.on),
-  .rar button[data-r="Epic"]:not(.on),
-  .rar button[data-r="Legendary"]:not(.on){color:var(--ink)}
+  .rar button::after{content:"";position:absolute;top:7px;right:8px;width:6px;height:6px;
+    border-radius:50%;background:var(--r);box-shadow:0 0 0 2px color-mix(in srgb,var(--r) 22%,transparent)}
+  .rar button[data-r="Common"]{--r:var(--r-common)}
+  .rar button[data-r="Rare"]{--r:var(--r-rare)}
+  .rar button[data-r="Epic"]{--r:var(--r-epic)}
+  .rar button[data-r="Legendary"]{--r:var(--r-legendary)}
+  .rar button:not(.on):hover{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r) 55%,transparent)}
+  .rar button.on{background:var(--r);color:#fff;font-weight:500;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r) 70%,#000)}
+  .rar button.on i{color:rgba(255,255,255,.72)}
+  .rar button.on::after{background:#fff;opacity:.92}
 
 
   .slot{display:flex;gap:6px;margin-bottom:13px;flex-wrap:wrap}
@@ -1853,10 +1874,17 @@
     display:flex;align-items:center;gap:5px}
   .rec .who b{color:var(--ink);font-weight:600}
   .rec .picks{font-size:11px;color:var(--ink);margin-top:5px;line-height:1.6}
+  /* one mapping from a rarity name to its token, reused by every tag that
+     prints the tier (lineup, receipt book, matrix) */
+  i.rr[data-r="Common"]{--rc:var(--r-common)}
+  i.rr[data-r="Rare"]{--rc:var(--r-rare)}
+  i.rr[data-r="Epic"]{--rc:var(--r-epic)}
+  i.rr[data-r="Legendary"]{--rc:var(--r-legendary)}
   .rec .picks i.rr{font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.04em;
-    color:var(--ink);box-shadow:inset 0 0 0 1px rgba(17,17,17,.2);
+    color:var(--rc);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 45%,transparent);
     border-radius:3px;padding:0 4px;margin-left:4px;vertical-align:1px;
-    text-transform:lowercase;margin-right:4px;background:rgba(17,17,17,.04)}
+    text-transform:lowercase;margin-right:4px;
+    background:color-mix(in srgb,var(--rc) 12%,transparent)}
   .rec .score{font-family:var(--display);font-size:17px;font-weight:500;white-space:nowrap;
     text-align:right;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .rec .score small{display:block;font-family:var(--mono);font-size:8px;font-weight:400;
@@ -1894,8 +1922,8 @@
   .mx-p .p b{font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;
     white-space:nowrap;min-width:0}
   .mx-p .p .rr{font-style:normal;font-family:var(--mono);font-size:7px;letter-spacing:.04em;
-    color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-soft);border-radius:3px;
-    padding:0 3px;text-transform:lowercase;margin-left:4px}
+    color:var(--rc);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 45%,transparent);
+    border-radius:3px;padding:0 3px;text-transform:lowercase;margin-left:4px}
   .mx-p .p .at{font-family:var(--mono);font-size:8.5px;color:var(--ink);
     font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
   .mx-p .p .at .arw{opacity:1;margin:0 2px}
@@ -3816,7 +3844,7 @@ function renderMine() {
         `<span class="mv ${cls(p.move)}">${signed(p.move)}</span>`;
       const now = p.positionNow == null ? "" :
         `<span class="arw">→</span>${esc(String(p.positionNow))}`;
-      const rr = p.rarity && p.rarity !== "Common" ? `<i class="rr">${esc(p.rarity)}</i>` : "";
+      const rr = p.rarity && p.rarity !== "Common" ? `<i class="rr" data-r="${esc(p.rarity)}">${esc(p.rarity)}</i>` : "";
       return `<span class="p" title="${esc(p.name)} — filed at ${esc(String(p.positionAtLock))}${p.positionNow != null ? ", now " + esc(String(p.positionNow)) : ""}">` +
         `<b>${esc(p.name)}${rr}</b>` +
         `<span class="at">#${esc(String(p.positionAtLock))}${now}</span>` +
@@ -3872,7 +3900,7 @@ function renderBook() {
   box.innerHTML = list.slice(0, 8).map(r => {
     const done = r.status === "settled";
     const picks = (r.picks || []).map(p => {
-      const tag = p.rarity && p.rarity !== "Common" ? `<i class="rr">${esc(p.rarity)}</i>` : "";
+      const tag = p.rarity && p.rarity !== "Common" ? `<i class="rr" data-r="${esc(p.rarity)}">${esc(p.rarity)}</i>` : "";
       if (p.move == null) return esc(p.name) + tag;
       return `${esc(p.name)}${tag} <span class="${cls(p.move)}">${signed(p.move)}</span>`;
     }).join(" · ");
