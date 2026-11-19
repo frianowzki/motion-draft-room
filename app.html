@@ -930,9 +930,13 @@
   tr.row.picked .pos,tr.row.picked .mono,tr.row.picked .stars,
   tr.row.picked .stars span,tr.row.picked .nwrap,tr.row.picked .add{color:#fff}
   tr.row.picked .pos{font-weight:600}
-  tr.row.picked .mbar{background:rgba(255,255,255,.26);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
-  tr.row.picked .mbar:before{background:rgba(255,255,255,.62)}
+  /* momentum is drawn by .bc/.track/.fill, not .mbar. On the accent fill the
+     track goes to near-paper and the fill to white, so the bar reads at a glance
+     instead of disappearing into the pink the way a 26%-white track did. */
+  tr.row.picked .bc .track{background:rgba(255,255,255,.34);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  tr.row.picked .bc .fill{background:#fff;opacity:1;box-shadow:none}
+  tr.row.picked .bc .target{background:rgba(255,255,255,.8);opacity:1}
   tr.row.picked .tag{background:rgba(255,255,255,.2);color:#fff;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
   tr.row.picked .avatar{box-shadow:0 0 0 2px var(--accent),0 0 0 3px rgba(255,255,255,.92)}
@@ -1495,9 +1499,13 @@
   tr.row.picked .pos,tr.row.picked .mono,tr.row.picked .stars,
   tr.row.picked .stars span,tr.row.picked .nwrap,tr.row.picked .add{color:#fff}
   tr.row.picked .pos{font-weight:600}
-  tr.row.picked .mbar{background:rgba(255,255,255,.26);
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
-  tr.row.picked .mbar:before{background:rgba(255,255,255,.62)}
+  /* momentum is drawn by .bc/.track/.fill, not .mbar. On the accent fill the
+     track goes to near-paper and the fill to white, so the bar reads at a glance
+     instead of disappearing into the pink the way a 26%-white track did. */
+  tr.row.picked .bc .track{background:rgba(255,255,255,.34);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  tr.row.picked .bc .fill{background:#fff;opacity:1;box-shadow:none}
+  tr.row.picked .bc .target{background:rgba(255,255,255,.8);opacity:1}
   tr.row.picked .tag{background:rgba(255,255,255,.2);color:#fff;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
   tr.row.picked .avatar{box-shadow:0 0 0 2px var(--accent),0 0 0 3px rgba(255,255,255,.92)}
