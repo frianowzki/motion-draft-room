@@ -1,6 +1,6 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-19 (`main` `a9b152d` + 2 commit rail pill belum di-commit, live `dpl_EfDfq1oGypAhWsLur1hNXVKZX1ZV`). Kalau kamu (agent baru) membaca ini setelah
+Terakhir ditulis: 2026-11-19 (`main` `4abcbc0`, live `dpl_Cs4smZbtSpvK8LYxYokh7teYwvgr`). Kalau kamu (agent baru) membaca ini setelah
 `/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
 apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
 
@@ -46,7 +46,7 @@ rail pill karena frian kirim screenshot referensi (dark mode = yang bener).
 5. **Footer** — Behance icon diganti X icon (`x.com/motiongame_`), persis landing.
    CSS: `.f1-social a[href*="x.com"] svg{width:15px;height:15px}`.
 
-**Iterasi rail pill (BELUM DI-COMMIT — `app.html` + `public/app.html` dirty):**
+**Iterasi rail pill (DI-COMMIT `4abcbc0`):**
 frian: "Transisi perpindahan sidebar error" (bug 2 di atas). Tiga iterasi:
 - v1: pill `var(--ink)` + text aktif `var(--bg)` → light mode: pill HITAM + teks PUTIH
   (terlalu kontras, frian: "yang bener yang di dark mode")
@@ -63,9 +63,8 @@ frian: "Transisi perpindahan sidebar error" (bug 2 di atas). Tiga iterasi:
   - Verified vision_analyze dark: "subtle gray highlight, same white text, textbook
     beui active state". Light: "elevated white card, same black text, highly readable".
 
-**Sisa kerja:** commit 2 file dirty (app.html + public/app.html) — isi: iterasi v3
-rail pill. Setelah commit, deploy ulang via `./deploy.sh` (author dipaku
-friodrops-5778, `vercel --prod` diblokir).
+**Sisa kerja:** commit HANDOFF.md update (di atas). Setelah commit, deploy ulang via
+`./deploy.sh` (author dipaku friodrops-5778, `vercel --prod` diblokir).
 
 **Deploy history sesi ini:** `e55515d` → `dpl_CWnxAra3UE9AyZShrsDBAwjmkowb` →
 `a9b152d` → `dpl_9pXjwJmJBVrx9d6DDCAqTErwU4Xh` → pill v1 → `dpl_CFajMqBb6GoHCnKsheehHAqVDVtn`
