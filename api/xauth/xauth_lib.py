@@ -197,7 +197,10 @@ def api_get(url, access_token):
 
 
 def fetch_me(access_token):
-    data = api_get(f"{ME}?user.fields=profile_image_url,username,name", access_token)
+    # `id` is not returned by /2/users/me unless it is asked for, and the draft store
+    # keys lineups by it (a handle can be renamed, an id cannot). Without it the
+    # sign-in succeeds but every write has nothing to attach itself to.
+    data = api_get(f"{ME}?user.fields=profile_image_url,username,name,id", access_token)
     return (data or {}).get("data") or {}
 
 

@@ -184,25 +184,37 @@
      the display's edge where the nav no longer lines up with the content */
   .dock{position:sticky;top:0;z-index:60;pointer-events:none;height:0;margin-top:14px;
     max-width:1380px;margin-left:auto;margin-right:auto;padding:0 24px}
-  /* one ruler: the pill and the switch share a header row, so the switch sits
-     on the pill's line at the far right of the page column, and on phones the
-     pill slides left to make room instead of colliding */
-  .dockrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  /* one floating object, centred: the row keeps the pill over the page while
+     content scrolls under it. Centred because a floating pill with nothing
+     beside it reads as deliberate; pinned left it read like a header that lost
+     its logo. The theme switch rides inside the same pill. */
+  .dockrow{display:flex;align-items:center;justify-content:center;gap:0;
     padding-top:14px;position:relative;isolation:isolate}
   /* paint the band the row occupies so scrolled content cannot show through
      the pill's transparent gaps and read as part of the nav */
   .dockrow::before{content:"";position:absolute;left:-24px;right:-24px;top:0;bottom:-10px;
-    background:linear-gradient(var(--bg) 72%,transparent);z-index:-1;pointer-events:none}
+    background:linear-gradient(var(--bg) 58%,transparent);z-index:-1;pointer-events:none}
   .dockrow .pillnav{margin-top:0;flex:none}
-  .tt{position:static;flex:none}
-  /* light mode: a softly translucent paper pill — the ink stays legible over the
-     hero without the heavy dark slab the first pass used */
+  /* the coin rides on the right end of the pill row with a breath of air between
+     it and the last icon: at 2px it read as a sixth destination instead of a
+     separate control. Desktop only, the phone block below pulls it back. */
+  .tt{position:static;flex:none;margin-left:14px}
+  /* glass, not a grey slab: the fill is translucent enough for the blur to
+     matter, a hairline sits on the edge, and an inner highlight runs along the
+     top lip so the surface reads as a curved pane catching the light. */
   .pillnav{pointer-events:auto;margin-top:14px;display:flex;align-items:center;gap:6px;
-    padding:8px 10px;border-radius:100px;
-    background:rgba(255,255,255,.55);
-    -webkit-backdrop-filter:blur(14px) saturate(1.15);backdrop-filter:blur(14px) saturate(1.15);
-    box-shadow:0 8px 24px rgba(17,17,17,.08),inset 0 0 0 1px rgba(17,17,17,.10)}
-  .pillnav a{width:38px;height:38px;border-radius:100px;display:grid;place-items:center;
+    padding:7px 9px;border-radius:100px;position:relative;
+    background:
+      linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,0) 46%),
+      rgba(250,249,246,.58);
+    -webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75),inset 0 -1px 0 rgba(17,17,17,.05),
+      0 18px 40px -12px rgba(17,17,17,.22),0 0 0 1px rgba(17,17,17,.09)}
+  /* the specular line that only glass has */
+  .pillnav::after{content:"";position:absolute;left:12px;right:12px;top:1px;height:1px;
+    border-radius:100px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent)}
+  .pillnav a{width:40px;height:40px;border-radius:100px;display:grid;place-items:center;
     color:var(--ink);transition:color .18s ease,background .18s ease}
   .pillnav a:hover{color:var(--ink);background:rgba(17,17,17,.06)}
   .pillnav a.is-active{color:var(--ink);background:rgba(17,17,17,.09);
@@ -210,6 +222,20 @@
   .pillnav a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .pillnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;
     stroke-linecap:round;stroke-linejoin:round}
+  /* dark: the same pane, just translated — a smoky translucent fill with a
+     brighter top lip, never an opaque black slab */
+  :root[data-theme="dark"] .pillnav{
+    background:
+      linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,0) 48%),
+      rgba(28,28,26,.55);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.45),
+      0 18px 44px -14px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.11)}
+  :root[data-theme="dark"] .pillnav::after{
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent)}
+  :root[data-theme="dark"] .pillnav a{color:#d8d5ce}
+  :root[data-theme="dark"] .pillnav a:hover{color:#fff;background:rgba(255,255,255,.09)}
+  :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.14);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.10)}
 
   /* ---- buttons ---- */
   .btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);
@@ -602,6 +628,13 @@
   .pickcard .signalPill{display:inline-flex;align-items:center;padding:2px 7px;
     border-radius:999px;background:var(--pc-rail);color:var(--ink)}
   .pickcard .signalPill b{font-size:8px;font-weight:600;letter-spacing:.08em}
+  /* the pill wears the same tier colour as the card's signal dot */
+  .pickcard .signalPill.s-surging{background:#3f9d63;color:#fff}
+  .pickcard .signalPill.s-coiled{background:#b8862b;color:#fff}
+  .pickcard .signalPill.s-sleeper{background:#5b73c4;color:#fff}
+  .pickcard .signalPill.s-quiet{background:#8a8a84;color:#fff}
+  .pickcard .signalPill.s-fade{background:#b45a4f;color:#fff}
+  .pickcard .signalPill.s-steady{background:#5f7fae;color:#fff}
   .pickcard .bigmove{display:flex;align-items:baseline;gap:8px;margin-top:11px}
   .pickcard .bigmove b{font-family:var(--display);font-size:29px;line-height:.95;
     font-weight:500;letter-spacing:-.045em;font-variant-numeric:tabular-nums;
@@ -713,16 +746,22 @@
   .f1-social a{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
     color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);background:transparent;
     transition:color .2s ease,box-shadow .2s ease,background .2s ease,transform .2s ease}
-  .f1-social a:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);transform:translateY(-1px)}
+  /* hover lifts the chip and thickens its ring - the ink never changes, in
+     either theme, so the glyph you point at is the glyph you get */
+  .f1-social a:hover{color:inherit;box-shadow:inset 0 0 0 1.5px var(--ink);transform:translateY(-1px)}
   .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .f1-social svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
     stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .f1-social a[href*="x.com"] svg{width:15px;height:15px}
   .f1-social a[href*="github.com"] svg{width:18px;height:18px}
   .f1-social svg path[fill="currentColor"]{stroke:none}
+  /* docs and globe are solid glyphs like the X mark: no stroke, same optical
+     weight. Without this they read as thin outlines next to the two brand marks. */
+  .f1-social a[href*="docs.motion.game"] svg,.f1-social a[href="https://motion.game"] svg{fill:currentColor;stroke:none}
   :root[data-theme="dark"] .f1-bar p{color:var(--ink)}
   :root[data-theme="dark"] .f1-social a{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
-  :root[data-theme="dark"] .f1-social a:hover{color:var(--ink);background:#f4f3f0;box-shadow:none}
+  :root[data-theme="dark"] .f1-social a:hover{color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
 
   /* ---- responsive: two breakpoints, same as the app ---- */
   @media(max-width:940px){
@@ -748,7 +787,7 @@
     .wrap{padding:0 12px 64px}
     .dock{margin-top:10px;padding:0 12px}
     .dockrow{padding-top:10px;gap:6px}
-    .tt{width:30px;height:30px}
+    .tt{width:30px;height:30px;margin-left:6px}
     .tt-face,.tt-face svg{width:16px;height:16px}
     .pillnav{gap:2px;padding:6px 8px}
     .pillnav a{width:36px;height:36px}
@@ -947,8 +986,8 @@
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.4"/><path d="M8.4 10.5V8a3.6 3.6 0 0 1 7.2 0v2.5"/><circle cx="12" cy="15.2" r="1.1"/></symbol>
   <symbol id="fi-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162L22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299l-.929-1.329L3.076 1.56h3.182l5.965 8.532l.929 1.329l7.754 11.09h-3.182z"/></symbol>
   <symbol id="fi-github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
-  <symbol id="fi-docs" viewBox="0 0 24 24"><path d="M6.5 3.5h7.2L18.5 8v12.5h-12a1.5 1.5 0 0 1-1.5-1.5V5a1.5 1.5 0 0 1 1.5-1.5Z"/><path d="M13.4 3.7V8h4.6"/><path d="M8.6 12.2h6.2"/><path d="M8.6 15.6h6.2"/><path d="M8.6 18.4h3.6"/></symbol>
-  <symbol id="fi-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 12h16.8"/><path d="M12 3.4c2.2 2.35 3.4 5.3 3.4 8.6S14.2 18.25 12 20.6c-2.2-2.35-3.4-5.3-3.4-8.6S9.8 5.75 12 3.4Z"/></symbol>
+  <symbol id="fi-docs" viewBox="0 0 24 24"><path fill="currentColor" d="M5 2.4h8.3l5.7 5.7v12.3a1.6 1.6 0 0 1-1.6 1.6H5a1.6 1.6 0 0 1-1.6-1.6V4A1.6 1.6 0 0 1 5 2.4Zm8.9 1.9v4.1h4.1l-4.1-4.1ZM6.8 11.6h9.1v1.9H6.8v-1.9Zm0 3.6h9.1v1.9H6.8v-1.9Zm0 3.6h5.4v1.9H6.8v-1.9Z"/></symbol>
+  <symbol id="fi-globe" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.1a9.9 9.9 0 1 0 0 19.8 9.9 9.9 0 0 0 0-19.8Zm6.6 6.4h-2.5a15.3 15.3 0 0 0-1.4-3.9 8.3 8.3 0 0 1 3.9 3.9ZM12 3.9c.7.9 1.3 2.1 1.7 3.5h-3.4c.4-1.4 1-2.6 1.7-3.5ZM3.9 12c0-.8.1-1.6.3-2.3h2.9a17.5 17.5 0 0 0 0 4.6H4.2c-.2-.7-.3-1.5-.3-2.3Zm.8 3.5h2.5c.3 1.4.8 2.7 1.4 3.9a8.3 8.3 0 0 1-3.9-3.9Zm2.5-6.9H4.7a8.3 8.3 0 0 1 3.9-3.9 15.3 15.3 0 0 0-1.4 3.9ZM12 20.1c-.7-.9-1.3-2.1-1.7-3.5h3.4c-.4 1.4-1 2.6-1.7 3.5Zm2.1-5.1H9.9a15.9 15.9 0 0 1 0-4.6h4.2a15.9 15.9 0 0 1 0 4.6Zm.5 4.4c.6-1.2 1.1-2.5 1.4-3.9h2.5a8.3 8.3 0 0 1-3.9 3.9ZM16.8 14a17.5 17.5 0 0 0 0-4.6h2.9a8.4 8.4 0 0 1 0 4.6h-2.9Z"/></symbol>
   <symbol id="i-trending-up" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></symbol>
   <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></symbol>
@@ -1243,7 +1282,7 @@
         </div>
         <div class="pc-foot">
           <span>card &middot; rare &times;1.10</span>
-          <b>filed 19:58Z</b>
+          <b id="pcFiled">filed 19:58 UTC</b>
         </div>
         <a class="hc-act acta acta-sm" href="/app" aria-label="Read how a call is scored">
           <span class="acta-t">Read how a call is scored</span>
@@ -1350,7 +1389,7 @@
     <div class="f1-bar">
       <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
       <div class="f1-social">
-        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
+        <a href="https://x.com/widyakrnwn" target="_blank" rel="noopener" aria-label="widyakrnwn on X"><svg><use href="#fi-x"/></svg></a>
         <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
         <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
         <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
@@ -1747,6 +1786,21 @@ fetch("/api/signals", { cache: "no-store" })
       }
     }
     if (rank) rank.textContent = '#' + (c.position == null ? '--' : c.position);
+    // the pill and the star count follow the same row the rest of the card reads
+    var pill = document.querySelector('.pickcard .signalPill b');
+    if (pill && c.tags && c.tags[0]) {
+      var tg = c.tags[0];
+      pill.textContent = tg;
+      pill.parentNode.className = 'signalPill s-' + tg.toLowerCase().replace(/[^a-z]/g, '');
+    }
+    var est = document.querySelector('.pickcard .meta .stars');
+    var estn = document.querySelector('.pickcard .meta .estn');
+    if (est && typeof c.estStars === 'number') {
+      var k = Math.max(0, Math.min(8, Math.round(c.estStars)));
+      est.textContent = new Array(k + 1).join('\u2605') + new Array(9 - k).join('\u2606');
+      est.title = k + ' of 8 estimated stars';
+    }
+    if (estn && typeof c.estStars === 'number') estn.textContent = Math.round(c.estStars * 4) + '/32';
     if (move) {
       var d = typeof c.delta4h === 'number' ? c.delta4h : 0;
       move.className = 'bigmove ' + (d >= 0 ? 'up' : 'down');
@@ -1770,11 +1824,18 @@ fetch("/api/signals", { cache: "no-store" })
 
   function paint(d) {
     var all = (d && d.creators) || [];
-    (function () {
-      var top = all.filter(function (c) { return c && c.tags && c.tags.indexOf('SURGING') > -1; })
-        .sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
-      paintCall(top);
-    })();
+    // the card reads the strongest name the board has, whatever its tag: a day
+    // can pass with nothing tagged SURGING and an empty card reads as broken.
+    // Surging names still win when they exist.
+    var urg = all.filter(function (c) { return c && c.tags && c.tags.indexOf('SURGING') > -1; });
+    var top = (urg.length ? urg : all.slice()).sort(function (a, b) { return (b.momentum || 0) - (a.momentum || 0); });
+    paintCall(top);
+    var filed = document.getElementById('pcFiled');
+    if (filed) {
+      var t = new Date();
+      filed.textContent = 'filed ' + ('0' + t.getUTCHours()).slice(-2) + ':' +
+        ('0' + t.getUTCMinutes()).slice(-2) + ' UTC';
+    }
     cards.forEach(function (card, ci) {
       var tag = card.getAttribute('data-tag');
       var rows = all.filter(function (c) {

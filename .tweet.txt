@@ -1,0 +1,13 @@
+Motion's leaderboard tells you where everyone stands right now. Then the next slot lands and it's gone. Deltas come in four hour slices and nothing stacks up, so you see today and never a trend.
+
+So I built a draft room that keeps the history.
+
+It takes a snapshot of all 79 creators every four hours, which is what makes 24h and 72h movement, acceleration and volatility real numbers instead of vibes. Every creator gets a momentum score with a readable formula, a star estimate on the game's actual 1 to 8 scale, and a tag: SURGING, COILED, SLEEPER, FADE, QUIET.
+
+Drafting is five creators under a 32 star cap, and each pick needs a one line thesis plus a pre-mortem. You cannot one click this thing into a lineup. When the next window opens, your locked picks get graded against what actually moved and the receipt goes in a public book next to your hit rate.
+
+The part I care most about: where I had to guess, the app says so. Motion publishes the Lineup Score formula but not the Score Boost multipliers, so rarity goes on the receipt and never into the grade. Projected numbers are labelled projected, on the same line as the number.
+
+Live: https://motion-draft-room.vercel.app
+Code: https://github.com/frianowzki/motion-draft-room
+#Mogathon @callmogbot

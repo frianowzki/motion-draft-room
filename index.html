@@ -74,12 +74,13 @@
   :root[data-theme="dark"] .chip{color:#c9c6bf;box-shadow:inset 0 0 0 1px var(--line)}
   :root[data-theme="dark"] .hc-row{color:#c2bfb8}
   :root[data-theme="dark"] .hc-foot{color:#a5a29a}
-  :root[data-theme="dark"] .themesw{background:rgba(255,255,255,.08)}
+:root[data-theme="dark"] .themesw{background:rgba(255,255,255,.08);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   :root[data-theme="dark"] .themesw button{color:#b4b1aa}
   :root[data-theme="dark"] .themesw button:hover{color:#fff}
   :root[data-theme="dark"] .themesw button[aria-pressed="true"]{color:#fff;
     background:rgba(255,255,255,.2)}
-  :root[data-theme="dark"] .pillnav a{color:#9d9a93}
+  :root[data-theme="dark"] .pillnav a{color:#c9c6bf}
   :root[data-theme="dark"] .pillnav a:hover{color:#fff}
   :root[data-theme="dark"] .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.16)}
   :root[data-theme="dark"] .faq-body{color:#bdbab3}
@@ -100,8 +101,14 @@
     box-shadow:none}
   :root[data-theme="dark"] .closer .btn.primary:hover{background:#000}
   :root[data-theme="dark"] .hc-state{color:var(--bg);background:var(--ink)}
-  :root[data-theme="dark"] .pillnav{background:linear-gradient(rgba(38,38,36,.9) 0%,rgba(24,24,23,.92) 100%);
-    box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.12)}
+  :root[data-theme="dark"] .pillnav{
+    background:
+      linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,0) 48%),
+      rgba(26,26,24,.55);
+    box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 -1px 0 rgba(0,0,0,.5) inset,
+      0 18px 44px -14px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.11)}
+  :root[data-theme="dark"] .pillnav::after{
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent)}
 
   /* ---- theme switch (Framer "CoolThemeSwitch" port): two icon knobs in a
      sunken track, and the page cross-fades between two inks ---- */
@@ -145,23 +152,40 @@
   /* one ruler: the pill and the switch share a header row, so the switch sits
      on the pill's line at the far right of the page column, and on phones the
      pill slides left to make room instead of colliding */
-  .dockrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  /* the whole nav is one floating glass pill, centred: a sticky row that keeps
+     the pill over the page while the content scrolls under it. Centred because
+     a floating object with nothing beside it reads as deliberate; pinned left
+     it read like a header that lost its logo. */
+  .dockrow{display:flex;align-items:center;justify-content:center;gap:0;
     padding-top:14px;position:relative;isolation:isolate}
   /* paint the band the row occupies so scrolled content cannot show through
      the pill's transparent gaps and read as part of the nav */
   .dockrow::before{content:"";position:absolute;left:-24px;right:-24px;top:0;bottom:-10px;
-    background:linear-gradient(var(--bg) 72%,transparent);z-index:-1;pointer-events:none}
+    background:linear-gradient(var(--bg) 60%,transparent);z-index:-1;pointer-events:none}
   .dockrow .pillnav{margin-top:0;flex:none}
-  .themesw{position:static;flex:none}
+  .themesw{position:static;flex:none;margin-left:2px}
+  /* glass, not a grey slab: the fill is translucent enough for the blur to
+     matter, a hairline sits on the edge, and an inner highlight runs along the
+     top lip so the surface reads as a curved pane catching the light. The
+     third layer is the sheen — a soft diagonal that fades out before it
+     reaches the icons. */
   .pillnav{pointer-events:auto;margin-top:14px;display:flex;align-items:center;gap:6px;
-    padding:8px 10px;border-radius:100px;
-    background:linear-gradient(rgba(23,23,23,.88) 0%,rgba(13,13,13,.88) 100%);
-    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-    box-shadow:0 10px 30px rgba(17,17,17,.18),inset 0 0 0 1px rgba(255,255,255,.10)}
-  .pillnav a{width:38px;height:38px;border-radius:100px;display:grid;place-items:center;
-    color:#8a8a8a;transition:color .18s ease,background .18s ease}
-  .pillnav a:hover{color:#fff;background:rgba(255,255,255,.08)}
-  .pillnav a.is-active{color:#fff;background:rgba(255,255,255,.12)}
+    padding:7px 9px 7px 9px;border-radius:100px;position:relative;
+    background:
+      linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,0) 46%),
+      rgba(247,246,243,.58);
+    -webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 -1px 0 rgba(17,17,17,.06) inset,
+      0 18px 40px -12px rgba(17,17,17,.24),0 0 0 1px rgba(17,17,17,.09)}
+  /* a second, thinner lip: the specular line that only glass has */
+  .pillnav::after{content:"";position:absolute;left:12px;right:12px;top:1px;height:1px;
+    border-radius:100px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent)}
+  .pillnav a{width:40px;height:40px;border-radius:100px;display:grid;place-items:center;
+    color:#4c4a45;transition:color .18s ease,background .18s ease,box-shadow .18s ease}
+  .pillnav a:hover{color:#111;background:rgba(17,17,17,.06)}
+  .pillnav a.is-active{color:#111;background:rgba(17,17,17,.09);
+    box-shadow:0 0 0 1px rgba(17,17,17,.07) inset}
   .pillnav a:focus-visible{outline:2px solid #fff;outline-offset:2px}
   .pillnav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;
     stroke-linecap:round;stroke-linejoin:round}

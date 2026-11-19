@@ -1,10 +1,152 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-19 (`main` `4abcbc0`, live `dpl_Cs4smZbtSpvK8LYxYokh7teYwvgr`). Kalau kamu (agent baru) membaca ini setelah
-`/new`, **file ini satu-satunya sumber konteks.** Baca sampai habis sebelum menyentuh
-apa pun. Jangan mengarang riwayat di luar yang tertulis di sini.
+Terakhir ditulis: 2026-11-19 (`main` `4591a81` + working tree belum commit, live `dpl_KfT9d94qr1yPqG6Nysno84yoj1bS`).
+Kalau kamu (agent baru) membaca ini setelah `/new`, **file ini satu-satunya sumber konteks.**
+Baca sampai habis sebelum menyentuh apa pun. Jangan mengarang riwayat di luar yang
+tertulis di sini.
 
-## 2026-11-19 (PALING BARU) — 5 bugfix + rail pill subtle beui-style (belum di-commit)
+## 2026-11-19 (PALING BARU) — sync picks lintas device, History satu accent pink, tombol View on X
+
+Semua **sudah live** di `dpl_KfT9d94qr1yPqG6Nysno84yoj1bS`. Tapi **belum di-commit** —
+working tree masih kotor (lihat bagian "Status git" di bawah).
+
+### 1. Sinkron lineup lintas device (`/api/draft`) — SELESAI & TERUJI END-TO-END
+
+Sebelumnya picks cuma di `localStorage['mdr_picks']` (per-device, desktop ≠ mobile).
+Sekarang dua arah: lokal tetap sumber instan, server otoritas saat sign in.
+
+- `db/drafts.sql` — tabel `public.drafts (xid text primary key, handle text, picks jsonb,
+  updated_at timestamptz)` + `check (jsonb_array_length(picks) between 0 and 5)` + RLS
+  enable tanpa policy. **frian sudah menjalankan ini di Supabase SQL Editor** ("success,
+  no rows returned").
+- `api/draft.py` — GET/POST/DELETE `/api/draft`, keyed `_xid(user)`.
+- Client: `syncPicksUp()` / `syncPicksDown()` di `app.html`, dipanggil dari `savePicks()`.
+
+**Tiga bug yang sudah diperbaiki di endpoint ini (jangan diulang):**
+1. `deploy.sh` hanya mengupload `git ls-files`. `api/draft.py` yang untracked bikin
+   `/api/draft` → **404 NOT_FOUND** di prod. **File baru wajib `git add` dulu.**
+2. `session has no account id` — `fetch_me` di `api/xauth/xauth_lib.py` hanya minta
+   `user.fields=profile_image_url,username,name`; X **tidak** mengembalikan `id` kecuali
+   diminta. Plus `draft.py` baca `user["xid"]` padahal `oauth.py` simpan `user["id"]`.
+   Fix: tambah `id` ke fields, helper `_xid()` baca `xid` → `id` → fallback `h:<handle>`.
+3. `supabase 400 ... 22023 cannot get array length of a scalar` — `"picks": json.dumps(picks)`
+   mengirim JSON *string*, bukan array, jadi `jsonb_array_length` gagal. Fix: kirim array
+   asli; baca lewat `_as_list()` yang tahan string/double-encoded/scalar/sampah.
+
+Bukti jalan: frian kirim balik `{"picks":[{"name":"IShowSpeed",...}],"saved":true}`.
+
+### 2. History: satu accent pink, tidak ada warna lain
+
+frian minta "Ganti accent di history jadi pink aja ilangin accent lain".
+- `.hpanel .hstats .s.up b` / `.s.down b` → `var(--accent)` (sebelumnya hijau/merah)
+- `.hmoves .row .d.up` / `.d.down` → `var(--accent)`
+- `.hboard td.mv.up` / `td.mv.down` / `td.mv.isnew` → `var(--accent)`
+- `.hmoves .grp > h3` → `var(--accent)`, `font-weight:600`
+- `.hboard tbody tr:hover td` → `color-mix(in srgb,var(--accent) 7%,transparent)`
+  light / `16%` dark (sebelumnya `--sunken` abu)
+
+**Warna signal di Market TIDAK diubah** — SURGING/COILED/QUIET tetap kode warna sendiri.
+Permintaan "satu accent" hanya berlaku untuk History.
+
+### 3. Dua bug seleksi History (ini yang bikin frian lihat "abu bukan pink")
+
+**Bug A — default seleksi kena baseline.** `HIST.i` mulai `0`, padahal list diurutkan
+terbalik (terbaru di atas), jadi index `0` = window paling lama yang digambar paling
+bawah. History selalu kebuka di "15 Nov, 20:00 UTC / BASELINE".
+Fix di `histBuild()`: kalau `HIST.i` tidak valid **atau** `!HIST.picked`, set ke
+`wins.length - 1`. Flag baru `HIST.picked` di-set `true` hanya saat reader memilih
+(`histShow`). Jadi poll yang menambah window tidak menggeser pilihan yang disengaja,
+tapi buka pertama selalu di window terbaru.
+
+**Bug B — kadang tidak ada baris terpilih sama sekali.** `aria-selected` cuma ditulis
+oleh template saat list dibangun dan oleh `histShow()` saat diklik; kalau `render()`
+membangun ulang list di momen tertentu, tak satu pun dapat `true` → tidak ada CSS pink
+aktif → semua baris abu (persis screenshot frian).
+Fix: setelah `list.innerHTML = ...`, `histBuild()` menegakkan tepat satu baris terpilih
+(`if (!list.querySelector('.hitem[aria-selected="true"]'))`).
+
+**Bug C — AKAR MASALAH SEBENARNYA (paling penting, jangan lupa).**
+Ada catch-all dark-theme di baris ~125 `app.html`:
+```css
+:root[data-theme="dark"] button:hover:not(:disabled):not(.mstep-next):not(.rail-act)
+  :not(.acta-solid):not(.tab):not(.pager button):not(.rar button)
+  :not(.rail-item[aria-selected="true"]),
+:root[data-theme="dark"] input:hover,
+:root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
+```
+`.hitem` itu `<button>` dan **tidak dikecualikan di sini**, dan `:root[data-theme="dark"]`
+menang spesifisitas atas rule accent. Jadi tiap kursor/tap berada di baris terpilih,
+abu `rgba(255,255,255,.09)` menimpa pink. Item yang tidak di-hover tetap pink — itu
+sebabnya kelihatan "kadang pink kadang enggak".
+Dua fix:
+- tambah `:not(.hitem)` ke catch-all dark itu (sumbernya)
+- anchor rule accent ke `:root[data-theme]` + lengkapi `:hover`/`:active`/`:focus`/
+  `:focus-visible`/`:focus-within` (jangan bergantung urutan rule di file)
+
+**Cara debug yang berhasil** (pakai kalau ada bug warna serupa): jangan percaya
+`getComputedStyle` mentah saja — nilainya bisa hasil komposit. Yang memecahkan kasus ini:
+iterasi `document.styleSheets` → semua rule yang `.matches()` pada elemen, print
+`selectorText + cssText`. Juga `elementFromPoint` untuk cek overlay, dan **klik nyata
+lewat `click_at_xy`** karena event `mouseover` sintetis tidak memicu `:hover` CSS.
+
+### 4. Tombol account di mobile jadi "View on X"
+
+Screenshot frian: di HP tombolnya cuma glyph X tanpa teks. Penyebab:
+`@media(max-width:520px)` punya `.rail-x span{display:none}` + `.rail-x{width:30px}`.
+Fix: label selalu tampil di semua lebar, teks `"View on X"` (ganti dari `"View profile"`),
+`padding:6px 10px;width:auto;font-size:10.5px;white-space:nowrap`.
+Verified prod 390px: `label=[Connect X] shown=true btn=90x44`, tanpa overflow horizontal.
+Catatan: teks "View on X" cuma muncul kalau sudah login X — probe gw pakai injeksi DOM
+karena browser sandbox tidak punya sesi X frian.
+
+## Status git (PENTING untuk agent baru)
+
+`main` `4591a81` ("chore: drop a stray screenshot"). Working tree **kotor**:
+```
+M  README.md
+A  api/draft.py          <- sudah staged, aman
+M  api/xauth/xauth_lib.py
+M  app.html
+A  db/drafts.sql         <- sudah staged, aman
+M  index.html            <- decoy, jangan dipakai
+M  landing.html
+MM public/app.html       <- public/ di-.gitignore, JANGAN git add (exit 1)
+?? .r1.png .r2.png .r3.png .tweet.txt SUBMISSION.md img/readme-*.png
+```
+`public/` di-ignore dan di-build di sisi Vercel — **selalu `git add app.html` saja**,
+jangan `git add public/app.html` (gagal exit 1).
+
+## Deploy
+
+```bash
+cd /data/workspace/motion-draft-room
+git add <file yang berubah>          # file baru WAJIB di-add, kalau tidak 404
+set -a && . /data/home/.hermes/.env && set +a && ./deploy.sh 2>&1 | grep -viE 'token|secret'
+```
+`vercel --prod` **diblokir** (`deployment_blocked`, team cuma owner & commit
+di-author frianowzki). Harus lewat `./deploy.sh` (Deployments API v13, author dipaku
+ke `friodrops-5778`).
+
+## Local dev
+
+- `./build.sh` → build ke `public/`
+- `python3 -m http.server 8791` (root, decoy) dan `8792` (dari `public/`)
+- Server lokal **tidak punya** `/api/history`, `/api/draft` — History kosong di lokal.
+  Untuk uji visual, injeksi `#histList` + `#histPanel` manual (contoh markup di riwayat
+  sesi) atau uji langsung ke prod.
+- Cache buster di query string (`?v=xxx`) wajib, browser agresif cache.
+
+## Kalau lanjut polish
+
+Sisa yang **belum** dikerjakan dan sudah disebut:
+- Bar progres di baris History yang **tidak** terpilih masih putih/abu (baris terpilih
+  sudah putih di atas pink). Kalau mau itu ikut pink, ubah `.hitem .bar i` untuk state
+  non-selected.
+- `data/profiles.json`: 22 dari 79 creator punya avatar.
+
+Deadline submission Mogathon X/@callmogbot: **2026-11-19**.
+
+## 2026-11-19 (sebelumnya) — 5 bugfix + rail pill subtle beui-style
 
 frian kirim 5 bug, semua dibenerin + verified di produksi. Lalu 2 iterasi tambahan soal
 rail pill karena frian kirim screenshot referensi (dark mode = yang bener).

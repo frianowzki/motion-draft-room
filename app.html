@@ -11,7 +11,7 @@
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0f0f0e">
-<title>Motion Market — five creators, five reasons, one grade</title>
+<title>Motion Market: five creators, five reasons, one grade</title>
 <meta name="description" content="Draft five creators from Motion's public leaderboard, write your reasoning, and get scored when the window closes. Every receipt stays public.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,6 +45,9 @@
     --accent-ink:#ffffff;
     --up:#1d7a44;
     --down:#c0392b;
+    /* the destructive fill. --down leans orange-red and white type on it lands
+       at 4.7:1; this one is deep enough that the same white clears 5.8:1. */
+    --btn-red:#c8261c;
     /* rarity accents follow the in-game card tiers: common green, rare blue,
        epic purple, legendary orange. Per theme so each stays readable on paper
        and on ink, and the selected rarity pill fills with its own tier. */
@@ -90,6 +93,7 @@
     --up:#4ec27c;
     --down:#e5766a;
     --danger:#ff6b6b;
+    --btn-red:#d9362b;
     --r-common:#4caf50;
     --r-rare:#29b6f6;
     --r-epic:#ab47bc;
@@ -110,12 +114,13 @@
       radial-gradient(40vmax 34vmax at 60% 96%, rgba(70,74,84,.16), transparent 66%)}
   :root[data-theme="dark"] .grain{mix-blend-mode:screen;opacity:.16}
   :root[data-theme="dark"] {--grain-svg:0}
-  :root[data-theme="dark"] .chip,
-  :root[data-theme="dark"] .tab{background:rgba(255,255,255,.05)}
-  :root[data-theme="dark"] .tab:hover,
+  :root[data-theme="dark"] .chip{background:rgba(255,255,255,.05)}
+  /* .tab is not in this list: a filter paints its own solid signal block, and a
+     generic dark wash on top of it turned every slab into grey */
+  
   /* the three solid pills below paint themselves and must not pick up the
      generic dark hover wash; they are excluded here, at the source of it */
-  :root[data-theme="dark"] button:hover:not(:disabled):not(.mstep-next):not(.rail-act):not(.acta-solid):not(.rail-item[aria-selected="true"]),
+  :root[data-theme="dark"] button:hover:not(:disabled):not(.mstep-next):not(.rail-act):not(.acta-solid):not(.tab):not(.pager button):not(.rar button):not(.rail-item[aria-selected="true"]):not(.hitem),
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
   :root[data-theme="dark"] input,
@@ -151,6 +156,11 @@
   ::-webkit-scrollbar-thumb{background:#c9c6c0;border-radius:99px;border:2px solid #eceae6}
   ::-webkit-scrollbar-thumb:hover{background:#b0aca4}
   html{-webkit-text-size-adjust:100%;background:var(--bg)}
+  /* the rail is sticky, so a tab whose content is taller than the viewport grows a
+     scrollbar and every short tab that follows loses the 15px gutter. The rail then
+     slides sideways on each tab switch. Reserving the gutter for good keeps the
+     sidebar planted, which is the whole point of a sticky nav. */
+  html{scrollbar-gutter:stable}
   /* the root is painted as well as the body: a theme switch cross-fades the body
      for 320ms, and an unpainted html showed as a light frame around a page that
      had not finished changing */
@@ -306,7 +316,11 @@
      action bar and the theme switch. Collapsed, the same markup folds to a
      52px strip of icons — the identity card keeps its face so you can still
      see who is signed in, and the labels stay in the DOM for screen readers. */
-  .rail{position:sticky;top:22px;display:flex;flex-direction:column;gap:10px;
+  /* The rail is a fixed-height column, not a sticky one. Sticky resolved its
+     offset against the body scroller, so it sat at 14px on a tab whose page
+     fit the viewport and slid to 22px on a tab that could scroll. Taking it out
+     of the flow's slack keeps it at exactly the same spot on every tab. */
+  .rail{position:sticky;top:14px;align-self:start;display:flex;flex-direction:column;gap:10px;
     width:100%;transition:width .28s cubic-bezier(.4,0,.2,1)}
   .rail-toggle{display:flex;align-items:center;gap:8px;align-self:flex-end;
     border:0;background:transparent;color:var(--ink);opacity:.5;font:inherit;
@@ -324,11 +338,11 @@
     display:grid;place-items:center;background:var(--sunken);color:var(--ink);
     box-shadow:inset 0 0 0 1px var(--line)}
   .rail-ava img{width:100%;height:100%;object-fit:cover;display:block}
-  .rail-ini{font-family:var(--mono);font-size:11px;letter-spacing:.02em;opacity:.62}
+  .rail-ini{font-family:var(--mono);font-size:11px;letter-spacing:.02em;opacity:1}
   .rail-who{min-width:0;flex:1}
   .rail-name{font-size:12.5px;font-weight:650;letter-spacing:-.01em;color:var(--ink);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
-  .rail-sub{font-size:10.5px;color:var(--ink);opacity:.5;white-space:nowrap;overflow:hidden;
+  .rail-sub{font-size:10.5px;color:var(--ink);opacity:1;white-space:nowrap;overflow:hidden;
     text-overflow:ellipsis;line-height:1.35;margin-top:1px}
   .rail-sub .dot{display:inline-block;width:5px;height:5px;border-radius:100px;
     background:var(--ok);vertical-align:1px;margin-right:4px}
@@ -341,7 +355,7 @@
   .rail-x .ic{width:11px;height:11px;flex:none}
   .rail-x.on .ic{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .rail-h{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink);opacity:.42;padding:1px 4px 7px}
+    color:var(--ink);opacity:1;padding:1px 4px 7px}
   .rail-items{display:flex;flex-direction:column;gap:1px}
   .rail-item{position:relative;display:flex;align-items:center;gap:9px;width:100%;
     padding:8px 9px;border:0;border-radius:11px;background:transparent;color:var(--ink);
@@ -371,11 +385,11 @@
     transform:none;opacity:1}
   html .rail-item[aria-selected="true"]:hover .ic,
   .rail-item[aria-selected="true"]:hover .rail-count{stroke:#fff;background:rgba(255,255,255,.22)}
-  .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;opacity:.55;
+  .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;opacity:1;
     padding:1px 5px;border-radius:100px;background:var(--card-2)}
   .rail-act{background:var(--ink);color:var(--bg);font-weight:600}
   .rail-act .ic{opacity:1}
-  .rail-act .rail-count{background:rgba(127,127,127,.28);opacity:.9}
+  .rail-act .rail-count{background:rgba(127,127,127,.28);opacity:1}
   /* the rail lock is solid ink and stays exactly that colour under the pointer,
      in both themes; hover feedback here was a dim that read as disabled */
   html button.rail-act:hover,button.rail-act:hover,button.rail-act:active,
@@ -431,7 +445,7 @@
     box-shadow:inset 0 0 0 1px var(--line)}
   .mstep-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .mstep-kicker{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--ink);opacity:.5}
+    text-transform:uppercase;color:var(--ink);opacity:1}
   .mstep-dots{display:flex;gap:5px}
   .mstep-dots i{width:18px;height:4px;border-radius:2px;background:rgba(127,127,127,.28);
     transition:background .22s ease,width .22s ease}
@@ -482,7 +496,7 @@
     padding:3px 8px;border-radius:100px;background:var(--sunken);color:var(--ink);
     box-shadow:inset 0 0 0 1px var(--line)}
   .lb-lead{font-size:15px;line-height:1.55;color:var(--ink);margin:0 0 12px;font-weight:500}
-  .lb-note{font-size:12.5px;line-height:1.65;color:var(--ink);opacity:.66;margin:0 0 12px}
+  .lb-note{font-size:12.5px;line-height:1.65;color:var(--ink);opacity:1;margin:0 0 12px}
   .lb-note:last-of-type{margin-bottom:20px}
   .lb-cta{display:inline-flex;align-items:center;gap:10px;padding:9px 9px 9px 16px;
     border:0;border-radius:100px;background:var(--ink);color:var(--bg);font:inherit;
@@ -556,22 +570,31 @@
     .rail-item{padding:7px 7px;font-size:10.5px;gap:4px;letter-spacing:-.02em}
     .rail-item .ic{width:12px;height:12px}
     .rc{padding:9px 10px}
-    .rail-x span{display:none}
-    .rail-x{padding:7px;width:30px;justify-content:center}
+    /* the account button keeps its words on a phone. As a bare glyph it read as a
+       decorative X mark rather than the one control that opens the profile, so it
+       stays a labelled pill and only shrinks enough to sit beside the name. */
+    .rail-x span{display:inline}
+    .rail-x{padding:6px 10px;width:auto;justify-content:center;white-space:nowrap;
+      font-size:10.5px}
   }
 
+  /* ---- stats: the original tally row, kept for desktop. Five figures in an
+     auto-fit grid, each sitting on a hairline with its figure over and its label
+     under. It was replaced for a while by a rule-free StatsSection; a row of
+     hairlines reads as five separate readings rather than one paragraph of
+     numbers, so the tallies are back. The phone block below still takes the lane
+     to a marquee. */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
     column-gap:22px;row-gap:16px;margin:14px 0 2px;width:100%}
   /* the marquee lane is a phone device only: on a wide screen .track dissolves so
      the tallies are the grid's own children. Wrapped, the track was one grid item
-     and the six figures stacked in a single column. */
-  .stats .track,.stats .stat-grp{display:contents}
+     and the figures stacked in a single column. */
+  .stats .track,.stats .stat-grp:not([aria-hidden]){display:contents}
   /* the second group exists only to make the phone loop seamless. On a wide
      screen .track dissolves into the grid, so both copies became grid items and
-     every figure appeared twice — at 1400px the six tallies wrapped into nine
-     columns and two rows. The copy is off on a desk; the phone block below turns
-     it back on. */
-  .stats .stat-grp[aria-hidden]{display:none}
+     every figure appeared twice. The copy is off on a desk; the phone block below
+     turns it back on. */
+  .stats .stat-grp[aria-hidden]{display:none!important}
   .stats .sep{display:none}
   .tally{min-width:0;border-top:1px solid var(--line);padding-top:14px}
   :root[data-theme="dark"] .tally{border-top-width:2px;border-top-color:rgba(255,255,255,.18)}
@@ -603,8 +626,8 @@
     /* on a phone the lane and its two groups stop being "contents" so the track
        can be one long flex row again */
     .stats .track{display:flex}
-    .stats .stat-grp{display:flex}
-    .stats .stat-grp[aria-hidden]{display:flex}
+    .stats .stat-grp{display:flex!important}
+    .stats .stat-grp[aria-hidden]{display:flex!important}
     .stats{display:block;position:relative;overflow:hidden;margin:12px 0 2px;
       border-radius:13px;background:var(--card);
       box-shadow:inset 0 0 0 1px var(--line-soft);
@@ -647,6 +670,108 @@
      control and made the row look like a segmented widget. Without it every tab
      carries its own hairline chip and the active one is the only thing that
      fills - the gap between pills does the grouping on its own. */
+  .mkbar{display:flex;align-items:center;gap:10px;margin:12px 0 10px;min-width:0}
+  .mkbar .tabs{margin:0;flex:1 1 auto;min-width:0}
+  /* the search bar reads as a field, not an icon button: it keeps the long pill
+     it always had and simply has no prompt text inside it any more */
+  .mksearch{flex:1 1 240px;max-width:340px;display:inline-flex;align-items:center;gap:8px;height:30px;
+    padding:0 12px 0 11px;border:0;border-radius:var(--r-pill);background:transparent;
+    color:var(--ink);font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;
+    text-transform:uppercase;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(17,17,17,.14);
+    transition:background .18s ease,box-shadow .18s ease}
+  .mksearch .ic{width:13px;height:13px;flex:none}
+  .mksearch-lab{white-space:nowrap}
+  .mksearch kbd{font-family:var(--mono);font-size:9px;padding:2px 5px;border-radius:5px;
+    color:var(--ink);background:color-mix(in srgb,var(--ink) 8%,transparent);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  .mksearch:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 5%,transparent);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.26)}
+  :root[data-theme="dark"] .mksearch{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+  :root[data-theme="dark"] .mksearch kbd{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  :root[data-theme="dark"] .mksearch:hover:not(:disabled){
+    background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+  @media (max-width:720px){
+    .mkbar{flex-wrap:wrap}
+    .mksearch{order:2;flex:1 0 100%;max-width:none;width:100%;justify-content:flex-start;height:34px}
+    .mksearch kbd{margin-left:auto}
+  }
+
+  /* ---- search sheet. The backdrop is the dim, the panel is the light: one
+     rounded sheet over the board, results as rows with a face, a name and the
+     one thing that decides a pick — its signal. Every colour here is an ink
+     mix, so the sheet is the same object in both themes. */
+  .srch{position:fixed;inset:0;z-index:920;display:grid;place-items:start center;
+    padding:min(11vh,96px) 14px 14px;background:rgba(10,10,10,.42);
+    -webkit-backdrop-filter:blur(10px) saturate(.9);backdrop-filter:blur(10px) saturate(.9);
+    opacity:0;transition:opacity .16s ease}
+  .srch[hidden]{display:none}
+  .srch.on{opacity:1}
+  .sh-panel{width:min(600px,100%);max-height:min(70vh,600px);display:flex;flex-direction:column;
+    border-radius:16px;background:var(--card);color:var(--ink);overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.10),
+      inset 0 0 0 1px rgba(17,17,17,.10);
+    transform:translateY(-6px) scale(.99);transition:transform .16s ease}
+  :root[data-theme="dark"] .sh-panel{box-shadow:0 30px 80px -18px rgba(0,0,0,.72),
+    0 2px 6px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.13)}
+  .srch.on .sh-panel{transform:none}
+  .sh-top{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;
+    box-shadow:inset 0 -1px 0 rgba(17,17,17,.09)}
+  :root[data-theme="dark"] .sh-top{box-shadow:inset 0 -1px 0 rgba(255,255,255,.1)}
+  .sh-top .ic{width:15px;height:15px;flex:none;color:var(--ink)}
+  .sh-q{flex:1;min-width:0;border:0;background:none;padding:0;color:var(--ink);
+    font-family:var(--sans);font-size:14.5px;font-weight:500;line-height:1.5}
+  .sh-q::placeholder{color:var(--ink);opacity:1}
+  .sh-q:focus{outline:none}
+  .sh-esc{flex:none;font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+    padding:3px 6px;border-radius:5px;color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.14)}
+  :root[data-theme="dark"] .sh-esc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  /* bottom padding so the last row clears the footer instead of being
+     sliced in half by it */
+  .sh-body{overflow-y:auto;overscroll-behavior:contain;padding:6px 6px 12px}
+  .sh-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink);padding:8px 10px 6px}
+  .sh-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;
+    border:0;border-radius:10px;background:none;color:var(--ink);text-align:left;cursor:pointer}
+  .sh-row:hover,.sh-row.sel{background:color-mix(in srgb,var(--ink) 7%,transparent)}
+  :root[data-theme="dark"] .sh-row:hover,:root[data-theme="dark"] .sh-row.sel{
+    background:rgba(255,255,255,.07)}
+  .sh-av{width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;
+    background:color-mix(in srgb,var(--ink) 10%,transparent);
+    font-family:var(--mono);font-size:9.5px;overflow:hidden}
+  .sh-av img{width:100%;height:100%;object-fit:cover}
+  .sh-nm{flex:1;min-width:0;font-size:13.5px;font-weight:500;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .sh-nm small{display:block;margin-top:2px;font-family:var(--mono);font-size:9.5px;font-weight:400;
+    letter-spacing:.04em;text-transform:uppercase}
+  /* the search row's pill wears exactly the board's signal block - same solid
+     tier colour, same white type - so a creator looks the same in the palette
+     as it does on the board. */
+  .sh-tag{flex:none;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 7px;border-radius:999px;color:#fff;
+    background:#4a5568;box-shadow:none;font-weight:600}
+  .sh-tag.SURGING{background:#1d7a44}
+  .sh-tag.COILED{background:#a86a17}
+  .sh-tag.SLEEPER{background:#3a5e9e}
+  .sh-tag.FADE{background:#c0392b}
+  .sh-tag.QUIET{background:#4a5568}
+  .sh-tag.STEADY{background:#4a5568}
+  :root[data-theme="dark"] .sh-tag{background:#4a5568;color:#fff}
+  :root[data-theme="dark"] .sh-tag.SURGING{background:#177a45}
+  :root[data-theme="dark"] .sh-tag.COILED{background:#8a5a12}
+  :root[data-theme="dark"] .sh-tag.SLEEPER{background:#35578f}
+  :root[data-theme="dark"] .sh-tag.FADE{background:#b23325}
+  .sh-empty{padding:26px 12px 30px;text-align:center;font-size:13px;color:var(--ink);
+    line-height:1.6}
+  .sh-foot{display:flex;align-items:center;gap:14px;padding:9px 12px;
+    box-shadow:inset 0 1px 0 rgba(17,17,17,.09)}
+  :root[data-theme="dark"] .sh-foot{box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+  .sh-foot span{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
+    font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+  .sh-foot em{font-style:normal;padding:1px 5px;border-radius:4px;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.16)}
+  :root[data-theme="dark"] .sh-foot em{box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+
   .tabs{display:inline-flex;align-items:center;gap:6px;margin:12px 0 10px;padding:0;
     border-radius:0;background:none;box-shadow:none;
     -webkit-backdrop-filter:none;backdrop-filter:none;
@@ -667,28 +792,49 @@
     transition:color .2s ease,background .2s ease,box-shadow .2s ease}
   .tab{border-radius:var(--r-pill);box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
   :root[data-theme="dark"] .tab{box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
-  .tab:hover{color:var(--ink);background:rgba(17,17,17,.045)}
-  :root[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06)}
+  /* a resting filter is a hairline chip and stays one under the pointer. It used
+     to fill with its signal colour on hover, which meant an inactive filter could
+     be mistaken for the selected one; only aria-pressed gets the colour. */
+  .tab:hover{color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  :root[data-theme="dark"] .tab:hover{color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
   /* the active filter: a raised thumb tinted with its own signal colour, ringed in
      the same hue. In light mode the tint is 12% of the hue so the label stays ink;
      in dark mode 22% because the page under it is nearly black. */
-  .tab.on{color:var(--ink);font-weight:600;
-    background:color-mix(in srgb,var(--hue) 14%,#fff);
-    box-shadow:0 1px 2px rgba(17,17,17,.08),inset 0 0 0 1px color-mix(in srgb,var(--hue) 55%,transparent)}
-  :root[data-theme="dark"] .tab.on{background:color-mix(in srgb,var(--hue) 22%,#111);
-    box-shadow:0 1px 2px rgba(0,0,0,.4),inset 0 0 0 1px color-mix(in srgb,var(--hue) 48%,transparent)}
-  .tab.on:hover{background:color-mix(in srgb,var(--hue) 16%,#fff)}
-  :root[data-theme="dark"] .tab.on:hover{background:color-mix(in srgb,var(--hue) 26%,#111)}
+  /* the active filter is a full block in its own signal colour - solid, white
+     type, no transparency - so SURGING reads as one green slab, COILED amber,
+     SLEEPER blue. The fill stays put on hover: the pointer must not repaint it. */
+  .tab.on{color:#fff;font-weight:600;background:var(--fill);
+    box-shadow:0 1px 2px rgba(17,17,17,.12),inset 0 0 0 1px color-mix(in srgb,#000 12%,var(--fill))}
+  :root[data-theme="dark"] .tab.on{background:var(--fill);
+    box-shadow:0 1px 2px rgba(0,0,0,.45),inset 0 0 0 1px color-mix(in srgb,#000 22%,var(--fill))}
+  .tab.on:hover{background:var(--fill);color:#fff}
+  :root[data-theme="dark"] .tab.on:hover{background:var(--fill);color:#fff}
+  .tab.on b{background:rgba(255,255,255,.22);color:#fff}
+  .tab.on i{background:#fff;box-shadow:0 0 0 2.5px rgba(255,255,255,.24)}
+  /* ALL is the one filter with no signal colour, so on the near-black page its
+     near-black slab disappeared. In dark mode it turns into a white slab with
+     dark type: still a full block, still plainly the selected option. */
+  :root[data-theme="dark"] .tab.on[data-tag="all"]{background:#f4f3f0;color:#16181b;
+    box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.6)}
+  :root[data-theme="dark"] .tab.on[data-tag="all"]:hover{background:#f4f3f0;color:#16181b}
+  :root[data-theme="dark"] .tab.on[data-tag="all"] b{background:rgba(22,24,27,.14);color:#16181b}
+  /* ALL is the one filter with no signal colour, so on the near-black page its
+     near-black slab disappeared. In dark mode it turns into a white slab with
+     dark type: still a full block, still plainly the selected option. */
+  :root[data-theme="dark"] .tab.on[data-tag="all"]{background:#f4f3f0;color:#16181b;
+    box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.6)}
+  :root[data-theme="dark"] .tab.on[data-tag="all"]:hover{background:#f4f3f0;color:#16181b}
+  :root[data-theme="dark"] .tab.on[data-tag="all"] b{background:rgba(22,24,27,.14);color:#16181b}
   /* the count: a hairline chip, tabular, quiet until its row is active */
   .tab .tl{display:inline-flex;align-items:center;gap:5px}
   .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
     padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.06);color:var(--ink);
     font-variant-numeric:tabular-nums;transition:background .2s ease,color .2s ease}
-  .tab:hover b{background:rgba(17,17,17,.1);color:var(--ink)}
-  .tab.on b{background:color-mix(in srgb,var(--hue) 22%,#fff);color:var(--ink)}
+  .tab.on b{background:rgba(255,255,255,.22);color:#fff}
   :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.08);color:var(--ink)}
-  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.12);color:var(--ink)}
-  :root[data-theme="dark"] .tab.on b{background:color-mix(in srgb,var(--hue) 30%,#111);color:var(--ink)}
+  :root[data-theme="dark"] .tab.on b{background:rgba(255,255,255,.22);color:#fff}
   /* the dot carries the signal's palette colour. An empty count fades the whole
      option rather than showing a zero with a live dot beside it. */
   .tab i{width:5px;height:5px;border-radius:50%;display:block;flex:none;
@@ -941,7 +1087,13 @@
      phone size. Hover is a half-strength version of the same fill so the two
      states stay related instead of being two unrelated tints. */
   tr.row:hover{background:color-mix(in srgb,var(--card-2) 55%,transparent)}
-  tr.row.sel{background:var(--card-2)}
+  /* The selected row is a solid band, never a translucent wash: on dark the
+     theme's --card-2 sits DARKER than the card, so the picked row read as a hole
+     rather than a highlight. A literal colour per theme keeps it a full block
+     that clears the card behind it, with an accent rail on the leading edge so
+     the pick is obvious even beside a lit momentum bar. */
+  tr.row.sel{background:#dcd9d3;box-shadow:inset 3px 0 0 var(--accent)}
+  :root[data-theme="dark"] tr.row.sel{background:#2b2b29}
   tr.row.sel td{background:transparent}
   tr.row.sel .name{font-weight:600}
   tr.row.sel .pos{color:var(--ink)}
@@ -968,6 +1120,14 @@
   tr.row.picked:hover > td{background:var(--accent);filter:brightness(1.05)}
   tr.row.picked .pos,tr.row.picked .mono,tr.row.picked .stars,
   tr.row.picked .stars span,tr.row.picked .nwrap,tr.row.picked .add{color:#fff}
+  /* the signal pill kept its own hue, and in light mode those hues are dark
+     greens and blues on pink — visible, but muddy, and the lighter of them went
+     to mush. Inside a picked row every glyph is paper and the pill is an outline:
+     it still reads as a pill, it just stops being a coloured chip. */
+  tr.row.picked .sb{color:#fff;background:rgba(255,255,255,.16);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  tr.row.picked .sb i{background:#fff;box-shadow:0 0 0 2.5px rgba(255,255,255,.22)}
+  tr.row.picked .tag{color:#fff}
   tr.row.picked .pos{font-weight:600}
   /* momentum is drawn by .bc/.track/.fill, not .mbar. On the accent fill the
      track goes to near-paper and the fill to white, so the bar reads at a glance
@@ -1016,19 +1176,24 @@
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.08)}
   .sb i{width:5px;height:5px;border-radius:50%;flex:none;background:currentColor;
     box-shadow:0 0 0 2.5px color-mix(in srgb,currentColor 16%,transparent)}
-  .sb.SURGING{color:#1d7a44;background:rgba(29,122,68,.09);box-shadow:inset 0 0 0 1px rgba(29,122,68,.22)}
-  .sb.COILED{color:#6b5b00;background:rgba(160,137,0,.11);box-shadow:inset 0 0 0 1px rgba(160,137,0,.24)}
-  .sb.SLEEPER{color:#3a5e9e;background:rgba(58,94,158,.09);box-shadow:inset 0 0 0 1px rgba(58,94,158,.22)}
-  .sb.FADE{color:#c0392b;background:rgba(192,57,43,.09);box-shadow:inset 0 0 0 1px rgba(192,57,43,.22)}
-  .sb.QUIET{color:var(--ink);background:rgba(17,17,17,.03);box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
-  .sb.STEADY{color:#4a5568;background:rgba(74,85,104,.08);box-shadow:inset 0 0 0 1px rgba(74,85,104,.2)}
-  :root[data-theme="dark"] .sb{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
-  :root[data-theme="dark"] .sb.SURGING{color:#5fd18b;background:rgba(60,190,120,.13);box-shadow:inset 0 0 0 1px rgba(95,209,139,.26)}
-  :root[data-theme="dark"] .sb.COILED{color:#d8c86a;background:rgba(216,200,106,.13);box-shadow:inset 0 0 0 1px rgba(216,200,106,.26)}
-  :root[data-theme="dark"] .sb.SLEEPER{color:#8ab0ec;background:rgba(90,140,220,.14);box-shadow:inset 0 0 0 1px rgba(138,176,236,.28)}
-  :root[data-theme="dark"] .sb.FADE{color:#ef8878;background:rgba(230,90,70,.14);box-shadow:inset 0 0 0 1px rgba(239,136,120,.28)}
-  :root[data-theme="dark"] .sb.QUIET{color:var(--ink);background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-  :root[data-theme="dark"] .sb.STEADY{color:var(--ink);background:rgba(160,175,200,.11);box-shadow:inset 0 0 0 1px rgba(169,178,195,.22)}
+  /* the signal pill is a full block of its own colour, not a tint: one solid
+     SURGING green, one solid FADE red, white type on all of them. */
+  .sb.SURGING{color:#fff;background:#1d7a44;box-shadow:none}
+  .sb.COILED{color:#fff;background:#a86a17;box-shadow:none}
+  .sb.SLEEPER{color:#fff;background:#3a5e9e;box-shadow:none}
+  .sb.FADE{color:#fff;background:#c0392b;box-shadow:none}
+  .sb.QUIET{color:#fff;background:#4a5568;box-shadow:none}
+  .sb.STEADY{color:#fff;background:#4a5568;box-shadow:none}
+  .sb i{background:currentColor;box-shadow:0 0 0 2.5px rgba(255,255,255,.22)}
+  /* dark mode keeps the same solid blocks - they already carry white type, and
+     a tinted pill on ink would be the low-contrast thing this batch is fixing */
+  :root[data-theme="dark"] .sb{background:#4a5568;box-shadow:none}
+  :root[data-theme="dark"] .sb.SURGING{color:#fff;background:#177a45;box-shadow:none}
+  :root[data-theme="dark"] .sb.COILED{color:#fff;background:#8a5a12;box-shadow:none}
+  :root[data-theme="dark"] .sb.SLEEPER{color:#fff;background:#35578f;box-shadow:none}
+  :root[data-theme="dark"] .sb.FADE{color:#fff;background:#b23325;box-shadow:none}
+  :root[data-theme="dark"] .sb.QUIET{color:#fff;background:#4a5568;box-shadow:none}
+  :root[data-theme="dark"] .sb.STEADY{color:#fff;background:#4a5568;box-shadow:none}
 
   /* ---- bullet chart: momentum as a track, a fill and a target tick */
   .bc{position:relative;display:block;width:100%;min-width:60px;height:15px}
@@ -1069,7 +1234,9 @@
     padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);
     box-shadow:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
     transition:background-color .25s cubic-bezier(.16,1,.3,1),color .25s cubic-bezier(.16,1,.3,1)}
-  .pager button:hover:not(:disabled):not([aria-current]){background:var(--sunken);color:var(--ink);
+  /* no hover fill anywhere in the pager: the digits and arrows are marks on the
+     card, so nothing lights up under the pointer in either theme */
+  .pager button:hover:not(:disabled):not([aria-current]){background:transparent;color:var(--ink);
     box-shadow:none}
   /* the reference's current page is a solid dark chip with light digits, not an
      ink-coloured one - in dark mode --ink is near-white and would turn the chip
@@ -1091,7 +1258,7 @@
   .pager .gap{font-size:12px;font-weight:500;color:var(--ink);user-select:none;
     width:30px;display:inline-flex;align-items:center;justify-content:center}
   .pager .gap.pad{width:30px;font-size:12px}
-  :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:transparent;color:var(--ink)}
   @media(max-width:640px){
     .pager{gap:8px;padding-top:13px}
     .pager .pnums{gap:3px}
@@ -1216,6 +1383,108 @@
      control and made the row look like a segmented widget. Without it every tab
      carries its own hairline chip and the active one is the only thing that
      fills - the gap between pills does the grouping on its own. */
+  .mkbar{display:flex;align-items:center;gap:10px;margin:12px 0 10px;min-width:0}
+  .mkbar .tabs{margin:0;flex:1 1 auto;min-width:0}
+  /* the search bar reads as a field, not an icon button: it keeps the long pill
+     it always had and simply has no prompt text inside it any more */
+  .mksearch{flex:1 1 240px;max-width:340px;display:inline-flex;align-items:center;gap:8px;height:30px;
+    padding:0 12px 0 11px;border:0;border-radius:var(--r-pill);background:transparent;
+    color:var(--ink);font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;
+    text-transform:uppercase;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(17,17,17,.14);
+    transition:background .18s ease,box-shadow .18s ease}
+  .mksearch .ic{width:13px;height:13px;flex:none}
+  .mksearch-lab{white-space:nowrap}
+  .mksearch kbd{font-family:var(--mono);font-size:9px;padding:2px 5px;border-radius:5px;
+    color:var(--ink);background:color-mix(in srgb,var(--ink) 8%,transparent);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  .mksearch:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 5%,transparent);
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.26)}
+  :root[data-theme="dark"] .mksearch{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+  :root[data-theme="dark"] .mksearch kbd{box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  :root[data-theme="dark"] .mksearch:hover:not(:disabled){
+    background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+  @media (max-width:720px){
+    .mkbar{flex-wrap:wrap}
+    .mksearch{order:2;flex:1 0 100%;max-width:none;width:100%;justify-content:flex-start;height:34px}
+    .mksearch kbd{margin-left:auto}
+  }
+
+  /* ---- search sheet. The backdrop is the dim, the panel is the light: one
+     rounded sheet over the board, results as rows with a face, a name and the
+     one thing that decides a pick — its signal. Every colour here is an ink
+     mix, so the sheet is the same object in both themes. */
+  .sheet{position:fixed;inset:0;z-index:920;display:grid;place-items:start center;
+    padding:min(11vh,96px) 14px 14px;background:rgba(10,10,10,.42);
+    -webkit-backdrop-filter:blur(10px) saturate(.9);backdrop-filter:blur(10px) saturate(.9);
+    opacity:0;transition:opacity .16s ease}
+  .sheet[hidden]{display:none}
+  .sheet.on{opacity:1}
+  .sh-panel{width:min(600px,100%);max-height:min(70vh,600px);display:flex;flex-direction:column;
+    border-radius:16px;background:var(--card);color:var(--ink);overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.10),
+      inset 0 0 0 1px rgba(17,17,17,.10);
+    transform:translateY(-6px) scale(.99);transition:transform .16s ease}
+  :root[data-theme="dark"] .sh-panel{box-shadow:0 30px 80px -18px rgba(0,0,0,.72),
+    0 2px 6px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.13)}
+  .sheet.on .sh-panel{transform:none}
+  .sh-top{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;
+    box-shadow:inset 0 -1px 0 rgba(17,17,17,.09)}
+  :root[data-theme="dark"] .sh-top{box-shadow:inset 0 -1px 0 rgba(255,255,255,.1)}
+  .sh-top .ic{width:15px;height:15px;flex:none;color:var(--ink)}
+  .sh-q{flex:1;min-width:0;border:0;background:none;padding:0;color:var(--ink);
+    font-family:var(--sans);font-size:14.5px;font-weight:500;line-height:1.5}
+  .sh-q::placeholder{color:var(--ink);opacity:1}
+  .sh-q:focus{outline:none}
+  .sh-esc{flex:none;font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+    padding:3px 6px;border-radius:5px;color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.14)}
+  :root[data-theme="dark"] .sh-esc{box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  /* bottom padding so the last row clears the footer instead of being
+     sliced in half by it */
+  .sh-body{overflow-y:auto;overscroll-behavior:contain;padding:6px 6px 12px}
+  .sh-lab{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink);padding:8px 10px 6px}
+  .sh-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;
+    border:0;border-radius:10px;background:none;color:var(--ink);text-align:left;cursor:pointer}
+  .sh-row:hover,.sh-row.sel{background:color-mix(in srgb,var(--ink) 7%,transparent)}
+  :root[data-theme="dark"] .sh-row:hover,:root[data-theme="dark"] .sh-row.sel{
+    background:rgba(255,255,255,.07)}
+  .sh-av{width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;
+    background:color-mix(in srgb,var(--ink) 10%,transparent);
+    font-family:var(--mono);font-size:9.5px;overflow:hidden}
+  .sh-av img{width:100%;height:100%;object-fit:cover}
+  .sh-nm{flex:1;min-width:0;font-size:13.5px;font-weight:500;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  .sh-nm small{display:block;margin-top:2px;font-family:var(--mono);font-size:9.5px;font-weight:400;
+    letter-spacing:.04em;text-transform:uppercase}
+  /* the search row's pill wears exactly the board's signal block - same solid
+     tier colour, same white type - so a creator looks the same in the palette
+     as it does on the board. */
+  .sh-tag{flex:none;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 7px;border-radius:999px;color:#fff;
+    background:#4a5568;box-shadow:none;font-weight:600}
+  .sh-tag.SURGING{background:#1d7a44}
+  .sh-tag.COILED{background:#a86a17}
+  .sh-tag.SLEEPER{background:#3a5e9e}
+  .sh-tag.FADE{background:#c0392b}
+  .sh-tag.QUIET{background:#4a5568}
+  .sh-tag.STEADY{background:#4a5568}
+  :root[data-theme="dark"] .sh-tag{background:#4a5568;color:#fff}
+  :root[data-theme="dark"] .sh-tag.SURGING{background:#177a45}
+  :root[data-theme="dark"] .sh-tag.COILED{background:#8a5a12}
+  :root[data-theme="dark"] .sh-tag.SLEEPER{background:#35578f}
+  :root[data-theme="dark"] .sh-tag.FADE{background:#b23325}
+  .sh-empty{padding:26px 12px 30px;text-align:center;font-size:13px;color:var(--ink);
+    line-height:1.6}
+  .sh-foot{display:flex;align-items:center;gap:14px;padding:9px 12px;
+    box-shadow:inset 0 1px 0 rgba(17,17,17,.09)}
+  :root[data-theme="dark"] .sh-foot{box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+  .sh-foot span{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
+    font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+  .sh-foot em{font-style:normal;padding:1px 5px;border-radius:4px;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.16)}
+  :root[data-theme="dark"] .sh-foot em{box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+
   .tabs{display:inline-flex;align-items:center;gap:6px;margin:12px 0 10px;padding:0;
     border-radius:0;background:none;box-shadow:none;
     -webkit-backdrop-filter:none;backdrop-filter:none;
@@ -1236,28 +1505,42 @@
     transition:color .2s ease,background .2s ease,box-shadow .2s ease}
   .tab{border-radius:var(--r-pill);box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
   :root[data-theme="dark"] .tab{box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
-  .tab:hover{color:var(--ink);background:rgba(17,17,17,.045)}
-  :root[data-theme="dark"] .tab:hover{background:rgba(255,255,255,.06)}
+  /* a resting filter is a hairline chip and stays one under the pointer. It used
+     to fill with its signal colour on hover, which meant an inactive filter could
+     be mistaken for the selected one; only aria-pressed gets the colour. */
+  .tab:hover{color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1px rgba(17,17,17,.10)}
+  :root[data-theme="dark"] .tab:hover{color:var(--ink);background:none;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.13)}
   /* the active filter: a raised thumb tinted with its own signal colour, ringed in
      the same hue. In light mode the tint is 12% of the hue so the label stays ink;
      in dark mode 22% because the page under it is nearly black. */
-  .tab.on{color:var(--ink);font-weight:600;
-    background:color-mix(in srgb,var(--hue) 14%,#fff);
-    box-shadow:0 1px 2px rgba(17,17,17,.08),inset 0 0 0 1px color-mix(in srgb,var(--hue) 55%,transparent)}
-  :root[data-theme="dark"] .tab.on{background:color-mix(in srgb,var(--hue) 22%,#111);
-    box-shadow:0 1px 2px rgba(0,0,0,.4),inset 0 0 0 1px color-mix(in srgb,var(--hue) 48%,transparent)}
-  .tab.on:hover{background:color-mix(in srgb,var(--hue) 16%,#fff)}
-  :root[data-theme="dark"] .tab.on:hover{background:color-mix(in srgb,var(--hue) 26%,#111)}
+  /* the active filter is a full block in its own signal colour - solid, white
+     type, no transparency - so SURGING reads as one green slab, COILED amber,
+     SLEEPER blue. The fill stays put on hover: the pointer must not repaint it. */
+  .tab.on{color:#fff;font-weight:600;background:var(--fill);
+    box-shadow:0 1px 2px rgba(17,17,17,.12),inset 0 0 0 1px color-mix(in srgb,#000 12%,var(--fill))}
+  :root[data-theme="dark"] .tab.on{background:var(--fill);
+    box-shadow:0 1px 2px rgba(0,0,0,.45),inset 0 0 0 1px color-mix(in srgb,#000 22%,var(--fill))}
+  .tab.on:hover{background:var(--fill);color:#fff}
+  :root[data-theme="dark"] .tab.on:hover{background:var(--fill);color:#fff}
+  .tab.on b{background:rgba(255,255,255,.22);color:#fff}
+  .tab.on i{background:#fff;box-shadow:0 0 0 2.5px rgba(255,255,255,.24)}
+  /* ALL is the one filter with no signal colour, so on the near-black page its
+     near-black slab disappeared. In dark mode it turns into a white slab with
+     dark type: still a full block, still plainly the selected option. */
+  :root[data-theme="dark"] .tab.on[data-tag="all"]{background:#f4f3f0;color:#16181b;
+    box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.6)}
+  :root[data-theme="dark"] .tab.on[data-tag="all"]:hover{background:#f4f3f0;color:#16181b}
+  :root[data-theme="dark"] .tab.on[data-tag="all"] b{background:rgba(22,24,27,.14);color:#16181b}
   /* the count: a hairline chip, tabular, quiet until its row is active */
   .tab .tl{display:inline-flex;align-items:center;gap:5px}
   .tab b{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0;
     padding:1.5px 5px;border-radius:100px;background:rgba(17,17,17,.06);color:var(--ink);
     font-variant-numeric:tabular-nums;transition:background .2s ease,color .2s ease}
-  .tab:hover b{background:rgba(17,17,17,.1);color:var(--ink)}
-  .tab.on b{background:color-mix(in srgb,var(--hue) 22%,#fff);color:var(--ink)}
+  .tab.on b{background:rgba(255,255,255,.22);color:#fff}
   :root[data-theme="dark"] .tab b{background:rgba(255,255,255,.08);color:var(--ink)}
-  :root[data-theme="dark"] .tab:hover b{background:rgba(255,255,255,.12);color:var(--ink)}
-  :root[data-theme="dark"] .tab.on b{background:color-mix(in srgb,var(--hue) 30%,#111);color:var(--ink)}
+  :root[data-theme="dark"] .tab.on b{background:rgba(255,255,255,.22);color:#fff}
   /* the dot carries the signal's palette colour. An empty count fades the whole
      option rather than showing a zero with a live dot beside it. */
   .tab i{width:5px;height:5px;border-radius:50%;display:block;flex:none;
@@ -1510,7 +1793,13 @@
      phone size. Hover is a half-strength version of the same fill so the two
      states stay related instead of being two unrelated tints. */
   tr.row:hover{background:color-mix(in srgb,var(--card-2) 55%,transparent)}
-  tr.row.sel{background:var(--card-2)}
+  /* The selected row is a solid band, never a translucent wash: on dark the
+     theme's --card-2 sits DARKER than the card, so the picked row read as a hole
+     rather than a highlight. A literal colour per theme keeps it a full block
+     that clears the card behind it, with an accent rail on the leading edge so
+     the pick is obvious even beside a lit momentum bar. */
+  tr.row.sel{background:#dcd9d3;box-shadow:inset 3px 0 0 var(--accent)}
+  :root[data-theme="dark"] tr.row.sel{background:#2b2b29}
   tr.row.sel td{background:transparent}
   tr.row.sel .name{font-weight:600}
   tr.row.sel .pos{color:var(--ink)}
@@ -1537,6 +1826,14 @@
   tr.row.picked:hover > td{background:var(--accent);filter:brightness(1.05)}
   tr.row.picked .pos,tr.row.picked .mono,tr.row.picked .stars,
   tr.row.picked .stars span,tr.row.picked .nwrap,tr.row.picked .add{color:#fff}
+  /* the signal pill kept its own hue, and in light mode those hues are dark
+     greens and blues on pink — visible, but muddy, and the lighter of them went
+     to mush. Inside a picked row every glyph is paper and the pill is an outline:
+     it still reads as a pill, it just stops being a coloured chip. */
+  tr.row.picked .sb{color:#fff;background:rgba(255,255,255,.16);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  tr.row.picked .sb i{background:#fff;box-shadow:0 0 0 2.5px rgba(255,255,255,.22)}
+  tr.row.picked .tag{color:#fff}
   tr.row.picked .pos{font-weight:600}
   /* momentum is drawn by .bc/.track/.fill, not .mbar. On the accent fill the
      track goes to near-paper and the fill to white, so the bar reads at a glance
@@ -1585,19 +1882,24 @@
     box-shadow:inset 0 0 0 1px rgba(17,17,17,.08)}
   .sb i{width:5px;height:5px;border-radius:50%;flex:none;background:currentColor;
     box-shadow:0 0 0 2.5px color-mix(in srgb,currentColor 16%,transparent)}
-  .sb.SURGING{color:#1d7a44;background:rgba(29,122,68,.09);box-shadow:inset 0 0 0 1px rgba(29,122,68,.22)}
-  .sb.COILED{color:#6b5b00;background:rgba(160,137,0,.11);box-shadow:inset 0 0 0 1px rgba(160,137,0,.24)}
-  .sb.SLEEPER{color:#3a5e9e;background:rgba(58,94,158,.09);box-shadow:inset 0 0 0 1px rgba(58,94,158,.22)}
-  .sb.FADE{color:#c0392b;background:rgba(192,57,43,.09);box-shadow:inset 0 0 0 1px rgba(192,57,43,.22)}
-  .sb.QUIET{color:var(--ink);background:rgba(17,17,17,.03);box-shadow:inset 0 0 0 1px rgba(17,17,17,.07)}
-  .sb.STEADY{color:#4a5568;background:rgba(74,85,104,.08);box-shadow:inset 0 0 0 1px rgba(74,85,104,.2)}
-  :root[data-theme="dark"] .sb{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1)}
-  :root[data-theme="dark"] .sb.SURGING{color:#5fd18b;background:rgba(60,190,120,.13);box-shadow:inset 0 0 0 1px rgba(95,209,139,.26)}
-  :root[data-theme="dark"] .sb.COILED{color:#d8c86a;background:rgba(216,200,106,.13);box-shadow:inset 0 0 0 1px rgba(216,200,106,.26)}
-  :root[data-theme="dark"] .sb.SLEEPER{color:#8ab0ec;background:rgba(90,140,220,.14);box-shadow:inset 0 0 0 1px rgba(138,176,236,.28)}
-  :root[data-theme="dark"] .sb.FADE{color:#ef8878;background:rgba(230,90,70,.14);box-shadow:inset 0 0 0 1px rgba(239,136,120,.28)}
-  :root[data-theme="dark"] .sb.QUIET{color:var(--ink);background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
-  :root[data-theme="dark"] .sb.STEADY{color:var(--ink);background:rgba(160,175,200,.11);box-shadow:inset 0 0 0 1px rgba(169,178,195,.22)}
+  /* the signal pill is a full block of its own colour, not a tint: one solid
+     SURGING green, one solid FADE red, white type on all of them. */
+  .sb.SURGING{color:#fff;background:#1d7a44;box-shadow:none}
+  .sb.COILED{color:#fff;background:#a86a17;box-shadow:none}
+  .sb.SLEEPER{color:#fff;background:#3a5e9e;box-shadow:none}
+  .sb.FADE{color:#fff;background:#c0392b;box-shadow:none}
+  .sb.QUIET{color:#fff;background:#4a5568;box-shadow:none}
+  .sb.STEADY{color:#fff;background:#4a5568;box-shadow:none}
+  .sb i{background:currentColor;box-shadow:0 0 0 2.5px rgba(255,255,255,.22)}
+  /* dark mode keeps the same solid blocks - they already carry white type, and
+     a tinted pill on ink would be the low-contrast thing this batch is fixing */
+  :root[data-theme="dark"] .sb{background:#4a5568;box-shadow:none}
+  :root[data-theme="dark"] .sb.SURGING{color:#fff;background:#177a45;box-shadow:none}
+  :root[data-theme="dark"] .sb.COILED{color:#fff;background:#8a5a12;box-shadow:none}
+  :root[data-theme="dark"] .sb.SLEEPER{color:#fff;background:#35578f;box-shadow:none}
+  :root[data-theme="dark"] .sb.FADE{color:#fff;background:#b23325;box-shadow:none}
+  :root[data-theme="dark"] .sb.QUIET{color:#fff;background:#4a5568;box-shadow:none}
+  :root[data-theme="dark"] .sb.STEADY{color:#fff;background:#4a5568;box-shadow:none}
 
   /* ---- bullet chart: momentum as a track, a fill and a target tick */
   .bc{position:relative;display:block;width:100%;min-width:60px;height:15px}
@@ -1638,7 +1940,9 @@
     padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);
     box-shadow:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
     transition:background-color .25s cubic-bezier(.16,1,.3,1),color .25s cubic-bezier(.16,1,.3,1)}
-  .pager button:hover:not(:disabled):not([aria-current]){background:var(--sunken);color:var(--ink);
+  /* no hover fill anywhere in the pager: the digits and arrows are marks on the
+     card, so nothing lights up under the pointer in either theme */
+  .pager button:hover:not(:disabled):not([aria-current]){background:transparent;color:var(--ink);
     box-shadow:none}
   /* the reference's current page is a solid dark chip with light digits, not an
      ink-coloured one - in dark mode --ink is near-white and would turn the chip
@@ -1660,7 +1964,7 @@
   .pager .gap{font-size:12px;font-weight:500;color:var(--ink);user-select:none;
     width:30px;display:inline-flex;align-items:center;justify-content:center}
   .pager .gap.pad{width:30px;font-size:12px}
-  :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:rgba(255,255,255,.08)}
+  :root[data-theme="dark"] .pager button:hover:not(:disabled):not([aria-current]){background:transparent;color:var(--ink)}
   @media(max-width:640px){
     .pager{gap:8px;padding-top:13px}
     .pager .pnums{gap:3px}
@@ -1788,15 +2092,31 @@
     gap:6px 10px;width:100%;padding:9px 10px;border:0;border-radius:9px;
     background:transparent;box-shadow:none;text-align:left;cursor:pointer;
     transition:background .16s ease}
-  .hlist .hitem:hover{background:var(--sunken)}
-  .hlist .hitem[aria-selected="true"]{background:var(--sunken);
-    box-shadow:inset 0 0 0 1px var(--line)}
-  :root[data-theme="dark"] .hlist .hitem:hover,
-  :root[data-theme="dark"] .hlist .hitem[aria-selected="true"]{background:rgba(255,255,255,.07)}
+  .hlist .hitem:hover:not([aria-selected="true"]){background:var(--sunken)}
+  .hlist .hitem:active:not([aria-selected="true"]){background:var(--sunken)}
+  /* the picked window is the accent block, the same one the rail uses for its
+     open section: it is the control that decides what the panel shows, so it
+     reads as chosen rather than merely tinted. Solid and frozen - hover, active
+     and focus all resolve to the exact same pink, in both themes */
+  /* anchored to :root[data-theme] so it out-ranks the theme-level `button:hover`
+     wash no matter which of the two the file happens to order last */
+  :root[data-theme] .hlist .hitem[aria-selected="true"],
+  :root[data-theme] .hlist .hitem[aria-selected="true"]:hover,
+  :root[data-theme] .hlist .hitem[aria-selected="true"]:active,
+  :root[data-theme] .hlist .hitem[aria-selected="true"]:focus,
+  :root[data-theme] .hlist .hitem[aria-selected="true"]:focus-visible,
+  :root[data-theme] .hlist .hitem[aria-selected="true"]:focus-within{
+    background:var(--accent);color:#fff;box-shadow:none;filter:none;transform:none;
+    border-color:transparent}
+  .hlist .hitem[aria-selected="true"] .w,
+  .hlist .hitem[aria-selected="true"] .n,
+  .hlist .hitem[aria-selected="true"] .n b{color:#fff}
+  .hlist .hitem[aria-selected="true"] .bar{background:rgba(255,255,255,.28)}
+  .hlist .hitem[aria-selected="true"] .bar i{background:#fff}
   .hlist .hitem .w{font-family:var(--mono);font-size:10px;letter-spacing:.04em;
     color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hlist .hitem .n{font-family:var(--mono);font-size:9px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--ink);opacity:.62;text-align:right;
+    text-transform:uppercase;color:var(--ink);opacity:1;text-align:right;
     white-space:nowrap}
   .hlist .hitem .n b{font-weight:600;opacity:1;font-variant-numeric:tabular-nums}
   .hlist .hitem .bar{grid-column:1/-1;height:2px;border-radius:1px;
@@ -1816,14 +2136,14 @@
   .hpanel .hhead .when{font-family:var(--display);font-size:20px;font-weight:500;
     letter-spacing:-.02em;color:var(--ink);line-height:1.15}
   .hpanel .hhead .sub{font-family:var(--mono);font-size:9px;letter-spacing:.07em;
-    text-transform:uppercase;color:var(--ink);opacity:.6;margin-top:3px}
+    text-transform:uppercase;color:var(--ink);opacity:1;margin-top:3px}
   .hpanel .hstats{display:flex;gap:20px;flex-wrap:wrap}
   .hpanel .hstats .s{display:flex;flex-direction:column;gap:2px;min-width:56px}
   .hpanel .hstats .s b{font-family:var(--display);font-size:22px;font-weight:500;
     line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--ink)}
   .hpanel .hstats .s span{font-family:var(--mono);font-size:8px;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--ink);opacity:.6;white-space:nowrap}
-  .hpanel .hstats .s.up b{color:var(--up)} .hpanel .hstats .s.down b{color:var(--down)}
+    text-transform:uppercase;color:var(--ink);opacity:1;white-space:nowrap}
+  .hpanel .hstats .s.up b{color:var(--accent)} .hpanel .hstats .s.down b{color:var(--accent)}
 
   /* what moved, grouped so the list is a story: the risers, then the fallers,
      then whoever arrived for the first time. A name and a number per line, the
@@ -1831,7 +2151,7 @@
   .hmoves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
   .hmoves .grp{min-width:0}
   .hmoves .grp > h3{margin:0 0 6px;font-family:var(--mono);font-size:8.5px;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--ink);opacity:.62;font-weight:500}
+    letter-spacing:.12em;text-transform:uppercase;color:var(--accent);opacity:1;font-weight:600}
   /* the move, a face, the name, the new rank. The face is a 16px disc because the
      row is 11.5px type: at 22 it towered over the name it is meant to label */
   .hmoves .row{display:grid;grid-template-columns:26px 16px minmax(0,1fr) auto;
@@ -1839,13 +2159,13 @@
   .hmoves .row .avatar{width:16px;height:16px;font-size:6px}
   .hmoves .row .d{font-family:var(--mono);font-size:10px;font-variant-numeric:tabular-nums;
     text-align:right;white-space:nowrap}
-  .hmoves .row .d.up{color:var(--up)} .hmoves .row .d.down{color:var(--down)}
+  .hmoves .row .d.up{color:var(--accent)} .hmoves .row .d.down{color:var(--accent)}
   .hmoves .row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-  .hmoves .row .pos{font-family:var(--mono);font-size:9.5px;opacity:.55;
+  .hmoves .row .pos{font-family:var(--mono);font-size:9.5px;opacity:1;
     font-variant-numeric:tabular-nums;white-space:nowrap}
   .hmoves .row .new{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;
-    text-transform:uppercase;opacity:.7}
-  .hmoves .empty{font-size:11px;color:var(--ink);opacity:.6}
+    text-transform:uppercase;color:var(--accent);opacity:1}
+  .hmoves .empty{font-size:11px;color:var(--ink);opacity:1}
 
   /* the board at that window: the same 79 rows, with the move since the previous
      window in its own column. This is the part the carousel never showed at all. */
@@ -1854,23 +2174,23 @@
   .hboard table{width:100%;border-collapse:collapse}
   .hboard thead th{position:sticky;top:0;z-index:1;background:var(--card);
     font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink);opacity:.62;font-weight:500;text-align:left;padding:8px 10px;
+    color:var(--ink);opacity:1;font-weight:500;text-align:left;padding:8px 10px;
     box-shadow:0 1px 0 var(--line-soft)}
   .hboard thead th.r{text-align:right}
   .hboard tbody td{padding:6px 10px;font-size:11.5px;color:var(--ink);
     border-top:1px solid var(--line-soft);white-space:nowrap}
   .hboard tbody tr:first-child td{border-top:0}
-  .hboard tbody tr:hover td{background:var(--sunken)}
-  :root[data-theme="dark"] .hboard tbody tr:hover td{background:rgba(255,255,255,.05)}
+  .hboard tbody tr:hover td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+  :root[data-theme="dark"] .hboard tbody tr:hover td{background:color-mix(in srgb,var(--accent) 16%,transparent)}
   .hboard td.rk,.hboard td.mv{text-align:right;font-family:var(--mono);font-size:10.5px;
     font-variant-numeric:tabular-nums}
   .hboard td.nm{max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis}
   .hboard td.nm .avatar{width:18px;height:18px;display:inline-block;vertical-align:-5px;
     margin-right:7px;font-size:6.5px}
   .hboard td.nm span{vertical-align:middle}
-  .hboard td.mv.up{color:var(--up)} .hboard td.mv.down{color:var(--down)}
-  .hboard td.mv.flat{opacity:.4}
-  .hboard td.mv.isnew{color:var(--ink);opacity:.7;font-size:8.5px;letter-spacing:.06em;
+  .hboard td.mv.up{color:var(--accent)} .hboard td.mv.down{color:var(--accent)}
+  .hboard td.mv.flat{opacity:1}
+  .hboard td.mv.isnew{color:var(--accent);opacity:1;font-size:8.5px;letter-spacing:.06em;
     text-transform:uppercase}
 
   /* a desk gives both columns the leftover viewport, so the panel ends where the
@@ -1976,7 +2296,16 @@
     box-shadow:inset 0 0 0 1px var(--line);
     transition:background .16s ease,transform .12s ease,box-shadow .16s ease;
     display:inline-flex;align-items:center;gap:6px;justify-content:center;letter-spacing:.02em}
-  button:hover:not(:disabled){background:var(--card-2)}
+  /* this catch-all sits after the pager and filter rules, so it used to repaint
+     both on hover in light mode: the digits lit up pale grey and every market
+     filter went white. Both paint themselves, so they are excluded here rather
+     than patched again further down the sheet. */
+  /* `.hitem` is excluded too: it is a button, and without this the catch-all repaints
+     the selected history window grey on hover no matter what the accent rule above says */
+  button:hover:not(:disabled):not(.pager button):not(.tab):not(.rar button):not(.rail-act):not(.rail-item):not(.mstep-next):not(.acta-solid):not(.hitem){background:var(--card-2)}
+  /* a tapped history window keeps the accent while it holds focus. Mobile has no
+     hover, so this is the state a phone actually lands in after a tap */
+  button.hitem:focus:not([aria-selected="true"]){background:var(--card-2)}
   button:active:not(:disabled){transform:translateY(1px)}
   button.primary{background:var(--accent);color:#fff;font-weight:500;
     box-shadow:inset 0 0 0 1px var(--ink)}
@@ -1996,7 +2325,7 @@
     border-top:1px solid var(--line-soft);min-width:0}
   .lrow:first-child{border-top:0;padding-top:2px}
   .ltop{display:flex;align-items:center;gap:9px;min-width:0}
-  .lnum{font-family:var(--mono);font-size:10px;color:var(--ink);opacity:.5;
+  .lnum{font-family:var(--mono);font-size:10px;color:var(--ink);opacity:1;
     width:14px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
   .lname{font-weight:600;font-size:13px;color:var(--ink);min-width:0;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2007,21 +2336,25 @@
   .ltier[data-r="Rare"]{--r:var(--r-rare)}
   .ltier[data-r="Epic"]{--r:var(--r-epic)}
   .ltier[data-r="Legendary"]{--r:var(--r-legendary)}
-  .lstars{font-size:10.5px;letter-spacing:.06em;color:var(--ink);opacity:.72;flex:none}
+  .lstars{font-size:10.5px;letter-spacing:.06em;color:var(--ink);opacity:1;flex:none}
+  /* "remove" on a saved pick: a solid red block, hover or not. A ghost cross
+     hid next to a coloured card until you went looking for it; a filled red
+     square says "this deletes something" before the pointer arrives. */
   .lx{margin-left:auto;width:26px;height:26px;min-height:0;padding:0;flex:none;
-    border-radius:50%;background:transparent;color:var(--ink);opacity:.42;
+    border-radius:8px;background:var(--btn-red);color:#fff;opacity:1;
     box-shadow:none;display:grid;place-items:center}
-  .lx:hover:not(:disabled){background:var(--card-2);opacity:1;transform:none}
+  .lx:hover:not(:disabled),.lx:active:not(:disabled),.lx:focus-visible{
+    background:var(--btn-red);color:#fff;opacity:1;transform:none}
   .lx .ic{width:12px;height:12px}
   .lmeta{display:grid;gap:5px;margin:8px 0 0 23px}
   .lfield{display:grid;grid-template-columns:62px minmax(0,1fr);gap:9px;align-items:baseline}
   .lk{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--ink);opacity:.45}
-  .lfield p{margin:0;font-size:12px;line-height:1.5;color:var(--ink);opacity:.86;
+    color:var(--ink);opacity:1}
+  .lfield p{margin:0;font-size:12px;line-height:1.5;color:var(--ink);opacity:1;
     overflow-wrap:anywhere}
-  .lfield p i{font-style:normal;opacity:.5}
+  .lfield p i{font-style:normal;opacity:1}
   .lrow.empty{align-items:center;flex-direction:row;gap:9px;padding:9px 2px}
-  .lrow.empty .lnone{font-family:var(--mono);font-size:10px;color:var(--ink);opacity:.3;
+  .lrow.empty .lnone{font-family:var(--mono);font-size:10px;color:var(--ink);opacity:1;
     letter-spacing:.04em}
   @media(max-width:600px){
     .lfield{grid-template-columns:minmax(0,1fr);gap:2px}
@@ -2030,17 +2363,19 @@
   /* clearing the lineup destroys five drafts, so the button says so in red and
      wears the plain cross. #i-x is the UI cross; #fi-x is the X brand glyph and
      must never stand in for a close control. */
-  .btn-clear{color:var(--down);background:transparent;
-    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--down) 42%,transparent)}
-  .btn-clear:hover:not(:disabled){color:var(--down);
-    background:color-mix(in srgb,var(--down) 10%,transparent);
-    box-shadow:inset 0 0 0 1px var(--down)}
+  /* a solid red block, not a red outline: the button is destructive and it
+     should look like it from across the room. The pointer does not repaint it,
+     so hover reads as "still red" instead of "slightly pinker red". */
+  .btn-clear{color:#fff;background:var(--btn-red);box-shadow:none;border:0}
+  .btn-clear:hover:not(:disabled),.btn-clear:active:not(:disabled),
+  .btn-clear:focus-visible{color:#fff;background:var(--btn-red);box-shadow:none}
   .btn-clear svg,.btn-clear .ic{width:13px;height:13px;stroke:currentColor;fill:none;
     stroke-width:2;stroke-linecap:round}
-  :root[data-theme="dark"] .btn-clear{color:var(--danger);
-    box-shadow:inset 0 0 0 1px rgba(255,107,107,.42)}
-  :root[data-theme="dark"] .btn-clear:hover:not(:disabled){color:var(--danger);
-    background:rgba(255,107,107,.12);box-shadow:inset 0 0 0 1px rgba(255,107,107,.75)}
+  :root[data-theme="dark"] .btn-clear{color:#fff;background:var(--btn-red)}
+  :root[data-theme="dark"] .btn-clear:hover:not(:disabled),
+  :root[data-theme="dark"] .btn-clear:active:not(:disabled),
+  :root[data-theme="dark"] .btn-clear:focus-visible{color:#fff;background:var(--btn-red);
+    box-shadow:none}
 
   /* rarity is its own colour language, the same one the card packs use: common
      green, rare blue, epic purple, legendary orange. An unpicked option keeps
@@ -2058,7 +2393,13 @@
   .rar button[data-r="Rare"]{--r:var(--r-rare)}
   .rar button[data-r="Epic"]{--r:var(--r-epic)}
   .rar button[data-r="Legendary"]{--r:var(--r-legendary)}
-  .rar button:not(.on):hover{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r) 55%,transparent)}
+  /* hovering a rarity previews it the way choosing it looks: a full block in
+     that tier's colour with white type, not a translucent green wash */
+  .rar button:not(.on):hover{background:var(--r);color:#fff;font-weight:500;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r) 70%,#000)}
+  .rar button:not(.on):hover i{color:rgba(255,255,255,.78)}
+  .rar button:not(.on):hover::after{background:#fff;opacity:.92}
+  .rar button.on:hover{background:var(--r);color:#fff}
   .rar button.on{background:var(--r);color:#fff;font-weight:500;
     box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r) 70%,#000)}
   .rar button.on i{color:rgba(255,255,255,.72)}
@@ -2164,7 +2505,11 @@
   .mx-p .p{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;
     background:var(--card);padding:5px 8px;font-size:10.5px;line-height:1.3}
   .mx-p .p b{font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;
-    white-space:nowrap;min-width:0}
+    white-space:nowrap;min-width:0;display:inline-flex;align-items:center;gap:5px}
+  .mx-p .p .mp-av{width:15px;height:15px;flex:none;border-radius:50%;object-fit:cover;
+    background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .mx-p .p .mp-av.ini{display:inline-grid;place-items:center;font-family:var(--mono);
+    font-size:6.5px;letter-spacing:.02em;color:var(--ink);object-fit:unset}
   .mx-p .p .rr{font-style:normal;font-family:var(--mono);font-size:7px;letter-spacing:.04em;
     color:var(--rc);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 45%,transparent);
     border-radius:3px;padding:0 3px;text-transform:lowercase;margin-left:4px}
@@ -2658,11 +3003,38 @@
 
   <div class="viewpane">
 
+  <!-- one sheet for the whole room: opened from the Market search, and from
+       the keyboard, and it always closes back to the board -->
+  <div class="srch" id="searchSheet" role="dialog" aria-modal="true" aria-label="Search creators" hidden>
+    <div class="sh-panel">
+      <div class="sh-top">
+        <svg class="ic"><use href="#i-search"/></svg>
+        <input class="sh-q" id="shQ" type="text" autocomplete="off" spellcheck="false"
+          placeholder="" aria-label="Search creators">
+        <button class="sh-esc" id="shEsc" type="button">ESC</button>
+      </div>
+      <div class="sh-body" id="shBody"></div>
+      <div class="sh-foot">
+        <span><em>↑</em><em>↓</em> move</span>
+        <span><em>↵</em> open</span>
+        <span><em>esc</em> close</span>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== MARKET: the board you pick from ===== -->
   <div class="view is-on" id="v-market" role="tabpanel" aria-label="Market">
   <div class="stats" id="stats"></div>
 
-    <div class="tabs" id="filters" role="group" aria-label="Filter by signal"></div>
+    <!-- the filter rail and the search share one row: the rail says what the
+         board is showing, the search says which creator you want off it. On a
+         phone the rail keeps the row and the search drops to the line below. -->
+    <div class="mkbar">
+      <div class="tabs" id="filters" role="group" aria-label="Filter by signal"></div>
+      <button class="mksearch" id="mkSearch" type="button" aria-haspopup="dialog" aria-label="Search creators">
+        <svg class="ic"><use href="#i-search"/></svg>
+      </button>
+    </div>
 
   <!-- one screen on a desktop: navbar, then the numbers, then the board and the
        draft beside it. Your lineup sits under both columns, so nothing important
@@ -2786,6 +3158,11 @@ let PAGE = 1;
 // creator's colour means the same thing wherever it appears on the page.
 const TAGC = { SURGING: "var(--up)", COILED: "var(--warm)", SLEEPER: "var(--cool)",
   FADE: "var(--down)", QUIET: "var(--faint)" };
+// the solid block each filter fills with. Separate from TAGC because a signal
+// colour tuned for text on the page would go muddy as a slab with white type on
+// it; these are the slab versions, dark enough to carry white in both themes.
+const TAGFILL = { SURGING: "#1d7a44", COILED: "#a86a17", SLEEPER: "#3a5e9e",
+  FADE: "#c0392b", QUIET: "#4a5568", all: "#16181b" };
 // Fifteen on a desk, and not one row fewer when the draft panel opens beside
 // the board. The page used to be measured to the board's height, so picking a
 // creator grew the panel, the board grew with it, and the same board showed ten
@@ -2835,7 +3212,10 @@ const avatar = (c, size) => {
   const prof = (c && DATA.profiles && DATA.profiles[c.name]) || null;
   const src = (prof && prof.avatar) || (c && c.id ? `https://leaderboard.motion.game/pfp/${encodeURIComponent(c.id)}.jpg` : "");
   if (src) {
-    return `<img class="${cls}" src="${esc(src)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${ini}" data-extra="${esc(size || "")}" onerror="${AV_FB}">`;
+    // eager + sync decode: the board and the history list are short populated
+    // lists, and lazy decoding was what made faces blink while the phone scrolled
+    // - Chrome dropped each off-screen bitmap and re-decoded it on the way back
+    return `<img class="${cls}" src="${esc(src)}" alt="" loading="eager" decoding="sync" referrerpolicy="no-referrer" data-ini="${ini}" data-extra="${esc(size || "")}" onerror="${AV_FB}">`;
   }
   return `<span class="${cls} av-fb">${ini}</span>`;
 };
@@ -2883,8 +3263,15 @@ function railWho() {
       ini.style.display = "grid";
       ini.textContent = (u.name || h).slice(0, 2).toUpperCase();
     }
-    if (btn) { btn.classList.add("on"); btn.onclick = () => { document.querySelector('.rail-item[data-view="profile"]').click(); }; }
-    if (lbl) lbl.textContent = "View profile";
+    // signed in, the button leaves the room: it is the only control that speaks
+    // for the account, so it opens that account's own page on X.
+    if (btn) {
+      btn.classList.add("on");
+      btn.setAttribute("aria-label", "Open your profile on X");
+      btn.title = "Open @" + h + " on X";
+      btn.onclick = () => window.open("https://x.com/" + encodeURIComponent(h), "_blank", "noopener");
+    }
+    if (lbl) lbl.textContent = "View on X";
   } else {
     name.textContent = "Not connected";
     name.title = "";
@@ -2950,6 +3337,9 @@ async function load() {
   // old guessed multipliers
   BOOST = { ...PUBLISHED_BOOST };
   PICKS = JSON.parse(localStorage.getItem("mdr_picks") || "[]").map(p => ({ ...p, rarity: p.rarity || "Common" }));
+  // paint the local draft first so nothing flashes 0/5, then let the account's
+  // copy catch this device up if it is further along
+  syncPicksDown().then(changed => { if (changed) render(); });
   if (PROF) DATA.profiles = PROF;
   render();
   BOOTED = true;
@@ -3145,6 +3535,111 @@ function rowsPerPage() {
   return Math.min(PER_PAGE, Math.max(6, fit));
 }
 
+// ---- creator search. The board is a paged table and the filter rail only
+// narrows it by signal, so finding one name meant paging and squinting. This is
+// a command palette over the same array the board renders: type, the list
+// filters on every keystroke, Enter jumps to that creator's row and selects it.
+let SH_CUR = 0, SH_HITS = [];
+
+function bindSearch(cr) {
+  const sheet = $("#searchSheet"), q = $("#shQ"), body = $("#shBody"), btn = $("#mkSearch");
+  if (!sheet || !q || !body) return;
+  if (sheet.dataset.bound) { sheet._cr = cr; return; }
+  sheet.dataset.bound = "1";
+  sheet._cr = cr;
+
+  const open = () => {
+    const c = sheet._cr || [];
+    sheet.hidden = false;
+    // no fade on the scrim: a transition started in the same frame the element
+    // is unhidden can stall at opacity 0 in a real browser. The panel still
+    // slides, so the open still reads as motion.
+    sheet.style.transition = "none";
+    void sheet.offsetHeight;
+    q.value = "";
+    SH_CUR = 0;
+    paint("");
+    // setTimeout, not rAF: rAF never fires in a background/headless tab, which
+    // left the sheet at opacity 0 with its rows already painted
+    sheet.classList.add("on");
+    requestAnimationFrame(() => { sheet.style.transition = ""; });
+    q.focus();
+    // the results are painted from the same array the board just rendered
+    void c;
+  };
+  const close = () => {
+    sheet.classList.remove("on");
+    setTimeout(() => { if (!sheet.classList.contains("on")) sheet.hidden = true; }, 170);
+  };
+
+  function paint(term) {
+    const c = sheet._cr || [];
+    const t = term.trim().toLowerCase();
+    SH_HITS = c.filter(x => !t
+      || x.name.toLowerCase().includes(t)
+      || (x.tags || []).some(g => g.toUpperCase().includes(t.toUpperCase()))
+      || String(x.handle || "").toLowerCase().includes(t));
+    if (SH_CUR >= SH_HITS.length) SH_CUR = 0;
+    if (!SH_HITS.length) {
+      body.innerHTML = `<div class="sh-empty">Nothing on the board matches “${esc(term.trim())}”.<br>Try a name, or one of the signals: surging, coiled, sleeper.</div>`;
+      return;
+    }
+    const head = t ? `${SH_HITS.length} match${SH_HITS.length === 1 ? "" : "es"}` : `All ${SH_HITS.length} creators`;
+    body.innerHTML = `<div class="sh-lab">${head}</div>` + SH_HITS.map((x, i) => {
+      const tag = (x.tags || [])[0] || "";
+      // the face comes from the X profile map, not from the board: the leaderboard
+      // publishes a name and nothing else. A creator without a resolved profile
+      // keeps the initials block rather than a broken image.
+      const pf = (DATA.profiles || {})[x.name] || null;
+      const face = String((pf && pf.avatar) || x.avatar || "")
+        .replace(/_normal(\.\w+)$/, "_400x400$1");
+      return `<button class="sh-row${i === SH_CUR ? " sel" : ""}" type="button" data-i="${i}">
+        <span class="sh-av">${face ? `<img src="${esc(face)}" alt="" loading="eager" decoding="sync" referrerpolicy="no-referrer" onerror="this.remove()">` : esc((x.name || "?").slice(0, 2).toUpperCase())}</span>
+        <span class="sh-nm">${esc(x.name)}<small>${tag ? esc(tag) : esc(String(x.estStars ?? "") + " est. stars")}</small></span>
+        ${tag ? `<span class="sh-tag ${esc(tag)}">${esc(tag)}</span>` : ""}</button>`;
+    }).join("");
+  }
+
+  function go(i) {
+    const x = SH_HITS[i];
+    if (!x) return;
+    close();
+    // land on the creator, not just on the board: drop the signal filter if it
+    // would hide the row, then select it and scroll it into view
+    if (FILTER !== "all" && !(x.tags || []).includes(FILTER)) FILTER = "all";
+    SEL = x.name;
+    PAGE = 1;
+    render();
+    requestAnimationFrame(() => {
+      const row = [...document.querySelectorAll("#board tr.row")].find(r => r.dataset.name === x.name);
+      if (row) row.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+  }
+
+  q.addEventListener("input", () => { SH_CUR = 0; paint(q.value); });
+  body.addEventListener("click", e => {
+    const b = e.target.closest(".sh-row");
+    if (b) go(Number(b.dataset.i));
+  });
+  q.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") { e.preventDefault(); SH_CUR = Math.min(SH_CUR + 1, SH_HITS.length - 1); paint(q.value); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); SH_CUR = Math.max(SH_CUR - 1, 0); paint(q.value); }
+    else if (e.key === "Enter") { e.preventDefault(); go(SH_CUR); }
+    else if (e.key === "Escape") { e.preventDefault(); close(); }
+  });
+  sheet.addEventListener("keydown", e => { if (e.key === "Escape") { e.preventDefault(); close(); } });
+  sheet.addEventListener("click", e => { if (e.target === sheet) close(); });
+  $("#shEsc").onclick = close;
+  btn.onclick = open;
+  // ⌘K / Ctrl-K opens it from anywhere in the room
+  document.addEventListener("keydown", e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if (sheet.hidden) open(); else close();
+    }
+  });
+}
+
 function render() {
   const d = DATA;
   // a re-render replaces every row, so any open card belongs to an element that
@@ -3163,6 +3658,9 @@ function render() {
   // distinct 4-hour windows: several runs inside one window add no history
   const slotWindows = [...new Set((d.slotTimes || []))].length;
   const avgAbs = cr.length ? (cr.reduce((a, c) => a + Math.abs(c.delta4h), 0) / cr.length) : 0;
+  // The original five, each with its unit under the figure. Five tallies in an
+  // auto-fit grid still land on one line on a desk and wrap to two on a narrow
+  // window, which is the trade the tally row always made.
   const stats = [
     ["users", "Creators", cr.length, "on the board"],
     ["activity", "Up / down", `${gainers} / ${losers}`, "last 4h"],
@@ -3176,7 +3674,7 @@ function render() {
   // instead of a grid, so the figures cost one line of height, not three.
   const statHtml = stats.map(([ico, k, v, sub]) =>
     `<div class="tally"><div class="num">${tallyParts(v)}</div>
-      <span class="lab">${icon(ico)}${esc(k)}${sub ? ` <span class="sub">&middot; ${esc(sub)}</span>` : ""}</span></div>`).join('<span class="sep" aria-hidden="true"></span>');
+      <span class="lab">${esc(k)}${sub ? ` <span class="sub">/ ${esc(sub)}</span>` : ""}</span></div>`).join('<span class="sep" aria-hidden="true"></span>');
   $("#stats").innerHTML = `<div class="track"><div class="stat-grp">${statHtml}</div>`
     + `<div class="stat-grp" aria-hidden="true">${statHtml}</div></div>`;
   countUp();
@@ -3186,8 +3684,8 @@ function render() {
     if (!document.querySelector(".warn")) {
       const b = el("div", "warn");
       b.innerHTML = `${icon("info")}<span>${slotWindows <= 1
-        ? `Only ${slotWindows || d.snapshotCount} distinct 4-hour window so far. Δ over multiple slots and acceleration need 3+ windows (~12h); until then those cells stay "—". Nothing is backfilled or invented.`
-        : `Only ${slotWindows} distinct 4-hour windows so far. Acceleration needs 3+ (~12h); until then it stays "—". Nothing is backfilled or invented.`}</span>`;
+        ? `Only ${slotWindows || d.snapshotCount} distinct 4-hour window so far. Δ over multiple slots and acceleration need 3+ windows (~12h); until then those cells stay blank. Nothing is backfilled or invented.`
+        : `Only ${slotWindows} distinct 4-hour windows so far. Acceleration needs 3+ (~12h); until then it stays blank. Nothing is backfilled or invented.`}</span>`;
       const anchor = $("#stats");
       anchor.parentNode.insertBefore(b, anchor.nextSibling);
     }
@@ -3223,9 +3721,11 @@ function paintRail(rail) {
     const b = el("button", "tab" + (FILTER === t ? " on" : ""));
     b.type = "button";
     b.setAttribute("aria-pressed", FILTER === t ? "true" : "false");
+    b.dataset.tag = t;
     // the colour travels as a custom property so the ring, the tint and the dot
     // are all the same hue without three hard-coded values per option
     b.style.setProperty("--hue", t === "all" ? "var(--faint)" : TAGC[t]);
+    b.style.setProperty("--fill", TAGFILL[t] || TAGFILL.QUIET);
     if (n === 0) b.classList.add("zero");
     b.innerHTML = `<span class="tl">${t === "all" ? "All" : `${`<i></i>`}${t}`}</span><b>${n}</b>`;
     // a creator can carry several signals, so these counts overlap and do not
@@ -3242,6 +3742,7 @@ function paintRail(rail) {
 
   // ---- table
   const list = FILTER === "all" ? cr : cr.filter(c => c.tags.includes(FILTER));
+  bindSearch(cr);
 
   // The page holds as many rows as the card can show without scrolling. The board
   // sits beside the draft panel and stretches to match it, so a fixed ten rows
@@ -3263,6 +3764,8 @@ function paintRail(rail) {
   slice.forEach(c => {
     const picked = PICKS.some(p => p.name === c.name);
     const tr = el("tr", "row" + (SEL === c.name ? " sel" : "") + (picked ? " picked" : ""));
+    // the search lands on a row by name, so the row has to carry its name
+    tr.dataset.name = c.name;
     tr.innerHTML = `
       <td class="pos">${c.position}</td>
       <td class="name"><span class="ncell">${avatar(c)}<span class="nwrap">${esc(c.name)}${picked ? ' <span class="tag COILED">IN</span>' : ""}</span></span></td>
@@ -3398,7 +3901,7 @@ function badges(tags) {
      gap in collection is visible as a missing row, not filled in.
    - a move is only claimed between two windows that both exist. The first window
      in the ledger is a baseline and says so instead of inventing a comparison. */
-const HIST = { i: 0, built: 0, windows: [] };
+const HIST = { i: 0, picked: false, built: 0, windows: [] };
 
 function histRead() {
   // The windows come from /api/history as one row per creator per window. A slot
@@ -3467,7 +3970,7 @@ function histPanelHtml(wins, i) {
   const head = `<div class="hhead">
       <div>
         <div class="when">${esc(histWhen(win.slot))}</div>
-        <div class="sub">${prev ? `compared with ${esc(prevWhen)}` : "the first window recorded — baseline"}</div>
+        <div class="sub">${prev ? `compared with ${esc(prevWhen)}` : "the first window recorded, so it is the baseline"}</div>
       </div>
       <div class="hstats">
         <div class="s"><b>${win.rows.length}</b><span>creators</span></div>
@@ -3480,7 +3983,7 @@ function histPanelHtml(wins, i) {
   let moves = "";
   if (!mv) {
     moves = `<div class="hmoves"><div class="grp"><h3>Baseline</h3>
-      <p class="empty">The first window recorded. Nothing to compare it with yet — the
+      <p class="empty">The first window recorded. Nothing to compare it with yet. The
       next collected window is where the moves start.</p></div></div>`;
   } else {
     const row = (m, kind) => {
@@ -3550,8 +4053,14 @@ function histBuild() {
   }
 
   // newest first in the list: the freshest window is the one a reader wants on
-  // opening the tab, and history is read backwards from now
-  HIST.i = Math.max(0, Math.min(HIST.i, wins.length - 1));
+  // opening the tab, and history is read backwards from now.
+  // HIST.i defaults to 0, which is the *oldest* window and is drawn last, so on a
+  // first read it has to be moved to the newest end. Only an explicit pick (or a
+  // surviving index) is kept, which is what HIST.picked tracks.
+  const idxOk = Number.isInteger(HIST.i) && HIST.i >= 0 && HIST.i < wins.length;
+  // a first read opens on the newest window; a poll that grew the ledger keeps the
+  // reader's choice unless it was the newest one they were already following
+  if (!idxOk || !HIST.picked) HIST.i = wins.length - 1;
   const order = wins.map((w, idx) => idx).reverse();
   list.innerHTML = order.map(idx => {
     const mv = histMoves(wins[idx], idx > 0 ? wins[idx - 1] : null);
@@ -3566,6 +4075,17 @@ function histBuild() {
     </button>`;
   }).join("");
 
+  // the list above is the single source of the selection attribute, so if none of
+  // it came out selected the panel and the list disagree and nothing reads as the
+  // window being shown. Assert one selected row rather than trusting the template.
+  if (!list.querySelector('.hitem[aria-selected="true"]')) {
+    const first = list.querySelector(".hitem");
+    if (first) {
+      first.setAttribute("aria-selected", "true");
+      HIST.i = Number(first.dataset.i) || 0;
+    }
+  }
+
   panel.innerHTML = histPanelHtml(wins, HIST.i);
   HIST.built = wins.length;
 }
@@ -3574,8 +4094,7 @@ function histShow(i) {
   const wins = HIST.windows;
   if (!wins.length) return;
   HIST.i = Math.max(0, Math.min(i, wins.length - 1));
-  const flag = HIST.i;
-  HIST.i = flag;
+  HIST.picked = true;
   const list = $("#histList"), panel = $("#histPanel");
   if (list) [].forEach.call(list.children, b => {
     if (b.dataset && b.dataset.i != null) b.setAttribute("aria-selected", String(Number(b.dataset.i) === HIST.i));
@@ -4091,7 +4610,56 @@ function renderDetail() {
     say("Pick cleared", `${c.name} is out of the lineup.`, "info"); };
 }
 
-function savePicks() { localStorage.setItem("mdr_picks", JSON.stringify(PICKS)); }
+// the draft is kept twice: localStorage so it survives a reload on this device,
+// and the server so it follows the account to another one. The server copy is the
+// authority when the session has one - that is what makes a lineup built on a
+// laptop show up on a phone instead of reading 0/5.
+function savePicks() {
+  localStorage.setItem("mdr_picks", JSON.stringify(PICKS));
+  syncPicksUp();
+}
+let PICK_SYNC_T = null, PICK_STORAGE = true;
+function syncPicksUp() {
+  clearTimeout(PICK_SYNC_T);
+  // one write per burst of edits, not one per keystroke in the thesis field
+  PICK_SYNC_T = setTimeout(async () => {
+    try {
+      const r = await fetch("/api/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ picks: PICKS }),
+      });
+      if (r.status === 503) {
+        // the account copy is the whole point of this call, so a storage failure
+        // is reported once rather than swallowed: the draft is still safe on this
+        // device, it just will not follow the visitor to the next one
+        PICK_STORAGE = false;
+        if (!window.__pickWarned) {
+          window.__pickWarned = true;
+          say("Lineup saved on this device only", "The account copy is unavailable right now. Your picks are kept in this browser.", "info");
+        }
+      } else if (r.ok) PICK_STORAGE = true;
+    } catch (e) { /* offline: localStorage already has it */ }
+  }, 700);
+}
+// read the account's draft. A 200 with signedIn:false means nobody is signed in,
+// which is normal and must not wipe the local copy.
+async function syncPicksDown() {
+  try {
+    const r = await fetch("/api/draft", { cache: "no-store" });
+    if (!r.ok) return false;
+    const j = await r.json();
+    if (!j || !j.signedIn) return false;
+    if (!Array.isArray(j.picks) || !j.picks.length) return false;
+    const local = JSON.parse(localStorage.getItem("mdr_picks") || "[]");
+    // the server copy only wins when this device has nothing to lose: a draft
+    // half-built offline stays put rather than being overwritten by an older one
+    if (local.length && local.length >= j.picks.length) return false;
+    PICKS = j.picks.map(x => ({ ...x, rarity: x.rarity || "Common" }));
+    localStorage.setItem("mdr_picks", JSON.stringify(PICKS));
+    return true;
+  } catch (e) { return false; }
+}
 // the sidebar's action card is the same lock as the card's button: it presses the
 // real one when it is ready, and otherwise says what is missing instead of failing
 // silently. Bound lazily because the toast helper is defined further down the file.
@@ -4249,7 +4817,7 @@ function whoCard() {
   }
   const why = ME && ME.configured === false
     ? `<div class="hint" style="color:var(--warm);margin:0 0 9px">Connect X is not wired up on this deployment yet: ${esc(ME.reason || "missing configuration")}. Drafting works, filing a receipt does not.</div>`
-    : `<div class="hint" style="margin:0 0 9px">The book is public, so every receipt carries the X account that filed it. Connecting reads your handle, display name and avatar — nothing else, no posting.</div>`;
+    : `<div class="hint" style="margin:0 0 9px">The book is public, so every receipt carries the X account that filed it. Connecting reads your handle, display name and avatar. It never posts.</div>`;
   box.innerHTML = `${why}
     <div class="idrow"><button class="primary xbtn" id="xIn">${icon("x")}Connect X</button></div>
     <div class="hint" style="margin:9px 0 0">No email, no password, no database: X hands back a token, this site keeps a signed cookie that says who you are.</div>`;
@@ -4330,8 +4898,13 @@ function renderMine() {
       const now = p.positionNow == null ? "" :
         `<span class="arw">→</span>${esc(String(p.positionNow))}`;
       const rr = p.rarity && p.rarity !== "Common" ? `<i class="rr" data-r="${esc(p.rarity)}">${esc(p.rarity)}</i>` : "";
+      // the same face the market row and the search sheet use, so a name in a
+      // receipt can be checked against the board at a glance.
+      const pf = (DATA.profiles || {})[p.name] || null;
+      const face = String((pf && pf.avatar) || "")
+        .replace(/_normal(\.\w+)$/, "_400x400$1");
       return `<span class="p" title="${esc(p.name)} — filed at ${esc(String(p.positionAtLock))}${p.positionNow != null ? ", now " + esc(String(p.positionNow)) : ""}">` +
-        `<b>${esc(p.name)}${rr}</b>` +
+        `<b>${face ? `<img class="mp-av" src="${esc(face)}" alt="" loading="eager" decoding="sync" referrerpolicy="no-referrer" onerror="this.remove()">` : `<span class="mp-av ini">${esc((p.name || "?").slice(0, 2).toUpperCase())}</span>`}${esc(p.name)}${rr}</b>` +
         `<span class="at">#${esc(String(p.positionAtLock))}${now}</span>` +
         `${mv}</span>`;
     }).join("");
@@ -4391,7 +4964,7 @@ function renderBook() {
     }).join(" · ");
     return `<div class="rec"><div class="l">
         <div class="who">${r.avatar
-          ? `<img class="avatar k" src="${esc(r.avatar)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-ini="${esc(String(r.player || "?").slice(0, 2).toUpperCase())}" data-extra="k" onerror="${AV_FB}">`
+          ? `<img class="avatar k" src="${esc(r.avatar)}" alt="" loading="eager" decoding="sync" referrerpolicy="no-referrer" data-ini="${esc(String(r.player || "?").slice(0, 2).toUpperCase())}" data-extra="k" onerror="${AV_FB}">`
           : icon("user", "font-size:11px;opacity:.7")}<b>@${esc(r.player || "?")}</b> · ${(r.picks || []).length} picks${r.name && r.name.toLowerCase() !== String(r.player || "").toLowerCase() ? ` <span style="color:var(--ink);font-size:10px">${esc(r.name)}</span>` : ""}</div>
         <div class="picks">${picks}</div>
       </div>
