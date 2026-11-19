@@ -288,113 +288,140 @@
      destination's own cards are shown. The rail is a sticky column on desktop
      and a horizontal strip above the content on phones and tablets, so the
      markup stays a single list. */
-  .shell{display:grid;grid-template-columns:224px minmax(0,1fr);gap:20px;align-items:start;
+  /* the first column follows the sidebar's own width, so collapsing the rail
+     hands the space back to the board instead of leaving a trench behind */
+  .shell{display:grid;grid-template-columns:auto minmax(0,1fr);gap:20px;align-items:start;
     margin-top:14px}
+  .shell > .rail{width:224px}
   /* The sidebar is beui's floating panel: the nav lives inside a card that floats
      off the page's left edge — the page's own 1px hairline runs behind it, and
      the panel's shadow does the separating. The page background shows through
      the gaps, so the panel reads as a layer above the board, not a column of it. */
-  .rail{position:sticky;top:22px;display:flex;flex-direction:column;gap:2px;
-    padding:12px;border-radius:22px;background:var(--card);
-    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-    box-shadow:inset 0 0 0 1px var(--line),
-      0 24px 48px -24px rgba(17,17,17,.38),0 4px 16px -8px rgba(17,17,17,.16)}
-  .rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;text-align:left;white-space:nowrap;
-    color:var(--faint);padding:4px 10px 8px;display:block}
-  /* Ported from beui's animated-sidebar: the selected state is not painted on
-     each item — one pill is positioned behind the rail and springs to whichever
-     item is active, so the highlight travels instead of blinking. The items keep
-     a transparent background; hover uses a separate soft layer so it never
-     fights the travelling pill. */
-  .rail{position:relative}
-  .rail-pill{position:absolute;left:0;top:0;width:0;height:0;border-radius:12px;
-    background:var(--sunken);pointer-events:none;opacity:0;
-    transition:transform .26s cubic-bezier(.4,0,.2,1),
-               width .26s cubic-bezier(.4,0,.2,1),
-               height .26s cubic-bezier(.4,0,.2,1),
-               opacity .14s ease}
-  .rail-pill.on{opacity:1}
-  :root[data-theme="dark"] .rail-pill{background:rgba(255,255,255,.09)}
-  /* Toast stack, ported from beui's animated-toast-stack: cards arrive from
-     below with a slight scale, stack with a small vertical offset and overlap,
-     and the ones behind sit pushed back and dimmed. Only the newest is fully
-     printed, so a burst never covers the board. */
-  .toasts{position:fixed;z-index:90;right:18px;bottom:18px;width:320px;max-width:calc(100vw - 36px);
-    display:flex;flex-direction:column;align-items:stretch;pointer-events:none}
-  .toast{pointer-events:auto;display:flex;gap:10px;align-items:flex-start;width:100%;
-    padding:12px 13px;border-radius:16px;background:var(--card);color:var(--ink);
-    box-shadow:inset 0 0 0 1px var(--line),0 18px 40px -24px rgba(17,17,17,.55);
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    transform-origin:bottom right;will-change:transform,opacity}
-  .toast .t-ic{width:22px;height:22px;flex:none;border-radius:100px;display:grid;place-items:center;
-    background:var(--sunken);color:var(--ink)}
-  .toast .t-ic svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;
+  /* ---- sidebar: three cards, ported from Framer's Collapsible Sidebar -----
+     The rail is no longer one box with a travelling pill. It is a stack of
+     floating cards on the page's own ground: identity, navigation, then the
+     action bar and the theme switch. Collapsed, the same markup folds to a
+     52px strip of icons — the identity card keeps its face so you can still
+     see who is signed in, and the labels stay in the DOM for screen readers. */
+  .rail{position:sticky;top:22px;display:flex;flex-direction:column;gap:10px;
+    width:100%;transition:width .28s cubic-bezier(.4,0,.2,1)}
+  .rail-toggle{display:flex;align-items:center;gap:8px;align-self:flex-end;
+    border:0;background:transparent;color:var(--ink);opacity:.5;font:inherit;
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+    padding:2px 4px;cursor:pointer;border-radius:8px;transition:opacity .18s ease,background .18s ease}
+  .rail-toggle:hover{opacity:1;background:var(--sunken)}
+  .rail-toggle .ic{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;
     stroke-linecap:round;stroke-linejoin:round}
-  .toast[data-kind="ok"] .t-ic{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
-  .toast[data-kind="err"] .t-ic{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
-  .toast .t-body{min-width:0;flex:1}
-  .toast .t-title{font-size:12.5px;font-weight:650;letter-spacing:-.01em;line-height:1.3}
-  .toast .t-desc{font-size:11.5px;color:var(--muted);line-height:1.4;margin-top:2px}
-  .toast .t-x{flex:none;border:0;background:transparent;color:var(--faint);cursor:pointer;
-    padding:2px;line-height:0;border-radius:6px}
-  .toast .t-x:hover{color:var(--ink);background:var(--sunken)}
-  .toast .t-x svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;
-    stroke-linecap:round}
-  /* the arrival curve: in from 18px below and 96% scale, out the same way */
-  @keyframes toast-in{from{opacity:0;transform:translateY(18px) scale(.96)}
-    to{opacity:1;transform:translateY(0) scale(1)}}
-  @keyframes toast-out{from{opacity:1;transform:translateY(0) scale(1)}
-    to{opacity:0;transform:translateY(10px) scale(.97)}}
-  .toast[data-state="in"]{animation:toast-in .38s cubic-bezier(.22,1,.36,1) both}
-  .toast[data-state="out"]{animation:toast-out .24s cubic-bezier(.4,0,1,1) both}
-  @media (prefers-reduced-motion:reduce){
-    .toast[data-state="in"],.toast[data-state="out"]{animation-duration:.01s}
-  }
-  /* The label colour rides the same curve and duration as the pill, but it starts
-     only after the pill has arrived (`transition-delay`). Before, the text turned
-     paper-on-paper the instant it was selected while the pill was still travelling,
-     so the chosen tab read as blank until something else forced a repaint. */
-  .rail-item{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:9px 10px;
-    border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;
-    font-size:12.5px;font-weight:600;letter-spacing:-.01em;cursor:pointer;text-align:left;
-    width:100%;justify-content:flex-start;transition:color .26s cubic-bezier(.4,0,.2,1);
-    /* the shared `button` rule paints every button with a sunken fill and a 1px
-       inset ring. A rail tab is not a button on a page — it is a line of text over
-       the pill — so both have to be cleared here or every tab wears the ring and
-       the hover fill has nowhere to show up. */
-    box-shadow:none}
-  /* one left-aligned column: every label gets the same 112px field, so the text
-     starts at the same x for Market, Leaderboard, Profile and History — a fixed
-     width, not auto, because the pill is measured from the item box and a
-     narrower label would pull the pill short of the rail's edge */
-  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.72;transition:opacity .28s ease}
-  .rail-item span:not(.rail-count){display:inline-block;width:112px;text-align:left;flex:none}
-  /* The delay is only half the story. A tab losing selection used to fall back to a
-     bare `.2s ease` colour transition with no delay, so leaving a tab snapped while
-     entering one eased — the same move looked different depending on direction, and
-     on the way back to Market the label drifted through several greys. Both states
-     now share one duration and one curve, and the delay is symmetrical, so the trip
-     in and the trip out are the same gesture. */
-  .rail-item[aria-selected="true"]{transition:color .26s cubic-bezier(.4,0,.2,1) .1s}
-  .rail-item[aria-selected="false"]{transition:color .26s cubic-bezier(.4,0,.2,1) 0s}
-  .rail-item::before{content:"";position:absolute;inset:0;border-radius:12px;
-    background:var(--sunken);opacity:0;transition:opacity .18s ease;z-index:-1}
-  /* Hover is a soft wash behind the label, never a ring: the tab you are pointing
-     at looks lit, the tab you picked looks stamped. The media query is kept for
-     touch screens, where :hover sticks after a tap and would leave a stray wash
-     under whatever was tapped last. */
-  .rail-item:not([aria-selected="true"]):hover::before{opacity:1}
-  /* on a touch screen :hover sticks after a tap, so the wash is dropped there
-     rather than left sitting under whichever tab was last touched */
-  @media (hover:none){.rail-item:hover::before{opacity:0}}
-  .rail-item[aria-selected="true"]{color:var(--ink)}
+  .rail-body{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .rc{background:var(--card);border-radius:18px;padding:14px;
+    box-shadow:inset 0 0 0 1px var(--line),0 18px 36px -28px rgba(17,17,17,.5);
+    transition:padding .28s cubic-bezier(.4,0,.2,1),border-radius .28s cubic-bezier(.4,0,.2,1)}
+  .rc-top{display:flex;align-items:center;gap:10px;min-width:0}
+  .rail-ava{position:relative;width:38px;height:38px;flex:none;border-radius:100px;overflow:hidden;
+    display:grid;place-items:center;background:var(--sunken);color:var(--ink);
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .rail-ava img{width:100%;height:100%;object-fit:cover;display:block}
+  .rail-ini{font-family:var(--mono);font-size:11px;letter-spacing:.02em;opacity:.62}
+  .rail-who{min-width:0;flex:1}
+  .rail-name{font-size:12.5px;font-weight:650;letter-spacing:-.01em;color:var(--ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25}
+  .rail-sub{font-size:10.5px;color:var(--ink);opacity:.5;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;line-height:1.35;margin-top:1px}
+  .rail-sub .dot{display:inline-block;width:5px;height:5px;border-radius:100px;
+    background:var(--ok);vertical-align:1px;margin-right:4px}
+  .rail-x{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+    margin-top:11px;padding:7px 10px;border:0;border-radius:100px;cursor:pointer;
+    font:inherit;font-size:11px;font-weight:600;letter-spacing:-.005em;
+    background:var(--ink);color:var(--bg);transition:opacity .16s ease}
+  .rail-x:hover{opacity:.88}
+  .rail-x.on{background:var(--sunken);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+  .rail-x .ic{width:11px;height:11px;flex:none}
+  .rail-x.on .ic{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .rail-h{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink);opacity:.42;padding:1px 4px 7px}
+  .rail-items{display:flex;flex-direction:column;gap:1px}
+  .rail-item{position:relative;display:flex;align-items:center;gap:9px;width:100%;
+    padding:8px 9px;border:0;border-radius:11px;background:transparent;color:var(--ink);
+    font:inherit;font-size:12.5px;font-weight:550;letter-spacing:-.01em;text-align:left;
+    cursor:pointer;box-shadow:none;transition:background .16s ease,color .16s ease}
+  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.55;
+    fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+    transition:opacity .16s ease}
+  .rail-item .lab{min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rail-item:hover{background:var(--sunken)}
+  .rail-item[aria-selected="true"]{background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line)}
   .rail-item[aria-selected="true"] .ic{opacity:1}
-  .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;
-    padding:1px 6px;border-radius:100px;background:rgba(17,17,17,.06);color:inherit}
-  .rail-item[aria-selected="true"] .rail-count{background:rgba(17,17,17,.1)}
-  :root[data-theme="dark"] .rail-item[aria-selected="true"] .rail-count{background:rgba(255,255,255,.14)}
-  @media (prefers-reduced-motion:reduce){.rail-pill{transition:opacity .12s ease}}
-  .rail-sep{height:1px;margin:6px 6px;background:var(--line)}
+  .rail-item .rail-count{margin-left:auto;font-family:var(--mono);font-size:9.5px;opacity:.55;
+    padding:1px 5px;border-radius:100px;background:var(--card-2)}
+  .rail-act{background:var(--ink);color:var(--bg);font-weight:600}
+  .rail-act .ic{opacity:1}
+  .rail-act .rail-count{background:rgba(127,127,127,.28);opacity:.9}
+  .rail-act:hover{background:var(--ink);opacity:.9}
+  .rail-tools{display:flex;justify-content:flex-end;margin-top:8px}
+  /* collapsed: 52px of faces. The labels, the section header and the counts
+     fold away; the toggle becomes the way back out and turns to point right. */
+  .rail[data-open="false"]{width:52px}
+  .shell > .rail[data-open="false"]{width:52px}
+  .rail[data-open="false"] .rail-toggle{align-self:center;padding:6px}
+  .rail[data-open="false"] .rail-toggle span,
+  .rail[data-open="false"] .rail-name,
+  .rail[data-open="false"] .rail-sub,
+  .rail[data-open="false"] .rail-h,
+  .rail[data-open="false"] .rail-item .rail-count,
+  .rail[data-open="false"] .rail-x span,
+  .rail[data-open="false"] .rail-tools{display:none}
+  .rail[data-open="false"] .rc{padding:9px;border-radius:16px}
+  .rail[data-open="false"] .rc-top{justify-content:center}
+  .rail[data-open="false"] .rail-who,.rail[data-open="false"] .rail-x,
+  /* collapsed on a desk the label list is gone; the icon strip under it is the
+     nav. The card it sat in keeps just the face, so the strip is not boxed twice. */
+  .rail[data-open="false"] .rail-items,.rail[data-open="false"] .rail-navcard{display:none}
+  .rail[data-open="false"] .rail-item{justify-content:center;padding:9px 0}
+  /* collapsed, the label still names the destination for screen readers and
+     for the title tooltip, and the strip of icons carries the rest. Hiding the
+     whole .rail-items list was what made the phone header a column of dots. */
+  .rail[data-open="false"] .rail-item .lab{position:absolute;width:1px;height:1px;
+    padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .rail[data-open="false"] .rail-toggle .ic{transform:rotate(180deg)}
+  .rail-mini{display:none;flex-direction:column;gap:1px}
+  /* ---- the two-step draft form ------------------------------------------
+     Thesis, then pre-mortem: one question per pane, a dot pair instead of a
+     progress bar, and the same card language as the rest of the room. The
+     dots are two squares, not three — this form has two questions, and a third
+     dot would promise a step that does not exist. */
+  .mstep{margin-top:6px;padding:14px;border-radius:16px;background:var(--sunken);
+    box-shadow:inset 0 0 0 1px var(--line)}
+  .mstep-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .mstep-kicker{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink);opacity:.5}
+  .mstep-dots{display:flex;gap:5px}
+  .mstep-dots i{width:18px;height:4px;border-radius:2px;background:rgba(127,127,127,.28);
+    transition:background .22s ease,width .22s ease}
+  .mstep-dots i.on{background:var(--ink);width:26px}
+  .mstep-pane{animation:mstep-in .26s cubic-bezier(.22,1,.36,1) both}
+  @keyframes mstep-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.mstep-pane{animation-duration:.01s}}
+  .mstep label{margin-top:0}
+  .mstep textarea{width:100%;box-sizing:border-box;resize:none;font:inherit;font-size:13px;
+    line-height:1.5;padding:9px 11px;border-radius:12px;border:0;background:var(--card);
+    color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);outline:none;
+    transition:box-shadow .16s ease}
+  .mstep textarea::placeholder{color:var(--faint);opacity:.42}
+  .mstep textarea:focus{box-shadow:inset 0 0 0 1px var(--ink)}
+  .mstep-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px}
+  .mstep-len{font-family:var(--mono);font-size:9px;opacity:.4}
+  .mstep-acts{display:flex;align-items:center;gap:7px;margin-left:auto}
+  .mstep-next{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:100px;
+    padding:7px 13px;background:var(--ink);color:var(--bg);font:inherit;font-size:11.5px;
+    font-weight:600;cursor:pointer;transition:opacity .16s ease}
+  .mstep-next:hover{opacity:.88}
+  .mstep-next .ic,.mstep-next svg{width:11px;height:11px;fill:none;stroke:currentColor;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .mstep-back{border:0;background:transparent;color:var(--ink);opacity:.55;font:inherit;
+    font-size:11.5px;font-weight:550;padding:7px 8px;border-radius:100px;cursor:pointer}
+  .mstep-back:hover{opacity:1;background:var(--card-2)}
+  .rail[data-open="false"] .rail-mini{display:flex}
+  .rail[data-open="false"] .rail-toggle{align-self:center;padding:6px}
 
   /* The leaderboard is a placeholder, and it reads as one on purpose: a plain
      statement of what will live here, why it is not here yet, and a way back to
@@ -442,19 +469,39 @@
     /* the rail becomes a strip above the content: five destinations on one
        wrapping row, the theme switch pushed to the far edge. Nothing scrolls
        sideways, so no destination can hide past the right edge on a phone. */
-    .rail{position:relative;top:0;flex-direction:row;flex-wrap:wrap;overflow:visible;
-      padding:6px;border-radius:16px;align-items:center;row-gap:4px}
-    .rail-brand,.rail-sep,.rail-foot{display:none}
-    .rail-item{width:auto;flex:none;padding:8px 10px;font-size:11.5px;gap:7px}
+    /* on a phone the rail is a header, not a column: the collapse state is
+       irrelevant there, so it is forced wide and the icon strip is off */
+    .rail{position:relative;top:0;flex-direction:column;width:100%!important;gap:8px}
+    .rail-toggle,.rail-mini{display:none!important}
+    .rail-body{display:flex!important}
+    .rail-navcard{display:flex!important}
+    /* one row of cards: the identity card keeps its avatar and name but drops the
+       button, the nav card turns into a strip, the action card keeps just the
+       theme switch and its counters */
+    .rail-body{flex-direction:column;gap:8px}
+    .rail-body > .rc{display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:14px}
+    .rc-top{flex:1}
+    .rail-x{margin-top:0;width:auto;padding:6px 11px}
+    .rail-h{display:none}
+    .rail-items{flex:1 0 100%;flex-direction:row;flex-wrap:wrap;gap:2px;
+      scrollbar-width:none;min-width:0}
+    .rail-body > .rc:last-child{min-width:0}
+    .rail-item{width:auto;flex:none;padding:7px 9px;font-size:11.5px;gap:6px}
+    .rail-item .lab{flex:none}
     .rail-item .rail-count{display:none}
+    .rc-foot{margin-top:0}
+    .rail-tools{margin-top:0}
   }
   @media(max-width:520px){
     /* the switch gets its own row under the strip, aligned to the end: the five
        destinations keep one row and nothing has to shrink to unreadable */
-    .rail{position:relative;padding:5px}
-    .shell{gap:26px}
-    .rail-item{padding:7px 6px;font-size:10.5px;gap:4px;letter-spacing:-.02em}
+    .shell{gap:16px}
+    .rail-item{padding:7px 7px;font-size:10.5px;gap:4px;letter-spacing:-.02em}
     .rail-item .ic{width:12px;height:12px}
+    .rc{padding:9px 10px}
+    .rail-x span{display:none}
+    .rail-x{padding:7px;width:30px;justify-content:center}
   }
 
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
@@ -2338,30 +2385,78 @@
        horizontal strip above the content on phones. aria-selected is the truth,
        the CSS just follows it. -->
   <div class="shell">
-  <nav class="rail" id="rail" role="tablist" aria-label="Sections" aria-orientation="vertical">
-    <span class="rail-pill" id="railPill" aria-hidden="true"></span>
-    <div class="rail-brand">Motion Market</div>
-    <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market">
-      <svg class="ic"><use href="#i-users"/></svg><span>Market</span>
-      <span class="rail-count" id="railMarket">79</span>
+  <nav class="rail" id="rail" aria-label="Sections">
+    <button type="button" class="rail-toggle" id="railToggle" aria-expanded="true" aria-controls="railBody" aria-label="Collapse sidebar">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9.5 4v16"/></svg>
+      <span>Collapse</span>
     </button>
-    <button type="button" class="rail-item" role="tab" data-view="leaderboard" aria-selected="false" aria-controls="v-leaderboard">
-      <svg class="ic"><use href="#i-trophy"/></svg><span>Leaderboard</span>
-    </button>
-    <button type="button" class="rail-item" role="tab" data-view="profile" aria-selected="false" aria-controls="v-profile">
-      <svg class="ic"><use href="#i-user"/></svg><span>Profile</span>
-    </button>
-    <button type="button" class="rail-item" role="tab" data-view="history" aria-selected="false" aria-controls="v-history">
-      <svg class="ic"><use href="#i-clock"/></svg><span>History</span>
-      <span class="rail-count" id="railHistory">0</span>
-    </button>
-    <div class="rail-sep" aria-hidden="true"></div>
-    <button type="button" class="tt" id="themesw" data-on="light" aria-label="Switch to dark theme" aria-pressed="false">
-      <span class="tt-face" aria-hidden="true">
-        <svg class="tt-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
-        <svg class="tt-moon" viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
-      </span>
-    </button>
+    <div class="rail-body" id="railBody">
+      <div class="rc" id="railProfile">
+        <div class="rc-top">
+          <span class="rail-ava" id="railAva" aria-hidden="true">
+            <span class="rail-ini" id="railIni">MM</span>
+          </span>
+          <div class="rail-who">
+            <div class="rail-name" id="railName">Not connected</div>
+            <div class="rail-sub" id="railSub">Sign in with X</div>
+          </div>
+        </div>
+        <button type="button" class="rail-x" id="railX">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><use href="#fi-x"/></svg>
+          <span id="railXLabel">Connect X</span>
+        </button>
+      </div>
+
+      <div class="rc rail-navcard">
+        <div class="rail-h">Main</div>
+        <div class="rail-items" id="railItems" role="tablist" aria-orientation="vertical" aria-label="Sections">
+          <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market">
+            <svg class="ic"><use href="#i-users"/></svg><span class="lab">Market</span>
+            <span class="rail-count" id="railMarket">79</span>
+          </button>
+          <button type="button" class="rail-item" role="tab" data-view="leaderboard" aria-selected="false" aria-controls="v-leaderboard">
+            <svg class="ic"><use href="#i-trophy"/></svg><span class="lab">Leaderboard</span>
+          </button>
+          <button type="button" class="rail-item" role="tab" data-view="profile" aria-selected="false" aria-controls="v-profile">
+            <svg class="ic"><use href="#i-user"/></svg><span class="lab">Profile</span>
+          </button>
+          <button type="button" class="rail-item" role="tab" data-view="history" aria-selected="false" aria-controls="v-history">
+            <svg class="ic"><use href="#i-clock"/></svg><span class="lab">History</span>
+            <span class="rail-count" id="railHistory">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="rc rc-foot">
+        <button type="button" class="rail-item rail-act" id="railLock">
+          <svg class="ic" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>
+          <span class="lab">Lock lineup</span>
+          <span class="rail-count" id="railLockN">0/5</span>
+        </button>
+        <div class="rail-tools">
+          <button type="button" class="tt" id="themesw" data-on="light" aria-label="Switch to dark theme" aria-pressed="false">
+            <span class="tt-face" aria-hidden="true">
+              <svg class="tt-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.4V4.6M12 19.4V21.6M2.4 12H4.6M19.4 12H21.6M5.2 5.2 6.8 6.8M17.2 17.2 18.8 18.8M18.8 5.2 17.2 6.8M6.8 17.2 5.2 18.8"/></svg>
+              <svg class="tt-moon" viewBox="0 0 24 24"><path d="M20.4 14.3A8.6 8.6 0 1 1 9.7 3.6a7 7 0 0 0 10.7 10.7Z"/></svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="rail-mini" id="railMini" role="tablist" aria-orientation="vertical" aria-label="Sections">
+      <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market" title="Market" aria-label="Market">
+        <svg class="ic"><use href="#i-users"/></svg>
+      </button>
+      <button type="button" class="rail-item" role="tab" data-view="leaderboard" aria-selected="false" aria-controls="v-leaderboard" title="Leaderboard" aria-label="Leaderboard">
+        <svg class="ic"><use href="#i-trophy"/></svg>
+      </button>
+      <button type="button" class="rail-item" role="tab" data-view="profile" aria-selected="false" aria-controls="v-profile" title="Profile" aria-label="Profile">
+        <svg class="ic"><use href="#i-user"/></svg>
+      </button>
+      <button type="button" class="rail-item" role="tab" data-view="history" aria-selected="false" aria-controls="v-history" title="History" aria-label="History">
+        <svg class="ic"><use href="#i-clock"/></svg>
+      </button>
+    </div>
   </nav>
 
   <div class="viewpane">
@@ -2591,7 +2686,40 @@ async function loadSession() {
     ME = { connected: false, configured: null, reason: "the status endpoint is unreachable" };
   }
   AUTH_CFG = ME && ME.configured;
-  [renderWho(), renderLineup()].forEach(f => { try { f(); } catch (e) {} });
+  [renderWho(), renderLineup(), railWho(), railLockSync].forEach(f => { try { f(); } catch (e) {} });
+}
+// the sidebar's identity card: X display name and face once signed in. Before
+// that it says so plainly and the button under it starts the same popup.
+function railWho() {
+  const name = $("#railName"), sub = $("#railSub"), ava = $("#railAva"),
+    btn = $("#railX"), lbl = $("#railXLabel"), ini = $("#railIni");
+  if (!name || !ava) return;
+  const u = (ME && ME.user) || {}, h = handle();
+  const face = String(u.avatar || "").replace(/_normal(\.\w+)$/, "_400x400$1");
+  if (h) {
+    name.textContent = u.name || "@" + h;
+    name.title = u.name || h;
+    sub.innerHTML = "<span class='dot'></span>@" + esc(h);
+    if (face) {
+      if (ava.dataset.src !== face) {
+        ava.dataset.src = face;
+        ava.innerHTML = `<img src="${esc(face)}" alt="" referrerpolicy="no-referrer"
+          onerror="this.remove();document.getElementById('railIni').style.display='grid'"><span class="rail-ini" id="railIni" style="display:none">${esc((u.name || h).slice(0, 2).toUpperCase())}</span>`;
+      }
+    } else if (ini) {
+      ini.style.display = "grid";
+      ini.textContent = (u.name || h).slice(0, 2).toUpperCase();
+    }
+    if (btn) { btn.classList.add("on"); btn.onclick = () => { document.querySelector('.rail-item[data-view="profile"]').click(); }; }
+    if (lbl) lbl.textContent = "View profile";
+  } else {
+    name.textContent = "Not connected";
+    name.title = "";
+    sub.textContent = ME ? "Sign in with X to file picks" : "Checking…";
+    ava.dataset.src = ""; ava.innerHTML = `<span class="rail-ini" id="railIni">MM</span>`;
+    if (btn) { btn.classList.remove("on"); btn.onclick = connectX; }
+    if (lbl) lbl.textContent = "Connect X";
+  }
 }
 // popup round trip: X's screen opens in its own window, the callback posts back
 function connectX() {
@@ -2777,7 +2905,7 @@ function sufTail(suf, unit) {
 // numbers are a read of the board, not decoration, so re-running it on every
 // render (which happens on each page change) would be a twitch, not a reveal.
 function countUp() {
-  const box = $("\#stats");
+  const box = $(".stats");
   if (!box || box.dataset.counted === "1") return;
   const lives = [...box.querySelectorAll(".live")];
   if (!lives.length) return;
@@ -3691,29 +3819,97 @@ function renderDetail() {
       ${RARITY.map(r => `<button data-r="${r}" class="${(already ? already.rarity : "Common") === r ? "on" : ""}" type="button">${r}<i>×${BOOST[r].toFixed(2)}</i></button>`).join("")}
     </div>
     <div class="hint" style="margin:7px 0 4px">Boost multipliers are Motion's published table: Common ×1, Rare ×1.5, Epic ×2, Legendary ×2.5. What is ours is the Motion Score they multiply — a rank-based stand-in — so a projected score here is not the game's Lineup Score.</div>
-    <label for="thesis">Thesis — why this pick, in one line</label>
-    <input id="thesis" maxlength="120" placeholder="e.g. three straight positive slots, calm board above" value="${already ? esc(already.thesis) : ""}">
-    <label for="premortem">Pre-mortem — what would make this wrong</label>
-    <input id="premortem" maxlength="120" placeholder="e.g. a big account posts and pushes him down the board" value="${already ? esc(already.premortem) : ""}">
-    <div class="hint">Both fields are required. No one-click lineups — the reasoning is the submission.</div>
-    <div class="rowbtns">
-      <button class="primary" id="addBtn">${icon("plus")}${already ? "Update pick" : "Add to lineup"}</button>
-      ${already ? `<button id="rmBtn">${icon("trash")}Remove</button>` : ""}
-    </div>`;
+    <div class="mstep" id="mstep" data-step="1">
+      <div class="mstep-head">
+        <div class="mstep-kicker" id="mstepKicker">Step 1 of 2</div>
+        <div class="mstep-dots" id="mstepDots" aria-hidden="true"><i class="on"></i><i></i></div>
+      </div>
+      <div class="mstep-body">
+        <div class="mstep-pane" data-pane="1">
+          <label for="thesis">Thesis — why this pick, in one line</label>
+          <textarea id="thesis" maxlength="120" rows="2" placeholder="e.g. three straight positive slots, calm board above">${already ? esc(already.thesis) : ""}</textarea>
+          <div class="mstep-foot">
+            <span class="mstep-len">0/120</span>
+            <button type="button" class="mstep-next" id="mnext">Next ${icon("arrow-right")}</button>
+          </div>
+        </div>
+        <div class="mstep-pane" data-pane="2" hidden>
+          <label for="premortem">Pre-mortem — what would make this wrong</label>
+          <textarea id="premortem" maxlength="120" rows="2" placeholder="e.g. a big account posts and pushes him down the board">${already ? esc(already.premortem) : ""}</textarea>
+          <div class="mstep-foot">
+            <span class="mstep-len">0/120</span>
+            <span class="mstep-acts">
+              <button type="button" class="mstep-back" id="mback">Back</button>
+              <button type="button" class="mstep-next" id="addBtn">${already ? "Update pick" : "Add to lineup"}</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="hint" style="margin:9px 0 0">Both answers are required. No one-click lineups — the reasoning is the submission.</div>
+    </div>
+    <div class="rowbtns">${already ? `<button id="rmBtn">${icon("trash")}Remove</button>` : ""}</div>`;
+
+  // two steps, two panes: thesis, then pre-mortem. The pane swap is a fade and a
+  // 6px lift, and the reader who edits an existing pick lands on step 1 with both
+  // answers already filled in. Nothing is validated until the last step.
+  const panes = [...document.querySelectorAll(".mstep-pane")];
+  const dots = [...document.querySelectorAll("#mstepDots i")];
+  const th = document.getElementById("thesis"), pm = document.getElementById("premortem");
+  const form = $("#mstep"), kicker = $("#mstepKicker");
+  // delegated input: the panes are re-rendered on every row click, and a counter
+  // bound to the old textarea would keep printing into a node nobody sees
+  form.addEventListener("input", e => {
+    const el = e.target;
+    if (!el || (el.id !== "thesis" && el.id !== "premortem")) return;
+    // the counter is the next field down inside the same pane, never an id: two
+    // ids with the same value on the page is the trap that made this look broken
+    const n = el.parentElement.querySelector(".mstep-len");
+    if (n) n.textContent = el.value.length + "/120";
+  });
+  const count = el => { if (!el) return;
+    const n = el.parentElement.querySelector(".mstep-len");
+    if (n) n.textContent = el.value.length + "/120"; };
+  if (th) count(th); if (pm) count(pm);
+  function goStep(n) {
+    $("#mstep").dataset.step = String(n);
+    panes.forEach(p => { p.hidden = p.dataset.pane !== String(n); });
+    dots.forEach((d, i) => d.classList.toggle("on", i === n - 1));
+    if (kicker) kicker.textContent = `Step ${n} of 2`;
+    setTimeout(() => {
+      const focus = document.querySelector(`.mstep-pane[data-pane="${n}"] textarea`) ||
+        (n === 1 ? th : pm);
+      if (focus) { focus.focus(); focus.setSelectionRange(focus.value.length, focus.value.length); }
+    }, 40);
+  }
+  const nextBtn = $("#mnext"), backBtn = $("#mback");
+  // the markup carries these ids once per panel, so the handlers are attached to
+  // the nodes we just queried instead of re-querying by tag and hoping
+  nextBtn.onclick = () => {
+    if (th.value.trim().length < 8) {
+      say("One line, please", "The thesis needs at least 8 characters before you can move on.", "err");
+      th.focus(); return;
+    }
+    goStep(2);
+  };
+  backBtn.onclick = () => goStep(1);
+  th.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); nextBtn.click(); } });
 
   const rarBtns = [...document.querySelectorAll("#rar button")];
   rarBtns.forEach(b => { b.onclick = () => { rarBtns.forEach(x => x.classList.toggle("on", x === b)); }; });
   $("#addBtn").onclick = () => {
-    const th = $("#thesis").value.trim(), pm = $("#premortem").value.trim();
+    const thV = $("#thesis").value.trim(), pmV = $("#premortem").value.trim();
     const rarity = (rarBtns.find(b => b.classList.contains("on")) || {}).dataset?.r || "Common";
-    if (th.length < 8 || pm.length < 8) { say("Not filed yet", "Thesis and pre-mortem both need at least 8 characters.", "err"); return; }
+    if (thV.length < 8 || pmV.length < 8) {
+      goStep(thV.length < 8 ? 1 : 2);
+      say("Not filed yet", "Thesis and pre-mortem both need at least 8 characters.", "err"); return;
+    }
     const prev = PICKS.find(p => p.name === c.name);
     const others = PICKS.filter(p => p.name !== c.name);
     if (others.length >= SIZE) { say("Lineup is full", `You already hold ${SIZE} picks. Clear one to swap it out.`, "err"); return; }
     const spent = others.reduce((a, p) => a + p.estStars, 0);
     if (spent + c.estStars > CAP) { say("Over the star cap", `That would spend ${spent + c.estStars} of ${CAP} stars.`, "err"); return; }
     if (prev && prev.rarity !== rarity) { say("Rarity is locked", "A creator keeps the rarity you filed them at. Clear the pick first.", "err"); return; }
-    PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: th, premortem: pm, position: c.position, momentum: c.momentum, rarity: prev ? prev.rarity : rarity }];
+    PICKS = [...others, { name: c.name, estStars: c.estStars, thesis: thV, premortem: pmV, position: c.position, momentum: c.momentum, rarity: prev ? prev.rarity : rarity }];
     savePicks(); render();
     say(prev ? "Pick updated" : "Added to the lineup", `${c.name} \u00b7 ${prev ? prev.rarity : rarity} \u00b7 ${c.estStars}${STAR}`, "ok");
   };
@@ -3723,6 +3919,22 @@ function renderDetail() {
 }
 
 function savePicks() { localStorage.setItem("mdr_picks", JSON.stringify(PICKS)); }
+// the sidebar's action card is the same lock as the card's button: it presses the
+// real one when it is ready, and otherwise says what is missing instead of failing
+// silently. Bound lazily because the toast helper is defined further down the file.
+function railLockBind() {
+  const b = $("#railLock");
+  if (!b || b.dataset.bound) return;
+  b.dataset.bound = "1";
+  b.addEventListener("click", () => {
+    const real = $("#lockBtn");
+    if (real && !real.disabled) { real.click(); return; }
+    document.querySelector('.rail-item[data-view="profile"]').click();
+    say("Not ready to lock", PICKS.length === SIZE && !handle()
+      ? "Connect X, then lock the lineup from the profile card."
+      : `${SIZE - PICKS.length} more pick${SIZE - PICKS.length === 1 ? "" : "s"} to go \u2014 fill the lineup first.`, "info");
+  });
+}
 
 // ---------- lineup + receipts
 function renderLineup() {
@@ -3760,6 +3972,8 @@ function renderLineup() {
   lb.disabled = PICKS.length !== SIZE || !h;
   ctaLabel(lb, lockLabel(h));
   lb.onclick = lockLineup;
+  railLockSync();
+  railLockBind();
   renderWho();
 }
 
@@ -3787,6 +4001,14 @@ function ctaLabel(btn, text) {
 function lockLabel(h) {
   if (!h && PICKS.length === SIZE) return "Connect X to lock";
   return `Lock lineup (${PICKS.length}/${SIZE})`;
+}
+// the sidebar's action card shows the same tally in its badge, and locks the
+// same lineup the profile card does — one action, two doors
+function railLockSync() {
+  const n = $("#railLockN");
+  if (n) n.textContent = `${PICKS.length}/${SIZE}`;
+  const b = $("#railLock");
+  if (b) b.title = lockLabel(handle());
 }
 
 function renderWho() {
@@ -4258,22 +4480,35 @@ document.addEventListener("click", e => {
 (function () {
   var rail = document.getElementById('rail');
   if (!rail) return;
-  var tabs = [].slice.call(rail.querySelectorAll('.rail-item'));
+  var tabs = [].slice.call(document.querySelectorAll('.rail .rail-item[role="tab"]'));
   var views = [].slice.call(document.querySelectorAll('.viewpane .view'));
   var NAMES = { market: 'Market', leaderboard: 'Leaderboard', profile: 'Profile', history: 'History' };
 
-  var pill = document.getElementById('railPill');
-  // move the travelling highlight to the active item; measured against the rail
-  // because the rail scrolls horizontally on phones
-  function movePill(btn) {
-    if (!pill || !btn) return;
-    var r = rail.getBoundingClientRect(), b = btn.getBoundingClientRect();
-    pill.style.width = b.width + 'px';
-    pill.style.height = b.height + 'px';
-    pill.style.transform = 'translate(' + (b.left - r.left + rail.scrollLeft) + 'px,' +
-      (b.top - r.top + rail.scrollTop) + 'px)';
-    pill.classList.add('on');
+  // ---- collapsible: open by default, the choice is remembered per browser.
+  // Collapsed, the label rail folds away and the mini rail of icons takes over;
+  // both rails hold one tab per view, so aria-selected is set on every copy.
+  var OPEN_KEY = 'mdr_rail_open';
+  var toggle = document.getElementById('railToggle');
+  function setOpen(open, remember) {
+    rail.setAttribute('data-open', open ? 'true' : 'false');
+    document.querySelectorAll('.rail .rail-item[role="tab"]').forEach(function (t) {
+      t.tabIndex = (open ? t.closest('.rail-body') : t.closest('.rail-mini')) &&
+        t.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    });
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'Collapse sidebar' : 'Expand sidebar');
+      var lbl = toggle.querySelector('span');
+      if (lbl) lbl.textContent = open ? 'Collapse' : 'Expand';
+    }
+    if (remember) { try { localStorage.setItem(OPEN_KEY, open ? '1' : '0'); } catch (e) {} }
   }
+  var savedOpen = null;
+  try { savedOpen = localStorage.getItem(OPEN_KEY); } catch (e) {}
+  setOpen(savedOpen !== '0', false);
+  if (toggle) toggle.addEventListener('click', function () {
+    setOpen(rail.getAttribute('data-open') !== 'true', true);
+  });
 
   function show(name, push) {
     if (!NAMES[name]) name = 'market';
@@ -4285,7 +4520,6 @@ document.addEventListener("click", e => {
       t.tabIndex = on ? 0 : -1;
       if (on) active = t;
     });
-    movePill(active);
     if (push !== false && location.hash.slice(1) !== name) {
       try { history.replaceState(null, '', '#' + name); } catch (e) { location.hash = name; }
     }
@@ -4322,15 +4556,9 @@ document.addEventListener("click", e => {
   window.addEventListener('resize', function () {
     clearTimeout(rt);
     rt = setTimeout(function () {
-      movePill(rail.querySelector('.rail-item[aria-selected="true"]'));
       if (typeof render === 'function') render();
     }, 140);
   });
-  if (window.ResizeObserver && rail) {
-    new ResizeObserver(function () {
-      movePill(rail.querySelector('.rail-item[aria-selected="true"]'));
-    }).observe(rail);
-  }
   window.addEventListener('hashchange', function () { show(location.hash.slice(1), false); });
   show(location.hash.slice(1) || 'market', false);
 })();
