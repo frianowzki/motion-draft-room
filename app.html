@@ -1731,14 +1731,29 @@
   /* a desk gives both columns the leftover viewport, so the panel ends where the
      screen does instead of a third of the way down it */
   @media(min-width:941px){
+    /* the grid that actually runs is the one at 1740, so declare it here too: a
+       rule written only inside that block lost to the flex default above it and
+       the board kept its 328px content height inside a 692px card */
+    .hpanel{display:grid;grid-template-rows:auto auto minmax(0,1fr);align-content:stretch}
     #v-history > .hist{height:calc(100dvh - 168px)}
     #v-history > .hist > .card{height:100%;min-height:0;display:flex;flex-direction:column}
     #v-history > .hist > .card.hlistcard{padding:14px 10px 12px}
     .hlist{flex:1 1 auto}
     /* the panel is a grid, so the leftover row has to come from grid-template-rows:
-       flex:1 on .hboard is ignored in a grid container. */
-    .hpanel{display:grid;grid-template-rows:auto auto minmax(0,1fr);align-content:start}
-    .hpanel > .hboard{min-height:0;max-height:none}
+       flex:1 on .hboard is ignored in a grid container. align-content stays start so
+       a short ledger does not stretch its rows to fill the card. */
+    /* the card is a flex column with min-height:0, so the panel's own height has to
+       be pinned to the leftover space: left as flex:1 1 auto it resolves against
+       its content and the grid hands the board the same 328px of table it already
+       had, which is the third-of-a-column board that never filled the card. */
+    .hpanel{flex:1 1 0;height:0;min-height:0}
+    /* the board is filed into a row that reaches the bottom of the panel, then
+       stretched into it. minmax(0,1fr) alone kept resolving to the table's content
+       height (328px of a 692px card) no matter how the free space was declared, so
+       the row is pinned to the card's edge and the board fills it. */
+    .hpanel{grid-template-rows:auto auto auto}
+    .hpanel > .hboard{grid-row:3;min-height:0;max-height:none;
+      height:calc(100dvh - 572px)}
   }
   @media(max-width:940px){
     #v-history > .hist{grid-template-columns:minmax(0,1fr)}
