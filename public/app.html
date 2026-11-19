@@ -89,6 +89,7 @@
     --accent-ink:#ffffff;
     --up:#4ec27c;
     --down:#e5766a;
+    --danger:#ff6b6b;
     --r-common:#4caf50;
     --r-rare:#29b6f6;
     --r-epic:#ab47bc;
@@ -1886,6 +1887,64 @@
   button:disabled{opacity:.35;cursor:not-allowed}
   .rowbtns{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
 
+
+  /* ---- the lineup list: one row per pick, thesis and pre-mortem under it.
+     The card used to hold a wrap of chips, which could only say a name. A row
+     carries the whole draft: face, name, tier, stars, remove, and the two
+     sentences. Rows are separated by hairlines, not boxes, so five of them read
+     as one list instead of five cards. */
+  .slot{display:flex;flex-direction:column;gap:0;margin-bottom:12px;flex-wrap:nowrap;
+    min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  .lrow{display:flex;flex-direction:column;gap:0;padding:11px 2px;
+    border-top:1px solid var(--line-soft);min-width:0}
+  .lrow:first-child{border-top:0;padding-top:2px}
+  .ltop{display:flex;align-items:center;gap:9px;min-width:0}
+  .lnum{font-family:var(--mono);font-size:10px;color:var(--ink);opacity:.5;
+    width:14px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
+  .lname{font-weight:600;font-size:13px;color:var(--ink);min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ltier{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 8px;border-radius:var(--r-pill);color:#fff;flex:none;
+    background:var(--r,var(--ink));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--r,var(--ink)) 70%,#000)}
+  .ltier[data-r="Common"]{--r:var(--r-common)}
+  .ltier[data-r="Rare"]{--r:var(--r-rare)}
+  .ltier[data-r="Epic"]{--r:var(--r-epic)}
+  .ltier[data-r="Legendary"]{--r:var(--r-legendary)}
+  .lstars{font-size:10.5px;letter-spacing:.06em;color:var(--ink);opacity:.72;flex:none}
+  .lx{margin-left:auto;width:26px;height:26px;min-height:0;padding:0;flex:none;
+    border-radius:50%;background:transparent;color:var(--ink);opacity:.42;
+    box-shadow:none;display:grid;place-items:center}
+  .lx:hover:not(:disabled){background:var(--card-2);opacity:1;transform:none}
+  .lx .ic{width:12px;height:12px}
+  .lmeta{display:grid;gap:5px;margin:8px 0 0 23px}
+  .lfield{display:grid;grid-template-columns:62px minmax(0,1fr);gap:9px;align-items:baseline}
+  .lk{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink);opacity:.45}
+  .lfield p{margin:0;font-size:12px;line-height:1.5;color:var(--ink);opacity:.86;
+    overflow-wrap:anywhere}
+  .lfield p i{font-style:normal;opacity:.5}
+  .lrow.empty{align-items:center;flex-direction:row;gap:9px;padding:9px 2px}
+  .lrow.empty .lnone{font-family:var(--mono);font-size:10px;color:var(--ink);opacity:.3;
+    letter-spacing:.04em}
+  @media(max-width:600px){
+    .lfield{grid-template-columns:minmax(0,1fr);gap:2px}
+    .lmeta{margin-left:0}
+  }
+  /* clearing the lineup destroys five drafts, so the button says so in red and
+     wears the plain cross. #i-x is the UI cross; #fi-x is the X brand glyph and
+     must never stand in for a close control. */
+  .btn-clear{color:var(--down);background:transparent;
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--down) 42%,transparent)}
+  .btn-clear:hover:not(:disabled){color:var(--down);
+    background:color-mix(in srgb,var(--down) 10%,transparent);
+    box-shadow:inset 0 0 0 1px var(--down)}
+  .btn-clear svg,.btn-clear .ic{width:13px;height:13px;stroke:currentColor;fill:none;
+    stroke-width:2;stroke-linecap:round}
+  :root[data-theme="dark"] .btn-clear{color:var(--danger);
+    box-shadow:inset 0 0 0 1px rgba(255,107,107,.42)}
+  :root[data-theme="dark"] .btn-clear:hover:not(:disabled){color:var(--danger);
+    background:rgba(255,107,107,.12);box-shadow:inset 0 0 0 1px rgba(255,107,107,.75)}
+
   /* rarity is its own colour language, the same one the card packs use: common
      green, rare blue, epic purple, legendary orange. An unpicked option keeps
      the ink type and shows the tier as a small dot, so the row reads calm until
@@ -2290,23 +2349,24 @@
     .acta-ic{width:32px;height:32px}
   }
 
-  /* ---- footer: pinned, not parked at the end of the page ----
-     The desk view is one screen of board, and the footer used to live somewhere
-     below it, so it only appeared to anyone who scrolled. It is now fixed to the
-     bottom edge; the page reserves the same height at the end so the last card can
-     still be read and never hides underneath it. Left/bottom only, so the phone's
-     URL bar and the desktop scrollbar can't shift it. */
-  body{padding-bottom:calc(var(--fbar-h,52px) + env(safe-area-inset-bottom,0px))}
-  footer{position:fixed;left:0;right:0;bottom:0;z-index:40;
-    background:color-mix(in srgb, var(--bg) 86%, transparent);
-    -webkit-backdrop-filter:saturate(140%) blur(14px);
-    backdrop-filter:saturate(140%) blur(14px);
-    border-top:1px solid var(--line);
-    padding-bottom:env(safe-area-inset-bottom,0px)}
-  /* One bar at every width, exactly the landing page's bar: the pinned wrapper
-     carries the hairline, so the bar itself must not add another one, and the
-     phone rules below only shrink type - never the height. */
-  footer .f1-bar{padding:9px 0 7px;border-top:0}
+  /* the profile's lock wears the leaderboard's pill, not the accent one: the same
+     label-plus-coin shape, but the button is ink and the coin is paper in the
+     light theme and the inverse in the dark one, so the CTA reads as ink-on-paper
+     everywhere and never competes with the rarity colours. */
+  .acta.acta-solid{background:var(--ink);color:var(--bg);box-shadow:none}
+  .acta.acta-solid .acta-ic{background:var(--bg);color:var(--ink);box-shadow:none}
+  .acta.acta-solid:hover{background:var(--ink);filter:none;opacity:.9;box-shadow:none}
+  :root[data-theme="dark"] .acta.acta-solid{background:#f4f3f0;color:#0b0b0a;box-shadow:none}
+  :root[data-theme="dark"] .acta.acta-solid .acta-ic{background:#0b0b0a;color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  :root[data-theme="dark"] .acta.acta-solid:hover{background:#f4f3f0;filter:none;opacity:.9}
+  /* disabled is still ink, just quiet: the accent version used to fade to a pale
+     pink pill that read as broken rather than as not-yet */
+  .acta.acta-solid:disabled{opacity:.42;filter:none}
+
+  /* the dashboard has no footer: the board is the page, and a pinned bar at the
+     bottom edge only stole a strip of it. The landing page keeps its own. */
+  body{padding-bottom:env(safe-area-inset-bottom,0px)}
 
 </style>
 </head>
@@ -2500,7 +2560,6 @@
     <div class="card lb-soon">
       <div class="lb-head">
         <h2><svg class="ic"><use href="#i-trophy"/></svg>Leaderboard</h2>
-        <span class="lb-tag">Coming soon</span>
       </div>
       <p class="lb-lead">This is where the players go, not the creators. You will see who
          is out in front this window, how their lineup is built, and what it has already
@@ -2530,7 +2589,7 @@
       <div class="slot" id="slot"></div>
       <div class="projline" id="proj"></div>
       <div class="rowbtns">
-        <button id="clearBtn" hidden><svg class="ic"><use href="#i-circle-exclamation"/></svg>Clear</button>
+        <button id="clearBtn" class="btn-clear" hidden><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg>Clear lineup</button>
         <button class="acta acta-solid" id="lockBtn" disabled aria-label="Lock the lineup">
           <span class="acta-t">Lock lineup</span>
           <span class="acta-ic" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"/></svg></span>
@@ -2571,31 +2630,10 @@
   </div><!-- /viewpane -->
   </div><!-- /shell -->
 
-<footer>
-    <div class="f1-bar">
-      <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
-      <div class="f1-social">
-        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
-        <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
-        <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
-        <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
-      </div>
-    </div>
-  </footer>
 
 </div>
 
 <script>
-// the footer is pinned, so the page has to know how tall it is: a two-row bar on a
-// phone is taller than one on a desk, and the body reserves exactly that much.
-function measureFooter(){
-  const f = document.querySelector("footer"); if (!f) return;
-  document.documentElement.style.setProperty("--fbar-h", Math.round(f.offsetHeight) + "px");
-}
-measureFooter();
-addEventListener("resize", measureFooter, {passive:true});
-addEventListener("orientationchange", () => setTimeout(measureFooter, 120));
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureFooter);
 
 const CAP = 32, SIZE = 5;
 // Rarity drives the Score Boost in the real formula. Motion's docs print the
@@ -3940,18 +3978,47 @@ function railLockBind() {
 function renderLineup() {
   const spent = PICKS.reduce((a, p) => a + p.estStars, 0);
   $("#cap").textContent = `${spent}/${CAP} ${STAR}`;
+  // The lineup is a list, not a grid of tags: a pick is a creator plus the two
+  // sentences that justify them, and a chip can only carry the name. Each row
+  // reads avatar, name, tier and stars on one line, then the thesis and the
+  // pre-mortem under it in their own labelled lines. An empty slot stays a row
+  // too, so the list never changes height as picks fill it.
   const slot = $("#slot"); slot.innerHTML = "";
   for (let i = 0; i < SIZE; i++) {
     const p = PICKS[i];
-    const chip = el("span", "s" + (p ? " spent" : ""));
-    if (p) {
-      const meta = DATA.creators.find(x => x.name === p.name);
-      chip.innerHTML = avatar(meta, "sm") + `<b>${esc(p.name)}</b> ${STAR.repeat(p.estStars)}`;
-    } else {
-      chip.textContent = `empty ${i + 1}`;
+    if (!p) {
+      slot.insertAdjacentHTML("beforeend",
+        `<div class="lrow empty"><span class="lnum">${i + 1}</span>` +
+        `<span class="lnone">empty slot</span></div>`);
+      continue;
     }
-    slot.appendChild(chip);
+    const meta = DATA.creators.find(x => x.name === p.name);
+    const tier = p.rarity ? `<span class="ltier" data-r="${esc(p.rarity)}">${esc(p.rarity)}</span>` : "";
+    const thesis = (p.thesis || "").trim();
+    const pre = (p.premortem || "").trim();
+    slot.insertAdjacentHTML("beforeend", `
+      <div class="lrow" data-name="${esc(p.name)}">
+        <div class="ltop">
+          <span class="lnum">${i + 1}</span>
+          ${meta ? avatar(meta, "sm") : histAva(p.name, "sm")}
+          <span class="lname">${esc(p.name)}</span>
+          ${tier}
+          <span class="lstars" title="estimated stars">${STAR.repeat(p.estStars)}</span>
+          <button class="lx" type="button" data-rm="${esc(p.name)}" aria-label="Remove ${esc(p.name)}">${icon("x")}</button>
+        </div>
+        <div class="lmeta">
+          <div class="lfield"><span class="lk">Thesis</span><p>${thesis ? esc(thesis) : "<i>no thesis yet</i>"}</p></div>
+          <div class="lfield"><span class="lk">Pre-mortem</span><p>${pre ? esc(pre) : "<i>no pre-mortem yet</i>"}</p></div>
+        </div>
+      </div>`);
   }
+  slot.onclick = e => {
+    const b = e.target.closest("[data-rm]");
+    if (!b) return;
+    const name = b.getAttribute("data-rm");
+    PICKS = PICKS.filter(x => x.name !== name);
+    savePicks(); render();
+  };
   // Projection, shown live so a rarity swap is visible before locking. It uses the
   // rank stand-in for Motion Score and the assumed boost table - labelled as such.
   const proj = $("#proj");
