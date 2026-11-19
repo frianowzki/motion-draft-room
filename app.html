@@ -3219,8 +3219,11 @@ function histBuild() {
   const list = $("#histList"), panel = $("#histPanel"), card = $("#hpanelCard");
   if (!list || !panel || !card) return;
 
-  HIST.windows = histRead();
-  const wins = HIST.windows;
+  const fresh = histRead();
+  // never overwrite a good ledger with an empty read: histBuild runs from render()
+  // as well as from the poll, and render() fires while DATA is mid-swap
+  if (fresh.length) HIST.windows = fresh;
+  const wins = HIST.windows.length ? HIST.windows : fresh;
   const cnt = $("#tlCount");
   if (cnt) cnt.textContent = wins.length ? `${wins.length} window${wins.length === 1 ? "" : "s"}` : "no windows yet";
 
@@ -4073,12 +4076,15 @@ async function poll() {
     if (r.ok) {
       const next = await r.json();
       const sig = JSON.stringify(next);
+      const historyWins = DATA && DATA.history;
       if (sig !== SIG_FP) {
         SIG_FP = sig;
         DATA = next;
-        // the poll replaces DATA wholesale, which wipes DATA.profiles — re-apply
-        // them or the next card hover shows "no verified X account matched"
+        // the poll replaces DATA wholesale, which wipes DATA.profiles and
+        // DATA.history — re-apply them or the next card hover shows "no verified X
+        // account matched" and the History ledger empties until a manual refresh
         if (PROF) DATA.profiles = PROF;
+        if (historyWins) DATA.history = historyWins;
         render();
       }
     }
