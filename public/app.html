@@ -298,7 +298,7 @@
      fights the travelling pill. */
   .rail{position:relative}
   .rail-pill{position:absolute;left:0;top:0;width:0;height:0;border-radius:12px;
-    background:var(--ink);pointer-events:none;opacity:0;
+    background:var(--sunken);pointer-events:none;opacity:0;
     transition:transform .26s cubic-bezier(.4,0,.2,1),
                width .26s cubic-bezier(.4,0,.2,1),
                height .26s cubic-bezier(.4,0,.2,1),
@@ -614,9 +614,9 @@
        their fraction of that height and scroll inside themselves, so the page
        frame never grows to fit twenty rows. */
     #v-market > .grid{height:calc(100dvh - 168px);min-height:0}
-    #v-market > .grid > .boardcard,
-    #v-market > .grid > .side{height:100%;min-height:0}
+    #v-market > .grid > .boardcard{height:100%;min-height:0}
     #v-market > .grid > .boardcard > .tablewrap{flex:1 1 auto;min-height:0;overflow-y:auto}
+    #v-market > .grid > .side{align-self:start;height:auto;min-height:0}
     #v-market > .grid > .side > .card.detail{overflow-y:auto}
   }
   @media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
@@ -710,7 +710,11 @@
   /* the draft column matches the board: the pick card takes the full height the
      creators table occupies, so the two tiles read as one row */
   .grid > .side{display:flex;flex-direction:column;align-items:stretch}
-  .grid > .side > .card.detail{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+  /* the draft card matches the creators list: it takes the board's height, not
+     the leftover viewport. The old flex:1 stretched it to fill the column, which
+     made it taller than the table beside it. min-height:0 lets it shrink to the
+     board's natural height. */
+  .grid > .side > .card.detail{display:flex;flex-direction:column;min-height:0}
   /* the draft card is filled by innerHTML on every render, so the flexible
      spacer is a pseudo-element rather than a wrapper element */
   .grid > .side > .card.detail:after{content:"";flex:1 1 auto;min-height:0;display:block}
@@ -1389,7 +1393,7 @@
   .steps div{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink)}
   .steps .n{font-family:var(--mono);font-size:9px;width:18px;height:18px;flex:none;
     border-radius:50%;display:grid;place-items:center;background:var(--ink);
-    color:var(--accent-ink);margin-top:1px}
+    color:var(--bg);margin-top:1px}
 
   /* ---- footer: the landing's sign-off, not a card - the same bar, the same
      icons, so the two pages end the same way. Nothing here explains the page. */
@@ -1410,8 +1414,8 @@
   .f1-social a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
   .f1-social svg{width:17px;height:17px;display:block;fill:none;stroke:currentColor;
     stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-  .f1-social a[href*="behance"] svg{width:16px;height:16px}
   .f1-social a[href*="github.com"] svg{width:18px;height:18px}
+  .f1-social a[href*="x.com"] svg{width:15px;height:15px}
   .f1-social svg path[fill="currentColor"]{stroke:none}
   :root[data-theme="dark"] .f1-bar p{color:var(--ink)}
   :root[data-theme="dark"] .f1-social a{color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
@@ -1817,7 +1821,7 @@
     <div class="f1-bar">
       <p>&copy; <span class="fy">2026</span> frianowzki. All rights reserved.</p>
       <div class="f1-social">
-        <a href="https://www.behance.net" target="_blank" rel="noopener" aria-label="Behance"><svg><use href="#fi-behance"/></svg></a>
+        <a href="https://x.com/motiongame_" target="_blank" rel="noopener" aria-label="Motion on X"><svg><use href="#fi-x"/></svg></a>
         <a href="https://github.com/frianowzki/motion-draft-room" target="_blank" rel="noopener" aria-label="Source on GitHub"><svg><use href="#fi-github"/></svg></a>
         <a href="https://docs.motion.game" target="_blank" rel="noopener" aria-label="Read the docs"><svg><use href="#fi-docs"/></svg></a>
         <a href="https://motion.game" target="_blank" rel="noopener" aria-label="motion.game"><svg><use href="#fi-globe"/></svg></a>
@@ -1989,7 +1993,6 @@ async function load() {
   if (PROF) DATA.profiles = PROF;
   render();
   BOOTED = true;
-  SIG_FP = JSON.stringify(DATA);
   HIST_LAST = TL.events ? TL.events.length - 1 : 0;
   bindBar();
   loadBook();          // redraws both the public book and the receipts card
@@ -3621,6 +3624,9 @@ async function poll() {
       if (sig !== SIG_FP) {
         SIG_FP = sig;
         DATA = next;
+        // the poll replaces DATA wholesale, which wipes DATA.profiles — re-apply
+        // them or the next card hover shows "no verified X account matched"
+        if (PROF) DATA.profiles = PROF;
         render();
       }
     }
