@@ -278,12 +278,17 @@
      destination's own cards are shown. The rail is a sticky column on desktop
      and a horizontal strip above the content on phones and tablets, so the
      markup stays a single list. */
-  .shell{display:grid;grid-template-columns:212px minmax(0,1fr);gap:20px;align-items:start;
+  .shell{display:grid;grid-template-columns:224px minmax(0,1fr);gap:20px;align-items:start;
     margin-top:14px}
-  .rail{position:sticky;top:14px;display:flex;flex-direction:column;gap:2px;
-    padding:10px;border-radius:20px;background:var(--card);
-    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-    box-shadow:inset 0 0 0 1px var(--line),0 10px 30px -24px rgba(17,17,17,.5)}
+  /* The sidebar is beui's floating panel: the nav lives inside a card that floats
+     off the page's left edge — the page's own 1px hairline runs behind it, and
+     the panel's shadow does the separating. The page background shows through
+     the gaps, so the panel reads as a layer above the board, not a column of it. */
+  .rail{position:sticky;top:22px;display:flex;flex-direction:column;gap:2px;
+    padding:12px;border-radius:22px;background:var(--card);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    box-shadow:inset 0 0 0 1px var(--line),
+      0 24px 48px -24px rgba(17,17,17,.38),0 4px 16px -8px rgba(17,17,17,.16)}
   .rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;text-align:left;white-space:nowrap;
     color:var(--faint);padding:4px 10px 8px;display:block}
   /* Ported from beui's animated-sidebar: the selected state is not painted on
@@ -341,12 +346,18 @@
   .rail-item{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:9px 10px;
     border:0;border-radius:12px;background:transparent;color:var(--ink);font:inherit;
     font-size:12.5px;font-weight:600;letter-spacing:-.01em;cursor:pointer;text-align:left;
-    width:100%;transition:color .26s cubic-bezier(.4,0,.2,1);
+    width:100%;justify-content:flex-start;transition:color .26s cubic-bezier(.4,0,.2,1);
     /* the shared `button` rule paints every button with a sunken fill and a 1px
        inset ring. A rail tab is not a button on a page — it is a line of text over
        the pill — so both have to be cleared here or every tab wears the ring and
        the hover fill has nowhere to show up. */
     box-shadow:none}
+  /* one left-aligned column: every label gets the same 112px field, so the text
+     starts at the same x for Market, Leaderboard, Profile and History — a fixed
+     width, not auto, because the pill is measured from the item box and a
+     narrower label would pull the pill short of the rail's edge */
+  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.72;transition:opacity .28s ease}
+  .rail-item span:not(.rail-count){display:inline-block;width:112px;text-align:left;flex:none}
   /* The delay is only half the story. A tab losing selection used to fall back to a
      bare `.2s ease` colour transition with no delay, so leaving a tab snapped while
      entering one eased — the same move looked different depending on direction, and
@@ -355,7 +366,6 @@
      in and the trip out are the same gesture. */
   .rail-item[aria-selected="true"]{transition:color .26s cubic-bezier(.4,0,.2,1) .1s}
   .rail-item[aria-selected="false"]{transition:color .26s cubic-bezier(.4,0,.2,1) 0s}
-  .rail-item .ic{width:15px;height:15px;flex:none;opacity:.72;transition:opacity .28s ease}
   .rail-item::before{content:"";position:absolute;inset:0;border-radius:12px;
     background:var(--sunken);opacity:0;transition:opacity .18s ease;z-index:-1}
   /* Hover is a soft wash behind the label, never a ring: the tab you are pointing
@@ -615,17 +625,84 @@
      board, in the same three-column rhythm the page already uses */
   .under{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
     align-items:stretch;margin-top:10px}
+  /* the profile carries three cards that do not share a width: the lineup is the
+     page's own full-width card, and who-is-calling and your receipts run as a
+     pair below it. The pair's columns are 1.45fr / 1fr, not 1fr / 1fr: the
+     receipts card is a ledger with a score column and the identity card is a
+     button, so the ledger gets the room and the button keeps a readable width. */
+  #v-profile > .under{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
+  #v-profile > .under > .card.lineup{grid-column:1/-1}
   .under > .card{margin-top:0!important;min-width:0;padding:14px 16px 15px}
   .under > .card h2{margin-bottom:7px}
-  /* the three lower cards carry supporting copy, so their type steps down a
-     notch: the row has to end inside the same screen as the board above it */
+  /* the lower cards carry supporting copy, so their type steps down a notch:
+     the row has to end inside the same screen as the board above it. The
+     lineup card is the profile's own full-width card, so it keeps the page's
+     type scale instead of stepping down with the pair below it. */
   .under{font-size:11.5px}
   .under .hint{font-size:10px;margin-top:4px;line-height:1.35}
   .under .slot .s{min-height:28px}
   .under .rowbtns{margin-top:9px}
   .under .rowbtns button{min-height:30px;padding:6px 13px;font-size:10px}
+  /* the profile's own cards keep the page's type scale: the lineup is the
+     profile's full-width card and its slot chips are the page's own chips, so
+     they are not stepped down with the pair below it */
+  .under .card.lineup{font-size:13px}
+  .under .card.lineup .slot .s{font-size:12px;padding:8px 12px;min-height:34px}
+  .under .card.lineup .projline{font-size:11.5px}
+  .under .card.lineup .rowbtns{margin-top:12px}
+  .under .card.lineup .rowbtns button{min-height:36px;padding:8px 16px;font-size:12px}
+  .under .card.identity{font-size:13px;padding:16px 18px 17px}
+  .under .card.identity .hint{font-size:11.5px;line-height:1.5}
+  .under .card.identity .idcard{padding:14px 16px}
+  .under .card.identity .idcard .h{font-size:14px}
+  .under .card.identity .idcard .n{font-size:12.5px}
+  .under .card.identity .idcard .state{font-size:9px;padding:5px 10px}
+  .under .card.identity .idrow{margin-top:2px}
+  .under .card.identity .idrow button{min-height:38px;padding:9px 16px;font-size:12.5px}
+  .under .card.mine{font-size:13px;padding:16px 18px 17px}
+  .under .card.mine .stand{font-size:11px;margin:2px 0 14px}
+  .under .card.mine .stand b{font-size:26px}
+  .under .card.mine .empty{font-size:13px;padding:26px 0}
+  .under .card.mine .mx{padding:13px 0}
+  .under .card.mine .mx-h .slot{font-size:10px}
+  .under .card.mine .mx-h .st{font-size:9.5px;padding:3px 8px}
+  .under .card.mine .mx-h .vt{font-size:17px}
+  .under .card.mine .mx-p .p{font-size:12px;padding:7px 10px}
+  /* the receipts ledger is a table: name, filed-at, now, score — four columns
+     that align down the list so a reader can compare receipts without counting
+     characters. The old 1fr auto auto grid was three columns; the fourth
+     (the score) lived in the header row and had no column of its own, so the
+     figures drifted. The grid is four columns, and the header row is gone. */
+  .under .card.mine .mx-p{display:grid;gap:1px;margin-top:10px;background:var(--line-soft);
+    border-radius:9px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .under .card.mine .mx-p .p{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) auto;
+    align-items:center;gap:10px;background:var(--card);padding:7px 10px;font-size:12px;line-height:1.3}
+  .under .card.mine .mx-p .p b{grid-column:1;font-weight:500;color:var(--ink);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .under .card.mine .mx-p .p .at{grid-column:2;font-family:var(--mono);font-size:10.5px;
+    color:var(--ink);text-align:right;white-space:nowrap}
+  .under .card.mine .mx-p .p .arw{display:none}
+  .under .card.mine .mx-p .p .mv{grid-column:3;font-family:var(--mono);font-size:11px;
+    font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .under .card.mine .mx-p .p .mv.up{color:var(--up)} .under .card.mine .mx-p .p .mv.down{color:var(--down)}
+  /* the profile's cards fill the desktop viewport: the lineup card stretches to
+     fill the vertical space above the pair, and the pair stretches to fill the
+     remaining space. The grid's rows are 1fr / 1fr so both rows share the
+     viewport height equally; without this the cards are compact and the bottom
+     half of the screen is empty dark background. */
+  #v-profile > .under{min-height:calc(100vh - 120px);grid-template-rows:1fr 1fr}
+  #v-profile > .under > .card.lineup{display:flex;flex-direction:column;min-height:0}
+  #v-profile > .under > .card.lineup .slot{flex:1 1 auto;min-height:0}
+  #v-profile > .under > .card.identity,
+  #v-profile > .under > .card.mine{display:flex;flex-direction:column;min-height:0}
+  #v-profile > .under > .card.identity #whoBody,
+  #v-profile > .under > .card.mine #mineBody{flex:1 1 auto;min-height:0}
   @media(max-width:1100px){.under{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:760px){.under{grid-template-columns:minmax(0,1fr)}}
+  @media(max-width:760px){
+    .under{grid-template-columns:minmax(0,1fr)}
+    #v-profile > .under{grid-template-columns:minmax(0,1fr)}
+    #v-profile > .under > .card.lineup{grid-column:auto}
+  }
 
   .card{background:var(--card);border-radius:var(--r-lg);padding:20px;
     box-shadow:var(--lift)}
@@ -977,6 +1054,11 @@
     border-radius:var(--r-md);cursor:grab;
     -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
     touch-action:pan-y;outline:none}
+  /* the card is sized to the stage by tlBuild, which sets --w on the track; the
+     240px here is the fallback for a stage that has not measured yet */
+  .tlev{flex:none;width:var(--w,240px);height:100%;display:flex;align-items:center;
+    justify-content:center;padding:0 calc(var(--tgap,14px) / 2);box-sizing:border-box;
+    transform-origin:center center;will-change:transform}
   .tlstage:active{cursor:grabbing}
   .tlstage:focus-visible{box-shadow:inset 0 0 0 2px var(--ink);border-radius:var(--r-md)}
   /* the ruler a focused card is measured against */
@@ -986,9 +1068,6 @@
      card can both sit in the centre instead of the ends showing air */
   .tltrack{position:absolute;top:0;height:100%;left:0;display:flex;align-items:center;
     padding:0 var(--tpad,50%);box-sizing:content-box;will-change:transform}
-  .tlev{flex:none;width:var(--w,240px);height:100%;display:flex;align-items:center;
-    justify-content:center;padding:0 7px;box-sizing:border-box;
-    transform-origin:center center;will-change:transform}
   /* a card that is not the focused one: smaller and veiled, but still solid —
      a veil in the page colour, not opacity, so nothing shows through it */
   .tlcard{width:100%;border-radius:12px;background:var(--card);padding:12px 13px;
@@ -1043,7 +1122,6 @@
   .tlstep[data-end="1"]{opacity:1;pointer-events:none}
   @media(max-width:640px){
     .tlstage{height:186px}
-    .tlev{padding:0 5px}
   }
   @media(prefers-reduced-motion:reduce){
     .tlev{transition:none!important}
@@ -1603,17 +1681,17 @@
     <span class="rail-pill" id="railPill" aria-hidden="true"></span>
     <div class="rail-brand">Motion Market</div>
     <button type="button" class="rail-item" role="tab" data-view="market" aria-selected="true" aria-controls="v-market">
-      <svg class="ic"><use href="#i-users"/></svg>Market
+      <svg class="ic"><use href="#i-users"/></svg><span>Market</span>
       <span class="rail-count" id="railMarket">79</span>
     </button>
     <button type="button" class="rail-item" role="tab" data-view="leaderboard" aria-selected="false" aria-controls="v-leaderboard">
-      <svg class="ic"><use href="#i-trophy"/></svg>Leaderboard
+      <svg class="ic"><use href="#i-trophy"/></svg><span>Leaderboard</span>
     </button>
     <button type="button" class="rail-item" role="tab" data-view="profile" aria-selected="false" aria-controls="v-profile">
-      <svg class="ic"><use href="#i-user"/></svg>Profile
+      <svg class="ic"><use href="#i-user"/></svg><span>Profile</span>
     </button>
     <button type="button" class="rail-item" role="tab" data-view="history" aria-selected="false" aria-controls="v-history">
-      <svg class="ic"><use href="#i-clock"/></svg>History
+      <svg class="ic"><use href="#i-clock"/></svg><span>History</span>
       <span class="rail-count" id="railHistory">0</span>
     </button>
     <div class="rail-sep" aria-hidden="true"></div>
@@ -1659,22 +1737,6 @@
       </div>
     </div>
   </div>
-
-
-  <div class="under">
-    <div class="card" style="margin-top:14px">
-      <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
-      <div class="slot" id="slot"></div>
-      <div class="projline" id="proj"></div>
-      <div class="rowbtns">
-        <button id="clearBtn" hidden><svg class="ic"><use href="#i-circle-exclamation"/></svg>Clear</button>
-        <button class="acta acta-solid" id="lockBtn" disabled aria-label="Lock the lineup">
-          <span class="acta-t">Lock lineup</span>
-          <span class="acta-ic" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"/></svg></span>
-        </button>
-      </div>
-    </div>
-  </div>
   </div>
 
   <!-- ===== LEADERBOARD: players, not creators ===== -->
@@ -1704,7 +1766,22 @@
   <div class="view" id="v-profile" role="tabpanel" aria-label="Profile" hidden>
 
   <div class="under">
-    <div class="card identity" style="margin-top:0">
+    <!-- Your lineup lives here, not under the board: it is the profile's own
+         section — who is calling, what you have on record, what you are holding.
+         The board keeps its screen for the board. -->
+    <div class="card lineup" style="margin-top:0">
+      <h2><svg class="ic"><use href="#i-layers"/></svg>Your lineup <span class="pill" id="cap"></span></h2>
+      <div class="slot" id="slot"></div>
+      <div class="projline" id="proj"></div>
+      <div class="rowbtns">
+        <button id="clearBtn" hidden><svg class="ic"><use href="#i-circle-exclamation"/></svg>Clear</button>
+        <button class="acta acta-solid" id="lockBtn" disabled aria-label="Lock the lineup">
+          <span class="acta-t">Lock lineup</span>
+          <span class="acta-ic" aria-hidden="true"><svg class="ic"><use href="#i-arrow-right"/></svg></span>
+        </button>
+      </div>
+    </div>
+    <div class="card identity" style="margin-top:14px">
       <h2><svg class="ic"><use href="#i-user"/></svg>Who is calling <span class="pill" id="whoState"></span></h2>
       <div id="whoBody"></div>
     </div>
@@ -1730,6 +1807,7 @@
     </div>
     <p class="tlhint" id="tlHint">Use &larr; &rarr; to walk the windows, or scroll and drag.</p>
   </section>
+  </div>
   </div>
 
   </div><!-- /viewpane -->
@@ -2360,7 +2438,8 @@ const TL = {
   lastT: 0,
   raf: 0,
   events: [],
-  w: 240,            // card width from CSS (--w)
+  w: 240,            // slot width from CSS (--w) — the pitch
+  cardW: 240,        // card width — the slot minus its gap padding
   settle: 0,         // spring state
 };
 
@@ -2418,6 +2497,18 @@ function tlBuild() {
   const cnt = $("#tlCount");
   if (cnt) cnt.textContent = evs.length ? `${evs.length} window${evs.length === 1 ? "" : "s"}` : "no windows yet";
 
+  // The card is sized to the stage, not to a fixed 240px: on a desktop the stage
+  // is wider than the card and the gaps read as empty space. The card takes the
+  // stage's width minus the neighbour's peek and the gap, so the focused card
+  // fills the stage and the neighbours stay visible at the edges. On a phone the
+  // stage is narrow and the card is the stage minus a smaller peek.
+  const SW = stage.clientWidth;
+  const peek = SW > 720 ? 180 : 40;
+  const gap = 14;
+  const cardW = Math.max(200, SW - 2 * peek - gap);
+  track.style.setProperty("--w", cardW + "px");
+  track.style.setProperty("--tgap", gap + "px");
+
   if (!evs.length) {
     track.innerHTML = `<div class="tlev" style="--w:auto"><div class="tlcard">
       <div class="tlwhen">No history yet</div>
@@ -2459,8 +2550,20 @@ function tlBuild() {
   // measures the layout and not the last frame's scale.
   const first = track.querySelector(".tlev");
   if (first) first.style.transform = "";
+  // the slot's width is the card plus the gap padding on each side: the gap is
+  // carried by the slot's padding, not by a margin between slots, so the pitch
+  // is the slot's own width and the card's centre is the slot's centre. Reading
+  // the card's width here would under-count the gap and every target would
+  // drift by half a gap per card.
   const cs = first ? getComputedStyle(first) : null;
+  // the slot's width is the card plus the gap padding on each side: the gap is
+  // carried by the slot's padding, not by a margin between slots, so the pitch
+  // is the slot's own width and the card's centre is the slot's centre.
   TL.w = first ? first.offsetWidth : Number((cs && cs.width) || 240) || 240;
+  // the card's width is the slot minus its padding: the scale and the veil are
+  // measured against the card, not the slot, so a focused card reads as the
+  // stage's own width and the neighbours read as the stage's edges.
+  TL.cardW = first ? (first.offsetWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)) : TL.w;
 
   TL.i = Math.min(TL.i, evs.length - 1);
   tlPad();
@@ -2471,11 +2574,12 @@ function tlBuild() {
 function tlPad() {
   const stage = $("#tlStage"), track = $("#tlTrack");
   if (!stage || !track || !track.children.length) return;
-  // Half a stage minus half a card puts the first card's centre exactly on the
-  // stage's centre with the track untranslated. Padding of a plain half stage
-  // left it short by half a card, so card 0 opened off-centre and permanently
-  // scaled at d = 0.5.
-  const cardW = track.children[0].offsetWidth || TL.w || 240;
+  // the slot's centre is the card's centre (the gap is the slot's own padding,
+  // not a margin), so the pad is the stage's width minus the slot's width,
+  // halved: with the track untranslated the first slot's centre sits on the
+  // stage's centre.
+  const slotW = track.children[0].offsetWidth || TL.w || 240;
+  const cardW = TL.cardW || (slotW - (parseFloat(getComputedStyle(track.children[0]).paddingLeft) || 0) * 2);
   const pad = Math.max(0, Math.round((stage.clientWidth - cardW) / 2));
   track.style.setProperty("--tpad", `${pad}px`);
 }
@@ -2530,11 +2634,12 @@ function tlLayout(animate) {
   const half = stage.clientWidth / 2;
   const kids = track.children;
   const pitch = TL.w || 240;
+  const cardW = TL.cardW || pitch;
   const padL = parseFloat(getComputedStyle(track).paddingLeft) || 0;
   for (let i = 0; i < kids.length; i++) {
     const k = kids[i];
     const centre = padL + i * pitch + pitch / 2 - TL.x;
-    const d = Math.min(1, Math.abs(centre - half) / pitch);
+    const d = Math.min(1, Math.abs(centre - half) / cardW);
     const scale = 1 - (1 - TL_SIDE_SCALE) * d;
     k.style.transform = `scale(${scale.toFixed(3)})`;
     k.style.opacity = String(1 - 0.55 * d);
@@ -2720,7 +2825,7 @@ function tlBind() {
 
   window.addEventListener("resize", () => {
     if (!TL.events.length) return;
-    tlPad();
+    tlBuild();
     tlLayout(false);
   });
 }
