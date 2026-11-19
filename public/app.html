@@ -113,7 +113,9 @@
   :root[data-theme="dark"] .chip,
   :root[data-theme="dark"] .tab{background:rgba(255,255,255,.05)}
   :root[data-theme="dark"] .tab:hover,
-  :root[data-theme="dark"] button:hover:not(:disabled),
+  /* the three solid pills below paint themselves and must not pick up the
+     generic dark hover wash; they are excluded here, at the source of it */
+  :root[data-theme="dark"] button:hover:not(:disabled):not(.mstep-next):not(.rail-act):not(.acta-solid),
   :root[data-theme="dark"] input:hover,
   :root[data-theme="dark"] textarea:hover{background:rgba(255,255,255,.09)}
   :root[data-theme="dark"] input,
@@ -357,7 +359,11 @@
   .rail-act{background:var(--ink);color:var(--bg);font-weight:600}
   .rail-act .ic{opacity:1}
   .rail-act .rail-count{background:rgba(127,127,127,.28);opacity:.9}
-  .rail-act:hover{background:var(--ink);opacity:.9}
+  /* the rail lock is solid ink and stays exactly that colour under the pointer,
+     in both themes; hover feedback here was a dim that read as disabled */
+  html button.rail-act:hover,button.rail-act:hover,button.rail-act:active,
+  button.rail-act:focus-visible{
+    background:var(--ink);color:var(--bg);opacity:1;transform:none;box-shadow:none}
   .rail-tools{display:flex;justify-content:flex-end;margin-top:8px}
   /* collapsed: 52px of faces. The labels, the section header and the counts
      fold away; the toggle becomes the way back out and turns to point right. */
@@ -415,11 +421,21 @@
   .mstep-next{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:100px;
     padding:7px 13px;background:var(--ink);color:var(--bg);font:inherit;font-size:11.5px;
     font-weight:600;cursor:pointer;transition:opacity .16s ease}
-  .mstep-next:hover{opacity:.88}
+  /* the action pill does not react to the pointer at all: it is the one solid
+     control in the card, and dimming it on hover made it look like it had a
+     pressed state it does not have */
+  /* `button:hover:not(:disabled)` up the sheet paints every other button, so the
+     reset has to out-weigh it; a bare :hover rule loses to element+class+pseudo */
+  html button.mstep-next:hover,button.mstep-next:hover,button.mstep-next:active,
+  button.mstep-next:focus-visible{
+    opacity:1;background:var(--ink);color:var(--bg);transform:none;filter:none;box-shadow:none}
   .mstep-next .ic,.mstep-next svg{width:11px;height:11px;fill:none;stroke:currentColor;
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-  .mstep-back{border:0;background:transparent;color:var(--ink);opacity:.55;font:inherit;
-    font-size:11.5px;font-weight:550;padding:7px 8px;border-radius:100px;cursor:pointer}
+  .mstep-back{border:0;background:transparent;color:var(--ink);opacity:.6;font:inherit;
+    width:28px;height:28px;min-height:0;margin:0;padding:0;border-radius:100px;
+    cursor:pointer;display:grid;place-items:center;align-self:center}
+  .mstep-back .ic,.mstep-back svg{width:13px;height:13px;fill:none;stroke:currentColor;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
   .mstep-back:hover{opacity:1;background:var(--card-2)}
   .rail[data-open="false"] .rail-mini{display:flex}
   .rail[data-open="false"] .rail-toggle{align-self:center;padding:6px}
@@ -903,6 +919,23 @@
   :root[data-theme="dark"] tr.row.picked + tr.row > td{box-shadow:inset 0 1px 0 #fff}
   :root[data-theme="dark"] tr.row.picked .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px #fff}
   :root[data-theme="dark"] tr.row.picked .name .tag{box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  /* A creator already in the lineup is painted, not outlined. The band covers
+     every cell so it reads as one block of accent across the row — the pink the
+     rest of the app uses — and the type inside flips to paper so the name, rank,
+     delta and pills stay legible on the fill in both themes. This is the only
+     row on the board that is filled; selection still only lifts --card-2. */
+  tr.row.picked > td{background:var(--accent);color:#fff}
+  tr.row.picked:hover{background:transparent}
+  tr.row.picked:hover > td{background:var(--accent);filter:brightness(1.05)}
+  tr.row.picked .pos,tr.row.picked .mono,tr.row.picked .stars,
+  tr.row.picked .stars span,tr.row.picked .nwrap,tr.row.picked .add{color:#fff}
+  tr.row.picked .pos{font-weight:600}
+  tr.row.picked .mbar{background:rgba(255,255,255,.26);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  tr.row.picked .mbar:before{background:rgba(255,255,255,.62)}
+  tr.row.picked .tag{background:rgba(255,255,255,.2);color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  tr.row.picked .avatar{box-shadow:0 0 0 2px var(--accent),0 0 0 3px rgba(255,255,255,.92)}
   .pos{font-family:var(--mono);color:var(--ink);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
@@ -1451,6 +1484,23 @@
   :root[data-theme="dark"] tr.row.picked + tr.row > td{box-shadow:inset 0 1px 0 #fff}
   :root[data-theme="dark"] tr.row.picked .avatar{box-shadow:0 0 0 2px var(--card),0 0 0 3px #fff}
   :root[data-theme="dark"] tr.row.picked .name .tag{box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  /* A creator already in the lineup is painted, not outlined. The band covers
+     every cell so it reads as one block of accent across the row — the pink the
+     rest of the app uses — and the type inside flips to paper so the name, rank,
+     delta and pills stay legible on the fill in both themes. This is the only
+     row on the board that is filled; selection still only lifts --card-2. */
+  tr.row.picked > td{background:var(--accent);color:#fff}
+  tr.row.picked:hover{background:transparent}
+  tr.row.picked:hover > td{background:var(--accent);filter:brightness(1.05)}
+  tr.row.picked .pos,tr.row.picked .mono,tr.row.picked .stars,
+  tr.row.picked .stars span,tr.row.picked .nwrap,tr.row.picked .add{color:#fff}
+  tr.row.picked .pos{font-weight:600}
+  tr.row.picked .mbar{background:rgba(255,255,255,.26);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+  tr.row.picked .mbar:before{background:rgba(255,255,255,.62)}
+  tr.row.picked .tag{background:rgba(255,255,255,.2);color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.55)}
+  tr.row.picked .avatar{box-shadow:0 0 0 2px var(--accent),0 0 0 3px rgba(255,255,255,.92)}
   .pos{font-family:var(--mono);color:var(--ink);width:30px;font-size:11px}
   tr.row .ncell .avatar{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease}
   tr.row .ncell .avatar:hover{box-shadow:0 0 0 2px var(--ink);transform:scale(1.06)}
@@ -2355,11 +2405,14 @@
      everywhere and never competes with the rarity colours. */
   .acta.acta-solid{background:var(--ink);color:var(--bg);box-shadow:none}
   .acta.acta-solid .acta-ic{background:var(--bg);color:var(--ink);box-shadow:none}
-  .acta.acta-solid:hover{background:var(--ink);filter:none;opacity:.9;box-shadow:none}
+  .acta.acta-solid:hover .acta-ic{transform:none}
+  .acta.acta-solid:hover .acta-ic svg{transform:none}
+  button.acta.acta-solid:hover,button.acta.acta-solid:active{background:var(--ink);
+    color:var(--bg);filter:none;opacity:1;box-shadow:none;transform:none}
   :root[data-theme="dark"] .acta.acta-solid{background:#f4f3f0;color:#0b0b0a;box-shadow:none}
   :root[data-theme="dark"] .acta.acta-solid .acta-ic{background:#0b0b0a;color:#fff;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
-  :root[data-theme="dark"] .acta.acta-solid:hover{background:#f4f3f0;filter:none;opacity:.9}
+  :root[data-theme="dark"] .acta.acta-solid:hover{background:#f4f3f0;filter:none;opacity:1}
   /* disabled is still ink, just quiet: the accent version used to fade to a pale
      pink pill that read as broken rather than as not-yet */
   .acta.acta-solid:disabled{opacity:.42;filter:none}
@@ -2411,6 +2464,7 @@
 <symbol id="i-medal" viewBox="0 0 24 24"><path d="M7 16C7 18.76142 9.23858 21 12 21C14.76142 21 17 18.76142 17 16C17 13.23858 14.76142 11 12 11C9.23858 11 7 13.23858 7 16ZM9 12L6 3H10L12 7L14 3H18L15 12"/></symbol>
 <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12H18"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M6 12H18M12 6V18"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11.5 5.5 5 12l6.5 6.5"/></symbol>
 <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M12 3H16C18.20914 3 20 4.79086 20 7V20C20 20.36902 19.36902 20.36902 19 20C18.44772 19.44772 17.55228 19.44772 17 20C16.44772 20.55228 15.55228 20.55228 15 20C14.44772 19.44772 13.55228 19.44772 13 20C12.44772 20.55228 11.55228 20.55228 11 20C10.44772 19.44772 9.55228 19.44772 9 20C8.44772 20.55228 7.55228 20.55228 7 20C6.44772 19.44772 5.55228 19.44772 5 20C4.63098 20.36902 4 20.36902 4 20V7C4 4.79086 5.79086 3 8 3H12ZM8 7H16M8 11H16M8 15H12"/></symbol>
 <symbol id="i-search" viewBox="0 0 24 24"><path d="M3 10C3 13.86599 6.13401 17 10 17C13.86599 17 17 13.86599 17 10C17 6.13401 13.86599 3 10 3C6.13401 3 3 6.13401 3 10ZM15 15L21 21"/></symbol>
 <symbol id="i-server" viewBox="0 0 24 24"><path d="M3 7C3 5.34315 4.34315 4 6 4H18C19.65685 4 21 5.34315 21 7C21 8.65685 19.65685 10 18 10H6C4.34315 10 3 8.65685 3 7ZM3 17C3 15.34315 4.34315 14 6 14H18C19.65685 14 21 15.34315 21 17C21 18.65685 19.65685 20 18 20H6C4.34315 20 3 18.65685 3 17ZM7 7H7.01M7 17H7.01"/></symbol>
@@ -2561,17 +2615,15 @@
       <div class="lb-head">
         <h2><svg class="ic"><use href="#i-trophy"/></svg>Leaderboard</h2>
       </div>
-      <p class="lb-lead">This is where the players go, not the creators. You will see who
-         is out in front this window, how their lineup is built, and what it has already
-         paid out.</p>
-      <p class="lb-note">It is not switched on yet. Motion Market grades every receipt
-         it holds, but the standings need a player table the server does not publish
-         today — and a scoreboard stitched together by hand would just be a guess wearing
-         a rank badge. So the panel stays quiet until the numbers are real.</p>
-      <p class="lb-note">The creators are already live, ranked and scored on the Market
-         tab. That board moves every four hours, so it is worth a look while you wait.</p>
+      <p class="lb-lead">Creators are on the Market tab. This one is for players: who is
+         ahead this window, what they drafted, and what it paid.</p>
+      <p class="lb-note">It is empty because the numbers are not there yet. We keep every
+         receipt, but the game does not publish a player table, so any ranking on this
+         page would be made up. I would rather show you nothing than a table I invented.</p>
+      <p class="lb-note">Meanwhile the creator board on Market is real and it moves every
+         four hours. That is where the picks happen.</p>
       <button class="lb-cta" data-goto="market">
-        <span>Back to the board</span>
+        <span>Go to Market</span>
         <span class="acta-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
       </button>
     </div>
@@ -3877,7 +3929,7 @@ function renderDetail() {
           <div class="mstep-foot">
             <span class="mstep-len">0/120</span>
             <span class="mstep-acts">
-              <button type="button" class="mstep-back" id="mback">Back</button>
+              <button type="button" class="mstep-back" id="mback" aria-label="Back to the thesis">${icon("arrow-left")}</button>
               <button type="button" class="mstep-next" id="addBtn">${already ? "Update pick" : "Add to lineup"}</button>
             </span>
           </div>
@@ -3885,7 +3937,7 @@ function renderDetail() {
       </div>
       <div class="hint" style="margin:9px 0 0">Both answers are required. No one-click lineups — the reasoning is the submission.</div>
     </div>
-    <div class="rowbtns">${already ? `<button id="rmBtn">${icon("trash")}Remove</button>` : ""}</div>`;
+    <div class="rowbtns">${already ? `<button id="rmBtn" class="btn-clear">${icon("x")}Remove</button>` : ""}</div>`;
 
   // two steps, two panes: thesis, then pre-mortem. The pane swap is a fade and a
   // 6px lift, and the reader who edits an existing pick lands on step 1 with both
