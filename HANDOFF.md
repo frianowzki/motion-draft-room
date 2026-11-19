@@ -1,14 +1,81 @@
 # Motion Draft Room — handoff
 
-Terakhir ditulis: 2026-11-19 (`main` `4591a81` + working tree belum commit, live `dpl_KfT9d94qr1yPqG6Nysno84yoj1bS`).
+Terakhir ditulis: 2026-11-19 (`main` `bc75df9`, `data` `aed44c1`, live `dpl_37tNhRftMy9HHR3jkeqRZHdWyBti` — working tree bersih).
 Kalau kamu (agent baru) membaca ini setelah `/new`, **file ini satu-satunya sumber konteks.**
 Baca sampai habis sebelum menyentuh apa pun. Jangan mengarang riwayat di luar yang
 tertulis di sini.
 
-## 2026-11-19 (PALING BARU) — sync picks lintas device, History satu accent pink, tombol View on X
+## 2026-11-19 (PALING BARU) — commit repo, collector hourly, label waktu relatif
 
-Semua **sudah live** di `dpl_KfT9d94qr1yPqG6Nysno84yoj1bS`. Tapi **belum di-commit** —
-working tree masih kotor (lihat bagian "Status git" di bawah).
+Semua **sudah live** di `dpl_37tNhRftMy9HHR3jkeqRZHdWyBti`. Working tree bersih.
+
+### 1. Commit & push (permintaan user "commit dulu, update repo paling baru")
+- `main` `fcb1b83` — sync picks `/api/draft`, History satu accent pink (3 bug seleksi +
+  dark catch-all), tombol mobile "View on X". Termasuk `README.md`, `SUBMISSION.md`,
+  `landing.html`, `index.html` (keduanya sama-sama dimodifikasi, identik — commit
+  keduanya biar tidak drift; `index.html` root memang tidak dipakai build, `build.sh`
+  menyalin `landing.html` → `public/index.html`).
+- `public/app.html` dikeluarkan dari index (`git rm --cached`) — file-nya generated
+  oleh `build.sh` tapi ter-track sejak lama, jadi ignore rule tidak berlaku.
+- Screenshot `.r1/.r2/.r3.png` dihapus (sampah).
+- `main` push: `fcfc651..fcb1b83`.
+
+### 2. Collector: kenapa History mentok di 12:00Z
+**Bukan data Motion yang basi.** `snapshot.py --dry-run` langsung dapat `asOf 16:00Z`
+saat dites. Yang rusak jalurnya:
+- Cron `7 */4 * * *` di repo sepi selalu telat 1–2 jam (run nyata: 01:50, 07:10,
+  13:07, 17:10 — bukan 00:07, 04:07…). Snapshot merekam slot apa pun yang live saat
+  run → telat = slot sebelumnya hilang permanen (board hanya menyajikan slot aktif).
+- `verify.py` menandai SETIAP gap historis sebagai failure → job merah di semua run
+  walau data masuk.
+- **Fix**: cron → `7 * * * *` (tiap jam; tiap window dapat beberapa kesempatan, run
+  yang tidak menemukan apa pun = no-op). `verify.py` sekarang hanya gagal jika
+  window milik run itu sendiri sudah lewat GRACE tapi kosong. Diuji dua arah:
+  `--at 18:57Z` (gap lama) → exit 0; `--at 20:30Z` (window sekarang kosong) → exit 1.
+- Data naik: `dataAsOf 12:00Z → 16:00Z`, 9 slot (branch `data` sebelumnya cuma 2 slot
+  di signals.json, asOf 15 Nov — sangat basi).
+
+### 3. Label waktu relatif (permintaan user "hilangin seperti itu juga")
+- `histWhen()` di `app.html` (~baris 3934): `"19 Nov, 12:00 UTC"` → `"4h ago"` /
+  `"8h ago"` / `"1 day ago"`. Dipakai di `.hitem .w`, `title`, `aria-label`, dan
+  heading panel History.
+- `graded to ...Z` di receipt book (~baris 4956) → `graded ${histWhen(...)}`.
+- Verifikasi prod: 9 window, label `4h ago/8h ago/20h ago/1 day ago/2 days ago/...`,
+  baris teratas pink, tidak ada timestamp absolut tersisa.
+
+### Status git (BERSIH)
+- `main` `bc75df9` = HEAD, push ke origin.
+- `data` `aed44c1` = HEAD origin/data (snapshot 16:00Z + signals rebuild dari 9
+  snapshot). Catatan: push ke `data` bisa ditolak karena cron mendahului →
+  `git pull --rebase origin data` lalu push. Worktree yang dipakai: `/tmp/dwt`
+  (bisa dihapus: `git worktree remove /tmp/dwt`).
+- Prod API: `dataAsOf 2026-11-19T16:00:00Z`, 9 slots, 9 snapshots.
+
+### Yang TIDAK bisa dipulihkan
+22 window antara 16 Nov–19 Nov hilang (gap historis). Board Motion hanya menyajikan
+slot aktif, jadi tidak bisa backfill. Cron hourly menjamin ke depan tidak bolong
+lagi. Kalau user mau History menutupi periode itu, satu-satunya jalan = buang
+jendela tanggal dari tampilan (bukan halusinasi data).
+
+### Deploy
+- `dpl_37tNhRftMy9HHR3jkeqRZHdWyBti` = live saat ini (commit `bc75df9` + data 16:00Z).
+- `build.sh` menarik `data/signals.json` dari **branch `data` di GitHub** (bukan
+  lokal) saat build → data baru HARUS di-push ke `data` dulu sebelum build/deploy.
+- `vercel --prod` tetap diblokir (deployment_blocked, author frianowzki vs team
+  owner friodrops-5778). Deploy selalu `set -a && . /data/home/.hermes/.env && set +a
+  && ./deploy.sh`.
+
+### Sisa kerja (belum dikerjakan)
+- Bar progres `.hitem .bar i` non-selected masih putih (track `rgba(255,255,255,.12)`)
+  — user belum memutuskan mau dipink-kan atau tidak.
+- Avatar: 22 dari 79 creator punya avatar di `data/profiles.json`.
+- Receipt book butuh login X user + `X_CLIENT_ID`/`X_SESSION_SECRET` di Vercel.
+- Gap 22 window: tunggu cron hourly mengisi, atau buang jendela tanggal dari UI.
+
+## 2026-11-19 (sebelumnya) — sync picks lintas device, History satu accent pink, tombol View on X
+
+Semua **sudah live** di `dpl_KfT9d94qr1yPqG6Nysno84yoj1bS`. Sudah di-commit sebagai
+`main` `fcb1b83` (lihat entry PALING BARU di atas).
 
 ### 1. Sinkron lineup lintas device (`/api/draft`) — SELESAI & TERUJI END-TO-END
 
