@@ -414,6 +414,8 @@
     font-size:11.5px;font-weight:600;cursor:pointer}
   .lb-cta .acta-ic{width:22px;height:22px;display:grid;place-items:center;border-radius:100px;
     background:#fff;color:#111}
+  :root[data-theme="dark"] .lb-cta .acta-ic{background:#0b0b0a;color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
   .lb-cta .acta-ic svg{width:11px;height:11px;fill:none;stroke:currentColor;
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
   .rail-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 6px 2px}
@@ -642,8 +644,14 @@
      pair below it. The pair's columns are 1.45fr / 1fr, not 1fr / 1fr: the
      receipts card is a ledger with a score column and the identity card is a
      button, so the ledger gets the room and the button keeps a readable width. */
+  /* two columns, and the lineup takes the first one on its own row: it is as wide
+     as who-is-calling, receipts sits beside it, and the bottom of the page is the
+     identity card alone at full width - a three-card stack left the last card
+     floating under a wide empty column */
   #v-profile > .under{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
-  #v-profile > .under > .card.lineup{grid-column:1/-1}
+  #v-profile > .under > .card.lineup{grid-column:1;grid-row:1}
+  #v-profile > .under > .card.mine{grid-column:2;grid-row:1}
+  #v-profile > .under > .card.identity{grid-column:1/-1;grid-row:2}
   .under > .card{margin-top:0!important;min-width:0;padding:14px 16px 15px}
   .under > .card h2{margin-bottom:7px}
   /* the lower cards carry supporting copy, so their type steps down a notch:
@@ -702,18 +710,21 @@
      remaining space. The grid's rows are 1fr / 1fr so both rows share the
      viewport height equally; without this the cards are compact and the bottom
      half of the screen is empty dark background. */
-  #v-profile > .under{min-height:calc(100vh - 120px);grid-template-rows:1fr 1fr}
+  #v-profile > .under{min-height:calc(100vh - 120px);grid-template-rows:1fr auto}
   #v-profile > .under > .card.lineup{display:flex;flex-direction:column;min-height:0}
   #v-profile > .under > .card.lineup .slot{flex:1 1 auto;min-height:0}
-  #v-profile > .under > .card.identity,
   #v-profile > .under > .card.mine{display:flex;flex-direction:column;min-height:0}
-  #v-profile > .under > .card.identity #whoBody,
-  #v-profile > .under > .card.mine #mineBody{flex:1 1 auto;min-height:0}
+  #v-profile > .under > .card.mine #mineBody{flex:1 1 auto;min-height:0;overflow-y:auto;
+    overscroll-behavior:contain}
+  #v-profile > .under > .card.identity{display:flex;flex-direction:column;min-height:0}
+  #v-profile > .under > .card.identity #whoBody{flex:1 1 auto;min-height:0}
   @media(max-width:1100px){.under{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:760px){
     .under{grid-template-columns:minmax(0,1fr)}
-    #v-profile > .under{grid-template-columns:minmax(0,1fr)}
-    #v-profile > .under > .card.lineup{grid-column:auto}
+    #v-profile > .under{grid-template-columns:minmax(0,1fr);grid-template-rows:auto}
+    #v-profile > .under > .card.lineup,
+    #v-profile > .under > .card.mine,
+    #v-profile > .under > .card.identity{grid-column:auto;grid-row:auto}
   }
 
   .card{background:var(--card);border-radius:var(--r-lg);padding:20px;
@@ -1181,8 +1192,14 @@
      pair below it. The pair's columns are 1.45fr / 1fr, not 1fr / 1fr: the
      receipts card is a ledger with a score column and the identity card is a
      button, so the ledger gets the room and the button keeps a readable width. */
+  /* two columns, and the lineup takes the first one on its own row: it is as wide
+     as who-is-calling, receipts sits beside it, and the bottom of the page is the
+     identity card alone at full width - a three-card stack left the last card
+     floating under a wide empty column */
   #v-profile > .under{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
-  #v-profile > .under > .card.lineup{grid-column:1/-1}
+  #v-profile > .under > .card.lineup{grid-column:1;grid-row:1}
+  #v-profile > .under > .card.mine{grid-column:2;grid-row:1}
+  #v-profile > .under > .card.identity{grid-column:1/-1;grid-row:2}
   .under > .card{margin-top:0!important;min-width:0;padding:14px 16px 15px}
   .under > .card h2{margin-bottom:7px}
   /* the lower cards carry supporting copy, so their type steps down a notch:
@@ -1241,18 +1258,21 @@
      remaining space. The grid's rows are 1fr / 1fr so both rows share the
      viewport height equally; without this the cards are compact and the bottom
      half of the screen is empty dark background. */
-  #v-profile > .under{min-height:calc(100vh - 120px);grid-template-rows:1fr 1fr}
+  #v-profile > .under{min-height:calc(100vh - 120px);grid-template-rows:1fr auto}
   #v-profile > .under > .card.lineup{display:flex;flex-direction:column;min-height:0}
   #v-profile > .under > .card.lineup .slot{flex:1 1 auto;min-height:0}
-  #v-profile > .under > .card.identity,
   #v-profile > .under > .card.mine{display:flex;flex-direction:column;min-height:0}
-  #v-profile > .under > .card.identity #whoBody,
-  #v-profile > .under > .card.mine #mineBody{flex:1 1 auto;min-height:0}
+  #v-profile > .under > .card.mine #mineBody{flex:1 1 auto;min-height:0;overflow-y:auto;
+    overscroll-behavior:contain}
+  #v-profile > .under > .card.identity{display:flex;flex-direction:column;min-height:0}
+  #v-profile > .under > .card.identity #whoBody{flex:1 1 auto;min-height:0}
   @media(max-width:1100px){.under{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:760px){
     .under{grid-template-columns:minmax(0,1fr)}
-    #v-profile > .under{grid-template-columns:minmax(0,1fr)}
-    #v-profile > .under > .card.lineup{grid-column:auto}
+    #v-profile > .under{grid-template-columns:minmax(0,1fr);grid-template-rows:auto}
+    #v-profile > .under > .card.lineup,
+    #v-profile > .under > .card.mine,
+    #v-profile > .under > .card.identity{grid-column:auto;grid-row:auto}
   }
 
   .card{background:var(--card);border-radius:var(--r-lg);padding:20px;
@@ -1667,8 +1687,11 @@
   .hmoves .grp{min-width:0}
   .hmoves .grp > h3{margin:0 0 6px;font-family:var(--mono);font-size:8.5px;
     letter-spacing:.12em;text-transform:uppercase;color:var(--ink);opacity:.62;font-weight:500}
-  .hmoves .row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;
-    align-items:center;gap:8px;padding:4px 0;font-size:11.5px;color:var(--ink)}
+  /* the move, a face, the name, the new rank. The face is a 16px disc because the
+     row is 11.5px type: at 22 it towered over the name it is meant to label */
+  .hmoves .row{display:grid;grid-template-columns:26px 16px minmax(0,1fr) auto;
+    align-items:center;gap:7px;padding:4px 0;font-size:11.5px;color:var(--ink)}
+  .hmoves .row .avatar{width:16px;height:16px;font-size:6px}
   .hmoves .row .d{font-family:var(--mono);font-size:10px;font-variant-numeric:tabular-nums;
     text-align:right;white-space:nowrap}
   .hmoves .row .d.up{color:var(--up)} .hmoves .row .d.down{color:var(--down)}
@@ -1697,6 +1720,9 @@
   .hboard td.rk,.hboard td.mv{text-align:right;font-family:var(--mono);font-size:10.5px;
     font-variant-numeric:tabular-nums}
   .hboard td.nm{max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis}
+  .hboard td.nm .avatar{width:18px;height:18px;display:inline-block;vertical-align:-5px;
+    margin-right:7px;font-size:6.5px}
+  .hboard td.nm span{vertical-align:middle}
   .hboard td.mv.up{color:var(--up)} .hboard td.mv.down{color:var(--down)}
   .hboard td.mv.flat{opacity:.4}
   .hboard td.mv.isnew{color:var(--ink);opacity:.7;font-size:8.5px;letter-spacing:.06em;
@@ -2123,6 +2149,11 @@
   .acta:hover .acta-ic{transform:scale(1.08)}
   .acta:hover .acta-ic svg{transform:translateX(2px)}
   .acta:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  /* on ink the accent coin reads as a loud pink button, not as a way out: the
+     disc goes black and the arrow turns paper - the same contrast the paper
+     theme has, inverted, so the arrow never sits in its own colour */
+  :root[data-theme="dark"] .acta-ic{background:#0b0b0a;color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
   .acta-sm{font-size:12.5px;padding:5px 5px 5px 18px;gap:9px}
   .acta-sm .acta-ic{width:30px;height:30px}
   .acta-sm .acta-ic svg{width:13px;height:13px}
@@ -3071,13 +3102,25 @@ function histRead() {
   return out;
 }
 
+// history rows arrive as {name, position} - no id, no handle - so the avatar is
+// resolved through the signals table by name. Names are unique on this board (the
+// backend keys creators by one row per name), and a miss simply renders nothing:
+// a creator who has since left the board still deserves their row, just without
+// a face.
+function histAva(name, size) {
+  const c = DATA && DATA.creators ? DATA.creators.find(x => x.name === name) : null;
+  return c ? avatar(c, size) : `<span class="avatar${size ? " " + size : ""} av-fb">${esc((name || "?").trim().slice(0, 2).toUpperCase())}</span>`;
+}
+
 function histWhen(slot) {
   if (!slot) return "—";
   const d = new Date(slot.length > 10 ? slot : slot + ":00:00Z");
   if (isNaN(d)) return slot;
+  // the board publishes on UTC slots, so the label says UTC rather than trailing a
+  // bare Z: "20:00Z" reads as a typo to everyone outside a terminal
   const date = d.toLocaleDateString("en-GB", { month: "short", day: "numeric", timeZone: "UTC" });
   const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" });
-  return `${date} · ${time}Z`;
+  return `${date}, ${time} UTC`;
 }
 
 // what changed between window i-1 and window i. A creator that did not exist in
@@ -3126,10 +3169,10 @@ function histPanelHtml(wins, i) {
   } else {
     const row = (m, kind) => {
       if (kind === "new") return `<div class="row"><span class="d new">new</span>
-        <span class="nm">${esc(m.name)}</span><span class="pos">#${m.to}</span></div>`;
+        ${histAva(m.name, "sm")}<span class="nm">${esc(m.name)}</span><span class="pos">#${m.to}</span></div>`;
       const sign = m.d > 0 ? "+" : "";
       return `<div class="row"><span class="d ${m.d > 0 ? "up" : "down"}">${sign}${m.d}</span>
-        <span class="nm">${esc(m.name)}</span><span class="pos">#${m.to}</span></div>`;
+        ${histAva(m.name, "sm")}<span class="nm">${esc(m.name)}</span><span class="pos">#${m.to}</span></div>`;
     };
     const grp = (title, list, kind, cap) => {
       const shown = list.slice(0, cap);
@@ -3161,7 +3204,7 @@ function histPanelHtml(wins, i) {
           : `<td class="mv ${d > 0 ? "up" : "down"}">${d > 0 ? "+" : ""}${d}</td>`;
       }
     }
-    return `<tr><td class="rk">${Number(r.position)}</td><td class="nm">${esc(r.name)}</td>${cell}</tr>`;
+    return `<tr><td class="rk">${Number(r.position)}</td><td class="nm">${histAva(r.name)}<span>${esc(r.name)}</span></td>${cell}</tr>`;
   }).join("");
 
   const board = `<div class="hboard" tabindex="0" role="region" aria-label="Board at ${esc(histWhen(win.slot))}">
