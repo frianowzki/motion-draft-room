@@ -1,4 +1,4 @@
-"""Rarity and Score Boost - the one part of the real formula that is not public.
+"""Rarity and Score Boost - the published half of the real formula.
 
 What the official docs do say (docs.motion.game, read 2026-11-15):
 
@@ -6,37 +6,38 @@ What the official docs do say (docs.motion.game, read 2026-11-15):
   Each rarity comes with a Score Boost multiplier; rarer card = higher boost.
   Stars do not add boost; they only gate eligibility through the star cap.
   A lineup must meet tournament-specific limits on the rarity/boost mix.
+  The multipliers themselves (docs.motion.game/docs/get-cards/understanding-cards):
+  Common 1x, Rare 1.5x, Epic 2x, Legendary 2.5x.
 
-What they do NOT say: the multiplier for Common/Rare/Epic/Legendary, the size of
-the boost limit, or how boosts combine. Those numbers are printed in the Pack Shop
-in-game, not on the docs page.
+What they do NOT say: the size of the boost limit, or how boosts combine. Those
+are tournament-specific and printed in-game.
 
-So this module never claims to reproduce a Lineup Score. It does two honest
-things:
+So this module never claims to reproduce a Lineup Score: the published boost
+table is real, the Motion Score it multiplies is not public. It does two things:
 
   1. projects a lineup as  sum(relative_strength(c) * boost(rarity))  where
      relative_strength is a rank-based stand-in for the unpublished Motion Score
-     and the boost multipliers are the DEFAULT_BOOST below - an assumption,
-     surfaced in the output as `assumedBoost` so the UI can label it.
+     and the boost multipliers are the published ones from DEFAULT_BOOST below,
+     surfaced in the output as `publishedBoost`.
   2. answers the question the boosts actually decide in practice: given a star
      budget and a boost mix, which five creators maximise the projection? A
      degenerate "five Common cards, ignore boost" answer is possible with our
      invented numbers, so `optimise` refuses to present a projection whose
      rarity mix breaks a cap it was given.
 
-Change DEFAULT_BOOST here, in one place, when Motion publishes real values.
+The multipliers are copied from Motion's docs, not invented: change DEFAULT_BOOST
+here, in one place, if they ever change them.
 """
 
 from __future__ import annotations
 
 TIERS = ("Common", "Rare", "Epic", "Legendary")
 
-# Assumption, not data. Monotonic in rarity (the docs only guarantee ordering),
-# and mild on purpose: a boost that swings the answer hard would make this page
-# look more clever than the information behind it.
-DEFAULT_BOOST = {"Common": 1.0, "Rare": 1.10, "Epic": 1.25, "Legendary": 1.50}
+# Motion's published Score Boost table, verbatim from
+# docs.motion.game/docs/get-cards/understanding-cards.
+DEFAULT_BOOST = {"Common": 1.0, "Rare": 1.5, "Epic": 2.0, "Legendary": 2.5}
 
-ASSUMED = True  # nothing below is taken from Motion
+ASSUMED = False  # the boosts are documented; the Motion Score they multiply is not
 
 
 def boost_for(rarity: object) -> float:
@@ -81,11 +82,10 @@ def project(picks: list[dict], field_size: int) -> dict:
     return {
         "projected": round(total, 4),
         "picks": rows,
-        "assumedBoost": dict(DEFAULT_BOOST),
+        "publishedBoost": dict(DEFAULT_BOOST),
         "assumptions": [
             "Motion Score is not public; strength is a rank-based stand-in in (0,1].",
-            "Score Boost multipliers are not published; the values here are an assumption.",
-            "Only the ordering Legendary > Epic > Rare > Common is documented.",
+            "Score Boost multipliers are published (Common 1, Rare 1.5, Epic 2, Legendary 2.5).",
             "This is not the game's Lineup Score and will not match it.",
         ],
     }
