@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-20T06:59:07.849252Z",
+ "generatedAt": "2026-11-20T09:45:11.466999Z",
  "snapshotCount": 11,
  "firstSnapshot": "2026-11-15T20:18:34.118961Z",
  "latestSnapshot": "2026-11-20T06:59:07.781457Z",
@@ -28,14 +28,14 @@
    "Epic",
    "Legendary"
   ],
-  "assumedBoost": {
+  "publishedBoost": {
    "Common": 1.0,
-   "Rare": 1.1,
-   "Epic": 1.25,
-   "Legendary": 1.5
+   "Rare": 1.5,
+   "Epic": 2.0,
+   "Legendary": 2.5
   },
-  "assumed": true,
-  "note": "Score Boost multipliers are not published (the docs only guarantee Legendary > Epic > Rare > Common). These values are an assumption; a projected score here is not the game's Lineup Score.",
+  "assumed": false,
+  "note": "Score Boost multipliers are Motion's published table (Common 1, Rare 1.5, Epic 2, Legendary 2.5). The Motion Score they multiply is not public and is stood in for by rank, so a projected score here is not the game's Lineup Score.",
   "boostLimit": null,
   "boostLimitNote": "tournaments limit the boost mix; the docs give no number, so this is unverified."
  },
