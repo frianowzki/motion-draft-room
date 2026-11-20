@@ -14,7 +14,7 @@
   "boostLimits": "tournament-specific limit on the rarity/boost mix",
   "scoreFormula": "Lineup Score = sum(Creator Motion Score * card Score Boost)",
   "boostCap": null,
-  "boostCapNote": "the docs say a lineup must meet limits on Score Boosts, but never state a number or how boosts are combined (sum, cap per tier, ranking). Unmodelled on purpose.",
+  "boostCapNote": "the docs say a lineup must meet limits on Score Boosts, but never state a number or how boosts are combined (sum, cap per tier, ranking). The tier multipliers themselves are published; the limit is not. Unmodelled on purpose.",
   "projectedScoreField": "projected is rank-relative to the best-available lineup on this board, not the game's Lineup Score"
  },
  "stars": {
@@ -31,8 +31,13 @@
    "Legendary"
   ],
   "function": "sets the Score Boost multiplier applied to that creator's Motion Score",
-  "boostValues": null,
-  "boostValuesNote": "the numeric multiplier of each tier is NOT published in the docs; only that Legendary > Epic > Rare > Common. Do not invent values.",
+  "boostValues": {
+   "Common": 1.0,
+   "Rare": 1.5,
+   "Epic": 2.0,
+   "Legendary": 2.5
+  },
+  "boostValuesNote": "published in docs.motion.game/docs/get-cards/understanding-cards (read 2026-11-15): Common 1x, Rare 1.5x, Epic 2x, Legendary 2.5x. The per-tournament boost limit and how boosts combine are NOT stated.",
   "dropRates": "printed in the Pack Shop in-game; the docs page shows them redacted",
   "sameCreator": "two cards of one creator can differ in rarity; same creator, same star rating, different boost"
  },

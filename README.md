@@ -107,13 +107,15 @@ Read from [docs.motion.game](https://docs.motion.game) on 19 Nov 2026. Mirrored 
 
 Two things this project changed after reading the rules: the draft cap moved from 15 to **32** (five cards on a 1–8 scale cannot fit under 15), and the star estimate switched to the real 1–8 scale instead of an invented 1–5.
 
-### Score Boost is modelled as an assumption, and labelled as one
+### Score Boost uses the published table, and still refuses to produce a Lineup Score
 
-The formula is public. The numbers in it are not. The docs guarantee `Legendary > Epic > Rare > Common` and stop there: no multipliers, no per-tournament boost limit, no rule for how boosts combine. Motion Score is not public either.
+The formula is public: `Lineup Score = Σ (Creator's Motion Score × Card's Score Boost)`. So are the tier multipliers — `docs.motion.game/docs/get-cards/understanding-cards` gives **Common 1×, Rare 1.5×, Epic 2×, Legendary 2.5×**. What the docs do not give is the size of the per-tournament boost limit, or how boosts combine when a lineup mixes tiers. And Motion Score itself is not public at all.
 
-So `engine/rarity.py` does not pretend to reproduce a Lineup Score. It keeps the boost table in one constant (`DEFAULT_BOOST`, marked assumed), projects a lineup from a rank-based stand-in, and returns the assumptions next to every number. Rarity is written on the receipt and **never graded on**, because grading against invented multipliers would turn a guess into a fake score. The UI prints `projected 3.42 · boosts ×5.60` and says in the same line that this is not the game's Lineup Score.
+So `engine/rarity.py` holds the real table in one constant (`DEFAULT_BOOST`, `ASSUMED = False` — the boosts are documented; the Motion Score they multiply is not), projects a lineup as `relative_strength(creator) × boost(rarity)` where `relative_strength` is a rank-based stand-in in (0, 1], and returns `publishedBoost`, `rarityKnown` and the assumptions next to every number. Rarity is written on the receipt and **never graded on**, because the unpublished half of the formula would turn a projection into a fake score. The UI prints `projected 3.42 · boosts ×5.60` and says in the same line that this is not the game's Lineup Score.
 
-When Motion publishes real multipliers, change that one constant and the engine, the API and the UI all follow.
+`optimise()` returns `feasible`, `boostSum`, `boostCap` and a `feasibleNote`. When no cap is known `boostCap` is `None` and the note reads "boost limit is not published; this lineup is unverified against it" — the projection is shown, but it is never marked legal. Verified by running it on the live board: a 5-card lineup at `boostSum` 5.0 with no cap known comes back `feasible: true, boostCap: None` plus that note.
+
+If Motion changes a multiplier, change `DEFAULT_BOOST` in one place and the engine, the API and the UI follow.
 
 ## Where the numbers come from
 

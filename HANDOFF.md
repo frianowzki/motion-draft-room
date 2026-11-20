@@ -1041,16 +1041,20 @@ di-*vendor* dua kali: `api/xauth_lib.py` (untuk `api/receipts.py`) dan
 `api/xauth/xauth_lib.py` (untuk `api/xauth/*`). Ubah keduanya. Ini penyebab deploy
 pertama 500 `ModuleNotFoundError: No module named 'xauth_lib'`.
 
-**Rarity/boost dimodelkan sebagai asumsi yang dilabeli, bukan angka karangan.**
-Docs resmi memberi formula `Lineup Score = Σ (Motion Score × Score Boost)`, memberi tahu
-boost dari rarity, dan bahwa Legendary > Epic > Rare > Common. Yang **tidak**
-dipublikasi: multiplier tiap tier, batas boost turnamen, cara boost digabung, dan Motion
-Score itu sendiri. Jadi `engine/rarity.py` punya `DEFAULT_BOOST` sebagai satu konstanta
-bernama yang ditandai `ASSUMED = True`, proyeksi memakai rank stand-in untuk Motion
-Score, dan setiap angka dikembalikan bersama daftar asumsinya. **Rarity dicatat di
-receipt tapi tidak pernah dipakai untuk menilai** — menilai dengan multiplier karangan
-sendiri = skor palsu. Kalau Motion publish angka aslinya, ubah `DEFAULT_BOOST` di satu
-tempat, engine + API + UI ikut.
+**Rarity/boost pakai tabel resmi Motion, dan tetap menolak bikin Lineup Score.**
+Docs resmi memberi formula `Lineup Score = Σ (Motion Score × Score Boost)`, dan sekarang
+juga memberi multiplier tiap tier: Common 1x, Rare 1.5x, Epic 2x, Legendary 2.5x
+(`docs.motion.game/docs/get-cards/understanding-cards`). Yang **tidak** dipublikasi:
+batas boost turnamen, cara boost digabung di lineup campur, dan Motion Score itu sendiri.
+Jadi `engine/rarity.py` menyimpan tabel asli di `DEFAULT_BOOST` dengan `ASSUMED = False`
+(boost-nya terdokumentasi; yang tidak terdokumentasi adalah Motion Score yang dikalikan),
+proyeksi memakai rank stand-in untuk Motion Score, dan setiap angka dikembalikan bersama
+daftar asumsinya (`publishedBoost`, `rarityKnown`). **Rarity dicatat di
+receipt tapi tidak pernah dipakai untuk menilai** — setengah formula yang tidak publik
+akan mengubah proyeksi jadi skor palsu. `optimise()` mengembalikan `boostCap: None` +
+note "boost limit is not published; this lineup is unverified against it" kalau batasnya
+tidak diketahui, jadi lineup tidak pernah dinyatakan legal. Kalau Motion ganti angka,
+ubah `DEFAULT_BOOST` di satu tempat, engine + API + UI ikut.
 
 **Kejujuran angka di UI itu fitur, bukan polish.** Contoh yang sudah dikerjakan: star
 cost itu estimasi dari rank (bukan harga kartu asli); pips bintang dibuang karena 4
