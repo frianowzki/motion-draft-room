@@ -1,8 +1,8 @@
 {
  "source": "motion-official",
- "asOf": "2026-11-20T16:00:00Z",
- "sourceCapturedAt": "2026-11-20T16:00:32.346Z",
- "baselineCapturedAt": "2026-11-20T12:00:20.325Z",
+ "asOf": "2026-11-21T00:00:00Z",
+ "sourceCapturedAt": "2026-11-21T00:00:32.300Z",
+ "baselineCapturedAt": "2026-11-20T20:00:32.328Z",
  "stats": {},
  "rows": [
   {
@@ -34,7 +34,7 @@
    "name": "Ludwig",
    "handle": null,
    "position": 4,
-   "delta": 1,
+   "delta": 0,
    "isNew": false
   },
   {
@@ -42,7 +42,7 @@
    "name": "Pat McAfee",
    "handle": null,
    "position": 5,
-   "delta": -1,
+   "delta": 0,
    "isNew": false
   },
   {
@@ -70,26 +70,18 @@
    "isNew": false
   },
   {
-   "id": "5aff38c9-c6fc-55ac-a40b-125579b540ad",
-   "name": "Dave Portnoy",
-   "handle": null,
-   "position": 9,
-   "delta": 1,
-   "isNew": false
-  },
-  {
    "id": "3c071339-a0ef-54c3-8db4-e590645978f8",
    "name": "Jake Paul",
    "handle": null,
-   "position": 10,
-   "delta": -1,
+   "position": 9,
+   "delta": 0,
    "isNew": false
   },
   {
-   "id": "137bb9b6-0dac-5b88-9c1c-5e6b3e3e6905",
-   "name": "Shams Charania",
+   "id": "5aff38c9-c6fc-55ac-a40b-125579b540ad",
+   "name": "Dave Portnoy",
    "handle": null,
-   "position": 11,
+   "position": 10,
    "delta": 0,
    "isNew": false
   },
@@ -97,7 +89,7 @@
    "id": "e56e667f-aaf9-57fb-a415-a8d44f0d514a",
    "name": "Gary Vaynerchuk",
    "handle": null,
-   "position": 12,
+   "position": 11,
    "delta": 0,
    "isNew": false
   },
@@ -105,7 +97,7 @@
    "id": "d9bb6bf0-5dfa-5a03-b8c0-b804e4c38db0",
    "name": "DJ Akademiks",
    "handle": null,
-   "position": 13,
+   "position": 12,
    "delta": 1,
    "isNew": false
   },
@@ -113,7 +105,7 @@
    "id": "bcdc0b7d-877b-52e6-be6a-8a9090e6b2ba",
    "name": "Jim Cramer",
    "handle": null,
-   "position": 14,
+   "position": 13,
    "delta": -1,
    "isNew": false
   },
@@ -121,7 +113,7 @@
    "id": "25620b9a-0958-5b1e-855d-ab5cf12eb93e",
    "name": "Logan Paul",
    "handle": null,
-   "position": 15,
+   "position": 14,
    "delta": 0,
    "isNew": false
   },
@@ -129,15 +121,15 @@
    "id": "caa50781-199f-53f7-a8cb-81d2e40970d3",
    "name": "Valkyrae",
    "handle": null,
-   "position": 16,
+   "position": 15,
    "delta": 0,
    "isNew": false
   },
   {
-   "id": "8e99ee2e-a1bc-587a-8bb1-b333312e8076",
-   "name": "Greg Isenberg",
+   "id": "26092401-8724-5c9d-8378-ad8a24fb6293",
+   "name": "Lex Fridman",
    "handle": null,
-   "position": 17,
+   "position": 16,
    "delta": 0,
    "isNew": false
   },
@@ -145,31 +137,31 @@
    "id": "5e9a5bfe-cb85-58f1-926d-16b71ba7b6c2",
    "name": "Jake Lucky",
    "handle": null,
-   "position": 18,
-   "delta": 2,
+   "position": 17,
+   "delta": 0,
    "isNew": false
   },
   {
    "id": "cb65f56b-7b30-58fc-b456-0767e1db9ff3",
    "name": "Druski",
    "handle": null,
-   "position": 19,
-   "delta": -1,
+   "position": 18,
+   "delta": 0,
    "isNew": false
   },
   {
-   "id": "26092401-8724-5c9d-8378-ad8a24fb6293",
-   "name": "Lex Fridman",
+   "id": "8e99ee2e-a1bc-587a-8bb1-b333312e8076",
+   "name": "Greg Isenberg",
    "handle": null,
-   "position": 20,
-   "delta": -1,
+   "position": 19,
+   "delta": 0,
    "isNew": false
   },
   {
    "id": "eea1575a-3baa-5ac2-9753-d72a539ab1d6",
    "name": "Coffeezilla",
    "handle": null,
-   "position": 21,
+   "position": 20,
    "delta": 0,
    "isNew": false
   },
@@ -177,8 +169,16 @@
    "id": "fdc5c7ad-322a-5229-afd8-a5587bd53952",
    "name": "Andrew Huberman",
    "handle": null,
-   "position": 22,
+   "position": 21,
    "delta": 0,
+   "isNew": false
+  },
+  {
+   "id": "7af29611-39c9-5c27-8eb8-da2594aaf3d9",
+   "name": "Michael Saylor",
+   "handle": null,
+   "position": 22,
+   "delta": 2,
    "isNew": false
   },
   {
@@ -194,20 +194,20 @@
    "name": "Mark Cuban",
    "handle": null,
    "position": 24,
-   "delta": 0,
+   "delta": -2,
    "isNew": false
   },
   {
-   "id": "7af29611-39c9-5c27-8eb8-da2594aaf3d9",
-   "name": "Michael Saylor",
+   "id": "277bbb1f-fb22-53f9-ba24-9e9d04933990",
+   "name": "Garry Tan",
    "handle": null,
    "position": 25,
    "delta": 0,
    "isNew": false
   },
   {
-   "id": "277bbb1f-fb22-53f9-ba24-9e9d04933990",
-   "name": "Garry Tan",
+   "id": "137bb9b6-0dac-5b88-9c1c-5e6b3e3e6905",
+   "name": "Shams Charania",
    "handle": null,
    "position": 26,
    "delta": 0,
@@ -222,16 +222,16 @@
    "isNew": false
   },
   {
-   "id": "8ff2ee17-bcce-57fe-abe9-c01f26653eff",
-   "name": "Clemente",
+   "id": "0682efbd-2cc0-541d-903f-0fb117295a93",
+   "name": "David Senra",
    "handle": null,
    "position": 28,
    "delta": 0,
    "isNew": false
   },
   {
-   "id": "0682efbd-2cc0-541d-903f-0fb117295a93",
-   "name": "David Senra",
+   "id": "8ff2ee17-bcce-57fe-abe9-c01f26653eff",
+   "name": "Clemente",
    "handle": null,
    "position": 29,
    "delta": 0,
@@ -270,10 +270,18 @@
    "isNew": false
   },
   {
+   "id": "fcfe7273-3f57-5af1-be8e-3c2451af0cc9",
+   "name": "Chamath Palihapitiya",
+   "handle": null,
+   "position": 34,
+   "delta": 5,
+   "isNew": false
+  },
+  {
    "id": "90340c16-e403-5eff-a384-cce0c637b5c6",
    "name": "Kai Trump",
    "handle": null,
-   "position": 34,
+   "position": 35,
    "delta": 0,
    "isNew": false
   },
@@ -281,31 +289,15 @@
    "id": "b24e1ce7-6378-5abe-83a6-eda0930d5d23",
    "name": "Bill Ackman",
    "handle": null,
-   "position": 35,
-   "delta": 0,
+   "position": 36,
+   "delta": -2,
    "isNew": false
   },
   {
    "id": "1dfe081d-34c2-5933-99c9-9485383aa144",
    "name": "PlaqueBoyMax",
    "handle": null,
-   "position": 36,
-   "delta": 0,
-   "isNew": false
-  },
-  {
-   "id": "40fb0ea1-1e57-5a12-bf4c-a09f53a6d385",
-   "name": "Jason",
-   "handle": null,
    "position": 37,
-   "delta": 1,
-   "isNew": false
-  },
-  {
-   "id": "68c66496-69f2-57fe-a03b-7b1ab64665b1",
-   "name": "rasmr",
-   "handle": null,
-   "position": 38,
    "delta": -1,
    "isNew": false
   },
@@ -313,7 +305,23 @@
    "id": "ffff0019-d18f-575d-96f5-9d5883d9d09f",
    "name": "Murray Hill Guy",
    "handle": null,
+   "position": 38,
+   "delta": 0,
+   "isNew": false
+  },
+  {
+   "id": "68c66496-69f2-57fe-a03b-7b1ab64665b1",
+   "name": "rasmr",
+   "handle": null,
    "position": 39,
+   "delta": -2,
+   "isNew": false
+  },
+  {
+   "id": "40fb0ea1-1e57-5a12-bf4c-a09f53a6d385",
+   "name": "Jason",
+   "handle": null,
+   "position": 40,
    "delta": 0,
    "isNew": false
   },
@@ -321,16 +329,8 @@
    "id": "4df4b66d-8ac3-5de3-9de2-559e33211984",
    "name": "Palmer Luckey",
    "handle": null,
-   "position": 40,
-   "delta": 1,
-   "isNew": false
-  },
-  {
-   "id": "fcfe7273-3f57-5af1-be8e-3c2451af0cc9",
-   "name": "Chamath Palihapitiya",
-   "handle": null,
    "position": 41,
-   "delta": -1,
+   "delta": 0,
    "isNew": false
   },
   {
@@ -346,6 +346,14 @@
    "name": "Threadguy",
    "handle": null,
    "position": 43,
+   "delta": 0,
+   "isNew": false
+  },
+  {
+   "id": "460bdc38-0c7c-5e0f-8d19-20aca203c013",
+   "name": "Naval",
+   "handle": null,
+   "position": 44,
    "delta": 1,
    "isNew": false
   },
@@ -353,16 +361,8 @@
    "id": "4b981eac-57ce-58c4-b4ab-823ef777c37c",
    "name": "Flood",
    "handle": null,
-   "position": 44,
-   "delta": -1,
-   "isNew": false
-  },
-  {
-   "id": "d6a7169f-2d9e-50a3-99ba-617d6cc148a4",
-   "name": "AlexFinn",
-   "handle": null,
    "position": 45,
-   "delta": 5,
+   "delta": -1,
    "isNew": false
   },
   {
@@ -370,23 +370,23 @@
    "name": "David Sacks",
    "handle": null,
    "position": 46,
-   "delta": 1,
+   "delta": 0,
    "isNew": false
   },
   {
-   "id": "93eb99be-12bf-5288-b9c0-5793587ac12b",
-   "name": "Sir Doge of the Coin",
+   "id": "d6a7169f-2d9e-50a3-99ba-617d6cc148a4",
+   "name": "AlexFinn",
    "handle": null,
    "position": 47,
-   "delta": -2,
+   "delta": 0,
    "isNew": false
   },
   {
-   "id": "460bdc38-0c7c-5e0f-8d19-20aca203c013",
-   "name": "Naval",
+   "id": "09a9e9d9-89ea-5b31-957c-ddb28f825466",
+   "name": "Beff Jezos",
    "handle": null,
    "position": 48,
-   "delta": -2,
+   "delta": 2,
    "isNew": false
   },
   {
@@ -394,7 +394,7 @@
    "name": "Balaji",
    "handle": null,
    "position": 49,
-   "delta": -1,
+   "delta": 0,
    "isNew": false
   },
   {
@@ -402,39 +402,39 @@
    "name": "Jynxzi",
    "handle": null,
    "position": 50,
-   "delta": -1,
-   "isNew": false
-  },
-  {
-   "id": "9fbbb2b0-c103-5631-be1b-89e3601b0eb2",
-   "name": "Nikita Bier",
-   "handle": null,
-   "position": 51,
-   "delta": 2,
-   "isNew": false
-  },
-  {
-   "id": "09a9e9d9-89ea-5b31-957c-ddb28f825466",
-   "name": "Beff Jezos",
-   "handle": null,
-   "position": 52,
-   "delta": 0,
+   "delta": 1,
    "isNew": false
   },
   {
    "id": "5585b9d2-6413-541d-8833-4f0ecfe625da",
    "name": "Brian Armstrong",
    "handle": null,
-   "position": 53,
-   "delta": -2,
+   "position": 51,
+   "delta": 2,
+   "isNew": false
+  },
+  {
+   "id": "93eb99be-12bf-5288-b9c0-5793587ac12b",
+   "name": "Sir Doge of the Coin",
+   "handle": null,
+   "position": 52,
+   "delta": -4,
    "isNew": false
   },
   {
    "id": "48e3454b-3eeb-517a-99cd-a68f6755215d",
    "name": "ChooseRich",
    "handle": null,
+   "position": 53,
+   "delta": 1,
+   "isNew": false
+  },
+  {
+   "id": "68e921a1-d7d5-5972-bd91-0ac4976d57f0",
+   "name": "Martin Shkreli",
+   "handle": null,
    "position": 54,
-   "delta": 0,
+   "delta": 5,
    "isNew": false
   },
   {
@@ -442,36 +442,36 @@
    "name": "Toly",
    "handle": null,
    "position": 55,
-   "delta": 1,
+   "delta": 0,
+   "isNew": false
+  },
+  {
+   "id": "9fbbb2b0-c103-5631-be1b-89e3601b0eb2",
+   "name": "Nikita Bier",
+   "handle": null,
+   "position": 56,
+   "delta": -4,
    "isNew": false
   },
   {
    "id": "8db9fff2-8944-5571-8da8-343023d5cf27",
    "name": "Jack Butcher",
    "handle": null,
-   "position": 56,
+   "position": 57,
+   "delta": -1,
+   "isNew": false
+  },
+  {
+   "id": "3684bdca-10f0-58fc-9382-e6d8b583876e",
+   "name": "Roon",
+   "handle": null,
+   "position": 58,
    "delta": -1,
    "isNew": false
   },
   {
    "id": "36b225ea-f6fa-5426-bd03-8502b20aab40",
    "name": "xQc",
-   "handle": null,
-   "position": 57,
-   "delta": 0,
-   "isNew": false
-  },
-  {
-   "id": "68e921a1-d7d5-5972-bd91-0ac4976d57f0",
-   "name": "Martin Shkreli",
-   "handle": null,
-   "position": 58,
-   "delta": 1,
-   "isNew": false
-  },
-  {
-   "id": "3684bdca-10f0-58fc-9382-e6d8b583876e",
-   "name": "Roon",
    "handle": null,
    "position": 59,
    "delta": -1,
@@ -490,7 +490,7 @@
    "name": "Taiki Maeda",
    "handle": null,
    "position": 61,
-   "delta": 2,
+   "delta": 0,
    "isNew": false
   },
   {
@@ -498,23 +498,23 @@
    "name": "Mike Solana",
    "handle": null,
    "position": 62,
-   "delta": -1,
-   "isNew": false
-  },
-  {
-   "id": "342a4a5b-d8a8-5245-a146-7d41267b2b7b",
-   "name": "Tarek Mansour",
-   "handle": null,
-   "position": 63,
-   "delta": -1,
+   "delta": 0,
    "isNew": false
   },
   {
    "id": "6521f8d8-0d44-55cc-a6cf-c48b0d66c8aa",
    "name": "Mert Mumtaz",
    "handle": null,
+   "position": 63,
+   "delta": 1,
+   "isNew": false
+  },
+  {
+   "id": "342a4a5b-d8a8-5245-a146-7d41267b2b7b",
+   "name": "Tarek Mansour",
+   "handle": null,
    "position": 64,
-   "delta": 0,
+   "delta": -1,
    "isNew": false
   },
   {
@@ -538,7 +538,7 @@
    "name": "Andy",
    "handle": null,
    "position": 67,
-   "delta": 0,
+   "delta": 1,
    "isNew": false
   },
   {
@@ -546,7 +546,7 @@
    "name": "Vlad Tenev",
    "handle": null,
    "position": 68,
-   "delta": 0,
+   "delta": -1,
    "isNew": false
   },
   {
@@ -574,16 +574,16 @@
    "isNew": false
   },
   {
-   "id": "cac731d7-dc8b-5964-9a61-75287b134e27",
-   "name": "Dylan Field",
+   "id": "b3c90095-e843-5999-96ba-a2bd00619bf8",
+   "name": "Jordi Hays",
    "handle": null,
    "position": 72,
    "delta": 0,
    "isNew": false
   },
   {
-   "id": "b3c90095-e843-5999-96ba-a2bd00619bf8",
-   "name": "Jordi Hays",
+   "id": "cac731d7-dc8b-5964-9a61-75287b134e27",
+   "name": "Dylan Field",
    "handle": null,
    "position": 73,
    "delta": 0,
@@ -638,6 +638,6 @@
    "isNew": false
   }
  ],
- "collectedAt": "2026-11-20T16:54:53.718041Z",
- "slot": "2026-11-20T16"
+ "collectedAt": "2026-11-21T01:23:23.368472Z",
+ "slot": "2026-11-21T01"
 }

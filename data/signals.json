@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-20T16:54:53.807768Z",
- "snapshotCount": 12,
+ "generatedAt": "2026-11-21T01:23:23.485192Z",
+ "snapshotCount": 13,
  "firstSnapshot": "2026-11-15T20:18:34.118961Z",
- "latestSnapshot": "2026-11-20T16:54:53.718041Z",
- "dataAsOf": "2026-11-20T16:00:00Z",
+ "latestSnapshot": "2026-11-21T01:23:23.368472Z",
+ "dataAsOf": "2026-11-21T00:00:00Z",
  "slotTimes": [
   "2026-11-15T20:00:00Z",
   "2026-11-16T04:00:00Z",
@@ -16,7 +16,8 @@
   "2026-11-19T16:00:00Z",
   "2026-11-19T20:00:00Z",
   "2026-11-20T04:00:00Z",
-  "2026-11-20T16:00:00Z"
+  "2026-11-20T16:00:00Z",
+  "2026-11-21T00:00:00Z"
  ],
  "source": "motion-official",
  "starsCap": 32,
@@ -42,36 +43,72 @@
  },
  "creators": [
   {
-   "name": "AlexFinn",
-   "id": "d6a7169f-2d9e-50a3-99ba-617d6cc148a4",
+   "name": "Martin Shkreli",
+   "id": "68e921a1-d7d5-5972-bd91-0ac4976d57f0",
    "handle": null,
-   "position": 45,
+   "position": 54,
    "delta4h": 5,
-   "delta24h": 6,
-   "delta72h": 4,
-   "acceleration": 5.0,
-   "volatility": 2.18,
-   "momentum": 56.8,
+   "delta24h": 7,
+   "delta72h": -3,
+   "acceleration": 5.5,
+   "volatility": 2.13,
+   "momentum": 60.4,
    "estStars": 2,
-   "value": 28.4,
+   "value": 30.2,
    "tags": [
     "SURGING"
    ],
    "isNew": false
   },
   {
-   "name": "Taiki Maeda",
-   "id": "e6bfeabf-85b7-59da-8235-19583d860cb6",
+   "name": "Chamath Palihapitiya",
+   "id": "fcfe7273-3f57-5af1-be8e-3c2451af0cc9",
    "handle": null,
-   "position": 61,
+   "position": 34,
+   "delta4h": 5,
+   "delta24h": 6,
+   "delta72h": 1,
+   "acceleration": 6.0,
+   "volatility": 3.82,
+   "momentum": 59.2,
+   "estStars": 3,
+   "value": 19.7,
+   "tags": [
+    "SURGING"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Michael Saylor",
+   "id": "7af29611-39c9-5c27-8eb8-da2594aaf3d9",
+   "handle": null,
+   "position": 22,
    "delta4h": 2,
-   "delta24h": 2,
-   "delta72h": -4,
-   "acceleration": 2.55,
-   "volatility": 1.7,
-   "momentum": 23.5,
+   "delta24h": 8,
+   "delta72h": 1,
+   "acceleration": 2.83,
+   "volatility": 2.13,
+   "momentum": 33.2,
+   "estStars": 4,
+   "value": 8.3,
+   "tags": [
+    "SURGING"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Brian Armstrong",
+   "id": "5585b9d2-6413-541d-8833-4f0ecfe625da",
+   "handle": null,
+   "position": 51,
+   "delta4h": 2,
+   "delta24h": 5,
+   "delta72h": 7,
+   "acceleration": 1.75,
+   "volatility": 1.5,
+   "momentum": 25.0,
    "estStars": 2,
-   "value": 11.8,
+   "value": 12.5,
    "tags": [
     "SURGING"
    ],
@@ -81,215 +118,89 @@
    "name": "DJ Akademiks",
    "id": "d9bb6bf0-5dfa-5a03-b8c0-b804e4c38db0",
    "handle": null,
-   "position": 13,
+   "position": 12,
    "delta4h": 1,
-   "delta24h": 9,
-   "delta72h": 4,
-   "acceleration": 1.45,
-   "volatility": 1.89,
-   "momentum": 23.4,
+   "delta24h": 10,
+   "delta72h": 5,
+   "acceleration": 1.33,
+   "volatility": 1.85,
+   "momentum": 24.5,
    "estStars": 5,
-   "value": 4.7,
+   "value": 4.9,
    "tags": [
     "STEADY"
    ],
    "isNew": false
   },
   {
-   "name": "Nikita Bier",
-   "id": "9fbbb2b0-c103-5631-be1b-89e3601b0eb2",
+   "name": "Beff Jezos",
+   "id": "09a9e9d9-89ea-5b31-957c-ddb28f825466",
    "handle": null,
-   "position": 51,
+   "position": 48,
    "delta4h": 2,
-   "delta24h": 1,
-   "delta72h": 4,
-   "acceleration": 1.82,
-   "volatility": 1.84,
-   "momentum": 18.9,
+   "delta24h": 2,
+   "delta72h": -5,
+   "acceleration": 2.42,
+   "volatility": 1.93,
+   "momentum": 22.8,
    "estStars": 2,
-   "value": 9.4,
+   "value": 11.4,
    "tags": [
     "SURGING"
    ],
    "isNew": false
   },
   {
-   "name": "Toly",
-   "id": "a6045306-6ab8-525d-a476-c9c4119f5658",
+   "name": "Mert Mumtaz",
+   "id": "6521f8d8-0d44-55cc-a6cf-c48b0d66c8aa",
    "handle": null,
-   "position": 55,
-   "delta4h": 1,
-   "delta24h": 4,
-   "delta72h": 5,
-   "acceleration": 1.0,
-   "volatility": 1.38,
-   "momentum": 14.6,
-   "estStars": 2,
-   "value": 7.3,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Martin Shkreli",
-   "id": "68e921a1-d7d5-5972-bd91-0ac4976d57f0",
-   "handle": null,
-   "position": 58,
-   "delta4h": 1,
-   "delta24h": 2,
-   "delta72h": -7,
-   "acceleration": 1.64,
-   "volatility": 1.61,
-   "momentum": 13.9,
-   "estStars": 2,
-   "value": 7.0,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Jason",
-   "id": "40fb0ea1-1e57-5a12-bf4c-a09f53a6d385",
-   "handle": null,
-   "position": 37,
-   "delta4h": 1,
-   "delta24h": 3,
-   "delta72h": 3,
-   "acceleration": 0.73,
-   "volatility": 0.94,
-   "momentum": 12.5,
-   "estStars": 3,
-   "value": 4.2,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Dave Portnoy",
-   "id": "5aff38c9-c6fc-55ac-a40b-125579b540ad",
-   "handle": null,
-   "position": 9,
-   "delta4h": 1,
-   "delta24h": 2,
-   "delta72h": 4,
-   "acceleration": 0.82,
-   "volatility": 1.09,
-   "momentum": 11.2,
-   "estStars": 5,
-   "value": 2.2,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Threadguy",
-   "id": "cceac8e6-5b48-50b6-9b73-6bc75890b25d",
-   "handle": null,
-   "position": 43,
+   "position": 63,
    "delta4h": 1,
    "delta24h": -1,
-   "delta72h": -7,
-   "acceleration": 1.45,
-   "volatility": 1.31,
-   "momentum": 9.0,
-   "estStars": 3,
-   "value": 3.0,
+   "delta72h": -10,
+   "acceleration": 2.75,
+   "volatility": 2.65,
+   "momentum": 12.8,
+   "estStars": 2,
+   "value": 6.4,
    "tags": [
     "SLEEPER"
    ],
    "isNew": false
   },
   {
-   "name": "Palmer Luckey",
-   "id": "4df4b66d-8ac3-5de3-9de2-559e33211984",
+   "name": "ChooseRich",
+   "id": "48e3454b-3eeb-517a-99cd-a68f6755215d",
    "handle": null,
-   "position": 40,
+   "position": 53,
    "delta4h": 1,
-   "delta24h": 4,
-   "delta72h": 10,
-   "acceleration": 0.18,
-   "volatility": 3.87,
-   "momentum": 8.8,
-   "estStars": 3,
-   "value": 2.9,
+   "delta24h": 1,
+   "delta72h": -8,
+   "acceleration": 1.58,
+   "volatility": 2.34,
+   "momentum": 11.5,
+   "estStars": 2,
+   "value": 5.8,
    "tags": [
     "SLEEPER"
    ],
    "isNew": false
   },
   {
-   "name": "Ludwig",
-   "id": "b53942ba-71a6-5169-a79b-6fda7b52674f",
+   "name": "Andy",
+   "id": "3743c6dd-f7da-5daa-aec0-6ad5b37fd125",
    "handle": null,
-   "position": 4,
+   "position": 67,
    "delta4h": 1,
    "delta24h": -1,
-   "delta72h": -1,
-   "acceleration": 1.18,
-   "volatility": 0.64,
-   "momentum": 8.6,
-   "estStars": 7,
-   "value": 1.2,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Michael Saylor",
-   "id": "7af29611-39c9-5c27-8eb8-da2594aaf3d9",
-   "handle": null,
-   "position": 25,
-   "delta4h": 0,
-   "delta24h": 4,
-   "delta72h": -2,
-   "acceleration": 0.91,
-   "volatility": 2.07,
-   "momentum": 7.6,
-   "estStars": 4,
-   "value": 1.9,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Bill Ackman",
-   "id": "b24e1ce7-6378-5abe-83a6-eda0930d5d23",
-   "handle": null,
-   "position": 35,
-   "delta4h": 0,
-   "delta24h": 8,
-   "delta72h": 11,
-   "acceleration": -0.64,
-   "volatility": 2.06,
-   "momentum": 7.4,
-   "estStars": 3,
-   "value": 2.5,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Jake Lucky",
-   "id": "5e9a5bfe-cb85-58f1-926d-16b71ba7b6c2",
-   "handle": null,
-   "position": 18,
-   "delta4h": 2,
-   "delta24h": -8,
    "delta72h": -4,
-   "acceleration": 1.82,
-   "volatility": 1.18,
-   "momentum": 6.1,
-   "estStars": 4,
-   "value": 1.5,
+   "acceleration": 1.17,
+   "volatility": 0.47,
+   "momentum": 8.7,
+   "estStars": 1,
+   "value": 8.7,
    "tags": [
-    "STEADY"
+    "SLEEPER"
    ],
    "isNew": false
   },
@@ -301,11 +212,101 @@
    "delta4h": 0,
    "delta24h": 5,
    "delta72h": 11,
-   "acceleration": -0.18,
-   "volatility": 0.9,
-   "momentum": 5.9,
+   "acceleration": -0.17,
+   "volatility": 0.86,
+   "momentum": 6.0,
    "estStars": 6,
    "value": 1.0,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Jake Paul",
+   "id": "3c071339-a0ef-54c3-8db4-e590645978f8",
+   "handle": null,
+   "position": 9,
+   "delta4h": 0,
+   "delta24h": 3,
+   "delta72h": 0,
+   "acceleration": 0.33,
+   "volatility": 0.72,
+   "momentum": 5.1,
+   "estStars": 5,
+   "value": 1.0,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Toly",
+   "id": "a6045306-6ab8-525d-a476-c9c4119f5658",
+   "handle": null,
+   "position": 55,
+   "delta4h": 0,
+   "delta24h": 4,
+   "delta72h": 5,
+   "acceleration": -0.08,
+   "volatility": 1.33,
+   "momentum": 4.3,
+   "estStars": 2,
+   "value": 2.1,
+   "tags": [
+    "SLEEPER"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Jim Cramer",
+   "id": "bcdc0b7d-877b-52e6-be6a-8a9090e6b2ba",
+   "handle": null,
+   "position": 13,
+   "delta4h": -1,
+   "delta24h": 12,
+   "delta72h": 20,
+   "acceleration": -1.42,
+   "volatility": 2.46,
+   "momentum": 3.9,
+   "estStars": 5,
+   "value": 0.8,
+   "tags": [
+    "FADE"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Mike Solana",
+   "id": "e8972afb-64c7-5e82-884a-17cf70e265bb",
+   "handle": null,
+   "position": 62,
+   "delta4h": 0,
+   "delta24h": 2,
+   "delta72h": -1,
+   "acceleration": 0.58,
+   "volatility": 1.39,
+   "momentum": 3.9,
+   "estStars": 2,
+   "value": 1.9,
+   "tags": [
+    "SLEEPER"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Gary Vaynerchuk",
+   "id": "e56e667f-aaf9-57fb-a415-a8d44f0d514a",
+   "handle": null,
+   "position": 11,
+   "delta4h": 0,
+   "delta24h": 3,
+   "delta72h": -1,
+   "acceleration": 0.08,
+   "volatility": 1.21,
+   "momentum": 3.6,
+   "estStars": 5,
+   "value": 0.7,
    "tags": [
     "COILED"
    ],
@@ -319,11 +320,29 @@
    "delta4h": 0,
    "delta24h": 1,
    "delta72h": -5,
-   "acceleration": 0.64,
-   "volatility": 0.64,
-   "momentum": 3.4,
+   "acceleration": 0.58,
+   "volatility": 0.63,
+   "momentum": 3.2,
    "estStars": 3,
    "value": 1.1,
+   "tags": [
+    "SLEEPER"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "MINHxDYNASTY",
+   "id": "023a0d73-5631-58da-84ff-d0f5e65804cf",
+   "handle": null,
+   "position": 32,
+   "delta4h": 0,
+   "delta24h": 2,
+   "delta72h": -6,
+   "acceleration": 0.42,
+   "volatility": 1.55,
+   "momentum": 3.1,
+   "estStars": 3,
+   "value": 1.0,
    "tags": [
     "SLEEPER"
    ],
@@ -337,9 +356,9 @@
    "delta4h": 0,
    "delta24h": 2,
    "delta72h": 1,
-   "acceleration": 0.09,
-   "volatility": 0.28,
-   "momentum": 3.1,
+   "acceleration": 0.08,
+   "volatility": 0.27,
+   "momentum": 3.0,
    "estStars": 6,
    "value": 0.5,
    "tags": [
@@ -348,16 +367,16 @@
    "isNew": false
   },
   {
-   "name": "Beff Jezos",
-   "id": "09a9e9d9-89ea-5b31-957c-ddb28f825466",
+   "name": "Taiki Maeda",
+   "id": "e6bfeabf-85b7-59da-8235-19583d860cb6",
    "handle": null,
-   "position": 52,
+   "position": 61,
    "delta4h": 0,
    "delta24h": 2,
-   "delta72h": -9,
-   "acceleration": 0.45,
-   "volatility": 1.89,
-   "momentum": 2.9,
+   "delta72h": -4,
+   "acceleration": 0.33,
+   "volatility": 1.64,
+   "momentum": 2.7,
    "estStars": 2,
    "value": 1.4,
    "tags": [
@@ -366,105 +385,69 @@
    "isNew": false
   },
   {
-   "name": "xQc",
-   "id": "36b225ea-f6fa-5426-bd03-8502b20aab40",
+   "name": "Murray Hill Guy",
+   "id": "ffff0019-d18f-575d-96f5-9d5883d9d09f",
    "handle": null,
-   "position": 57,
+   "position": 38,
    "delta4h": 0,
-   "delta24h": 4,
-   "delta72h": 7,
-   "acceleration": -0.64,
-   "volatility": 1.26,
-   "momentum": 2.2,
-   "estStars": 2,
-   "value": 1.1,
+   "delta24h": 3,
+   "delta72h": 1,
+   "acceleration": -0.08,
+   "volatility": 1.54,
+   "momentum": 2.6,
+   "estStars": 3,
+   "value": 0.9,
    "tags": [
     "SLEEPER"
    ],
    "isNew": false
   },
   {
-   "name": "Gary Vaynerchuk",
-   "id": "e56e667f-aaf9-57fb-a415-a8d44f0d514a",
+   "name": "Jordi Hays",
+   "id": "b3c90095-e843-5999-96ba-a2bd00619bf8",
    "handle": null,
-   "position": 12,
+   "position": 72,
    "delta4h": 0,
-   "delta24h": 2,
-   "delta72h": -2,
-   "acceleration": 0.09,
-   "volatility": 1.26,
+   "delta24h": 1,
+   "delta72h": 0,
+   "acceleration": 0.25,
+   "volatility": 0.42,
    "momentum": 2.1,
-   "estStars": 5,
-   "value": 0.4,
+   "estStars": 1,
+   "value": 2.1,
+   "tags": [
+    "SLEEPER"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Pat McAfee",
+   "id": "a65b356a-1f71-589f-b12e-08d278462b30",
+   "handle": null,
+   "position": 5,
+   "delta4h": 0,
+   "delta24h": 1,
+   "delta72h": 0,
+   "acceleration": 0.25,
+   "volatility": 0.7,
+   "momentum": 1.8,
+   "estStars": 6,
+   "value": 0.3,
    "tags": [
     "COILED"
    ],
    "isNew": false
   },
   {
-   "name": "Mert Mumtaz",
-   "id": "6521f8d8-0d44-55cc-a6cf-c48b0d66c8aa",
+   "name": "Haseeb Qureshi",
+   "id": "4dd941d9-6394-54dc-a5e6-000ced3e7e62",
    "handle": null,
-   "position": 64,
+   "position": 71,
    "delta4h": 0,
-   "delta24h": -2,
-   "delta72h": -11,
-   "acceleration": 1.91,
-   "volatility": 2.65,
-   "momentum": 2.0,
-   "estStars": 1,
-   "value": 2.0,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Jim Cramer",
-   "id": "bcdc0b7d-877b-52e6-be6a-8a9090e6b2ba",
-   "handle": null,
-   "position": 14,
-   "delta4h": -1,
-   "delta24h": 11,
-   "delta72h": 19,
-   "acceleration": -1.55,
-   "volatility": 2.53,
-   "momentum": 1.8,
-   "estStars": 5,
-   "value": 0.4,
-   "tags": [
-    "FADE"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "MINHxDYNASTY",
-   "id": "023a0d73-5631-58da-84ff-d0f5e65804cf",
-   "handle": null,
-   "position": 32,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": -6,
-   "acceleration": 0.45,
-   "volatility": 1.61,
-   "momentum": 1.7,
-   "estStars": 3,
-   "value": 0.6,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Dylan Field",
-   "id": "cac731d7-dc8b-5964-9a61-75287b134e27",
-   "handle": null,
-   "position": 72,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": -1,
-   "acceleration": 0.27,
-   "volatility": 0.92,
+   "delta24h": 0,
+   "delta72h": -4,
+   "acceleration": 0.67,
+   "volatility": 1.0,
    "momentum": 1.7,
    "estStars": 1,
    "value": 1.7,
@@ -481,9 +464,9 @@
    "delta4h": 0,
    "delta24h": 1,
    "delta72h": -1,
-   "acceleration": 0.27,
-   "volatility": 1.01,
-   "momentum": 1.6,
+   "acceleration": 0.25,
+   "volatility": 0.97,
+   "momentum": 1.5,
    "estStars": 3,
    "value": 0.5,
    "tags": [
@@ -492,51 +475,15 @@
    "isNew": false
   },
   {
-   "name": "Murray Hill Guy",
-   "id": "ffff0019-d18f-575d-96f5-9d5883d9d09f",
-   "handle": null,
-   "position": 39,
-   "delta4h": 0,
-   "delta24h": 2,
-   "delta72h": 0,
-   "acceleration": -0.09,
-   "volatility": 1.61,
-   "momentum": 1.0,
-   "estStars": 3,
-   "value": 0.3,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Marques Brownlee",
-   "id": "02ff07d3-a15c-533a-b0c0-9e628761218a",
-   "handle": null,
-   "position": 3,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": -1,
-   "acceleration": 0.0,
-   "volatility": 0.58,
-   "momentum": 0.9,
-   "estStars": 7,
-   "value": 0.1,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
    "name": "Valkyrae",
    "id": "caa50781-199f-53f7-a8cb-81d2e40970d3",
    "handle": null,
-   "position": 16,
+   "position": 15,
    "delta4h": 0,
    "delta24h": 1,
-   "delta72h": 0,
+   "delta72h": 1,
    "acceleration": 0.0,
-   "volatility": 0.71,
+   "volatility": 0.68,
    "momentum": 0.8,
    "estStars": 5,
    "value": 0.2,
@@ -553,119 +500,11 @@
    "delta4h": 0,
    "delta24h": 0,
    "delta72h": -3,
-   "acceleration": 0.36,
-   "volatility": 0.62,
-   "momentum": 0.8,
-   "estStars": 1,
-   "value": 0.8,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Vlad Tenev",
-   "id": "79c190af-06a7-5afa-a7b6-094bfcd0f80b",
-   "handle": null,
-   "position": 68,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": -3,
-   "acceleration": 0.27,
-   "volatility": 1.83,
-   "momentum": 0.8,
-   "estStars": 1,
-   "value": 0.8,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "DogeDesigner",
-   "id": "cc7e26d1-1db4-519f-ad4e-71aff733f746",
-   "handle": null,
-   "position": 33,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": -1,
-   "acceleration": 0.0,
-   "volatility": 0.82,
-   "momentum": 0.7,
-   "estStars": 3,
-   "value": 0.2,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Aaron Levie",
-   "id": "2baa7312-65a7-54aa-8880-ae17f4709a1c",
-   "handle": null,
-   "position": 70,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": -2,
-   "acceleration": 0.0,
-   "volatility": 0.82,
+   "acceleration": 0.33,
+   "volatility": 0.61,
    "momentum": 0.7,
    "estStars": 1,
    "value": 0.7,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Haseeb Qureshi",
-   "id": "4dd941d9-6394-54dc-a5e6-000ced3e7e62",
-   "handle": null,
-   "position": 71,
-   "delta4h": 0,
-   "delta24h": -1,
-   "delta72h": -4,
-   "acceleration": 0.73,
-   "volatility": 1.03,
-   "momentum": 0.4,
-   "estStars": 1,
-   "value": 0.4,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "David Holz",
-   "id": "a86b292c-9a9c-5efc-b039-f4307b110415",
-   "handle": null,
-   "position": 75,
-   "delta4h": 0,
-   "delta24h": 0,
-   "delta72h": -1,
-   "acceleration": 0.09,
-   "volatility": 0.28,
-   "momentum": 0.1,
-   "estStars": 1,
-   "value": 0.1,
-   "tags": [
-    "SLEEPER"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Cobie",
-   "id": "ca216ca8-478a-528f-9b45-8525eaf2ef7b",
-   "handle": null,
-   "position": 76,
-   "delta4h": 0,
-   "delta24h": 0,
-   "delta72h": -1,
-   "acceleration": 0.09,
-   "volatility": 0.28,
-   "momentum": 0.1,
-   "estStars": 1,
-   "value": 0.1,
    "tags": [
     "SLEEPER"
    ],
@@ -690,17 +529,35 @@
    "isNew": false
   },
   {
-   "name": "Clemente",
-   "id": "8ff2ee17-bcce-57fe-abe9-c01f26653eff",
+   "name": "David Holz",
+   "id": "a86b292c-9a9c-5efc-b039-f4307b110415",
    "handle": null,
-   "position": 28,
+   "position": 75,
    "delta4h": 0,
-   "delta24h": -1,
-   "delta72h": -4,
-   "acceleration": 0.64,
-   "volatility": 1.04,
+   "delta24h": 0,
+   "delta72h": -1,
+   "acceleration": 0.08,
+   "volatility": 0.27,
    "momentum": 0.0,
-   "estStars": 4,
+   "estStars": 1,
+   "value": 0.0,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Cobie",
+   "id": "ca216ca8-478a-528f-9b45-8525eaf2ef7b",
+   "handle": null,
+   "position": 76,
+   "delta4h": 0,
+   "delta24h": 0,
+   "delta72h": -1,
+   "acceleration": 0.08,
+   "volatility": 0.27,
+   "momentum": 0.0,
+   "estStars": 1,
    "value": 0.0,
    "tags": [
     "COILED"
@@ -762,6 +619,24 @@
    "isNew": false
   },
   {
+   "name": "Clemente",
+   "id": "8ff2ee17-bcce-57fe-abe9-c01f26653eff",
+   "handle": null,
+   "position": 29,
+   "delta4h": 0,
+   "delta24h": -1,
+   "delta72h": -5,
+   "acceleration": 0.58,
+   "volatility": 1.01,
+   "momentum": -0.2,
+   "estStars": 3,
+   "value": -0.1,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
    "name": "Marc Andreessen",
    "id": "40ab08c3-1346-554c-8ac0-679a41ae3276",
    "handle": null,
@@ -769,11 +644,29 @@
    "delta4h": 0,
    "delta24h": 0,
    "delta72h": -5,
-   "acceleration": 0.18,
-   "volatility": 0.9,
+   "acceleration": 0.17,
+   "volatility": 0.86,
    "momentum": -0.2,
    "estStars": 1,
    "value": -0.2,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Ludwig",
+   "id": "b53942ba-71a6-5169-a79b-6fda7b52674f",
+   "handle": null,
+   "position": 4,
+   "delta4h": 0,
+   "delta24h": 0,
+   "delta72h": -1,
+   "acceleration": 0.08,
+   "volatility": 0.62,
+   "momentum": -0.3,
+   "estStars": 7,
+   "value": -0.0,
    "tags": [
     "COILED"
    ],
@@ -788,7 +681,7 @@
    "delta24h": 0,
    "delta72h": 2,
    "acceleration": 0.0,
-   "volatility": 0.41,
+   "volatility": 0.39,
    "momentum": -0.4,
    "estStars": 8,
    "value": -0.1,
@@ -798,35 +691,17 @@
    "isNew": false
   },
   {
-   "name": "greg",
-   "id": "0728df0d-f799-504b-aa99-b02968e153cd",
+   "name": "Marques Brownlee",
+   "id": "02ff07d3-a15c-533a-b0c0-9e628761218a",
    "handle": null,
-   "position": 27,
-   "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": 1,
-   "acceleration": -0.27,
-   "volatility": 1.01,
-   "momentum": -0.6,
-   "estStars": 4,
-   "value": -0.1,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Zohran Mamdani",
-   "id": "d59b284b-deca-5612-996e-0f3c2aae3ec1",
-   "handle": null,
-   "position": 6,
+   "position": 3,
    "delta4h": 0,
    "delta24h": 0,
-   "delta72h": 1,
-   "acceleration": -0.09,
-   "volatility": 0.49,
-   "momentum": -0.8,
-   "estStars": 6,
+   "delta72h": -1,
+   "acceleration": 0.0,
+   "volatility": 0.55,
+   "momentum": -0.6,
+   "estStars": 7,
    "value": -0.1,
    "tags": [
     "COILED"
@@ -834,36 +709,72 @@
    "isNew": false
   },
   {
-   "name": "Jordi Hays",
-   "id": "b3c90095-e843-5999-96ba-a2bd00619bf8",
+   "name": "Dave Portnoy",
+   "id": "5aff38c9-c6fc-55ac-a40b-125579b540ad",
    "handle": null,
-   "position": 73,
+   "position": 10,
    "delta4h": 0,
-   "delta24h": -1,
+   "delta24h": 1,
+   "delta72h": 3,
+   "acceleration": -0.25,
+   "volatility": 1.05,
+   "momentum": -0.6,
+   "estStars": 5,
+   "value": -0.1,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "DogeDesigner",
+   "id": "cc7e26d1-1db4-519f-ad4e-71aff733f746",
+   "handle": null,
+   "position": 33,
+   "delta4h": 0,
+   "delta24h": 0,
    "delta72h": -1,
-   "acceleration": 0.27,
-   "volatility": 0.43,
+   "acceleration": 0.0,
+   "volatility": 0.78,
+   "momentum": -0.8,
+   "estStars": 3,
+   "value": -0.3,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "AlexFinn",
+   "id": "d6a7169f-2d9e-50a3-99ba-617d6cc148a4",
+   "handle": null,
+   "position": 47,
+   "delta4h": 0,
+   "delta24h": 2,
+   "delta72h": 2,
+   "acceleration": -0.42,
+   "volatility": 2.1,
+   "momentum": -0.8,
+   "estStars": 2,
+   "value": -0.4,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Aaron Levie",
+   "id": "2baa7312-65a7-54aa-8880-ae17f4709a1c",
+   "handle": null,
+   "position": 70,
+   "delta4h": 0,
+   "delta24h": 0,
+   "delta72h": -2,
+   "acceleration": 0.0,
+   "volatility": 0.78,
    "momentum": -0.8,
    "estStars": 1,
    "value": -0.8,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Andy",
-   "id": "3743c6dd-f7da-5daa-aec0-6ad5b37fd125",
-   "handle": null,
-   "position": 67,
-   "delta4h": 0,
-   "delta24h": -1,
-   "delta72h": -4,
-   "acceleration": 0.18,
-   "volatility": 0.37,
-   "momentum": -1.1,
-   "estStars": 1,
-   "value": -1.1,
    "tags": [
     "COILED"
    ],
@@ -877,11 +788,11 @@
    "delta4h": 0,
    "delta24h": 1,
    "delta72h": 4,
-   "acceleration": -0.45,
-   "volatility": 0.95,
-   "momentum": -1.2,
+   "acceleration": -0.42,
+   "volatility": 0.92,
+   "momentum": -1.1,
    "estStars": 1,
-   "value": -1.2,
+   "value": -1.1,
    "tags": [
     "COILED"
    ],
@@ -891,51 +802,15 @@
    "name": "David Senra",
    "id": "0682efbd-2cc0-541d-903f-0fb117295a93",
    "handle": null,
-   "position": 29,
+   "position": 28,
    "delta4h": 0,
    "delta24h": 1,
-   "delta72h": 2,
-   "acceleration": -0.45,
-   "volatility": 1.04,
-   "momentum": -1.3,
-   "estStars": 3,
-   "value": -0.4,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Andrej Karpathy",
-   "id": "aacb69c8-becb-5d57-867a-0b4bb701c937",
-   "handle": null,
-   "position": 69,
-   "delta4h": 0,
-   "delta24h": -1,
-   "delta72h": -3,
-   "acceleration": 0.18,
-   "volatility": 0.69,
-   "momentum": -1.5,
-   "estStars": 1,
-   "value": -1.5,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Greg Isenberg",
-   "id": "8e99ee2e-a1bc-587a-8bb1-b333312e8076",
-   "handle": null,
-   "position": 17,
-   "delta4h": 0,
-   "delta24h": -2,
-   "delta72h": -5,
-   "acceleration": 0.55,
-   "volatility": 0.76,
-   "momentum": -1.6,
+   "delta72h": 3,
+   "acceleration": -0.42,
+   "volatility": 1.0,
+   "momentum": -1.2,
    "estStars": 4,
-   "value": -0.4,
+   "value": -0.3,
    "tags": [
     "COILED"
    ],
@@ -949,27 +824,81 @@
    "delta4h": 0,
    "delta24h": 3,
    "delta72h": 14,
-   "acceleration": -1.0,
-   "volatility": 2.29,
-   "momentum": -1.8,
+   "acceleration": -0.92,
+   "volatility": 2.21,
+   "momentum": -1.4,
    "estStars": 3,
-   "value": -0.6,
+   "value": -0.5,
    "tags": [
     "STEADY"
    ],
    "isNew": false
   },
   {
-   "name": "Mark Cuban",
-   "id": "50ddbaa9-f5e4-5fd6-96ee-103198820bb9",
+   "name": "Threadguy",
+   "id": "cceac8e6-5b48-50b6-9b73-6bc75890b25d",
    "handle": null,
-   "position": 24,
+   "position": 43,
    "delta4h": 0,
-   "delta24h": 0,
-   "delta72h": 5,
-   "acceleration": -0.18,
-   "volatility": 1.4,
-   "momentum": -2.1,
+   "delta24h": -1,
+   "delta72h": -7,
+   "acceleration": 0.33,
+   "volatility": 1.26,
+   "momentum": -1.4,
+   "estStars": 3,
+   "value": -0.5,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Dylan Field",
+   "id": "cac731d7-dc8b-5964-9a61-75287b134e27",
+   "handle": null,
+   "position": 73,
+   "delta4h": 0,
+   "delta24h": -1,
+   "delta72h": -2,
+   "acceleration": 0.25,
+   "volatility": 0.89,
+   "momentum": -1.4,
+   "estStars": 1,
+   "value": -1.4,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Andrej Karpathy",
+   "id": "aacb69c8-becb-5d57-867a-0b4bb701c937",
+   "handle": null,
+   "position": 69,
+   "delta4h": 0,
+   "delta24h": -1,
+   "delta72h": -3,
+   "acceleration": 0.17,
+   "volatility": 0.66,
+   "momentum": -1.5,
+   "estStars": 1,
+   "value": -1.5,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Greg Isenberg",
+   "id": "8e99ee2e-a1bc-587a-8bb1-b333312e8076",
+   "handle": null,
+   "position": 19,
+   "delta4h": 0,
+   "delta24h": -2,
+   "delta72h": -7,
+   "acceleration": 0.5,
+   "volatility": 0.75,
+   "momentum": -1.8,
    "estStars": 4,
    "value": -0.5,
    "tags": [
@@ -978,38 +907,38 @@
    "isNew": false
   },
   {
-   "name": "PlaqueBoyMax",
-   "id": "1dfe081d-34c2-5933-99c9-9485383aa144",
+   "name": "Zohran Mamdani",
+   "id": "d59b284b-deca-5612-996e-0f3c2aae3ec1",
    "handle": null,
-   "position": 36,
+   "position": 6,
    "delta4h": 0,
-   "delta24h": 1,
-   "delta72h": 8,
-   "acceleration": -0.73,
-   "volatility": 1.03,
-   "momentum": -2.5,
-   "estStars": 3,
-   "value": -0.8,
+   "delta24h": -1,
+   "delta72h": 1,
+   "acceleration": -0.08,
+   "volatility": 0.47,
+   "momentum": -2.3,
+   "estStars": 6,
+   "value": -0.4,
    "tags": [
     "COILED"
    ],
    "isNew": false
   },
   {
-   "name": "Andrew Huberman",
-   "id": "fdc5c7ad-322a-5229-afd8-a5587bd53952",
+   "name": "Palmer Luckey",
+   "id": "4df4b66d-8ac3-5de3-9de2-559e33211984",
    "handle": null,
-   "position": 22,
+   "position": 41,
    "delta4h": 0,
-   "delta24h": -2,
-   "delta72h": -4,
-   "acceleration": 0.27,
-   "volatility": 1.01,
-   "momentum": -2.9,
-   "estStars": 4,
-   "value": -0.7,
+   "delta24h": 3,
+   "delta72h": 9,
+   "acceleration": -0.83,
+   "volatility": 3.72,
+   "momentum": -2.5,
+   "estStars": 3,
+   "value": -0.8,
    "tags": [
-    "COILED"
+    "STEADY"
    ],
    "isNew": false
   },
@@ -1021,8 +950,8 @@
    "delta4h": 0,
    "delta24h": -2,
    "delta72h": -3,
-   "acceleration": 0.18,
-   "volatility": 0.69,
+   "acceleration": 0.17,
+   "volatility": 0.66,
    "momentum": -3.0,
    "estStars": 4,
    "value": -0.8,
@@ -1032,18 +961,72 @@
    "isNew": false
   },
   {
-   "name": "Tim Dillon",
-   "id": "fbd10f4e-634e-53c1-8dba-5c50f8636286",
+   "name": "greg",
+   "id": "0728df0d-f799-504b-aa99-b02968e153cd",
    "handle": null,
-   "position": 60,
+   "position": 27,
    "delta4h": 0,
-   "delta24h": -2,
-   "delta72h": -1,
-   "acceleration": 0.09,
-   "volatility": 0.64,
-   "momentum": -3.3,
-   "estStars": 2,
-   "value": -1.6,
+   "delta24h": -1,
+   "delta72h": 1,
+   "acceleration": -0.25,
+   "volatility": 0.97,
+   "momentum": -3.5,
+   "estStars": 4,
+   "value": -0.9,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Druski",
+   "id": "cb65f56b-7b30-58fc-b456-0767e1db9ff3",
+   "handle": null,
+   "position": 18,
+   "delta4h": 0,
+   "delta24h": 1,
+   "delta72h": -3,
+   "acceleration": -0.67,
+   "volatility": 2.47,
+   "momentum": -3.7,
+   "estStars": 4,
+   "value": -0.9,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Jason",
+   "id": "40fb0ea1-1e57-5a12-bf4c-a09f53a6d385",
+   "handle": null,
+   "position": 40,
+   "delta4h": 0,
+   "delta24h": -1,
+   "delta72h": 0,
+   "acceleration": -0.33,
+   "volatility": 0.91,
+   "momentum": -3.7,
+   "estStars": 3,
+   "value": -1.2,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Andrew Huberman",
+   "id": "fdc5c7ad-322a-5229-afd8-a5587bd53952",
+   "handle": null,
+   "position": 21,
+   "delta4h": 0,
+   "delta24h": -3,
+   "delta72h": -3,
+   "acceleration": 0.25,
+   "volatility": 0.97,
+   "momentum": -4.5,
+   "estStars": 4,
+   "value": -1.1,
    "tags": [
     "COILED"
    ],
@@ -1053,17 +1036,35 @@
    "name": "Logan Paul",
    "id": "25620b9a-0958-5b1e-855d-ab5cf12eb93e",
    "handle": null,
-   "position": 15,
+   "position": 14,
    "delta4h": 0,
    "delta24h": 1,
-   "delta72h": 12,
-   "acceleration": -1.0,
-   "volatility": 2.6,
-   "momentum": -5.1,
+   "delta72h": 13,
+   "acceleration": -0.92,
+   "volatility": 2.51,
+   "momentum": -4.7,
    "estStars": 5,
-   "value": -1.0,
+   "value": -0.9,
    "tags": [
     "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Tim Dillon",
+   "id": "fbd10f4e-634e-53c1-8dba-5c50f8636286",
+   "handle": null,
+   "position": 60,
+   "delta4h": 0,
+   "delta24h": -3,
+   "delta72h": -1,
+   "acceleration": 0.08,
+   "volatility": 0.62,
+   "momentum": -4.8,
+   "estStars": 2,
+   "value": -2.4,
+   "tags": [
+    "COILED"
    ],
    "isNew": false
   },
@@ -1071,15 +1072,249 @@
    "name": "Flood",
    "id": "4b981eac-57ce-58c4-b4ab-823ef777c37c",
    "handle": null,
-   "position": 44,
+   "position": 45,
    "delta4h": -1,
-   "delta24h": 3,
-   "delta72h": -2,
-   "acceleration": -0.64,
-   "volatility": 1.04,
-   "momentum": -5.1,
+   "delta24h": 1,
+   "delta72h": -3,
+   "acceleration": -0.58,
+   "volatility": 1.01,
+   "momentum": -7.8,
    "estStars": 2,
-   "value": -2.5,
+   "value": -3.9,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Coffeezilla",
+   "id": "eea1575a-3baa-5ac2-9753-d72a539ab1d6",
+   "handle": null,
+   "position": 20,
+   "delta4h": 0,
+   "delta24h": 0,
+   "delta72h": 2,
+   "acceleration": -1.08,
+   "volatility": 3.68,
+   "momentum": -8.0,
+   "estStars": 4,
+   "value": -2.0,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Balaji",
+   "id": "2c8b06ca-002a-534c-94f5-f027634f671e",
+   "handle": null,
+   "position": 49,
+   "delta4h": 0,
+   "delta24h": -2,
+   "delta72h": 5,
+   "acceleration": -1.0,
+   "volatility": 1.73,
+   "momentum": -8.7,
+   "estStars": 2,
+   "value": -4.3,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Garry Tan",
+   "id": "277bbb1f-fb22-53f9-ba24-9e9d04933990",
+   "handle": null,
+   "position": 25,
+   "delta4h": 0,
+   "delta24h": -2,
+   "delta72h": 12,
+   "acceleration": -0.5,
+   "volatility": 3.86,
+   "momentum": -8.9,
+   "estStars": 4,
+   "value": -2.2,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Jynxzi",
+   "id": "cef94554-c546-580a-b1ce-41a693dd362c",
+   "handle": null,
+   "position": 50,
+   "delta4h": 1,
+   "delta24h": -2,
+   "delta72h": 26,
+   "acceleration": -1.25,
+   "volatility": 6.9,
+   "momentum": -8.9,
+   "estStars": 2,
+   "value": -4.5,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Roon",
+   "id": "3684bdca-10f0-58fc-9382-e6d8b583876e",
+   "handle": null,
+   "position": 58,
+   "delta4h": -1,
+   "delta24h": 0,
+   "delta72h": -10,
+   "acceleration": -0.25,
+   "volatility": 2.01,
+   "momentum": -9.0,
+   "estStars": 2,
+   "value": -4.5,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Vlad Tenev",
+   "id": "79c190af-06a7-5afa-a7b6-094bfcd0f80b",
+   "handle": null,
+   "position": 68,
+   "delta4h": -1,
+   "delta24h": 1,
+   "delta72h": -3,
+   "acceleration": -0.75,
+   "volatility": 1.77,
+   "momentum": -9.3,
+   "estStars": 1,
+   "value": -9.3,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Jack Butcher",
+   "id": "8db9fff2-8944-5571-8da8-343023d5cf27",
+   "handle": null,
+   "position": 57,
+   "delta4h": -1,
+   "delta24h": -2,
+   "delta72h": -10,
+   "acceleration": -0.25,
+   "volatility": 1.42,
+   "momentum": -11.4,
+   "estStars": 2,
+   "value": -5.7,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "xQc",
+   "id": "36b225ea-f6fa-5426-bd03-8502b20aab40",
+   "handle": null,
+   "position": 59,
+   "delta4h": -1,
+   "delta24h": 1,
+   "delta72h": 5,
+   "acceleration": -1.58,
+   "volatility": 1.28,
+   "momentum": -12.1,
+   "estStars": 2,
+   "value": -6.0,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Jake Lucky",
+   "id": "5e9a5bfe-cb85-58f1-926d-16b71ba7b6c2",
+   "handle": null,
+   "position": 17,
+   "delta4h": 0,
+   "delta24h": -7,
+   "delta72h": -3,
+   "acceleration": -0.33,
+   "volatility": 1.14,
+   "momentum": -13.0,
+   "estStars": 4,
+   "value": -3.2,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "PlaqueBoyMax",
+   "id": "1dfe081d-34c2-5933-99c9-9485383aa144",
+   "handle": null,
+   "position": 37,
+   "delta4h": -1,
+   "delta24h": 0,
+   "delta72h": 7,
+   "acceleration": -1.67,
+   "volatility": 1.08,
+   "momentum": -13.8,
+   "estStars": 3,
+   "value": -4.6,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Lex Fridman",
+   "id": "26092401-8724-5c9d-8378-ad8a24fb6293",
+   "handle": null,
+   "position": 16,
+   "delta4h": 0,
+   "delta24h": -9,
+   "delta72h": -10,
+   "acceleration": 0.08,
+   "volatility": 0.73,
+   "momentum": -13.9,
+   "estStars": 5,
+   "value": -2.8,
+   "tags": [
+    "COILED"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Bill Ackman",
+   "id": "b24e1ce7-6378-5abe-83a6-eda0930d5d23",
+   "handle": null,
+   "position": 36,
+   "delta4h": -2,
+   "delta24h": 7,
+   "delta72h": 10,
+   "acceleration": -2.58,
+   "volatility": 2.1,
+   "momentum": -13.9,
+   "estStars": 3,
+   "value": -4.6,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Naval",
+   "id": "460bdc38-0c7c-5e0f-8d19-20aca203c013",
+   "handle": null,
+   "position": 44,
+   "delta4h": 1,
+   "delta24h": -17,
+   "delta72h": -23,
+   "acceleration": 1.42,
+   "volatility": 0.82,
+   "momentum": -14.6,
+   "estStars": 2,
+   "value": -7.3,
    "tags": [
     "COILED"
    ],
@@ -1090,284 +1325,14 @@
    "id": "bce70ac1-7c16-55e2-a249-b0619ac9a0fe",
    "handle": null,
    "position": 46,
-   "delta4h": 1,
+   "delta4h": 0,
    "delta24h": -11,
    "delta72h": -12,
-   "acceleration": 2.18,
-   "volatility": 4.04,
-   "momentum": -5.8,
+   "acceleration": 1.0,
+   "volatility": 3.89,
+   "momentum": -16.4,
    "estStars": 2,
-   "value": -2.9,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Mike Solana",
-   "id": "e8972afb-64c7-5e82-884a-17cf70e265bb",
-   "handle": null,
-   "position": 62,
-   "delta4h": -1,
-   "delta24h": 2,
-   "delta72h": -1,
-   "acceleration": -0.45,
-   "volatility": 1.44,
-   "momentum": -6.2,
-   "estStars": 2,
-   "value": -3.1,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Jake Paul",
-   "id": "3c071339-a0ef-54c3-8db4-e590645978f8",
-   "handle": null,
-   "position": 10,
-   "delta4h": -1,
-   "delta24h": 2,
-   "delta72h": -1,
-   "acceleration": -0.73,
-   "volatility": 0.75,
-   "momentum": -6.7,
-   "estStars": 5,
-   "value": -1.3,
-   "tags": [
-    "FADE"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Sir Doge of the Coin",
-   "id": "93eb99be-12bf-5288-b9c0-5793587ac12b",
-   "handle": null,
-   "position": 47,
-   "delta4h": -2,
-   "delta24h": 6,
-   "delta72h": -6,
-   "acceleration": -1.18,
-   "volatility": 2.1,
-   "momentum": -9.8,
-   "estStars": 2,
-   "value": -4.9,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Pat McAfee",
-   "id": "a65b356a-1f71-589f-b12e-08d278462b30",
-   "handle": null,
-   "position": 5,
-   "delta4h": -1,
-   "delta24h": 0,
-   "delta72h": 0,
-   "acceleration": -0.82,
-   "volatility": 0.72,
-   "momentum": -10.0,
-   "estStars": 6,
-   "value": -1.7,
-   "tags": [
-    "FADE"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Jack Butcher",
-   "id": "8db9fff2-8944-5571-8da8-343023d5cf27",
-   "handle": null,
-   "position": 56,
-   "delta4h": -1,
-   "delta24h": -1,
-   "delta72h": -9,
-   "acceleration": -0.27,
-   "volatility": 1.48,
-   "momentum": -10.1,
-   "estStars": 2,
-   "value": -5.0,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "rasmr",
-   "id": "68c66496-69f2-57fe-a03b-7b1ab64665b1",
-   "handle": null,
-   "position": 38,
-   "delta4h": -1,
-   "delta24h": 0,
-   "delta72h": 0,
-   "acceleration": -0.73,
-   "volatility": 1.43,
-   "momentum": -10.3,
-   "estStars": 3,
-   "value": -3.4,
-   "tags": [
-    "COILED"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Garry Tan",
-   "id": "277bbb1f-fb22-53f9-ba24-9e9d04933990",
-   "handle": null,
-   "position": 26,
-   "delta4h": 0,
-   "delta24h": -3,
-   "delta72h": 11,
-   "acceleration": -0.55,
-   "volatility": 4.01,
-   "momentum": -10.7,
-   "estStars": 4,
-   "value": -2.7,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Shams Charania",
-   "id": "137bb9b6-0dac-5b88-9c1c-5e6b3e3e6905",
-   "handle": null,
-   "position": 11,
-   "delta4h": 0,
-   "delta24h": -4,
-   "delta72h": 0,
-   "acceleration": -0.82,
-   "volatility": 2.24,
-   "momentum": -11.5,
-   "estStars": 5,
-   "value": -2.3,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Coffeezilla",
-   "id": "eea1575a-3baa-5ac2-9753-d72a539ab1d6",
-   "handle": null,
-   "position": 21,
-   "delta4h": 0,
-   "delta24h": -2,
-   "delta72h": 1,
-   "acceleration": -1.18,
-   "volatility": 3.82,
-   "momentum": -11.5,
-   "estStars": 4,
-   "value": -2.9,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "ChooseRich",
-   "id": "48e3454b-3eeb-517a-99cd-a68f6755215d",
-   "handle": null,
-   "position": 54,
-   "delta4h": 0,
-   "delta24h": -8,
-   "delta72h": -9,
-   "acceleration": 0.64,
-   "volatility": 2.4,
-   "momentum": -11.8,
-   "estStars": 2,
-   "value": -5.9,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Roon",
-   "id": "3684bdca-10f0-58fc-9382-e6d8b583876e",
-   "handle": null,
-   "position": 59,
-   "delta4h": -1,
-   "delta24h": -2,
-   "delta72h": -11,
-   "acceleration": -0.27,
-   "volatility": 2.09,
-   "momentum": -12.2,
-   "estStars": 2,
-   "value": -6.1,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Chamath Palihapitiya",
-   "id": "fcfe7273-3f57-5af1-be8e-3c2451af0cc9",
-   "handle": null,
-   "position": 41,
-   "delta4h": -1,
-   "delta24h": -2,
-   "delta72h": -6,
-   "acceleration": 0.0,
-   "volatility": 3.61,
-   "momentum": -12.6,
-   "estStars": 3,
-   "value": -4.2,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Druski",
-   "id": "cb65f56b-7b30-58fc-b456-0767e1db9ff3",
-   "handle": null,
-   "position": 19,
-   "delta4h": -1,
-   "delta24h": -1,
-   "delta72h": -4,
-   "acceleration": -1.82,
-   "volatility": 2.56,
-   "momentum": -17.3,
-   "estStars": 4,
-   "value": -4.3,
-   "tags": [
-    "FADE"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Balaji",
-   "id": "2c8b06ca-002a-534c-94f5-f027634f671e",
-   "handle": null,
-   "position": 49,
-   "delta4h": -1,
-   "delta24h": -1,
-   "delta72h": 5,
-   "acceleration": -2.18,
-   "volatility": 1.78,
-   "momentum": -18.0,
-   "estStars": 2,
-   "value": -9.0,
-   "tags": [
-    "STEADY"
-   ],
-   "isNew": false
-  },
-  {
-   "name": "Brian Armstrong",
-   "id": "5585b9d2-6413-541d-8833-4f0ecfe625da",
-   "handle": null,
-   "position": 53,
-   "delta4h": -2,
-   "delta24h": 3,
-   "delta72h": 5,
-   "acceleration": -2.45,
-   "volatility": 1.48,
-   "momentum": -18.8,
-   "estStars": 2,
-   "value": -9.4,
+   "value": -8.2,
    "tags": [
     "STEADY"
    ],
@@ -1377,12 +1342,12 @@
    "name": "Kai Trump",
    "id": "90340c16-e403-5eff-a384-cce0c637b5c6",
    "handle": null,
-   "position": 34,
+   "position": 35,
    "delta4h": 0,
-   "delta24h": 2,
-   "delta72h": 39,
-   "acceleration": -3.45,
-   "volatility": 10.2,
+   "delta24h": 1,
+   "delta72h": 38,
+   "acceleration": -3.17,
+   "volatility": 9.84,
    "momentum": -21.0,
    "estStars": 3,
    "value": -7.0,
@@ -1392,38 +1357,38 @@
    "isNew": false
   },
   {
-   "name": "Lex Fridman",
-   "id": "26092401-8724-5c9d-8378-ad8a24fb6293",
+   "name": "rasmr",
+   "id": "68c66496-69f2-57fe-a03b-7b1ab64665b1",
    "handle": null,
-   "position": 20,
-   "delta4h": -1,
-   "delta24h": -12,
-   "delta72h": -14,
-   "acceleration": -1.0,
-   "volatility": 0.76,
-   "momentum": -28.8,
-   "estStars": 4,
+   "position": 39,
+   "delta4h": -2,
+   "delta24h": -1,
+   "delta72h": -1,
+   "acceleration": -1.67,
+   "volatility": 1.45,
+   "momentum": -21.6,
+   "estStars": 3,
    "value": -7.2,
    "tags": [
-    "FADE"
+    "STEADY"
    ],
    "isNew": false
   },
   {
-   "name": "Jynxzi",
-   "id": "cef94554-c546-580a-b1ce-41a693dd362c",
+   "name": "Mark Cuban",
+   "id": "50ddbaa9-f5e4-5fd6-96ee-103198820bb9",
    "handle": null,
-   "position": 50,
-   "delta4h": -1,
-   "delta24h": -1,
-   "delta72h": 26,
-   "acceleration": -3.55,
-   "volatility": 7.18,
-   "momentum": -28.9,
-   "estStars": 2,
-   "value": -14.4,
+   "position": 24,
+   "delta4h": -2,
+   "delta24h": 0,
+   "delta72h": 5,
+   "acceleration": -2.17,
+   "volatility": 1.47,
+   "momentum": -22.1,
+   "estStars": 4,
+   "value": -5.5,
    "tags": [
-    "STEADY"
+    "FADE"
    ],
    "isNew": false
   },
@@ -1431,33 +1396,69 @@
    "name": "Tarek Mansour",
    "id": "342a4a5b-d8a8-5245-a146-7d41267b2b7b",
    "handle": null,
-   "position": 63,
+   "position": 64,
    "delta4h": -1,
-   "delta24h": -13,
-   "delta72h": -11,
-   "acceleration": -0.55,
-   "volatility": 1.85,
-   "momentum": -29.6,
-   "estStars": 2,
-   "value": -14.8,
+   "delta24h": -11,
+   "delta72h": -12,
+   "acceleration": -0.5,
+   "volatility": 1.78,
+   "momentum": -26.3,
+   "estStars": 1,
+   "value": -26.3,
    "tags": [
     "STEADY"
    ],
    "isNew": false
   },
   {
-   "name": "Naval",
-   "id": "460bdc38-0c7c-5e0f-8d19-20aca203c013",
+   "name": "Shams Charania",
+   "id": "137bb9b6-0dac-5b88-9c1c-5e6b3e3e6905",
    "handle": null,
-   "position": 48,
-   "delta4h": -2,
-   "delta24h": -22,
-   "delta72h": -27,
-   "acceleration": -1.73,
-   "volatility": 0.76,
-   "momentum": -52.7,
+   "position": 26,
+   "delta4h": 0,
+   "delta24h": -18,
+   "delta72h": -15,
+   "acceleration": -0.75,
+   "volatility": 2.16,
+   "momentum": -32.2,
+   "estStars": 4,
+   "value": -8.1,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Sir Doge of the Coin",
+   "id": "93eb99be-12bf-5288-b9c0-5793587ac12b",
+   "handle": null,
+   "position": 52,
+   "delta4h": -4,
+   "delta24h": -1,
+   "delta72h": -11,
+   "acceleration": -3.08,
+   "volatility": 2.18,
+   "momentum": -40.0,
    "estStars": 2,
-   "value": -26.4,
+   "value": -20.0,
+   "tags": [
+    "STEADY"
+   ],
+   "isNew": false
+  },
+  {
+   "name": "Nikita Bier",
+   "id": "9fbbb2b0-c103-5631-be1b-89e3601b0eb2",
+   "handle": null,
+   "position": 56,
+   "delta4h": -4,
+   "delta24h": -4,
+   "delta72h": -1,
+   "acceleration": -4.33,
+   "volatility": 2.11,
+   "momentum": -49.4,
+   "estStars": 2,
+   "value": -24.7,
    "tags": [
     "STEADY"
    ],
@@ -1468,140 +1469,140 @@
   "balanced": {
    "picks": [
     {
-     "name": "AlexFinn",
-     "estStars": 2,
-     "momentum": 56.8,
-     "tags": [
-      "SURGING"
-     ]
-    },
-    {
-     "name": "Taiki Maeda",
-     "estStars": 2,
-     "momentum": 23.5,
-     "tags": [
-      "SURGING"
-     ]
-    },
-    {
-     "name": "Nikita Bier",
-     "estStars": 2,
-     "momentum": 18.9,
-     "tags": [
-      "SURGING"
-     ]
-    },
-    {
-     "name": "Toly",
-     "estStars": 2,
-     "momentum": 14.6,
-     "tags": [
-      "SLEEPER"
-     ]
-    },
-    {
      "name": "Martin Shkreli",
      "estStars": 2,
-     "momentum": 13.9,
+     "momentum": 60.4,
+     "tags": [
+      "SURGING"
+     ]
+    },
+    {
+     "name": "Chamath Palihapitiya",
+     "estStars": 3,
+     "momentum": 59.2,
+     "tags": [
+      "SURGING"
+     ]
+    },
+    {
+     "name": "Brian Armstrong",
+     "estStars": 2,
+     "momentum": 25.0,
+     "tags": [
+      "SURGING"
+     ]
+    },
+    {
+     "name": "Beff Jezos",
+     "estStars": 2,
+     "momentum": 22.8,
+     "tags": [
+      "SURGING"
+     ]
+    },
+    {
+     "name": "Andy",
+     "estStars": 1,
+     "momentum": 8.7,
      "tags": [
       "SLEEPER"
      ]
     }
    ],
    "starsUsed": 10,
-   "projectedMomentum": 127.7
+   "projectedMomentum": 176.1
   },
   "sleeperHeavy": {
    "picks": [
     {
+     "name": "Andy",
+     "estStars": 1,
+     "momentum": 8.7,
+     "tags": [
+      "SLEEPER"
+     ]
+    },
+    {
+     "name": "Mert Mumtaz",
+     "estStars": 2,
+     "momentum": 12.8,
+     "tags": [
+      "SLEEPER"
+     ]
+    },
+    {
+     "name": "ChooseRich",
+     "estStars": 2,
+     "momentum": 11.5,
+     "tags": [
+      "SLEEPER"
+     ]
+    },
+    {
      "name": "Toly",
      "estStars": 2,
-     "momentum": 14.6,
+     "momentum": 4.3,
      "tags": [
       "SLEEPER"
      ]
     },
     {
-     "name": "Martin Shkreli",
-     "estStars": 2,
-     "momentum": 13.9,
-     "tags": [
-      "SLEEPER"
-     ]
-    },
-    {
-     "name": "Jason",
-     "estStars": 3,
-     "momentum": 12.5,
-     "tags": [
-      "SLEEPER"
-     ]
-    },
-    {
-     "name": "Threadguy",
-     "estStars": 3,
-     "momentum": 9.0,
-     "tags": [
-      "SLEEPER"
-     ]
-    },
-    {
-     "name": "Palmer Luckey",
-     "estStars": 3,
-     "momentum": 8.8,
+     "name": "Jordi Hays",
+     "estStars": 1,
+     "momentum": 2.1,
      "tags": [
       "SLEEPER"
      ]
     }
    ],
-   "starsUsed": 13,
-   "projectedMomentum": 58.8
+   "starsUsed": 8,
+   "projectedMomentum": 39.4
   },
   "contrarian": {
    "picks": [
     {
      "name": "Sir Doge of the Coin",
      "estStars": 2,
-     "momentum": -9.8,
+     "momentum": -40.0,
      "tags": [
       "STEADY"
      ]
     },
     {
-     "name": "Brian Armstrong",
+     "name": "Nikita Bier",
      "estStars": 2,
-     "momentum": -18.8,
+     "momentum": -49.4,
      "tags": [
       "STEADY"
      ]
     },
     {
-     "name": "Naval",
-     "estStars": 2,
-     "momentum": -52.7,
+     "name": "Bill Ackman",
+     "estStars": 3,
+     "momentum": -13.9,
      "tags": [
       "STEADY"
      ]
     },
     {
-     "name": "Jim Cramer",
-     "estStars": 5,
-     "momentum": 1.8,
+     "name": "rasmr",
+     "estStars": 3,
+     "momentum": -21.6,
+     "tags": [
+      "STEADY"
+     ]
+    },
+    {
+     "name": "Mark Cuban",
+     "estStars": 4,
+     "momentum": -22.1,
      "tags": [
       "FADE"
      ]
-    },
-    {
-     "name": "Flood",
-     "estStars": 2,
-     "momentum": -5.1,
-     "tags": [
-      "COILED"
-     ]
     }
    ],
-   "starsUsed": 13,
-   "projectedMomentum": -84.6
+   "starsUsed": 14,
+   "projectedMomentum": -147.0
   }
  },
  "disclaimer": "Scores are derived from Motion's public leaderboard (positions + 4-hour rank deltas). Star costs are estimated from rank, not the real card values. Nothing here is insider information."
